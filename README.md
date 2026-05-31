@@ -1,5 +1,8 @@
 # Restaurant WhatsApp Chatbot SaaS
 
+v0.1
+
+
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
 
 ## Arquitectura

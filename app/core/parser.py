@@ -1,4 +1,4 @@
-"""Natural-language order parser with cart operations."""
+"""Order Intelligence Engine — natural-language order parser with cart operations."""
 
 from __future__ import annotations
 
@@ -7,8 +7,20 @@ import unicodedata
 from difflib import SequenceMatcher
 from typing import Any, Dict, List, Optional, Tuple
 
+try:
+    from rapidfuzz import fuzz as _rapidfuzz
 
-NUMBER_WORDS = {
+    _HAS_RAPIDFUZZ = True
+except ImportError:
+    _rapidfuzz = None  # type: ignore[assignment]
+    _HAS_RAPIDFUZZ = False
+
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+
+NUMBER_WORDS: Dict[str, int] = {
     "un": 1,
     "una": 1,
     "uno": 1,
@@ -25,140 +37,868 @@ NUMBER_WORDS = {
     "doce": 12,
 }
 
+NOISE_WORDS = frozenset(
+    {
+        "quiero",
+        "quero",
+        "dame",
+        "deme",
+        "porfa",
+        "porfavor",
+        "favor",
+        "mmm",
+        "mm",
+        "eh",
+        "este",
+        "esta",
+        "eso",
+        "esa",
+        "pedir",
+        "pedido",
+        "pedidos",
+        "ordenar",
+        "orden",
+        "necesito",
+        "quisiera",
+        "me",
+        "gustaria",
+        "ponme",
+        "traeme",
+        "trae",
+        "agrega",
+        "agregar",
+        "anade",
+        "añade",
+        "añadir",
+        "suma",
+        "sumar",
+        "tambien",
+        "también",
+        "mas",
+        "más",
+        "solo",
+        "solamente",
+        "favor",
+        "hola",
+        "buenas",
+        "buenos",
+        "dias",
+        "tardes",
+        "noches",
+        "please",
+        "pls",
+        "ok",
+        "vale",
+        "listo",
+        "ya",
+        "ahora",
+        "por",
+        "para",
+        "mi",
+        "mio",
+        "mía",
+        "de",
+        "del",
+        "la",
+        "el",
+        "los",
+        "las",
+        "un",
+        "una",
+        "unos",
+        "unas",
+        "con",
+        "sin",
+        "algo",
+        "alguna",
+        "algun",
+        "algún",
+    }
+)
+
+# Token-level semantic hints (applied before menu matching, never invent products).
+SYNONYM_TOKEN_MAP: Dict[str, str] = {
+    "coca": "coca cola",
+    "cola": "coca cola",
+    "gaseosa": "coca cola",
+    "gasosa": "coca cola",
+    "refresco": "coca cola",
+    "soda": "coca cola",
+    "agua": "agua",
+    "natural": "agua",
+    "mineral": "agua",
+    "hambre": "hamburguesa",
+    "burger": "hamburguesa",
+    "hamburgesa": "hamburguesa",
+    "hamburgsa": "hamburguesa",
+    "hamburguesa": "hamburguesa",
+    "hamburguesas": "hamburguesa",
+    "margarita": "margarita",
+    "margaritas": "margarita",
+    "hawaiana": "hawaiana",
+    "hawaiano": "hawaiana",
+    "hawaianas": "hawaiana",
+    "hawaianos": "hawaiana",
+    "cesar": "cesar",
+    "césar": "cesar",
+    "papas": "papas fritas",
+    "papitas": "papas fritas",
+    "fritas": "papas fritas",
+    "frits": "papas fritas",
+    "pizza": "pizza",
+    "ensalada": "ensalada",
+}
+
+MENU_INTENT_TOKENS = frozenset({"menu", "carta", "catalogo", "catálogo", "lista", "ver"})
+
+ORDER_INTENT_PHRASES = (
+    "quiero comer",
+    "tengo hambre",
+    "algo de comer",
+    "hacer pedido",
+    "hacer un pedido",
+)
+
+COMMA_SPLIT_RE = re.compile(r"\s*,\s*")
+
+CONNECTOR_SPLIT_RE = re.compile(
+    r"\s*(?:,|;|&|\band\b|\s+y\s+|\s+e\s+|\s+mas\s+|\s+más\s+|\s+también\s+|\s+tambien\s+)\s*",
+    re.IGNORECASE,
+)
+
+EMOJI_RE = re.compile(
+    "["
+    "\U0001F300-\U0001FAFF"
+    "\U00002700-\U000027BF"
+    "\U0001F600-\U0001F64F"
+    "\U0001F680-\U0001F6FF"
+    "]+",
+    flags=re.UNICODE,
+)
+
+REPEAT_CHAR_RE = re.compile(r"(.)\1{2,}", re.UNICODE)
+
+QTY_PREFIX_RE = re.compile(
+    r"^(?:(\d+)\s*[x×]\s*|[x×]\s*(\d+)\s*|[x×](\d+)\s*|(\d+)\s+)(.*)$",
+    re.IGNORECASE,
+)
+
+QTY_SUFFIX_RE = re.compile(r"^(.+?)\s+(\d+)\s*$")
+
+SEGMENT_BOUNDARY_RE = re.compile(
+    r"(?<!\d)(?:(\d+)\s*[x×]\s*|[x×]\s*(\d+)\s*|[x×](\d+)\s*|(\d+)\s+)",
+    re.IGNORECASE,
+)
+
+ACCEPT_AUTO_SCORE = 0.80
+ACCEPT_REVIEW_SCORE = 0.50
+AMBIGUITY_DELTA = 0.05
+
+# Generic menu words — matching only these must not beat a distinctive token hit.
+CATEGORY_STOPWORDS = frozenset(
+    {
+        "pizza",
+        "pizzas",
+        "hamburguesa",
+        "hamburguesas",
+        "ensalada",
+        "ensaladas",
+        "agua",
+        "coca",
+        "cola",
+        "mineral",
+        "clasica",
+        "cesar",
+        "clasico",
+        "natural",
+        "bebida",
+        "bebidas",
+    }
+)
+
+
+# ---------------------------------------------------------------------------
+# Text normalization
+# ---------------------------------------------------------------------------
+
 
 def _strip_accents(value: str) -> str:
-    normalized = unicodedata.normalize("NFD", value)
+    """Fold áéíóú, ñ and other accented characters for stable menu matching."""
+    normalized = unicodedata.normalize("NFKD", value)
     return "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn")
 
 
+def _singularize_token(token: str) -> str:
+    """Reduce simple Spanish plurals for matching (pizzas → pizza)."""
+    if len(token) <= 3:
+        return token
+    if token.endswith("iones"):
+        return token[:-2]
+    if token.endswith("anes") and len(token) > 5:
+        return token[:-2]
+    if token.endswith("ces") and len(token) > 4:
+        return token[:-2] + "r"
+    if token.endswith("as") and len(token) > 4:
+        return token[:-1]
+    if token.endswith("es") and len(token) > 4:
+        return token[:-2]
+    if token.endswith("s") and not token.endswith("ss"):
+        return token[:-1]
+    return token
+
+
+def _token_keys(text: str) -> set[str]:
+    return {
+        _singularize_token(_strip_accents(part))
+        for part in text.split()
+        if part and _singularize_token(_strip_accents(part)) not in CATEGORY_STOPWORDS
+    }
+
+
 def normalize(value: str) -> str:
-    cleaned = _strip_accents(value.lower().strip())
-    cleaned = re.sub(r"[^\w\s]", " ", cleaned)
-    cleaned = re.sub(r"\s+", " ", cleaned)
-    return cleaned.strip()
+    """Public lightweight normalizer (backward compatible)."""
+    return TextNormalizer.basic(value)
 
 
-class OrderParser:
+class TextNormalizer:
+    """Advanced normalization pipeline for chaotic WhatsApp input."""
+
+    @staticmethod
+    def basic(value: str) -> str:
+        cleaned = value.lower().strip()
+        cleaned = EMOJI_RE.sub(" ", cleaned)
+        cleaned = _strip_accents(cleaned)
+        cleaned = COMMA_SPLIT_RE.sub(" ", cleaned)
+        cleaned = re.sub(r"[^\w\s]", " ", cleaned)
+        cleaned = re.sub(r"\s+", " ", cleaned)
+        return cleaned.strip()
+
+    @classmethod
+    def advanced(cls, value: str, catalog_normalized: Optional[List[str]] = None) -> str:
+        text = value.lower().strip()
+        text = EMOJI_RE.sub(" ", text)
+        text = _strip_accents(text)
+        text = COMMA_SPLIT_RE.sub(" ", text)
+        text = REPEAT_CHAR_RE.sub(r"\1", text)
+        text = re.sub(r"[^\w\s]", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()
+        if catalog_normalized:
+            glued_tokens: List[str] = []
+            for token in text.split():
+                if re.search(r"\d", token):
+                    glued_tokens.append(token)
+                else:
+                    glued_tokens.append(
+                        cls._split_glued_words(token, catalog_normalized)
+                    )
+            text = " ".join(glued_tokens)
+        text = cls._remove_noise_tokens(text)
+        text = re.sub(r"\s+", " ", text).strip()
+        return text
+
+    @staticmethod
+    def _split_glued_words(text: str, catalog_names: List[str]) -> str:
+        compact = text.replace(" ", "")
+        if not compact:
+            return text
+        compact_to_spaced: Dict[str, str] = {}
+        for spaced_name in catalog_names:
+            if not spaced_name:
+                continue
+            compact_name = spaced_name.replace(" ", "")
+            if len(compact_name) < 4:
+                continue
+            if compact_name not in compact_to_spaced or len(spaced_name) > len(
+                compact_to_spaced[compact_name]
+            ):
+                compact_to_spaced[compact_name] = spaced_name
+
+        spans: List[Tuple[int, int, str]] = []
+        for compact_name, spaced_name in compact_to_spaced.items():
+            start = 0
+            while True:
+                idx = compact.find(compact_name, start)
+                if idx == -1:
+                    break
+                spans.append((idx, idx + len(compact_name), spaced_name))
+                start = idx + 1
+        if not spans:
+            return text
+        spans.sort(key=lambda s: (-(s[1] - s[0]), s[0]))
+        used: List[Tuple[int, int]] = []
+        chosen: List[Tuple[int, int, str]] = []
+        for start, end, spaced_name in spans:
+            if any(not (end <= u0 or start >= u1) for u0, u1 in used):
+                continue
+            used.append((start, end))
+            chosen.append((start, end, spaced_name))
+        if not chosen:
+            return text
+        chosen.sort(key=lambda s: s[0])
+        rebuilt: List[str] = []
+        cursor = 0
+        for start, end, spaced_name in chosen:
+            if start > cursor:
+                gap = compact[cursor:start]
+                if gap:
+                    rebuilt.append(gap)
+            rebuilt.append(spaced_name)
+            cursor = end
+        if cursor < len(compact):
+            rebuilt.append(compact[cursor:])
+        return " ".join(rebuilt)
+
+    @staticmethod
+    def _remove_noise_tokens(text: str) -> str:
+        tokens = text.split()
+        filtered = [
+            t
+            for t in tokens
+            if t not in NOISE_WORDS or t in NUMBER_WORDS
+        ]
+        return " ".join(filtered)
+
+
+# ---------------------------------------------------------------------------
+# Fuzzy matching
+# ---------------------------------------------------------------------------
+
+
+class FuzzyMatcher:
+    """Real numeric similarity scoring against dynamic menu catalog."""
+
+    def __init__(self, catalog: List[Dict[str, Any]]) -> None:
+        self.catalog = catalog
+
+    @staticmethod
+    def _ratio(a: str, b: str) -> float:
+        if not a or not b:
+            return 0.0
+        if a == b:
+            return 1.0
+        if _HAS_RAPIDFUZZ and _rapidfuzz is not None:
+            token_score = _rapidfuzz.token_set_ratio(a, b) / 100.0
+            partial_score = _rapidfuzz.partial_ratio(a, b) / 100.0
+            base_score = _rapidfuzz.ratio(a, b) / 100.0
+            return max(token_score, partial_score, base_score)
+        token_a = set(a.split())
+        token_b = set(b.split())
+        token_overlap = len(token_a & token_b) / max(len(token_a | token_b), 1)
+        seq_score = SequenceMatcher(None, a, b).ratio()
+        if a in b or b in a:
+            return max(0.95, token_overlap, seq_score)
+        return max(token_overlap, seq_score)
+
+    def score_pair(self, query: str, item: Dict[str, Any]) -> float:
+        normalized_query = query.strip()
+        if not normalized_query:
+            return 0.0
+
+        target = item["normalized"]
+        if normalized_query == target:
+            return 1.0
+        if normalized_query in target or target in normalized_query:
+            return 0.95
+
+        base = self._ratio(normalized_query, target)
+        query_tokens = set(normalized_query.split())
+        item_tokens = set(item["tokens"])
+        if query_tokens and item_tokens:
+            overlap = len(query_tokens & item_tokens) / max(len(query_tokens | item_tokens), 1)
+            base = max(base, overlap)
+
+        for alias in item.get("aliases", []):
+            alias_score = self._ratio(normalized_query, alias)
+            base = max(base, alias_score)
+
+        q_keys = _token_keys(normalized_query)
+        i_keys = _token_keys(target)
+        distinctive = i_keys - CATEGORY_STOPWORDS
+        if distinctive:
+            hits = len(distinctive & q_keys)
+            if hits == len(distinctive):
+                base = max(base, 0.97)
+            elif hits == 0:
+                base = min(base, 0.62)
+
+        return min(base, 1.0)
+
+    def best_match(
+        self, fragment: str
+    ) -> Tuple[Optional[Dict[str, Any]], float, Optional[Dict[str, Any]], float]:
+        query = TextNormalizer.advanced(
+            fragment,
+            [entry["normalized"] for entry in self.catalog],
+        )
+        query = self._apply_synonyms(query)
+        if not query:
+            return None, 0.0, None, 0.0
+
+        ranked: List[Tuple[Dict[str, Any], float]] = []
+        for item in self.catalog:
+            ranked.append((item, self.score_pair(query, item)))
+        ranked.sort(key=lambda pair: pair[1], reverse=True)
+
+        if not ranked or ranked[0][1] < ACCEPT_REVIEW_SCORE:
+            return None, 0.0, None, 0.0
+
+        if (
+            len(ranked) > 1
+            and ranked[0][1] == ranked[1][1]
+            and FuzzyMatcher.has_distinctive_winner(query, ranked[1][0], ranked[0][0])
+        ):
+            ranked[0], ranked[1] = ranked[1], ranked[0]
+
+        best_item, best_score = ranked[0]
+        second_score = ranked[1][1] if len(ranked) > 1 else 0.0
+        second_item = ranked[1][0] if len(ranked) > 1 else None
+        return best_item, best_score, second_item, second_score
+
+    @staticmethod
+    def has_distinctive_winner(
+        query: str,
+        best: Dict[str, Any],
+        second: Dict[str, Any],
+    ) -> bool:
+        q_keys = _token_keys(query)
+        best_keys = _token_keys(best["normalized"]) - CATEGORY_STOPWORDS
+        second_keys = _token_keys(second["normalized"]) - CATEGORY_STOPWORDS
+        best_hits = best_keys & q_keys
+        second_hits = second_keys & q_keys
+        if best_hits and not second_hits:
+            return True
+        if len(best_hits) > len(second_hits):
+            return True
+        return False
+
+    @staticmethod
+    def _apply_synonyms(text: str) -> str:
+        tokens = text.split()
+        expanded: List[str] = []
+        for token in tokens:
+            token_key = _strip_accents(token.lower())
+            mapped = SYNONYM_TOKEN_MAP.get(token_key, SYNONYM_TOKEN_MAP.get(token, token))
+            expanded.extend(mapped.split())
+        deduped: List[str] = []
+        for token in expanded:
+            if token and (not deduped or deduped[-1] != token):
+                deduped.append(token)
+        return " ".join(deduped)
+
+
+# ---------------------------------------------------------------------------
+# Segmentation & quantity extraction
+# ---------------------------------------------------------------------------
+
+
+class SegmentEngine:
+    """Splits chaotic order text into quantity + product fragments."""
+
+    @staticmethod
+    def split_segments(text: str) -> List[str]:
+        raw = text.strip()
+        if not raw:
+            return []
+
+        # Commas act as logical AND (same role as "y" / connectors).
+        comma_chunks = [chunk.strip() for chunk in COMMA_SPLIT_RE.split(raw) if chunk.strip()]
+        if not comma_chunks:
+            return []
+
+        segments: List[str] = []
+        for chunk in comma_chunks:
+            normalized = TextNormalizer.basic(chunk)
+            if not normalized:
+                continue
+            parts = CONNECTOR_SPLIT_RE.split(normalized)
+            for part in parts:
+                part = part.strip()
+                if not part:
+                    continue
+                segments.extend(SegmentEngine._split_numeric_boundaries(part))
+
+        merged: List[str] = []
+        for segment in segments:
+            segment = segment.strip()
+            if not segment:
+                continue
+            if merged and SegmentEngine._is_quantity_only(segment):
+                prev_qty, prev_name = QuantityEngine.extract(merged[-1])
+                extra_qty, _ = QuantityEngine.extract(segment)
+                merged[-1] = f"{prev_qty + extra_qty} {prev_name}".strip()
+                continue
+            merged.append(segment)
+        return merged
+
+    @staticmethod
+    def _split_numeric_boundaries(part: str) -> List[str]:
+        matches = list(SEGMENT_BOUNDARY_RE.finditer(part))
+        if not matches:
+            return [part]
+
+        chunks: List[str] = []
+        cursor = 0
+        for match in matches:
+            if match.start() > cursor:
+                prefix = part[cursor : match.start()].strip()
+                if prefix:
+                    chunks.append(prefix)
+            cursor = match.start()
+
+        tail = part[cursor:].strip()
+        if tail:
+            chunks.append(tail)
+
+        if not chunks:
+            return [part]
+        return chunks
+
+    @staticmethod
+    def _is_quantity_only(segment: str) -> bool:
+        cleaned = segment.strip()
+        return bool(re.fullmatch(r"\d+", cleaned))
+
+
+class QuantityEngine:
+    """Robust quantity resolver: 2x, x2, digits, number words."""
+
+    @staticmethod
+    def _strip_leading_noise(text: str) -> str:
+        tokens = text.split()
+        while tokens and tokens[0] in NOISE_WORDS and tokens[0] not in NUMBER_WORDS:
+            tokens.pop(0)
+        return " ".join(tokens)
+
+    @staticmethod
+    def extract(segment: str) -> Tuple[int, str]:
+        cleaned = TextNormalizer.basic(segment)
+        cleaned = QuantityEngine._strip_leading_noise(cleaned)
+        if not cleaned:
+            return 1, ""
+
+        match = QTY_PREFIX_RE.match(cleaned)
+        if match:
+            qty = int(match.group(1) or match.group(2) or match.group(3) or match.group(4))
+            remainder = (match.group(5) or "").strip()
+            return max(qty, 1), remainder
+
+        for word, qty in NUMBER_WORDS.items():
+            pattern = rf"^{word}\s+(.+)$"
+            word_match = re.match(pattern, cleaned)
+            if word_match:
+                return qty, word_match.group(1).strip()
+
+        suffix = QTY_SUFFIX_RE.match(cleaned)
+        if suffix:
+            name = suffix.group(1).strip()
+            qty = int(suffix.group(2))
+            if name and not re.fullmatch(r"\d+", name):
+                return max(qty, 1), name
+
+        return 1, cleaned
+
+
+# ---------------------------------------------------------------------------
+# Order Intelligence Engine (core)
+# ---------------------------------------------------------------------------
+
+
+class OrderIntelligenceEngine:
+    """
+    Production-grade order interpretation pipeline.
+    Menu is injected at construction time (dynamic, never hardcoded).
+    """
+
     def __init__(self, menu_items: List[Dict[str, Any]]) -> None:
         self.menu_items = [item for item in menu_items if item.get("disponible", True)]
         self._catalog = self._build_catalog()
+        self._matcher = FuzzyMatcher(self._catalog)
+        self._catalog_by_name = {entry["nombre"].lower(): entry for entry in self._catalog}
 
     def _build_catalog(self) -> List[Dict[str, Any]]:
-        catalog = []
+        catalog: List[Dict[str, Any]] = []
         for item in self.menu_items:
-            name = item.get("nombre", "")
+            name = str(item.get("nombre", "")).strip()
+            normalized = TextNormalizer.basic(name)
+            aliases = {normalized, *normalized.split()}
+            for token, mapped in SYNONYM_TOKEN_MAP.items():
+                if mapped.replace(" ", "") in normalized.replace(" ", ""):
+                    aliases.add(token)
             catalog.append(
                 {
                     "id": item.get("id"),
                     "nombre": name,
                     "precio": float(item.get("precio", 0)),
                     "categoria": item.get("categoria", ""),
-                    "tokens": normalize(name).split(),
-                    "normalized": normalize(name),
+                    "tokens": normalized.split(),
+                    "normalized": normalized,
+                    "aliases": sorted(aliases),
                 }
             )
         return sorted(catalog, key=lambda entry: len(entry["normalized"]), reverse=True)
 
-    def _match_product(self, fragment: str) -> Optional[Dict[str, Any]]:
-        query = normalize(fragment)
-        if not query:
-            return None
+    def parse(self, text: str) -> Dict[str, Any]:
+        """Canonical output contract."""
+        raw = (text or "").strip()
+        if not raw:
+            return self._result([], "needs_clarification", ["entrada vacía"])
 
-        best: Optional[Dict[str, Any]] = None
-        best_score = 0.0
+        normalized_full = TextNormalizer.advanced(
+            raw,
+            [entry["normalized"] for entry in self._catalog],
+        )
 
-        for item in self._catalog:
-            if query == item["normalized"]:
-                return item
-            if query in item["normalized"] or item["normalized"] in query:
-                score = 0.95
-            else:
-                score = SequenceMatcher(None, query, item["normalized"]).ratio()
+        if self._is_menu_intent(normalized_full):
+            return self._result([], "needs_clarification", ["intención de menú"])
 
-            token_overlap = len(set(query.split()) & set(item["tokens"])) / max(
-                len(set(query.split()) | set(item["tokens"])), 1
+        if self._is_order_intent_only(normalized_full):
+            return self._result([], "needs_clarification", ["intención de pedido sin productos"])
+
+        if not self._has_menu_token_overlap(normalized_full) and (
+            self._is_gibberish(normalized_full) or len(_token_keys(normalized_full)) <= 1
+        ):
+            return self._fail_safe(["texto no interpretable"])
+
+        catalog_norms = [entry["normalized"] for entry in self._catalog]
+        segments = SegmentEngine.split_segments(raw)
+        if not segments:
+            segments = [normalized_full] if normalized_full else []
+
+        parsed_items: List[Dict[str, Any]] = []
+        unknown: List[str] = []
+        needs_review = False
+
+        for segment in segments:
+            prepped = TextNormalizer.advanced(segment, catalog_norms)
+            if not prepped:
+                continue
+            qty, product_text = QuantityEngine.extract(prepped)
+            product_text = TextNormalizer.advanced(product_text, catalog_norms)
+            product_text = FuzzyMatcher._apply_synonyms(product_text)
+            if not product_text:
+                continue
+
+            best, score, second, second_score = self._matcher.best_match(product_text)
+            if not best:
+                unknown.append(segment)
+                continue
+
+            if score < ACCEPT_AUTO_SCORE:
+                needs_review = True
+            ambiguous = (
+                second
+                and second_score >= ACCEPT_REVIEW_SCORE
+                and best["id"] != second["id"]
+                and abs(score - second_score) <= AMBIGUITY_DELTA
+                and not FuzzyMatcher.has_distinctive_winner(product_text, best, second)
             )
-            score = max(score, token_overlap)
+            if ambiguous:
+                needs_review = True
 
-            if score > best_score:
-                best_score = score
-                best = item
+            parsed_items.append(
+                {
+                    "product": best["nombre"],
+                    "quantity": qty,
+                    "product_id": best["id"],
+                    "unit_price": best["precio"],
+                    "confidence": round(score, 4),
+                }
+            )
 
-        return best if best_score >= 0.55 else None
+        parsed_items = self._deduplicate(parsed_items)
+        parsed_items, qa_unknown, qa_review = self._quality_assurance(raw, parsed_items)
+        unknown.extend(qa_unknown)
+        needs_review = needs_review or qa_review
+
+        if not parsed_items:
+            return self._fail_safe(unknown or ["sin productos reconocidos"])
+
+        status = "ok" if not needs_review and not unknown else "needs_clarification"
+        return self._result(parsed_items, status, unknown)
+
+    def _quality_assurance(
+        self,
+        raw: str,
+        items: List[Dict[str, Any]],
+    ) -> Tuple[List[Dict[str, Any]], List[str], bool]:
+        """Double-check: menu boundary, coherence, no invented products."""
+        unknown: List[str] = []
+        needs_review = False
+        validated: List[Dict[str, Any]] = []
+
+        for item in items:
+            name_key = item["product"].lower()
+            catalog_entry = self._catalog_by_name.get(name_key)
+            if not catalog_entry:
+                unknown.append(item["product"])
+                needs_review = True
+                continue
+            if item.get("confidence", 0) < ACCEPT_REVIEW_SCORE:
+                needs_review = True
+            validated.append(item)
+
+        validated = self._deduplicate(validated)
+        if validated and not unknown:
+            simulated = ", ".join(f"{i['quantity']} {i['product']}" for i in validated)
+            raw_norm = TextNormalizer.basic(raw)
+            if len(raw_norm) > 8 and len(simulated) < 3:
+                needs_review = True
+
+        return validated, unknown, needs_review
+
+    @staticmethod
+    def _deduplicate(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        merged: Dict[str, Dict[str, Any]] = {}
+        for item in items:
+            key = str(item.get("product_id") or item["product"]).lower()
+            if key not in merged:
+                merged[key] = dict(item)
+            else:
+                merged[key]["quantity"] += item["quantity"]
+                merged[key]["confidence"] = max(
+                    merged[key].get("confidence", 0),
+                    item.get("confidence", 0),
+                )
+        return list(merged.values())
+
+    def _fail_safe(self, unknown: List[str]) -> Dict[str, Any]:
+        available = [entry["nombre"] for entry in self._catalog]
+        return {
+            "items": [],
+            "total_items": 0,
+            "status": "needs_clarification",
+            "unknown": unknown,
+            "menu_available": available,
+        }
+
+    @staticmethod
+    def _result(
+        items: List[Dict[str, Any]],
+        status: str,
+        unknown: Optional[List[str]] = None,
+    ) -> Dict[str, Any]:
+        public_items = [
+            {"product": item["product"], "quantity": int(item["quantity"])}
+            for item in items
+        ]
+        return {
+            "items": public_items,
+            "total_items": sum(item["quantity"] for item in public_items),
+            "status": status,
+            "unknown": unknown or [],
+        }
+
+    @staticmethod
+    def _is_menu_intent(text: str) -> bool:
+        tokens = {_strip_accents(token.lower()) for token in text.split()}
+        menu_tokens = {_strip_accents(token.lower()) for token in MENU_INTENT_TOKENS}
+        return bool(tokens & menu_tokens) and len(tokens) <= 3
+
+    @staticmethod
+    def _is_order_intent_only(text: str) -> bool:
+        if any(phrase in text for phrase in ORDER_INTENT_PHRASES):
+            return len(text.split()) <= 6
+        return False
+
+    def _has_menu_token_overlap(self, text: str) -> bool:
+        query_keys = _token_keys(text)
+        if not query_keys:
+            return False
+        for entry in self._catalog:
+            if query_keys & _token_keys(entry["normalized"]):
+                return True
+        return False
+
+    @staticmethod
+    def _is_gibberish(text: str) -> bool:
+        if not text or len(text) < 3:
+            return True
+        tokens = text.split()
+        if len(tokens) == 1 and len(tokens[0]) >= 6:
+            letters = re.sub(r"[^a-z]", "", tokens[0])
+            if letters and len(set(letters)) <= 3:
+                return True
+            if not re.search(r"[aeiou]", letters) and len(letters) >= 5:
+                return True
+        return False
+
+
+# ---------------------------------------------------------------------------
+# Public facade (Flask / Twilio integration — backward compatible)
+# ---------------------------------------------------------------------------
+
+
+class OrderParser:
+    """Facade used by OrderService; wraps OrderIntelligenceEngine."""
+
+    def __init__(self, menu_items: List[Dict[str, Any]]) -> None:
+        self.menu_items = [item for item in menu_items if item.get("disponible", True)]
+        self._engine = OrderIntelligenceEngine(self.menu_items)
+        self._catalog = self._engine._catalog
+        self._matcher = self._engine._matcher
+
+    def parse_order(self, text: str) -> Dict[str, Any]:
+        """Structured output contract for order interpretation."""
+        return self._engine.parse(text)
+
+    def _match_product(self, fragment: str) -> Optional[Dict[str, Any]]:
+        best, score, _, _ = self._matcher.best_match(fragment)
+        return best if best and score >= ACCEPT_REVIEW_SCORE else None
 
     def _extract_quantity(self, text: str) -> Tuple[int, str]:
-        cleaned = normalize(text)
-        digit_match = re.match(r"^(\d+)\s+(.*)$", cleaned)
-        if digit_match:
-            return int(digit_match.group(1)), digit_match.group(2).strip()
-
-        for word, qty in NUMBER_WORDS.items():
-            pattern = rf"^{word}\s+(.*)$"
-            match = re.match(pattern, cleaned)
-            if match:
-                return qty, match.group(1).strip()
-
-        return 1, cleaned
+        return QuantityEngine.extract(text)
 
     def _split_segments(self, text: str) -> List[str]:
-        raw = text.lower().strip()
-        raw = re.sub(r"\s+y\s+", ",", raw)
-        raw = re.sub(r"\s+e\s+", ",", raw)
-        raw = re.sub(r"\s+mas\s+", ",", raw)
-        raw = re.sub(r"\s+también\s+", ",", raw)
-        raw = re.sub(r"\s+tambien\s+", ",", raw)
-
-        comma_parts = [part.strip() for part in raw.split(",") if part.strip()]
-        if len(comma_parts) > 1:
-            return [normalize(part) for part in comma_parts]
-
-        normalized = normalize(text)
-        if normalized:
-            return [normalized]
-        return []
+        return SegmentEngine.split_segments(text)
 
     def parse_additions(self, text: str) -> Tuple[List[Dict[str, Any]], List[str]]:
+        result = self._engine.parse(text)
         items: List[Dict[str, Any]] = []
-        unknown: List[str] = []
-
-        for segment in self._split_segments(text):
-            qty, product_text = self._extract_quantity(segment)
-            matched = self._match_product(product_text)
-            if matched:
-                items.append(
-                    {
-                        "product_id": matched["id"],
-                        "product": matched["nombre"],
-                        "qty": qty,
-                        "unit_price": matched["precio"],
-                        "subtotal": round(qty * matched["precio"], 2),
-                    }
-                )
-            else:
-                unknown.append(segment)
-
+        for entry in result.get("items", []):
+            matched = self._catalog_by_name(entry["product"])
+            if not matched:
+                continue
+            qty = entry["quantity"]
+            items.append(
+                {
+                    "product_id": matched["id"],
+                    "product": matched["nombre"],
+                    "qty": qty,
+                    "unit_price": matched["precio"],
+                    "subtotal": round(qty * matched["precio"], 2),
+                }
+            )
+        unknown = list(result.get("unknown", []))
+        if result.get("status") == "needs_clarification" and not items:
+            segments = self._split_segments(text)
+            unknown.extend(segments)
         return items, unknown
 
-    def parse_remove(self, text: str) -> Tuple[List[str], List[str]]:
-        cleaned = normalize(text)
-        cleaned = re.sub(r"^(quita|quitar|elimina|eliminar|saca|sacar)\s+", "", cleaned)
-        cleaned = cleaned.replace(" la ", " ").replace(" el ", " ").replace(" los ", " ")
-        cleaned = cleaned.replace(" las ", " ")
+    def _catalog_by_name(self, product_name: str) -> Optional[Dict[str, Any]]:
+        for entry in self._catalog:
+            if entry["nombre"].lower() == product_name.lower():
+                return entry
+        return None
 
+    def parse_remove(self, text: str) -> Tuple[List[str], List[str]]:
+        cleaned = TextNormalizer.basic(text)
+        cleaned = re.sub(
+            r"^(quita|quitar|elimina|eliminar|saca|sacar|borra|borrar)\s+",
+            "",
+            cleaned,
+        )
         removed: List[str] = []
         unknown: List[str] = []
-
         for segment in self._split_segments(cleaned):
             matched = self._match_product(segment)
             if matched:
                 removed.append(matched["nombre"])
             else:
                 unknown.append(segment)
-
         return removed, unknown
 
     def parse_replace(self, text: str) -> Tuple[Optional[str], Optional[str], List[str]]:
-        cleaned = normalize(text)
+        cleaned = TextNormalizer.basic(text)
         patterns = [
             r"cambia\s+(.+?)\s+por\s+(.+)",
             r"reemplaza\s+(.+?)\s+por\s+(.+)",
@@ -173,7 +913,7 @@ class OrderParser:
             new_item = self._match_product(new_fragment)
             if old_item and new_item:
                 return old_item["nombre"], new_item["nombre"], []
-            unknown = []
+            unknown: List[str] = []
             if not old_item:
                 unknown.append(old_fragment)
             if not new_item:
@@ -189,9 +929,9 @@ class OrderParser:
         cart = [dict(item) for item in (current_cart or [])]
         notes: List[str] = []
         unknown: List[str] = []
-        cleaned = normalize(text)
+        cleaned = TextNormalizer.basic(text)
 
-        if re.search(r"\b(quita|quitar|elimina|eliminar|saca|sacar)\b", cleaned):
+        if re.search(r"\b(quita|quitar|elimina|eliminar|saca|sacar|borra|borrar)\b", cleaned):
             removed, unknown_remove = self.parse_remove(text)
             unknown.extend(unknown_remove)
             if removed:
@@ -248,3 +988,181 @@ class OrderParser:
         total = OrderParser.cart_total(items)
         lines.append(f"\n*Total: ${total:.2f}*")
         return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Internal validation suite (regression guard)
+# ---------------------------------------------------------------------------
+
+_VALIDATION_MENU: List[Dict[str, Any]] = [
+    {"id": "t1", "nombre": "Papas Fritas", "precio": 4.0, "categoria": "Sides", "disponible": True},
+    {
+        "id": "t2",
+        "nombre": "Hamburguesa Clásica",
+        "precio": 9.5,
+        "categoria": "Hamburguesas",
+        "disponible": True,
+    },
+    {"id": "t3", "nombre": "Agua Mineral", "precio": 1.5, "categoria": "Bebidas", "disponible": True},
+]
+
+_DEMO_VALIDATION_MENU: List[Dict[str, Any]] = [
+    {"id": "1", "nombre": "Pizza Hawaiana", "precio": 12.5, "categoria": "Pizzas", "disponible": True},
+    {"id": "2", "nombre": "Pizza Margarita", "precio": 11.0, "categoria": "Pizzas", "disponible": True},
+    {
+        "id": "3",
+        "nombre": "Hamburguesa Clásica",
+        "precio": 9.5,
+        "categoria": "Hamburguesas",
+        "disponible": True,
+    },
+    {"id": "4", "nombre": "Coca Cola", "precio": 2.5, "categoria": "Bebidas", "disponible": True},
+    {"id": "5", "nombre": "Agua Mineral", "precio": 1.5, "categoria": "Bebidas", "disponible": True},
+    {"id": "6", "nombre": "Ensalada César", "precio": 8.0, "categoria": "Ensaladas", "disponible": True},
+]
+
+
+def _find_item(items: List[Dict[str, Any]], product_fragment: str) -> Optional[Dict[str, Any]]:
+    fragment = _strip_accents(product_fragment.lower())
+    for item in items:
+        if fragment in _strip_accents(item["product"].lower()):
+            return item
+    return None
+
+
+def _qty_for(items: List[Dict[str, Any]], product_fragment: str) -> int:
+    found = _find_item(items, product_fragment)
+    return int(found["quantity"]) if found else 0
+
+
+def run_validation_suite(verbose: bool = True) -> bool:
+    """
+    Executable regression tests for the Order Intelligence Engine.
+    Safe to call in development; does not mutate external state.
+    """
+    failures: List[str] = []
+    total = 0
+
+    def check(label: str, condition: bool, detail: str = "") -> None:
+        nonlocal total
+        total += 1
+        if not condition:
+            failures.append(f"{label}: {detail}".strip())
+
+    basic_engine = OrderIntelligenceEngine(_VALIDATION_MENU)
+    demo_engine = OrderIntelligenceEngine(_DEMO_VALIDATION_MENU)
+
+    case1 = basic_engine.parse("2 papas fritas")
+    check(
+        "2 papas fritas",
+        case1["status"] == "ok" and _qty_for(case1["items"], "papas") == 2,
+        str(case1),
+    )
+
+    case2 = basic_engine.parse("peeeedido 3 hamburgesa")
+    check(
+        "peeeedido 3 hamburgesa",
+        case2["status"] == "ok" and _qty_for(case2["items"], "hamburguesa") == 3,
+        str(case2),
+    )
+
+    case3 = basic_engine.parse("asdfgh")
+    check(
+        "asdfgh fail-safe",
+        case3["status"] == "needs_clarification" and case3["total_items"] == 0,
+        str(case3),
+    )
+
+    case4 = basic_engine.parse("2 papas fritas y agua 3 hamburguesas")
+    check(
+        "2 papas fritas y agua 3 hamburguesas",
+        case4["status"] == "ok"
+        and _qty_for(case4["items"], "papas") == 2
+        and _qty_for(case4["items"], "agua") == 1
+        and _qty_for(case4["items"], "hamburguesa") == 3,
+        str(case4),
+    )
+
+    user_order = (
+        "quiero dos pizzas hawaianas, dos pizza margarita, una hamburgsa clasica, "
+        "dos agua mineral y 5 ensaladas cesar"
+    )
+    case5 = demo_engine.parse(user_order)
+    check(
+        "pedido largo con comas (usuario)",
+        case5["status"] == "ok"
+        and not case5.get("unknown")
+        and _qty_for(case5["items"], "hawaiana") == 2
+        and _qty_for(case5["items"], "margarita") == 2
+        and _qty_for(case5["items"], "hamburguesa") == 1
+        and _qty_for(case5["items"], "agua") == 2
+        and _qty_for(case5["items"], "cesar") == 5,
+        str(case5),
+    )
+
+    apply5 = OrderParser(_DEMO_VALIDATION_MENU).apply_message(user_order)
+    check(
+        "apply_message pedido largo sin unknown",
+        len(apply5["items"]) == 5 and not apply5.get("unknown"),
+        str(apply5),
+    )
+
+    case6 = demo_engine.parse("dos pizza margarita,una hamburgsa clasica")
+    check(
+        "comas sin espacios",
+        case6["status"] == "ok"
+        and _qty_for(case6["items"], "margarita") == 2
+        and _qty_for(case6["items"], "hamburguesa") == 1,
+        str(case6),
+    )
+
+    case7 = demo_engine.parse("2 pizzas hawaiana 1 ensalada césar")
+    check(
+        "tildes en producto",
+        case7["status"] == "ok"
+        and _qty_for(case7["items"], "hawaiana") == 2
+        and _qty_for(case7["items"], "cesar") == 1,
+        str(case7),
+    )
+
+    case8 = demo_engine.parse("pizzahawaiana y pizzamargarita")
+    check(
+        "palabras pegadas",
+        case8["status"] == "ok"
+        and _find_item(case8["items"], "hawaiana")
+        and _find_item(case8["items"], "margarita"),
+        str(case8),
+    )
+
+    case9 = demo_engine.parse("3 coca cola, 2 gaseosa")
+    check(
+        "sinonimos bebidas",
+        case9["status"] == "ok" and _qty_for(case9["items"], "coca") >= 3,
+        str(case9),
+    )
+
+    case10 = demo_engine.parse("menu")
+    check(
+        "intencion menu sin productos",
+        case10["total_items"] == 0 and case10["status"] == "needs_clarification",
+        str(case10),
+    )
+
+    if verbose:
+        passed = total - len(failures)
+        if failures:
+            print("PARSER VALIDATION FAILURES:")
+            for failure in failures:
+                print(f"  - {failure}")
+            print(f"PARSER VALIDATION: {passed}/{total}")
+        else:
+            print(f"PARSER VALIDATION: OK ({total}/{total})")
+
+    return not failures
+
+
+if __name__ == "__main__":
+    import sys
+
+    ok = run_validation_suite(verbose=True)
+    sys.exit(0 if ok else 1)
