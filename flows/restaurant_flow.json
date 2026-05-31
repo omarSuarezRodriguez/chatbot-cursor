@@ -14,7 +14,10 @@
   "nodes": {
     "start": {
       "flow": "idle",
-      "message": "Hola, bienvenido a *{{restaurant_name}}*.\n\nSoy tu asistente personal. Puedo ayudarte con el menú, tomar tu pedido o reservar una mesa.\n\n¿Qué te gustaría hacer hoy?",
+      "action": "welcome_customer",
+      "dual_message": true,
+      "message": "{{welcome_line}}",
+      "message_secondary": "¿Qué te gustaría hacer hoy?\n\n1. *menu* — Ver el menú\n2. *pedido* — Hacer tu pedido\n3. *reservar* — Reservar mesa",
       "options": {
         "menu": "menu_node",
         "pedido": "order_start",
@@ -62,10 +65,37 @@
         "menu": "menu_node"
       }
     },
+    "order_delivery": {
+      "flow": "order",
+      "message": "¿Cómo prefieres recibir tu pedido?\n\n1. *Domicilio*\n2. *Recoger en tienda*\n\nResponde con el número o escribe *domicilio* / *recoger*.",
+      "input_mode": "free_text",
+      "action": "capture_delivery_type",
+      "options": {
+        "menu": "menu_node"
+      }
+    },
+    "order_address": {
+      "flow": "order",
+      "message": "{{address_prompt}}",
+      "input_mode": "free_text",
+      "action": "capture_address",
+      "options": {
+        "menu": "menu_node"
+      }
+    },
+    "order_customer_name": {
+      "flow": "order",
+      "message": "Para identificar tu pedido, ¿cuál es tu nombre?",
+      "input_mode": "free_text",
+      "action": "capture_customer_name",
+      "options": {
+        "menu": "menu_node"
+      }
+    },
     "order_saved": {
       "flow": "idle",
       "action": "save_order",
-      "message_after_action": "\n\nGracias por tu confianza. Tu pedido ya está en cocina.\n\nSi necesitas algo más, escribe *menu*, *pedido* o *reservar*.",
+      "message_after_action": "\n\nGracias por tu confianza. Tu pedido fue registrado y está *pendiente* de confirmación del restaurante.\n\nSi necesitas algo más, escribe *menu*, *pedido* o *reservar*.",
       "options": {
         "menu": "menu_node",
         "pedido": "order_start",

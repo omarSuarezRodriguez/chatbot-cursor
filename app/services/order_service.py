@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from app.core.parser import OrderParser
 from app.integrations.google_sheets import GoogleSheetsClient
@@ -19,8 +19,9 @@ class OrderService:
         self,
         text: str,
         current_cart: List[Dict[str, Any]] | None = None,
+        wa_id: str = "",
     ) -> Dict[str, Any]:
-        return self._parser().apply_message(text, current_cart)
+        return self._parser().apply_message(text, current_cart, wa_id=wa_id)
 
     def format_cart(self, items: List[Dict[str, Any]]) -> str:
         return OrderParser.format_cart(items)
@@ -28,7 +29,28 @@ class OrderService:
     def cart_total(self, items: List[Dict[str, Any]]) -> float:
         return OrderParser.cart_total(items)
 
-    def save_order(self, wa_id: str, items: List[Dict[str, Any]]) -> Tuple[str, float]:
+    def save_order(
+        self,
+        wa_id: str,
+        items: List[Dict[str, Any]],
+        customer_name: str = "",
+        address: str = "",
+        delivery_type: str = "",
+    ) -> Tuple[str, float]:
         total = self.cart_total(items)
-        order_id = self.sheets.create_order(wa_id=wa_id, items=items, total=total)
+        order_id = self.sheets.create_order(
+            wa_id=wa_id,
+            items=items,
+            total=total,
+            status="pending",
+            customer_name=customer_name,
+            address=address,
+            delivery_type=delivery_type,
+        )
         return order_id, total
+
+    def get_order(self, order_id: str) -> Optional[Dict[str, Any]]:
+        return self.sheets.get_order(order_id)
+
+    def confirm_order(self, order_id: str) -> bool:
+        return self.sheets.update_order_status(order_id, "confirmed")

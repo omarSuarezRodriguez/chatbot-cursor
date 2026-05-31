@@ -57,8 +57,25 @@ DEMO_MENU = [
 
 SHEET_HEADERS = {
     "MENU": ["id", "nombre", "precio", "categoria", "disponible"],
-    "USERS": ["wa_id", "name", "last_seen"],
-    "ORDERS": ["order_id", "wa_id", "items", "total", "status", "timestamp"],
+    "USERS": [
+        "wa_id",
+        "name",
+        "address",
+        "last_order_date",
+        "last_order_json",
+        "last_seen",
+    ],
+    "ORDERS": [
+        "order_id",
+        "wa_id",
+        "items",
+        "total",
+        "status",
+        "timestamp",
+        "customer_name",
+        "address",
+        "delivery_type",
+    ],
     "RESERVATIONS": [
         "reservation_id",
         "wa_id",
@@ -77,6 +94,8 @@ class GoogleSheetsClient:
         self._client = None
         self._spreadsheet = None
         self._connected = False
+        self._demo_users: Dict[str, Dict[str, Any]] = {}
+        self._demo_orders: List[Dict[str, Any]] = []
         self._connect()
 
     def _connect(self) -> None:
@@ -153,18 +172,78 @@ class GoogleSheetsClient:
             )
         return menu or DEMO_MENU
 
-    def upsert_user(self, wa_id: str, name: str = "") -> None:
+    def get_user(self, wa_id: str) -> Dict[str, Any]:
         sheet = self._get_sheet("USERS")
         if not sheet:
+            return dict(self._demo_users.get(wa_id, {}))
+
+        for row in sheet.get_all_records():
+            if str(row.get("wa_id")) == wa_id:
+                last_order = row.get("last_order_json") or ""
+                try:
+                    last_order_items = json.loads(last_order) if last_order else []
+                except json.JSONDecodeError:
+                    last_order_items = []
+                return {
+                    "wa_id": wa_id,
+                    "name": str(row.get("name", "")).strip(),
+                    "address": str(row.get("address", "")).strip(),
+                    "last_order_date": str(row.get("last_order_date", "")).strip(),
+                    "last_order_items": last_order_items,
+                    "last_seen": str(row.get("last_seen", "")).strip(),
+                }
+        return {}
+
+    def upsert_user(
+        self,
+        wa_id: str,
+        name: str = "",
+        address: str = "",
+        last_order_items: Optional[List[Dict[str, Any]]] = None,
+    ) -> None:
+        now = datetime.utcnow().isoformat()
+        existing = self.get_user(wa_id)
+        merged_name = name or existing.get("name", "")
+        merged_address = address or existing.get("address", "")
+        merged_items = last_order_items if last_order_items is not None else existing.get(
+            "last_order_items", []
+        )
+        last_order_date = existing.get("last_order_date", "")
+        if last_order_items is not None:
+            last_order_date = now
+
+        sheet = self._get_sheet("USERS")
+        if not sheet:
+            self._demo_users[wa_id] = {
+                "wa_id": wa_id,
+                "name": merged_name,
+                "address": merged_address,
+                "last_order_date": last_order_date,
+                "last_order_items": merged_items,
+                "last_seen": now,
+            }
             return
 
         rows = sheet.get_all_records()
-        now = datetime.utcnow().isoformat()
+        payload_items = json.dumps(merged_items, ensure_ascii=False) if merged_items else ""
         for idx, row in enumerate(rows, start=2):
             if str(row.get("wa_id")) == wa_id:
-                sheet.update(f"B{idx}:C{idx}", [[name or row.get("name", ""), now]])
+                sheet.update(
+                    f"B{idx}:F{idx}",
+                    [
+                        [
+                            merged_name,
+                            merged_address,
+                            last_order_date,
+                            payload_items,
+                            now,
+                        ]
+                    ],
+                )
                 return
-        sheet.append_row([wa_id, name, now])
+        sheet.append_row(
+            [wa_id, merged_name, merged_address, last_order_date, payload_items, now]
+        )
 
     def create_order(
         self,
@@ -172,6 +251,9 @@ class GoogleSheetsClient:
         items: List[Dict[str, Any]],
         total: float,
         status: str = "pending",
+        customer_name: str = "",
+        address: str = "",
+        delivery_type: str = "",
     ) -> str:
         order_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
         payload = {
@@ -181,6 +263,9 @@ class GoogleSheetsClient:
             "total": total,
             "status": status,
             "timestamp": datetime.utcnow().isoformat(),
+            "customer_name": customer_name,
+            "address": address,
+            "delivery_type": delivery_type,
         }
 
         sheet = self._get_sheet("ORDERS")
@@ -193,9 +278,111 @@ class GoogleSheetsClient:
                     total,
                     status,
                     payload["timestamp"],
+                    customer_name,
+                    address,
+                    delivery_type,
                 ]
             )
+        else:
+            self._demo_orders.append(payload)
+
+        self.upsert_user(
+            wa_id=wa_id,
+            name=customer_name,
+            address=address,
+            last_order_items=items,
+        )
         return order_id
+
+    def get_last_order(self, wa_id: str) -> Optional[Dict[str, Any]]:
+        user = self.get_user(wa_id)
+        items = user.get("last_order_items") or []
+        if not items:
+            return None
+        return {
+            "wa_id": wa_id,
+            "items": items,
+            "customer_name": user.get("name", ""),
+            "address": user.get("address", ""),
+            "last_order_date": user.get("last_order_date", ""),
+        }
+
+    def get_order(self, order_id: str) -> Optional[Dict[str, Any]]:
+        order_id = order_id.upper()
+        for order in self._demo_orders:
+            if order.get("order_id") == order_id:
+                return dict(order)
+
+        sheet = self._get_sheet("ORDERS")
+        if not sheet:
+            return None
+        for row in sheet.get_all_records():
+            if str(row.get("order_id", "")).upper() == order_id:
+                try:
+                    items = json.loads(row.get("items") or "[]")
+                except json.JSONDecodeError:
+                    items = []
+                return {
+                    "order_id": row.get("order_id"),
+                    "wa_id": str(row.get("wa_id", "")),
+                    "items": items,
+                    "total": float(row.get("total", 0) or 0),
+                    "status": str(row.get("status", "pending")),
+                    "timestamp": str(row.get("timestamp", "")),
+                    "customer_name": str(row.get("customer_name", "")),
+                    "address": str(row.get("address", "")),
+                    "delivery_type": str(row.get("delivery_type", "")),
+                }
+        return None
+
+    def update_order_status(self, order_id: str, status: str) -> bool:
+        order_id = order_id.upper()
+        for order in self._demo_orders:
+            if order.get("order_id") == order_id:
+                order["status"] = status
+                return True
+
+        sheet = self._get_sheet("ORDERS")
+        if not sheet:
+            return False
+        rows = sheet.get_all_records()
+        for idx, row in enumerate(rows, start=2):
+            if str(row.get("order_id", "")).upper() == order_id:
+                sheet.update(f"E{idx}", [[status]])
+                return True
+        return False
+
+    def get_pending_orders(self) -> List[Dict[str, Any]]:
+        pending: List[Dict[str, Any]] = []
+        for order in self._demo_orders:
+            if order.get("status") == "pending":
+                pending.append(dict(order))
+
+        sheet = self._get_sheet("ORDERS")
+        if not sheet:
+            return pending
+
+        for row in sheet.get_all_records():
+            if str(row.get("status", "")).lower() != "pending":
+                continue
+            try:
+                items = json.loads(row.get("items") or "[]")
+            except json.JSONDecodeError:
+                items = []
+            pending.append(
+                {
+                    "order_id": row.get("order_id"),
+                    "wa_id": str(row.get("wa_id", "")),
+                    "items": items,
+                    "total": float(row.get("total", 0) or 0),
+                    "status": "pending",
+                    "timestamp": str(row.get("timestamp", "")),
+                    "customer_name": str(row.get("customer_name", "")),
+                    "address": str(row.get("address", "")),
+                    "delivery_type": str(row.get("delivery_type", "")),
+                }
+            )
+        return pending
 
     def create_reservation(
         self,

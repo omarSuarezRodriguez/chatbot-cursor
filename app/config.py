@@ -20,11 +20,20 @@ FLOWS_PATH = BASE_DIR / "flows" / "restaurant_flow.json"
 
 GLOBAL_COMMANDS = frozenset({"menu", "pedido", "reservar", "inicio", "cancelar"})
 
+ADMIN_WHATSAPP_NUMBER = os.getenv("ADMIN_WHATSAPP_NUMBER", "").strip()
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "").strip()
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "").strip()
+TWILIO_WHATSAPP_FROM = os.getenv("TWILIO_WHATSAPP_FROM", "").strip()
+
+PARSER_ERROR_LOG_PATH = os.getenv(
+    "PARSER_ERROR_LOG_PATH",
+    str(BASE_DIR / "data" / "parser_errors.jsonl"),
+)
+
+ADMIN_REMINDER_INTERVAL_SECONDS = int(os.getenv("ADMIN_REMINDER_INTERVAL_SECONDS", "300"))
+ADMIN_REMINDER_MAX_SECONDS = int(os.getenv("ADMIN_REMINDER_MAX_SECONDS", "3600"))
+
 NAV_HINT = (
     "\n\n---\n"
-    "Escribe *menu* para ver el menú\n"
-    "Escribe *pedido* para hacer tu pedido\n"
-    "Escribe *reservar* para reservar mesa\n"
     "Escribe *inicio* para volver al inicio\n"
-    "Escribe *cancelar* para detener el proceso"
 )

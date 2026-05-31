@@ -2,10 +2,16 @@
 
 from __future__ import annotations
 
+import json
+import logging
 import re
 import unicodedata
+from datetime import datetime, timezone
 from difflib import SequenceMatcher
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 try:
     from rapidfuzz import fuzz as _rapidfuzz
@@ -131,6 +137,9 @@ SYNONYM_TOKEN_MAP: Dict[str, str] = {
     "burger": "hamburguesa",
     "hamburgesa": "hamburguesa",
     "hamburgsa": "hamburguesa",
+    "hambrguesa": "hamburguesa",
+    "gaseoza": "coca cola",
+    "gaseosa": "coca cola",
     "hamburguesa": "hamburguesa",
     "hamburguesas": "hamburguesa",
     "margarita": "margarita",
@@ -160,6 +169,9 @@ ORDER_INTENT_PHRASES = (
 )
 
 COMMA_SPLIT_RE = re.compile(r"\s*,\s*")
+
+PLUS_SPLIT_RE = re.compile(r"\s*\+\s*")
+STAR_SPLIT_RE = re.compile(r"\s*\*\s*")
 
 CONNECTOR_SPLIT_RE = re.compile(
     r"\s*(?:,|;|&|\band\b|\s+y\s+|\s+e\s+|\s+mas\s+|\s+más\s+|\s+también\s+|\s+tambien\s+)\s*",
@@ -193,6 +205,45 @@ SEGMENT_BOUNDARY_RE = re.compile(
 ACCEPT_AUTO_SCORE = 0.80
 ACCEPT_REVIEW_SCORE = 0.50
 AMBIGUITY_DELTA = 0.05
+
+
+def log_parser_errors(
+    *,
+    wa_id: str = "",
+    message: str = "",
+    reason: str = "",
+    parser_status: str = "",
+    score: Optional[float] = None,
+    unknown: Optional[List[str]] = None,
+    extra: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Append parser audit events; never raises."""
+    try:
+        from app.config import PARSER_ERROR_LOG_PATH
+
+        record: Dict[str, Any] = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "wa_id": wa_id,
+            "message": message,
+            "reason": reason,
+            "parser_status": parser_status,
+            "score": score,
+            "unknown": unknown or [],
+        }
+        if extra:
+            record.update(extra)
+        path = Path(PARSER_ERROR_LOG_PATH)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:
+        logger.exception("log_parser_errors failed (non-fatal)")
+
+
+def _min_confidence(items: List[Dict[str, Any]]) -> Optional[float]:
+    scores = [float(item.get("confidence", 0)) for item in items if item.get("confidence")]
+    return min(scores) if scores else None
+
 
 # Generic menu words — matching only these must not beat a distinctive token hit.
 CATEGORY_STOPWORDS = frozenset(
@@ -269,6 +320,8 @@ class TextNormalizer:
         cleaned = EMOJI_RE.sub(" ", cleaned)
         cleaned = _strip_accents(cleaned)
         cleaned = COMMA_SPLIT_RE.sub(" ", cleaned)
+        cleaned = PLUS_SPLIT_RE.sub(" ", cleaned)
+        cleaned = STAR_SPLIT_RE.sub(" ", cleaned)
         cleaned = re.sub(r"[^\w\s]", " ", cleaned)
         cleaned = re.sub(r"\s+", " ", cleaned)
         return cleaned.strip()
@@ -279,6 +332,8 @@ class TextNormalizer:
         text = EMOJI_RE.sub(" ", text)
         text = _strip_accents(text)
         text = COMMA_SPLIT_RE.sub(" ", text)
+        text = PLUS_SPLIT_RE.sub(" ", text)
+        text = STAR_SPLIT_RE.sub(" ", text)
         text = REPEAT_CHAR_RE.sub(r"\1", text)
         text = re.sub(r"[^\w\s]", " ", text)
         text = re.sub(r"\s+", " ", text).strip()
@@ -495,13 +550,22 @@ class SegmentEngine:
     """Splits chaotic order text into quantity + product fragments."""
 
     @staticmethod
+    def _split_by_connectors(raw: str) -> List[str]:
+        chunks = [raw.strip()]
+        for splitter in (COMMA_SPLIT_RE, PLUS_SPLIT_RE, STAR_SPLIT_RE):
+            next_chunks: List[str] = []
+            for chunk in chunks:
+                next_chunks.extend(splitter.split(chunk))
+            chunks = [part.strip() for part in next_chunks if part.strip()]
+        return chunks
+
+    @staticmethod
     def split_segments(text: str) -> List[str]:
         raw = text.strip()
         if not raw:
             return []
 
-        # Commas act as logical AND (same role as "y" / connectors).
-        comma_chunks = [chunk.strip() for chunk in COMMA_SPLIT_RE.split(raw) if chunk.strip()]
+        comma_chunks = SegmentEngine._split_by_connectors(raw)
         if not comma_chunks:
             return []
 
@@ -714,7 +778,13 @@ class OrderIntelligenceEngine:
             return self._fail_safe(unknown or ["sin productos reconocidos"])
 
         status = "ok" if not needs_review and not unknown else "needs_clarification"
-        return self._result(parsed_items, status, unknown)
+        result = self._result(parsed_items, status, unknown)
+        result["_internal"] = {
+            "min_score": _min_confidence(parsed_items),
+            "needs_review": needs_review,
+            "ambiguous": needs_review and not unknown,
+        }
+        return result
 
     def _quality_assurance(
         self,
@@ -769,6 +839,7 @@ class OrderIntelligenceEngine:
             "status": "needs_clarification",
             "unknown": unknown,
             "menu_available": available,
+            "_internal": {"min_score": None, "needs_review": True, "fail_safe": True},
         }
 
     @staticmethod
@@ -801,11 +872,12 @@ class OrderIntelligenceEngine:
         return False
 
     def _has_menu_token_overlap(self, text: str) -> bool:
-        query_keys = _token_keys(text)
-        if not query_keys:
+        query_tokens = set(TextNormalizer.basic(text).split())
+        if not query_tokens:
             return False
         for entry in self._catalog:
-            if query_keys & _token_keys(entry["normalized"]):
+            menu_tokens = set(entry["normalized"].split())
+            if query_tokens & menu_tokens:
                 return True
         return False
 
@@ -837,9 +909,35 @@ class OrderParser:
         self._catalog = self._engine._catalog
         self._matcher = self._engine._matcher
 
-    def parse_order(self, text: str) -> Dict[str, Any]:
+    def parse_order(self, text: str, wa_id: str = "") -> Dict[str, Any]:
         """Structured output contract for order interpretation."""
-        return self._engine.parse(text)
+        result = self._engine.parse(text)
+        self._audit_parse_result(text, result, wa_id=wa_id)
+        return result
+
+    @staticmethod
+    def _audit_parse_result(text: str, result: Dict[str, Any], wa_id: str = "") -> None:
+        status = result.get("status", "")
+        unknown = result.get("unknown") or []
+        internal = result.get("_internal") or {}
+        if status == "ok" and not unknown and not internal.get("needs_review"):
+            return
+        reason = "needs_clarification"
+        if internal.get("fail_safe"):
+            reason = "fail_safe"
+        elif unknown:
+            reason = "unknown_segments"
+        elif internal.get("ambiguous"):
+            reason = "ambiguity"
+        log_parser_errors(
+            wa_id=wa_id,
+            message=text,
+            reason=reason,
+            parser_status=status,
+            score=internal.get("min_score"),
+            unknown=unknown,
+            extra={"total_items": result.get("total_items", 0)},
+        )
 
     def _match_product(self, fragment: str) -> Optional[Dict[str, Any]]:
         best, score, _, _ = self._matcher.best_match(fragment)
@@ -851,8 +949,9 @@ class OrderParser:
     def _split_segments(self, text: str) -> List[str]:
         return SegmentEngine.split_segments(text)
 
-    def parse_additions(self, text: str) -> Tuple[List[Dict[str, Any]], List[str]]:
-        result = self._engine.parse(text)
+    def _cart_from_parse(
+        self, result: Dict[str, Any]
+    ) -> Tuple[List[Dict[str, Any]], List[str]]:
         items: List[Dict[str, Any]] = []
         for entry in result.get("items", []):
             matched = self._catalog_by_name(entry["product"])
@@ -869,6 +968,11 @@ class OrderParser:
                 }
             )
         unknown = list(result.get("unknown", []))
+        return items, unknown
+
+    def parse_additions(self, text: str) -> Tuple[List[Dict[str, Any]], List[str]]:
+        result = self._engine.parse(text)
+        items, unknown = self._cart_from_parse(result)
         if result.get("status") == "needs_clarification" and not items:
             segments = self._split_segments(text)
             unknown.extend(segments)
@@ -925,6 +1029,7 @@ class OrderParser:
         self,
         text: str,
         current_cart: Optional[List[Dict[str, Any]]] = None,
+        wa_id: str = "",
     ) -> Dict[str, Any]:
         cart = [dict(item) for item in (current_cart or [])]
         notes: List[str] = []
@@ -956,8 +1061,10 @@ class OrderParser:
                 notes.append(f"Cambié {old_name} por {new_name}.")
             return {"items": cart, "notes": notes, "unknown": unknown}
 
-        additions, unknown_add = self.parse_additions(text)
+        parse_snapshot = self._engine.parse(text)
+        additions, unknown_add = self._cart_from_parse(parse_snapshot)
         unknown.extend(unknown_add)
+        self._audit_parse_result(text, parse_snapshot, wa_id=wa_id)
 
         for addition in additions:
             found = False
@@ -1146,6 +1253,31 @@ def run_validation_suite(verbose: bool = True) -> bool:
         "intencion menu sin productos",
         case10["total_items"] == 0 and case10["status"] == "needs_clarification",
         str(case10),
+    )
+
+    case11 = demo_engine.parse("2 hamburgesa & 1 agua")
+    check(
+        "conector ampersand",
+        case11["status"] == "ok"
+        and _qty_for(case11["items"], "hamburguesa") == 2
+        and _qty_for(case11["items"], "agua") == 1,
+        str(case11),
+    )
+
+    case12 = demo_engine.parse("hamburguesa + agua")
+    check(
+        "conector plus",
+        case12["status"] == "ok"
+        and _find_item(case12["items"], "hamburguesa")
+        and _find_item(case12["items"], "agua"),
+        str(case12),
+    )
+
+    case13 = basic_engine.parse("peeedido dos hamburgesas y una agua")
+    check(
+        "errores ortograficos extremos",
+        _qty_for(case13["items"], "hamburguesa") >= 2 and _qty_for(case13["items"], "agua") >= 1,
+        str(case13),
     )
 
     if verbose:

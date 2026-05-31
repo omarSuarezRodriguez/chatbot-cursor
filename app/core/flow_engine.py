@@ -4,24 +4,30 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from app.config import FLOWS_PATH, NAV_HINT, RESTAURANT_NAME
 from app.core.state_manager import StateManager
+from app.services.admin_service import AdminService
 from app.services.menu_service import MenuService
 from app.services.order_service import OrderService
 from app.services.reservation_service import ReservationService
+from app.services.user_service import UserService
 from app.utils.validators import (
     is_confirmation,
+    is_greeting,
     is_rejection,
     normalize_text,
     parse_date,
+    parse_delivery_type,
     parse_persons,
     parse_time,
     validate_reservation_slot,
 )
 
 logger = logging.getLogger(__name__)
+
+Reply = Union[str, List[str]]
 
 
 class FlowEngine:
@@ -31,12 +37,16 @@ class FlowEngine:
         menu_service: MenuService,
         order_service: OrderService,
         reservation_service: ReservationService,
+        user_service: UserService,
+        admin_service: AdminService,
         flow_path: str | None = None,
     ) -> None:
         self.state_manager = state_manager
         self.menu_service = menu_service
         self.order_service = order_service
         self.reservation_service = reservation_service
+        self.user_service = user_service
+        self.admin_service = admin_service
         self.flow_path = flow_path or str(FLOWS_PATH)
         self.flow = self._load_flow()
         self.nodes = self.flow.get("nodes", {})
@@ -44,10 +54,14 @@ class FlowEngine:
         self.global_commands = self.meta.get("global_commands", {})
 
         self._actions: Dict[str, Callable[..., Tuple[str, Optional[str]]]] = {
+            "welcome_customer": self._action_welcome_customer,
             "show_menu": self._action_show_menu,
             "capture_order": self._action_capture_order,
             "show_cart": self._action_show_cart,
             "handle_order_confirmation": self._action_handle_order_confirmation,
+            "capture_delivery_type": self._action_capture_delivery_type,
+            "capture_address": self._action_capture_address,
+            "capture_customer_name": self._action_capture_customer_name,
             "save_order": self._action_save_order,
             "capture_persons": self._action_capture_persons,
             "capture_date": self._action_capture_date,
@@ -68,7 +82,7 @@ class FlowEngine:
         self.global_commands = self.meta.get("global_commands", {})
 
     def _render(self, template: str, extra: Optional[Dict[str, Any]] = None) -> str:
-        context = {"restaurant_name": RESTAURANT_NAME}
+        context = {"restaurant_name": RESTAURANT_NAME, "welcome_line": "", "address_prompt": ""}
         if extra:
             context.update(extra)
         rendered = template
@@ -76,22 +90,81 @@ class FlowEngine:
             rendered = rendered.replace(f"{{{{{key}}}}}", str(value))
         return rendered
 
-    def _append_navigation(self, message: str, node: Dict[str, Any]) -> str:
+    def _as_reply(self, message: str, node: Optional[Dict[str, Any]] = None) -> Reply:
+        if node and node.get("dual_message") and node.get("message_secondary"):
+            primary = message.strip()
+            secondary = self._render(node.get("message_secondary", ""))
+            parts = [part for part in (primary, secondary) if part]
+            return parts if len(parts) > 1 else (parts[0] if parts else message)
+        return message
+
+    def _append_navigation(self, message: Reply, node: Dict[str, Any]) -> Reply:
         if not self.meta.get("navigation_hint", True):
             return message
         if node.get("suppress_navigation"):
             return message
-        return f"{message}{NAV_HINT}"
+        hint = NAV_HINT
+        if isinstance(message, list):
+            if message:
+                message[-1] = f"{message[-1]}{hint}"
+            return message
+        return f"{message}{hint}"
+
+    def _has_active_order(self, wa_id: str) -> bool:
+        state = self.state_manager.get(wa_id)
+        cart = state.get("data", {}).get("cart", [])
+        return bool(cart) and state.get("flow") == "order"
+
+    def _handle_abandon_confirm(self, wa_id: str, text: str) -> Optional[Reply]:
+        state = self.state_manager.get(wa_id)
+        if not state.get("data", {}).get("awaiting_abandon_confirm"):
+            return None
+        if is_confirmation(text):
+            self.state_manager.reset(wa_id)
+            return self._process_node(wa_id, "start", include_navigation=True)
+        if is_rejection(text):
+            self.state_manager.patch_data(wa_id, awaiting_abandon_confirm=False)
+            return "Perfecto, continuamos con tu pedido actual."
+        return "Responde *sí* para volver al inicio o *no* para continuar tu pedido."
+
+    def _handle_repeat_order(self, wa_id: str, text: str) -> Optional[Reply]:
+        state = self.state_manager.get(wa_id)
+        if not state.get("data", {}).get("awaiting_repeat_order"):
+            return None
+        if is_confirmation(text):
+            items = self.user_service.get_last_order_items(wa_id)
+            if not items:
+                self.state_manager.patch_data(wa_id, awaiting_repeat_order=False)
+                return "No encontré tu pedido anterior."
+            self.state_manager.patch_data(
+                wa_id,
+                cart=items,
+                awaiting_repeat_order=False,
+            )
+            self.state_manager.set_step(wa_id, "order_review", "order")
+            return self._process_node(wa_id, "order_review", include_navigation=False)
+        if is_rejection(text):
+            self.state_manager.patch_data(wa_id, awaiting_repeat_order=False)
+            return self._process_node(wa_id, "start", include_navigation=True)
+        return "Responde *sí* para repetir tu pedido anterior o *no* para elegir otra opción."
 
     def _resolve_global_command(
         self,
         wa_id: str,
         command: str,
         current_step: str,
-    ) -> Optional[str]:
+    ) -> Optional[Reply]:
         target = self.global_commands.get(command)
         if not target:
             return None
+
+        if command == "inicio" and self._has_active_order(wa_id):
+            self.state_manager.patch_data(wa_id, awaiting_abandon_confirm=True)
+            return (
+                "Tienes un pedido en curso.\n\n"
+                "¿Estás seguro de abandonar tu pedido actual?\n"
+                "Responde *sí* para volver al inicio o *no* para continuar."
+            )
 
         if command == "cancelar":
             self.state_manager.reset(wa_id)
@@ -100,7 +173,10 @@ class FlowEngine:
                 "Proceso cancelado. Estoy aquí cuando quieras continuar.",
             )
             start_message = self._process_node(wa_id, target, include_navigation=False)
-            combined = f"{cancel_message}\n\n{start_message}".strip()
+            if isinstance(start_message, list):
+                combined = [cancel_message, *start_message]
+            else:
+                combined = f"{cancel_message}\n\n{start_message}".strip()
             return self._append_navigation(combined, self.nodes.get(target, {}))
 
         if command == "inicio":
@@ -109,11 +185,17 @@ class FlowEngine:
         node = self.nodes.get(target, {})
         self.state_manager.set_step(wa_id, target, node.get("flow", "idle"))
         if command in {"menu", "pedido", "reservar"} and target != current_step:
-            self.state_manager.patch_data(wa_id, cart=[], reservation={})
+            self.state_manager.patch_data(
+                wa_id,
+                cart=[],
+                reservation={},
+                awaiting_repeat_order=False,
+                awaiting_abandon_confirm=False,
+            )
 
         return self._process_node(wa_id, target, include_navigation=True)
 
-    def process_message(self, wa_id: str, body: str) -> str:
+    def process_message(self, wa_id: str, body: str) -> Reply:
         text = (body or "").strip()
         if not text:
             text = "hola"
@@ -121,6 +203,14 @@ class FlowEngine:
         normalized = normalize_text(text)
         state = self.state_manager.get(wa_id)
         current_step = state.get("step", "start")
+
+        abandon = self._handle_abandon_confirm(wa_id, text)
+        if abandon is not None:
+            return abandon
+
+        repeat = self._handle_repeat_order(wa_id, text)
+        if repeat is not None:
+            return repeat
 
         if normalized in self.global_commands:
             response = self._resolve_global_command(wa_id, normalized, current_step)
@@ -160,9 +250,21 @@ class FlowEngine:
                             next_step,
                             include_navigation=False,
                         )
-                        combined = f"{message}\n\n{follow_up}".strip()
+                        if isinstance(follow_up, list):
+                            combined: Reply = [message, *follow_up] if message else follow_up
+                        elif message:
+                            combined = f"{message}\n\n{follow_up}".strip()
+                        else:
+                            combined = follow_up
                         return self._append_navigation(combined, next_node)
                 return self._append_navigation(message, node)
+
+        if is_greeting(text) and current_step in {"order_start", "order_modify"}:
+            return self._append_navigation(
+                "¡Hola! Cuando quieras, cuéntame qué deseas ordenar.\n"
+                "Ejemplo: *2 hamburguesas y 1 agua*",
+                node,
+            )
 
         fallback = node.get(
             "fallback",
@@ -176,14 +278,15 @@ class FlowEngine:
         step: str,
         include_navigation: bool = False,
         user_input: str = "",
-    ) -> str:
+    ) -> Reply:
         node = self.nodes.get(step, self.nodes.get("start", {}))
         self.state_manager.set_step(wa_id, step, node.get("flow", "idle"))
 
+        extra = self._build_node_context(wa_id, step)
         parts = []
         base_message = node.get("message")
         if base_message:
-            parts.append(self._render(base_message))
+            parts.append(self._render(base_message, extra))
 
         action_name = node.get("action")
         next_step: Optional[str] = None
@@ -205,7 +308,7 @@ class FlowEngine:
 
         after_action = node.get("message_after_action")
         if after_action:
-            parts.append(self._render(after_action))
+            parts.append(self._render(after_action, extra))
 
         response = "\n\n".join(part for part in parts if part).strip()
 
@@ -221,25 +324,61 @@ class FlowEngine:
                 next_step,
                 include_navigation=False,
             )
-            response = f"{response}\n\n{follow_up}".strip()
+            if isinstance(follow_up, list):
+                if response:
+                    response = [response, *follow_up]
+                else:
+                    response = follow_up
+            elif follow_up:
+                response = f"{response}\n\n{follow_up}".strip() if response else follow_up
 
         if include_navigation:
             response = self._append_navigation(response, node)
 
-        return response
+        return self._as_reply(response, node)
 
-    def _render_node_message(self, step: str) -> str:
-        node = self.nodes.get(step, {})
-        message = node.get("message", "")
-        return self._render(message) if message else ""
+    def _build_node_context(self, wa_id: str, step: str) -> Dict[str, str]:
+        profile = self.user_service.get_profile(wa_id)
+        name = profile.get("name", "")
+        welcome = f"Hola{', ' + name if name else ''}, bienvenido a *{RESTAURANT_NAME}*."
+        if name:
+            welcome = f"Hola *{name}*, bienvenido nuevamente a *{RESTAURANT_NAME}*."
+
+        address_prompt = "Indícame la dirección de entrega a domicilio."
+        saved_address = profile.get("address", "")
+        if saved_address:
+            address_prompt = (
+                f"Tienes guardada esta dirección:\n*{saved_address}*\n\n"
+                "¿Deseas usarla? Responde *sí*.\n"
+                "O escribe una dirección nueva."
+            )
+        return {"welcome_line": welcome, "address_prompt": address_prompt}
+
+    def _action_welcome_customer(self, wa_id: str, text: str = "") -> Tuple[str, Optional[str]]:
+        profile = self.user_service.get_profile(wa_id)
+        last_items = profile.get("last_order_items") or []
+        if last_items:
+            self.state_manager.patch_data(wa_id, awaiting_repeat_order=True)
+            return (
+                "¿Deseas repetir tu pedido anterior?\nResponde *sí* o *no*.",
+                None,
+            )
+        return "", None
 
     def _action_show_menu(self, wa_id: str, text: str = "") -> Tuple[str, Optional[str]]:
         return self.menu_service.format_menu(), None
 
     def _action_capture_order(self, wa_id: str, text: str) -> Tuple[str, Optional[str]]:
+        if is_greeting(text):
+            return (
+                "¡Hola! Cuéntame qué te gustaría ordenar.\n"
+                "Ejemplo: *2 hamburguesas y 1 agua*",
+                None,
+            )
+
         state = self.state_manager.get(wa_id)
         cart = state.get("data", {}).get("cart", [])
-        result = self.order_service.parse_order_text(text, cart)
+        result = self.order_service.parse_order_text(text, cart, wa_id=wa_id)
 
         if not result["items"]:
             unknown_note = ""
@@ -286,7 +425,7 @@ class FlowEngine:
         text: str,
     ) -> Tuple[str, Optional[str]]:
         if is_confirmation(text):
-            return "¡Excelente!", "order_saved"
+            return "¡Excelente!", "order_delivery"
         if is_rejection(text):
             return "Claro, modifiquemos tu pedido.", "order_modify"
         return (
@@ -294,19 +433,93 @@ class FlowEngine:
             None,
         )
 
+    def _action_capture_delivery_type(
+        self, wa_id: str, text: str
+    ) -> Tuple[str, Optional[str]]:
+        delivery = parse_delivery_type(text)
+        if not delivery:
+            return (
+                "No entendí tu elección.\n"
+                "Responde *1* o *domicilio*, o *2* o *recoger*.",
+                None,
+            )
+        self.state_manager.patch_data(wa_id, delivery_type=delivery)
+        if delivery == "domicilio":
+            return "", "order_address"
+        profile = self.user_service.get_profile(wa_id)
+        if profile.get("name"):
+            return "", "order_saved"
+        return "", "order_customer_name"
+
+    def _action_capture_address(self, wa_id: str, text: str) -> Tuple[str, Optional[str]]:
+        profile = self.user_service.get_profile(wa_id)
+        saved = profile.get("address", "")
+        address = text.strip()
+        if saved and is_confirmation(text):
+            address = saved
+        elif not address:
+            return "Necesito una dirección válida para el domicilio.", None
+
+        self.user_service.save_address(wa_id, address)
+        self.state_manager.patch_data(wa_id, delivery_address=address)
+        profile = self.user_service.get_profile(wa_id)
+        if profile.get("name"):
+            return "", "order_saved"
+        return "Gracias. Guardé tu dirección.", "order_customer_name"
+
+    def _action_capture_customer_name(
+        self, wa_id: str, text: str
+    ) -> Tuple[str, Optional[str]]:
+        name = text.strip()
+        if len(name) < 2:
+            return "Por favor escribe tu nombre (mínimo 2 caracteres).", None
+        self.user_service.save_name(wa_id, name)
+        return "", "order_saved"
+
     def _action_save_order(self, wa_id: str, text: str = "") -> Tuple[str, Optional[str]]:
         state = self.state_manager.get(wa_id)
-        cart = state.get("data", {}).get("cart", [])
+        data = state.get("data", {})
+        cart = data.get("cart", [])
         if not cart:
             return "No encontré productos para guardar.", "order_start"
 
-        order_id, total = self.order_service.save_order(wa_id, cart)
-        self.state_manager.patch_data(wa_id, cart=[], last_order_id=order_id)
+        profile = self.user_service.get_profile(wa_id)
+        customer_name = profile.get("name", "")
+        address = data.get("delivery_address", profile.get("address", ""))
+        delivery_type = data.get("delivery_type", "")
+
+        order_id, total = self.order_service.save_order(
+            wa_id,
+            cart,
+            customer_name=customer_name,
+            address=address,
+            delivery_type=delivery_type,
+        )
+        order_payload = self.order_service.get_order(order_id) or {
+            "order_id": order_id,
+            "wa_id": wa_id,
+            "items": cart,
+            "total": total,
+            "customer_name": customer_name,
+            "address": address,
+            "delivery_type": delivery_type,
+        }
+        self.admin_service.notify_new_order(order_payload)
+
+        self.state_manager.patch_data(
+            wa_id,
+            cart=[],
+            delivery_type="",
+            delivery_address="",
+            last_order_id=order_id,
+            awaiting_repeat_order=False,
+            awaiting_abandon_confirm=False,
+        )
         self.state_manager.set_step(wa_id, "start", "idle")
         return (
             f"Pedido *{order_id}* registrado correctamente.\n"
             f"Total: *${total:.2f}*\n"
-            f"Estado: *pendiente*",
+            f"Estado: *pendiente* (esperando confirmación del restaurante)",
             None,
         )
 

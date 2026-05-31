@@ -17,6 +17,76 @@ def is_global_command(text: str) -> bool:
     }
 
 
+GREETING_PHRASES = frozenset(
+    {
+        "hola",
+        "holaa",
+        "holaaa",
+        "buenas",
+        "buenos dias",
+        "buenas tardes",
+        "buenas noches",
+        "buen dia",
+        "hey",
+        "hello",
+        "hi",
+        "que tal",
+        "qué tal",
+        "saludos",
+        "como estas",
+        "cómo estás",
+    }
+)
+
+
+def is_greeting(text: str) -> bool:
+    cleaned = normalize_text(text)
+    if cleaned in GREETING_PHRASES:
+        return True
+    return any(cleaned.startswith(phrase) for phrase in GREETING_PHRASES if len(phrase) > 4)
+
+
+def parse_delivery_type(text: str) -> Optional[str]:
+    cleaned = normalize_text(text)
+    if cleaned in {"1", "domicilio", "delivery", "a domicilio", "envio", "envío"}:
+        return "domicilio"
+    if cleaned in {
+        "2",
+        "recoger",
+        "recojo",
+        "pickup",
+        "tienda",
+        "en tienda",
+        "pasar por",
+        "pasar a recoger",
+    }:
+        return "recoger"
+    if "domicilio" in cleaned or "envio" in cleaned or "envío" in cleaned:
+        return "domicilio"
+    if "recog" in cleaned or "tienda" in cleaned:
+        return "recoger"
+    return None
+
+
+def is_admin_confirm(text: str) -> bool:
+    cleaned = normalize_text(text)
+    if cleaned.startswith("confirmar"):
+        return True
+    return cleaned in {"confirmar", "confirmado", "confirmo", "ok confirmar"}
+
+
+def extract_admin_order_id(text: str) -> Optional[str]:
+    cleaned = normalize_text(text)
+    match = re.search(r"(ord-[a-f0-9]{8})", cleaned, re.IGNORECASE)
+    if match:
+        return match.group(1).upper()
+    parts = cleaned.split()
+    for part in parts:
+        if part.upper().startswith("ORD-"):
+            return part.upper()
+    return None
+
+
 def parse_persons(text: str) -> Optional[int]:
     cleaned = normalize_text(text)
     match = re.search(r"(\d+)", cleaned)

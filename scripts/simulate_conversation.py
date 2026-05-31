@@ -12,19 +12,27 @@ from app.config import GOOGLE_SHEETS_CREDENTIALS_PATH, GOOGLE_SPREADSHEET_ID, ST
 from app.core.flow_engine import FlowEngine
 from app.core.state_manager import StateManager
 from app.integrations.google_sheets import GoogleSheetsClient
+from app.services.admin_service import AdminService
 from app.services.menu_service import MenuService
 from app.services.order_service import OrderService
 from app.services.reservation_service import ReservationService
+from app.services.user_service import UserService
 
 
 def run_scenario(wa_id: str, messages: list[str]) -> None:
-    sheets = GoogleSheetsClient(GOOGLE_SHEETS_CREDENTIALS_PATH, GOOGLE_SPREADSHEET_ID)
+    sheets = GoogleSheetsClient(
+        GOOGLE_SHEETS_CREDENTIALS_PATH, GOOGLE_SPREADSHEET_ID
+    )
     state = StateManager(persist_path=None)
+    menu_service = MenuService(sheets)
+    order_service = OrderService(sheets, menu_service)
     engine = FlowEngine(
         state_manager=state,
-        menu_service=MenuService(sheets),
-        order_service=OrderService(sheets, MenuService(sheets)),
+        menu_service=menu_service,
+        order_service=order_service,
         reservation_service=ReservationService(sheets),
+        user_service=UserService(sheets),
+        admin_service=AdminService(sheets, order_service),
     )
 
     print(f"\n=== User {wa_id} ===")
