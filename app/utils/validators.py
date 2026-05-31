@@ -1,10 +1,17 @@
 import re
+import unicodedata
 from datetime import date, datetime, time
 from typing import Optional, Tuple
 
 
+def _strip_accents(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value)
+    return "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn")
+
+
 def normalize_text(text: str) -> str:
-    return " ".join(text.strip().lower().split())
+    cleaned = _strip_accents(text.strip().lower())
+    return " ".join(cleaned.split())
 
 
 def is_global_command(text: str) -> bool:
@@ -71,6 +78,8 @@ def parse_delivery_type(text: str) -> Optional[str]:
 def is_admin_confirm(text: str) -> bool:
     cleaned = normalize_text(text)
     if cleaned.startswith("confirmar"):
+        return True
+    if "listo" in cleaned and ("pedido" in cleaned or "ord-" in cleaned):
         return True
     return cleaned in {"confirmar", "confirmado", "confirmo", "ok confirmar"}
 

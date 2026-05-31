@@ -1255,6 +1255,13 @@ def run_validation_suite(verbose: bool = True) -> bool:
         str(case10),
     )
 
+    case10b = demo_engine.parse("men\u00fa")
+    check(
+        "intencion menu con tilde",
+        case10b["total_items"] == 0 and case10b["status"] == "needs_clarification",
+        str(case10b),
+    )
+
     case11 = demo_engine.parse("2 hamburgesa & 1 agua")
     check(
         "conector ampersand",

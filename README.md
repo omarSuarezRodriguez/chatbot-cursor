@@ -1,6 +1,6 @@
 # Restaurant WhatsApp Chatbot SaaS
 
-v0.4
+v0.7
 
 
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
@@ -848,4 +848,204 @@ Saludo personalizado, menú en el segundo mensaje, pedidos, reservas y comandos 
 
 
 ######################################################################################################################################
-v0.5
+## v0.5
+
+## prompt: 
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[* Verificar por qué el número de whatsapp del admin no funciona si ya se puso correctamente en .env, verificar que si funciona]
+
+
+## Respuesta cursor:
+
+Análisis previo
+Revisé la carga de .env, el endpoint /bot y AdminService.is_admin().
+
+Diagnóstico:
+
+Verificación	Resultado
+ADMIN_WHATSAPP_NUMBER en .env
+Cargado correctamente
+Twilio (SID, token, FROM)
+Configurado
+/health → admin_configured
+true
+Causa raíz: Twilio envía el WaId sin el prefijo + (ej. 573001111032), pero en .env suele estar con + (ej. whatsapp:+573001111032). is_admin() comparaba strings exactos:
+
+"+573001111032" == "573001111032"  # False
+Por eso el admin recibía el bot de cliente en lugar de los comandos admin (CONFIRMAR ORD-...).
+
+Cambios implementados
+En app/services/admin_service.py, is_admin() ahora compara solo los dígitos del número, ignorando whatsapp:, + y espacios.
+
+Archivos modificados
+app/services/admin_service.py
+Riesgos mitigados
+Sin cambios en endpoints, .env ni flujo de clientes.
+Las notificaciones salientes al admin siguen usando el valor completo de .env (formato Twilio correcto).
+Compatibilidad verificada
+Prueba	Resultado
+is_admin("5730...") (formato Twilio WaId)
+✅
+is_admin("+5730...")
+✅
+is_admin("whatsapp:+5730...") (formato .env)
+✅
+Otro número
+❌ (correcto)
+Webhook /bot con WaId sin +
+Ruta admin ✅
+Parser
+14/14 OK
+Funcionalidades agregadas
+Reconocimiento del admin aunque Twilio y .env usen formatos distintos del mismo número.
+Funcionalidades preservadas
+Notificaciones de pedidos, recordatorios, confirmación CONFIRMAR ORD-XXXXXXXX y flujo normal de clientes.
+Importante: reinicia el servidor Flask después de cambiar .env para que cargue los valores nuevos.
+
+Formato recomendado en .env:
+
+ADMIN_WHATSAPP_NUMBER=whatsapp:+57XXXXXXXXXX
+Debe ser el mismo número desde el que escribes al bot por WhatsApp
+
+
+
+
+
+###################################################################
+## v0.7
+
+prompt
+
+
+# MODO ARQUITECTO SENIOR
+
+Actúa como Principal Software Architect especializado en Python, Flask, Twilio, WhatsApp Bots y SaaS.
+
+Objetivo: implementar únicamente la mejora solicitada con cambios mínimos, seguros y compatibles.
+
+## REGLAS
+
+* Evolucionar, no reconstruir.
+* No romper funcionalidades existentes.
+* No cambiar APIs, endpoints, contratos, JSON ni estados.
+* No refactorizar módulos completos para cambios pequeños.
+* Reutilizar código existente antes de crear componentes nuevos.
+* Modificar la menor cantidad posible de archivos y líneas.
+* Si existe riesgo de ruptura, detenerse y reportarlo.
+
+## ANTES DE MODIFICAR
+
+1. Leer únicamente los archivos necesarios.
+2. Analizar impacto.
+3. Identificar archivos afectados.
+4. Detectar riesgos.
+5. Proponer la solución de menor impacto.
+
+No generar código hasta terminar el análisis.
+
+## IMPLEMENTACIÓN
+
+* Aplicar únicamente los cambios necesarios.
+* Mantener estructura, nombres e interfaces actuales.
+* Conservar el comportamiento existente.
+* No generar pseudocódigo.
+* Realizar cambios reales sobre el código existente.
+
+## ENTREGA
+
+### Análisis previo
+
+* Funcionalidad solicitada
+* Archivos afectados
+* Riesgos
+* Estrategia de compatibilidad
+
+### Cambios implementados
+
+### Archivos modificados
+
+### Riesgos mitigados
+
+### Compatibilidad verificada
+
+✅ Parser
+
+✅ Flask
+
+✅ Twilio
+
+✅ Flow Engine
+
+✅ Order Service
+
+✅ Persistencia
+
+✅ Estados conversacionales
+
+### Funcionalidades agregadas
+
+### Funcionalidades preservadas
+
+## TAREA
+
+[Por favor revisa el parser y verifica que puede leer palabras con tilde como menú, revisa e implementa la mejora] 
+
+
+## Respuesta cursor:
+
+Análisis previo
+Funcionalidad solicitada: Que el sistema reconozca palabras con tilde como menú (comandos y parser).
+
+Hallazgos:
+
+Parser (app/core/parser.py): ya usaba _strip_accents() para productos (ensalada césar) e intención de menú.
+Flow Engine (validators.normalize_text): solo hacía lower() + espacios, sin quitar tildes. Por eso menu funcionaba y menú caía en el fallback.
+Archivos afectados:
+
+app/utils/validators.py — normalización usada por Flow Engine y comandos globales
+app/core/parser.py — prueba de regresión para menú
+Riesgos: Que normalize_text rompa confirmaciones o fechas. Mitigado: sí → si (ya en el set), envío → envio (ya contemplado).
+
+Estrategia: Añadir _strip_accents en normalize_text (misma lógica que el parser), sin tocar APIs, JSON ni estados.
+
+Cambios implementados
+normalize_text() ahora elimina tildes antes de comparar comandos (menú → menu).
+Prueba automática intencion menu con tilde en la suite del parser (15/15).
+Archivos modificados
+app/utils/validators.py
+app/core/parser.py
+Riesgos mitigados
+Sin cambios en endpoints, JSON del flujo ni estados conversacionales.
+Parser mantiene su pipeline de acentos; solo se alineó la capa de comandos.
+Compatibilidad verificada
+✅ Parser — 15/15 OK (incluye menú y ensalada césar)
+✅ Flask — sin cambios
+✅ Twilio — sin cambios
+✅ Flow Engine — menú abre el menú igual que menu
+✅ Order Service — sin cambios
+✅ Persistencia — sin cambios
+✅ Estados conversacionales — sin cambios
+
+Funcionalidades agregadas
+Comandos con tilde: menú, envío, qué tal, etc. se normalizan y enrutan igual que sin tilde.
+Funcionalidades preservadas
+Matching de productos con typos y tildes en el parser.
+Comandos globales sin tilde (menu, pedido, reservar, inicio, cancelar).
+Confirmaciones, reservas, pedidos y flujo admin.
+
+
+
+
+
+
+#################################################################
+
+## v0.8
+

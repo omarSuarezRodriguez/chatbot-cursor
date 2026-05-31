@@ -34,12 +34,26 @@ class AdminService:
         self._lock = threading.Lock()
 
     @staticmethod
+    def _normalize_phone(value: str) -> str:
+        return "".join(
+            ch for ch in value.replace("whatsapp:", "").strip() if ch.isdigit()
+        )
+
+    @staticmethod
     def is_admin(wa_id: str) -> bool:
         if not ADMIN_WHATSAPP_NUMBER:
             return False
-        normalized_admin = ADMIN_WHATSAPP_NUMBER.replace("whatsapp:", "").strip()
-        normalized_wa = wa_id.replace("whatsapp:", "").strip()
-        return normalized_wa == normalized_admin
+        normalized_admin = AdminService._normalize_phone(ADMIN_WHATSAPP_NUMBER)
+        normalized_wa = AdminService._normalize_phone(wa_id)
+        return bool(normalized_admin) and normalized_wa == normalized_admin
+
+    def _format_whatsapp_address(self, number: str) -> str:
+        stripped = number.replace("whatsapp:", "").strip()
+        digits = "".join(ch for ch in stripped if ch.isdigit())
+        if digits and not stripped.startswith("+"):
+            stripped = f"+{digits}"
+        prefix = "whatsapp:" if not number.startswith("whatsapp:") else ""
+        return f"{prefix}{stripped}" if prefix else stripped
 
     def _send_whatsapp(self, to_number: str, body: str) -> bool:
         if not (TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_WHATSAPP_FROM):
@@ -49,12 +63,12 @@ class AdminService:
             from twilio.rest import Client
 
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-            to = to_number if to_number.startswith("whatsapp:") else f"whatsapp:{to_number}"
-            from_ = (
-                TWILIO_WHATSAPP_FROM
-                if TWILIO_WHATSAPP_FROM.startswith("whatsapp:")
-                else f"whatsapp:{TWILIO_WHATSAPP_FROM}"
-            )
+            to = self._format_whatsapp_address(to_number)
+            if not to.startswith("whatsapp:"):
+                to = f"whatsapp:{to}"
+            from_ = self._format_whatsapp_address(TWILIO_WHATSAPP_FROM)
+            if not from_.startswith("whatsapp:"):
+                from_ = f"whatsapp:{from_}"
             client.messages.create(body=body, from_=from_, to=to)
             return True
         except Exception:
@@ -75,7 +89,7 @@ class AdminService:
             f"Dirección: {order.get('address') or 'N/A'}\n"
             f"Entrega: {order.get('delivery_type') or 'N/A'}\n\n"
             f"{chr(10).join(lines)}\n\n"
-            f"Responde *CONFIRMAR {order.get('order_id')}* para aceptar el pedido."
+            f"Responde *CONFIRMAR {order.get('order_id')}* o *pedido {order.get('order_id')} listo* para aceptar el pedido."
         )
         self._send_whatsapp(ADMIN_WHATSAPP_NUMBER, message)
         self._track_pending_reminder(order.get("order_id", ""))
@@ -84,7 +98,7 @@ class AdminService:
         if not is_admin_confirm(body):
             return (
                 "Comando admin no reconocido.\n"
-                "Responde: *CONFIRMAR ORD-XXXXXXXX*"
+                "Responde: *CONFIRMAR ORD-XXXXXXXX* o *pedido ORD-XXXXXXXX listo*"
             )
 
         order_id = extract_admin_order_id(body)
@@ -96,7 +110,11 @@ class AdminService:
             return f"No encontré el pedido *{order_id}*."
 
         if order.get("status") == "confirmed":
-            return f"El pedido *{order_id}* ya estaba confirmado."
+            self._clear_reminder(order_id)
+            return (
+                f"El pedido *{order_id}* ya fue confirmado. "
+                "No recibirás más recordatorios sobre él."
+            )
 
         if self.order_service.confirm_order(order_id):
             self._clear_reminder(order_id)
@@ -165,7 +183,7 @@ class AdminService:
             self._send_whatsapp(
                 ADMIN_WHATSAPP_NUMBER,
                 f"Recordatorio: pedido *{order_id}* sigue pendiente. "
-                f"Responde *CONFIRMAR {order_id}*.",
+                f"Responde *CONFIRMAR {order_id}* o *pedido {order_id} listo*.",
             )
             with self._lock:
                 if order_id in self._reminder_state:
