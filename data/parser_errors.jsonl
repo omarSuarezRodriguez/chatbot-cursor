@@ -1,0 +1,2 @@
+{"timestamp": "2026-05-31T20:53:04.833566+00:00", "wa_id": "35699155990", "message": "2 pizzas hawaianas, 2 coca colas dos hamburguesas con dos aguas", "reason": "ambiguity", "parser_status": "needs_clarification", "score": 1.0, "unknown": [], "total_items": 4}
+{"timestamp": "2026-05-31T20:56:20.346129+00:00", "wa_id": "", "message": "dos pizzas, dos hamburguesas con dos aguas", "reason": "ambiguity", "parser_status": "needs_clarification", "score": 0.62, "unknown": [], "total_items": 6}

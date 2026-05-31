@@ -113,7 +113,6 @@ NOISE_WORDS = frozenset(
         "una",
         "unos",
         "unas",
-        "con",
         "sin",
         "algo",
         "alguna",
@@ -174,7 +173,7 @@ PLUS_SPLIT_RE = re.compile(r"\s*\+\s*")
 STAR_SPLIT_RE = re.compile(r"\s*\*\s*")
 
 CONNECTOR_SPLIT_RE = re.compile(
-    r"\s*(?:,|;|&|\band\b|\s+y\s+|\s+e\s+|\s+mas\s+|\s+más\s+|\s+también\s+|\s+tambien\s+)\s*",
+    r"\s*(?:,|;|&|\band\b|\s+y\s+|\s+e\s+|\s+con\s+|\s+mas\s+|\s+más\s+|\s+también\s+|\s+tambien\s+)\s*",
     re.IGNORECASE,
 )
 
@@ -718,15 +717,16 @@ class OrderIntelligenceEngine:
         if self._is_order_intent_only(normalized_full):
             return self._result([], "needs_clarification", ["intención de pedido sin productos"])
 
-        if not self._has_menu_token_overlap(normalized_full) and (
-            self._is_gibberish(normalized_full) or len(_token_keys(normalized_full)) <= 1
-        ):
-            return self._fail_safe(["texto no interpretable"])
-
         catalog_norms = [entry["normalized"] for entry in self._catalog]
         segments = SegmentEngine.split_segments(raw)
         if not segments:
             segments = [normalized_full] if normalized_full else []
+
+        if not self._has_menu_token_overlap(normalized_full) and (
+            self._is_gibberish(normalized_full) or len(_token_keys(normalized_full)) <= 1
+        ):
+            if len(segments) < 2:
+                return self._fail_safe(["texto no interpretable"])
 
         parsed_items: List[Dict[str, Any]] = []
         unknown: List[str] = []
@@ -1269,6 +1269,26 @@ def run_validation_suite(verbose: bool = True) -> bool:
         and _qty_for(case11["items"], "hamburguesa") == 2
         and _qty_for(case11["items"], "agua") == 1,
         str(case11),
+    )
+
+    case11b = demo_engine.parse("dos pizzas, dos hamburguesas con dos aguas")
+    check(
+        "conector con como y",
+        case11b["status"] in {"ok", "needs_clarification"}
+        and len(case11b["items"]) == 3
+        and _qty_for(case11b["items"], "hamburguesa") == 2
+        and _qty_for(case11b["items"], "agua") == 2,
+        str(case11b),
+    )
+
+    case11c = demo_engine.parse("2 pizzas, 2 hamburguesas con 2 aguas")
+    check(
+        "conector con con cantidades numericas",
+        case11c["status"] in {"ok", "needs_clarification"}
+        and len(case11c["items"]) == 3
+        and _qty_for(case11c["items"], "hamburguesa") == 2
+        and _qty_for(case11c["items"], "agua") == 2,
+        str(case11c),
     )
 
     case12 = demo_engine.parse("hamburguesa + agua")

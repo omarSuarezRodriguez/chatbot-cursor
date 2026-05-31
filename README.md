@@ -1046,6 +1046,58 @@ Confirmaciones, reservas, pedidos y flujo admin.
 
 
 #################################################################
-
 ## v0.8
+
+## Prompt: 
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Cuando estoy escribiendo el pedido, osea lo que quiero pedir, si por ejemplo escribo dos pizzas, dos hamburguesas con dos aguas, el sistema no me reconoce el con como si fuera un Y]
+
+
+## Respuesta cursor:
+
+Análisis previo
+Funcionalidad solicitada: Que con actúe como conector de ítems, igual que y (ej.: dos pizzas, dos hamburguesas con dos aguas).
+
+Causa raíz (doble):
+
+CONNECTOR_SPLIT_RE no incluía con, así que no separaba los productos.
+con estaba en NOISE_WORDS y se eliminaba al normalizar; el fail_safe veía solo tokens genéricos (dos, 2) y rechazaba el pedido antes de procesar los segmentos.
+Archivos afectados: solo app/core/parser.py
+
+Riesgos: Que con deje de filtrarse en frases tipo “hamburguesa con queso”. Mitigado: solo se usa como separador con \s+con\s+ (espacios a ambos lados).
+
+Cambios implementados
+Añadido \s+con\s+ a CONNECTOR_SPLIT_RE (junto a y, e, comas, etc.).
+Eliminado con de NOISE_WORDS para que no desaparezca antes del análisis.
+Reordenado parse(): si hay 2+ segmentos, no aplica el fail_safe prematuro.
+Pruebas automáticas para con con cantidades en palabras y en dígitos.
+Archivos modificados
+app/core/parser.py
+Riesgos mitigados
+Sin cambios en APIs, Flask, Twilio, flow JSON ni estados.
+Conectores existentes (y, e, ,, &, +, *) intactos.
+Compatibilidad verificada
+✅ Parser — 17/17 OK
+✅ Flask — sin cambios
+✅ Twilio — sin cambios
+✅ Flow Engine — sin cambios
+✅ Order Service — dos pizzas, dos hamburguesas con dos aguas → 3 productos
+✅ Persistencia — sin cambios
+✅ Estados conversacionales — sin cambios
+
+Funcionalidades agregadas
+con como conector entre ítems del pedido, equivalente a y.
+Ejemplo verificado:
+
+dos pizzas, dos hamburguesas con dos aguas
+→ 2 Pizza Margarita, 2 Hamburguesa Clásica, 2 Agua Mineral
+Funcionalidades preservadas
+Pedidos con y, comas, typos, tildes y el resto de conectores ya soportados.
 
