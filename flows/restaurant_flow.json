@@ -15,6 +15,7 @@
     "start": {
       "flow": "idle",
       "action": "welcome_customer",
+      "suppress_navigation": true,
       "dual_message": true,
       "message": "{{welcome_line}}",
       "message_secondary": "¿Qué te gustaría hacer hoy?\n\n1. *menu* — Ver el menú\n2. *pedido* — Hacer tu pedido\n3. *reservar* — Reservar mesa",

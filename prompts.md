@@ -1,4 +1,37 @@
-Prompt maestro para solo implementar mejoras:
+## Prompt maestro para implementar mejoras usando AI_RULES.md
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[mejora a implementar]
+
+
+##
+## 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # MODO ARQUITECTO SENIOR
 

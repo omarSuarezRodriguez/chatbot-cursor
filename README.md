@@ -1,6 +1,6 @@
 # Restaurant WhatsApp Chatbot SaaS
 
-v0.1
+v0.4
 
 
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
@@ -742,14 +742,57 @@ v0.3
 
 Prompt generado con chat gpt:
 
+OBLIGATORIO:
 
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[* Que cuando el cliente salude, el bot le responda:
+(
+1 mensaje: Hola "nombre de persona", Bienvenido a "Nombre del restaurante"
+2 mensaje: mostrar el menú (osea los productos que tiene el restaurante) y al final preguntarle que si desea hacer un pedido o reservar una mesa
+)]
 
 
 
 
 *****Respuesta de cursor*
 
+Análisis previo
+El nodo start ya usaba dual_message para enviar dos burbujas en Twilio. El segundo mensaje mostraba opciones (menu, pedido, reservar) en lugar del menú real. La tarea pide: (1) saludo con nombre y restaurante, (2) productos del menú + pregunta por pedido o reserva.
 
+Solución mínima: un solo archivo (flow_engine.py), sin tocar el JSON del flujo ni los estados conversacionales.
+
+Cambios implementados
+Saludo (mensaje 1): formato Hola *{nombre}*, Bienvenido a *{restaurante}*.
+Menú (mensaje 2): en el nodo start, el segundo mensaje incluye el menú dinámico (MenuService.format_menu()) y cierra con: ¿Deseas hacer un pedido o reservar una mesa?
+Saludos en flujo idle: variantes como buenos días o qué tal en nodos idle redirigen al nodo start con la bienvenida completa.
+Archivos modificados
+app/core/flow_engine.py
+Riesgos mitigados
+Sin cambios en parser, endpoints, JSON del flujo ni estados.
+Saludos en order_start / order_modify siguen invitando a ordenar (Mejora 9).
+Repetir pedido anterior sigue en el mensaje 1 cuando aplica.
+Compatibilidad verificada
+Sistema	Estado
+Parser
+14/14 OK
+Flow Engine
+Saludo → 2 mensajes con menú
+Twilio
+dual_message → lista de respuestas
+Pedido / reserva
+Sin cambios en flujos posteriores
+Funcionalidades agregadas
+Al saludar, el bot responde con bienvenida personalizada y menú completo en la segunda burbuja, preguntando si desea pedir o reservar.
+Funcionalidades preservadas
+Comandos globales (menu, pedido, reservar, inicio, cancelar)
+Flujo de pedidos y reservas
+Repetir pedido anterior
+Confirmación al abandonar carrito activo
+Notificaciones admin
 
 
 
@@ -757,3 +800,52 @@ Prompt generado con chat gpt:
 
 
 ##################################################################################################################################
+
+v0.4
+
+## Prompt generado con chat gpt:
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[* El saludo actualmente son dos mensajes, el segundo mensaje está bien pero el primero es así:
+Hola Omar Suarez, Bienvenido a La Casa del Sabor.
+
+---
+Escribe inicio para volver al inicio
+
+quiero que le quites el --- y lo que dice Escribe inicio para volver al inicio]
+
+## Respuesta cursor:
+
+Análisis previo
+El hint --- / Escribe *inicio*... se agregaba en _append_navigation() antes de dividir la respuesta en dos burbujas (_as_reply()), así que quedaba pegado al mensaje 1.
+
+Cambios implementados
+Se añadió "suppress_navigation": true al nodo start en el flujo JSON. Ese flag ya existía en el engine y evita el hint solo en la bienvenida.
+
+Archivos modificados
+flows/restaurant_flow.json
+Riesgos mitigados
+Sin cambios en Python, estados ni otros nodos.
+El mensaje 2 (menú + pedido/reserva) queda igual.
+Compatibilidad verificada
+Sistema	Estado
+Flow Engine
+Saludo → msg1 limpio, msg2 sin cambios
+Otros nodos
+Siguen mostrando el hint de navegación
+Funcionalidades agregadas
+El primer mensaje de bienvenida ya no incluye --- ni “Escribe inicio para volver al inicio”.
+Funcionalidades preservadas
+Saludo personalizado, menú en el segundo mensaje, pedidos, reservas y comandos globales.
+
+
+
+
+######################################################################################################################################
+v0.5
