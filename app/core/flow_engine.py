@@ -90,10 +90,25 @@ class FlowEngine:
             rendered = rendered.replace(f"{{{{{key}}}}}", str(value))
         return rendered
 
-    def _as_reply(self, message: str, node: Optional[Dict[str, Any]] = None) -> Reply:
-        if node and node.get("dual_message") and node.get("message_secondary"):
+    def _as_reply(
+        self,
+        message: str,
+        node: Optional[Dict[str, Any]] = None,
+        step: str = "",
+    ) -> Reply:
+        if node and node.get("dual_message"):
             primary = message.strip()
-            secondary = self._render(node.get("message_secondary", ""))
+            if step == "start":
+                menu_text = self.menu_service.format_menu()
+                secondary = (
+                    f"{menu_text}\n\n"
+                    "¿Deseas hacer un pedido o reservar una mesa?\n\n"
+                    "Escribe *pedido* para ordenar o *reservar* para agendar tu mesa."
+                )
+            elif node.get("message_secondary"):
+                secondary = self._render(node.get("message_secondary", ""))
+            else:
+                secondary = ""
             parts = [part for part in (primary, secondary) if part]
             return parts if len(parts) > 1 else (parts[0] if parts else message)
         return message
@@ -233,6 +248,9 @@ class FlowEngine:
             )
             return self._process_node(wa_id, next_step, include_navigation=True)
 
+        if is_greeting(text) and node.get("flow") == "idle":
+            return self._process_node(wa_id, "start", include_navigation=True)
+
         if node.get("input_mode") == "free_text":
             action_name = node.get("action_on_input") or node.get("action")
             if action_name and action_name in self._actions:
@@ -335,14 +353,15 @@ class FlowEngine:
         if include_navigation:
             response = self._append_navigation(response, node)
 
-        return self._as_reply(response, node)
+        return self._as_reply(response, node, step=step)
 
     def _build_node_context(self, wa_id: str, step: str) -> Dict[str, str]:
         profile = self.user_service.get_profile(wa_id)
         name = profile.get("name", "")
-        welcome = f"Hola{', ' + name if name else ''}, bienvenido a *{RESTAURANT_NAME}*."
         if name:
-            welcome = f"Hola *{name}*, bienvenido nuevamente a *{RESTAURANT_NAME}*."
+            welcome = f"Hola *{name}*, Bienvenido a *{RESTAURANT_NAME}*."
+        else:
+            welcome = f"Hola, Bienvenido a *{RESTAURANT_NAME}*."
 
         address_prompt = "Indícame la dirección de entrega a domicilio."
         saved_address = profile.get("address", "")
