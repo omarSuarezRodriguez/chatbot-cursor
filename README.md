@@ -1,6 +1,6 @@
-## Restaurant WhatsApp Chatbot SaaS
+## v0.11
 
-## v0.10
+## Restaurant WhatsApp Chatbot SaaS
 
 
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
@@ -1313,4 +1313,37 @@ Sí. Aparte del tutorial de Google, para dejarlo **funcional de verdad por Whats
 
 #################################################################
 ## v0.11
+
+## Prompt:
+
+quiero que no me toques absolutamente el proyecto para nada, quiero que unica y exclusivamente hagas lo siguiente, solo 1 archivo puedes crear no puedes tocar ni editar nada más solo quiero que crees un archivo en la raíz del proyecto que haga lo siguiente:
+
+Que cuando yo le de doble clic, me ejecute git add . , git commit -m "(aquí iría la primera línea del readme.md que sería la versión de la app, en este caso ## v0.10 , pero claramente yo la idea es editarla y solamente con escribir run save.py me haga tambien el git push -u origin main, osea que haga todo de una, si me entiendes? ya sabes solo puedes crear ese archivo que haga eso, ni mas ni menos
+
+
+
+## Respuesta cursor:
+
+Creé solo `save.py` en la raíz. No toqué ningún otro archivo.
+
+**Qué hace:**
+1. Lee la **primera línea** de `README.md` (ej. `## v0.10` → commit `v0.10`)
+2. `git add .`
+3. `git commit -m "v0.10"`
+4. `git push -u origin main`
+
+**Cómo usarlo:**
+- Doble clic en `save.py` (si Windows abre `.py` con Python)
+- O en terminal: `python save.py`
+
+Al terminar espera que pulses Enter para que veas el resultado antes de cerrar la ventana.
+
+**Para nueva versión:** cambia solo la primera línea de `README.md` (ej. `## v0.11`) y ejecuta `save.py`.
+
+
+
+
+#################################################################
+## v0.12
+
 
