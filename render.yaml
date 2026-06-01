@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: restaurant-chatbot
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: RESTAURANT_NAME
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_WHATSAPP_FROM
+        sync: false
+      - key: ADMIN_WHATSAPP_NUMBER
+        sync: false
+      - key: GOOGLE_SPREADSHEET_ID
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: MENU_CACHE_TTL_SECONDS
+        value: "60"
+      - key: ORDERS_CACHE_TTL_SECONDS
+        value: "30"
+      - key: STATE_PERSIST_PATH
+        value: data/user_states.json

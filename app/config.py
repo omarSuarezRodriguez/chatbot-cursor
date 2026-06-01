@@ -33,6 +33,9 @@ PARSER_ERROR_LOG_PATH = os.getenv(
 ADMIN_REMINDER_INTERVAL_SECONDS = int(os.getenv("ADMIN_REMINDER_INTERVAL_SECONDS", "300"))
 ADMIN_REMINDER_MAX_SECONDS = int(os.getenv("ADMIN_REMINDER_MAX_SECONDS", "3600"))
 
+MENU_CACHE_TTL_SECONDS = int(os.getenv("MENU_CACHE_TTL_SECONDS", "60"))
+ORDERS_CACHE_TTL_SECONDS = int(os.getenv("ORDERS_CACHE_TTL_SECONDS", "30"))
+
 NAV_HINT = (
     "\n\n---\n"
     "Escribe *inicio* para volver al inicio\n"

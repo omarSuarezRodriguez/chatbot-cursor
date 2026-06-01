@@ -4,16 +4,16 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import threading
 import time
 import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-logger = logging.getLogger(__name__)
+from app.config import MENU_CACHE_TTL_SECONDS, ORDERS_CACHE_TTL_SECONDS
 
-MENU_CACHE_TTL_SECONDS = 60
-ORDERS_CACHE_TTL_SECONDS = 30
+logger = logging.getLogger(__name__)
 
 DEMO_MENU = [
     {
@@ -123,17 +123,42 @@ class GoogleSheetsClient:
                 "https://www.googleapis.com/auth/spreadsheets",
                 "https://www.googleapis.com/auth/drive",
             ]
-            credentials = Credentials.from_service_account_file(
-                self.credentials_path,
-                scopes=scopes,
-            )
+            json_blob = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+            if json_blob:
+                credentials = Credentials.from_service_account_info(
+                    json.loads(json_blob),
+                    scopes=scopes,
+                )
+            else:
+                credentials = Credentials.from_service_account_file(
+                    self.credentials_path,
+                    scopes=scopes,
+                )
             self._client = gspread.authorize(credentials)
             self._spreadsheet = self._client.open_by_key(self.spreadsheet_id)
             self._connected = True
             self._ensure_worksheets()
+            self.warm_up_cache()
         except Exception as exc:
             logger.warning("Google Sheets unavailable (%s). Using demo data.", exc)
             self._connected = False
+
+    def warm_up_cache(self) -> None:
+        if not self._connected:
+            return
+        started = time.perf_counter()
+        try:
+            menu = self.get_menu()
+            users = self._load_users_cache()
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            logger.info(
+                "Google Sheets cache warm-up: %d menu items, %d users in %.1f ms",
+                len(menu),
+                len(users),
+                elapsed_ms,
+            )
+        except Exception as exc:
+            logger.warning("Google Sheets cache warm-up failed (%s).", exc)
 
     def _ensure_worksheets(self) -> None:
         if not self._spreadsheet:

@@ -40,6 +40,16 @@ class StateManager:
         with self._persist_path.open("w", encoding="utf-8") as handle:
             json.dump(self._states, handle, ensure_ascii=False, indent=2)
 
+    def _persist_if_changed(
+        self,
+        wa_id: str,
+        previous: Optional[Dict[str, Any]],
+        current: Dict[str, Any],
+    ) -> None:
+        if previous == current:
+            return
+        self._save()
+
     def get(self, wa_id: str) -> Dict[str, Any]:
         with self._lock:
             if wa_id not in self._states:
@@ -48,10 +58,12 @@ class StateManager:
 
     def update(self, wa_id: str, **kwargs: Any) -> Dict[str, Any]:
         with self._lock:
-            current = self.get(wa_id)
-            current.update(kwargs)
-            self._states[wa_id] = current
-            self._save()
+            if wa_id not in self._states:
+                self._states[wa_id] = deepcopy(DEFAULT_STATE)
+            previous = deepcopy(self._states[wa_id])
+            self._states[wa_id].update(kwargs)
+            current = self._states[wa_id]
+            self._persist_if_changed(wa_id, previous, current)
             return deepcopy(current)
 
     def set_step(self, wa_id: str, step: str, flow: Optional[str] = None) -> Dict[str, Any]:
@@ -70,9 +82,11 @@ class StateManager:
 
     def reset(self, wa_id: str) -> Dict[str, Any]:
         with self._lock:
-            self._states[wa_id] = deepcopy(DEFAULT_STATE)
-            self._save()
-            return deepcopy(self._states[wa_id])
+            previous = self._states.get(wa_id)
+            new_state = deepcopy(DEFAULT_STATE)
+            self._states[wa_id] = new_state
+            self._persist_if_changed(wa_id, previous, new_state)
+            return deepcopy(new_state)
 
     def cancel(self, wa_id: str) -> Dict[str, Any]:
         return self.reset(wa_id)

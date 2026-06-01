@@ -11,9 +11,29 @@ class OrderService:
     def __init__(self, sheets: GoogleSheetsClient, menu_service: MenuService) -> None:
         self.sheets = sheets
         self.menu_service = menu_service
+        self._cached_parser: Optional[OrderParser] = None
+        self._parser_menu_key: Optional[tuple] = None
+
+    @staticmethod
+    def _menu_cache_key(menu: List[Dict[str, Any]]) -> tuple:
+        return tuple(
+            (
+                str(item.get("id", "")),
+                str(item.get("nombre", "")),
+                float(item.get("precio", 0) or 0),
+                bool(item.get("disponible", True)),
+            )
+            for item in menu
+        )
 
     def _parser(self) -> OrderParser:
-        return OrderParser(self.menu_service.get_available_menu())
+        menu = self.menu_service.get_available_menu()
+        key = self._menu_cache_key(menu)
+        if self._cached_parser is not None and self._parser_menu_key == key:
+            return self._cached_parser
+        self._cached_parser = OrderParser(menu)
+        self._parser_menu_key = key
+        return self._cached_parser
 
     def parse_order_text(
         self,

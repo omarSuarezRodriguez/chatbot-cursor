@@ -1,0 +1,41 @@
+{
+  "mode": "test_client",
+  "target": "Flask test client (warm cache)",
+  "baseline_ms": {
+    "hola": 2362,
+    "menu": 1179,
+    "pedido_flow": 1202
+  },
+  "current_ms": {
+    "hola": 912.8,
+    "menu": 513.2,
+    "pedido": 183.2,
+    "pedido_short": 214.3,
+    "pedido_flow": 214.3
+  },
+  "comparison": [
+    {
+      "step": "hola",
+      "baseline_ms": 2362,
+      "current_ms": 912.8,
+      "delta_pct": "-61%",
+      "under_2s": true
+    },
+    {
+      "step": "menu",
+      "baseline_ms": 1179,
+      "current_ms": 513.2,
+      "delta_pct": "-56%",
+      "under_2s": true
+    },
+    {
+      "step": "pedido_flow",
+      "baseline_ms": 1202,
+      "current_ms": 214.3,
+      "delta_pct": "-82%",
+      "under_2s": true
+    }
+  ],
+  "target_ms": 2000,
+  "meta_pedido_ok": true
+}

@@ -1,4 +1,4 @@
-## v0.18
+## v0.19
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -2154,6 +2154,473 @@ Listo para continuar con el Paso 4 (caché menú por request) cuando quieras.
 
 #################################################################
 ## v0.19
+
+## Prompt:
+
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 4 — Caché de menú por request en MenuService Un solo get_menu() por mensaje (no releer en saludo + parser). **Verificar:** saludo con menú correcto + parser reconoce productos.]
+
+
+## Respuesta cursor: ##
+
+### Análisis previo
+
+`MenuService.get_available_menu()` llamaba a `sheets.get_menu()` en cada invocación. En un mismo webhook podían acumularse varias lecturas (p. ej. `format_menu()` en el saludo y `OrderParser` vía `OrderService._parser()`).
+
+### Cambios implementados
+
+Caché por request en `MenuService` usando Flask `g`: la primera llamada filtra y guarda el menú disponible; las siguientes en el mismo mensaje reutilizan esa lista sin volver a llamar a Sheets.
+
+Scripts y tests sin contexto Flask siguen funcionando como antes (carga directa en cada llamada).
+
+### Archivos modificados
+
+- `app/services/menu_service.py`
+
+### Riesgos mitigados
+
+- Sin contexto de request (scripts, tests unitarios): comportamiento previo intacto.
+- Con contexto Flask (`/bot`): `g` se limpia automáticamente entre requests, sin datos obsoletos entre mensajes.
+
+### Compatibilidad verificada
+
+```
+=== Result: 5/5 passed ===
+```
+
+- Saludo con menú correcto (2 mensajes, productos de Sheets).
+- Parser reconoce productos (`1 hamburguesa` → confirmación).
+- Test unitario: 3 llamadas a `get_available_menu`/`format_menu` → **1** `sheets.get_menu()`.
+
+### Funcionalidades agregadas
+
+- Caché de menú disponible por request HTTP.
+
+### Funcionalidades preservadas
+
+- API de `MenuService`, formato del menú, parser, flow engine y contratos existentes sin cambios.
+
+
+
+## Segundo Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 5 — Precarga de caché al arrancar (warm-up) Al iniciar Flask, cargar MENU y USERS en memoria. **Verificar:** el primer hola tras reiniciar ya no es el más lento.]
+
+
+
+
+## Respuesta cursor: ##
+
+### Análisis previo
+
+El primer `hola` tras reiniciar pagaba el costo de conectar y leer MENU + USERS en la primera petición (~1.3 s+). Esas lecturas pueden hacerse al arrancar, cuando ya se crea `GoogleSheetsClient` en `create_app()`.
+
+### Cambios implementados
+
+Nuevo método `warm_up_cache()` en `GoogleSheetsClient`: tras conectar con éxito, precarga menú y usuarios en memoria y registra el tiempo en log.
+
+Se invoca automáticamente al final de `_connect()`, sin cambios en `app.py`.
+
+### Archivos modificados
+
+- `app/integrations/google_sheets.py`
+
+### Riesgos mitigados
+
+- Si Sheets no está disponible, `warm_up_cache()` no hace nada (modo demo intacto).
+- Errores en warm-up se capturan y registran; no impiden arrancar la app.
+
+### Compatibilidad verificada
+
+```
+=== Result: 5/5 passed ===
+```
+
+Medición con caché caliente al arrancar:
+- Warm-up al inicio: ~407 ms (10 ítems menú, 8–10 usuarios)
+- Primer `hola`: ~980–1050 ms (antes ~1363 ms post-Paso 3, ~2362 ms baseline)
+- `menu` siguiente: ~225 ms
+
+### Funcionalidades agregadas
+
+- Precarga de caché MENU + USERS al iniciar Flask.
+
+### Funcionalidades preservadas
+
+- APIs, endpoints, flujo conversacional, parser y persistencia sin cambios.
+
+
+
+## Tercer Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 6 — Reutilizar OrderParser entre mensajes No reconstruir catálogo en cada mensaje; invalidar solo si cambia el menú. **Verificar:** parser 21/21 + pedido largo con cantidades (60, 2333, 777…).]
+
+
+
+## Respuesta cursor: ##
+
+### Análisis previo
+
+`OrderService._parser()` creaba un `OrderParser` nuevo en cada mensaje, reconstruyendo catálogo, matcher y motor de fuzzy matching aunque el menú no hubiera cambiado.
+
+### Cambios implementados
+
+`OrderService` mantiene una instancia cacheada de `OrderParser` y una clave derivada del menú (`id`, `nombre`, `precio`, `disponible`). Solo reconstruye el parser cuando esa clave cambia (menú actualizado o TTL de Sheets expirado).
+
+### Archivos modificados
+
+- `app/services/order_service.py`
+
+### Riesgos mitigados
+
+- Invalidación automática al cambiar contenido del menú; no queda parser obsoleto.
+- API pública de `OrderService` sin cambios.
+
+### Compatibilidad verificada
+
+```
+PARSER VALIDATION: OK (21/21)
+=== Result: 5/5 passed ===
+```
+
+Pedido largo (60, 2333, 12123, 777, 8): cantidades correctas. Test unitario: dos llamadas a `_parser()` → misma instancia (`p1 is p2`).
+
+### Funcionalidades agregadas
+
+- Reutilización de `OrderParser` entre mensajes con invalidación por cambio de menú.
+
+### Funcionalidades preservadas
+
+- Parser, flow engine, contratos JSON y flujo de pedidos sin cambios.
+
+
+## Cuarto Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 7 — Notificaciones Twilio en background Enviar WhatsApp al admin/cliente en thread/async, sin bloquear la respuesta del webhook. **Verificar:** cliente responde rápido + admin sigue recibiendo notificaciones.]
+
+## Respuesta Cursor: ##
+
+### Análisis previo
+
+`notify_new_order()` y la confirmación al cliente llamaban `_send_whatsapp()` de forma síncrona dentro del webhook, bloqueando la respuesta mientras Twilio procesaba el envío (500 ms–2 s+).
+
+### Cambios implementados
+
+- Nuevo `_send_whatsapp_async()`: lanza un thread daemon que ejecuta el envío real.
+- `notify_new_order()` → notificación al admin en background.
+- Confirmación al cliente tras `CONFIRMAR ORD-...` → también en background.
+- Recordatorios del scheduler siguen en su thread propio (no bloquean el webhook).
+
+### Archivos modificados
+
+- `app/services/admin_service.py`
+
+### Riesgos mitigados
+
+- Threads daemon: no impiden apagar el proceso.
+- Errores de Twilio se registran en el thread; no afectan la respuesta al cliente.
+- Sin credenciales Twilio: mismo comportamiento de log que antes.
+
+### Compatibilidad verificada
+
+```
+=== Result: 5/5 passed ===
+```
+
+Test unitario: envío simulado de 1.5 s → el caller retorna en **< 200 ms**; el mensaje se envía en background. `notify_new_order` sigue invocando el envío.
+
+### Funcionalidades agregadas
+
+- Notificaciones Twilio outbound sin bloquear el webhook.
+
+### Funcionalidades preservadas
+
+- Formato de mensajes admin/cliente, confirmación de pedidos, scheduler de recordatorios, APIs y flujo conversacional sin cambios.
+
+
+## Quinto Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 8 — Persistencia de estado más liviana Escribir user_states.json solo si hubo cambio (debounce o diff). **Verificar:** flujo de pedido conserva carrito tras varios mensajes.]
+
+
+## Respuesta prompt: ##
+
+### Análisis previo
+
+`StateManager` escribía `user_states.json` en cada `update()` y `reset()`, incluso cuando el estado no cambiaba (p. ej. `set_step` repetido con los mismos valores).
+
+### Cambios implementados
+
+- `_persist_if_changed()` compara el estado anterior con el nuevo antes de guardar.
+- `update()` y `reset()` solo llaman a `_save()` si hubo cambio real.
+- `update()` modifica el estado in-place (sin el `get()` + deepcopy extra de antes).
+
+### Archivos modificados
+
+- `app/core/state_manager.py`
+
+### Riesgos mitigados
+
+- Si el estado es idéntico, no hay escritura a disco (menos I/O y menos contención).
+- Cuando sí hay cambio (carrito, paso, etc.), se persiste igual que antes.
+
+### Compatibilidad verificada
+
+```
+=== Result: 5/5 passed ===
+```
+
+Tests adicionales:
+- 3× `set_step` igual → **1** escritura; `patch_data` duplicado → sin escritura extra.
+- Carrito persiste tras recargar desde disco.
+- Flujo `pedido` → `2 hamburguesas` → mensaje siguiente: carrito conservado (qty ≥ 2).
+
+### Funcionalidades agregadas
+
+- Persistencia con diff: escribir solo si el estado cambió.
+
+### Funcionalidades preservadas
+
+- API de `StateManager`, flujo de pedido, carrito y estados conversacionales sin cambios.
+
+
+## Sexto Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 9 — TTL de caché configurable en .env MENU_CACHE_TTL_SECONDS, ORDERS_CACHE_TTL_SECONDS con defaults actuales. **Verificar:** cambio en Sheets se refleja según TTL; todo lo demás igual.]
+
+## Respuesta cursor: ##
+
+### Análisis previo
+
+Los TTL de caché de menú (60 s) y pedidos (30 s) estaban fijos en `google_sheets.py`, sin poder ajustarlos desde `.env`.
+
+### Cambios implementados
+
+- **`app/config.py`**: `MENU_CACHE_TTL_SECONDS` y `ORDERS_CACHE_TTL_SECONDS` leídos de `.env` con defaults `60` y `30`.
+- **`app/integrations/google_sheets.py`**: importa esos valores desde `config` (ya no hay constantes locales).
+- **`.env.example`**: documentadas las nuevas variables.
+
+### Archivos modificados
+
+- `app/config.py`
+- `app/integrations/google_sheets.py`
+- `.env.example`
+
+### Riesgos mitigados
+
+- Defaults idénticos al comportamiento anterior si no se define nada en `.env`.
+- Sin cambios en APIs ni en la lógica de invalidación de caché existente.
+
+### Compatibilidad verificada
+
+```
+=== Result: 5/5 passed ===
+```
+
+Defaults verificados: `60` / `30`. Tras expirar el TTL, `get_menu()` vuelve a leer Sheets.
+
+### Funcionalidades agregadas
+
+- TTL de caché configurable vía `.env`:
+
+```env
+MENU_CACHE_TTL_SECONDS=60
+ORDERS_CACHE_TTL_SECONDS=30
+```
+
+### Funcionalidades preservadas
+
+- Warm-up, parser, flujo de pedidos y resto del checklist sin cambios.
+
+
+## Septimo Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 10 — Servidor de producción local Usar waitress o gunicorn en lugar de Flask debug. **Verificar:** /health OK + checklist WhatsApp del Paso 2.]
+
+
+## Respuesta cursor: ##
+
+### Análisis previo
+
+El arranque usaba `app.run(..., debug=True)` (servidor de desarrollo de Flask), inadecuado para uso local estable o como base de producción.
+
+### Cambios implementados
+
+- **`waitress`** añadido a `requirements.txt` (compatible con Windows; gunicorn no lo es).
+- **`run.py`**: arranca con Waitress; host/puerto configurables vía `HOST` y `PORT`.
+- **`app/app.py`**: el bloque `__main__` también usa Waitress (sin `debug=True`).
+- **`.env.example`**: documentados `HOST=0.0.0.0` y `PORT=5000`.
+
+### Archivos modificados
+
+- `requirements.txt`
+- `run.py`
+- `app/app.py`
+- `.env.example`
+
+### Riesgos mitigados
+
+- Waitress es un servidor WSGI de producción, sin reloader ni debugger de Flask.
+- Misma app WSGI (`app = create_app()`); endpoints sin cambios.
+
+### Compatibilidad verificada
+
+```
+GET /health → 200 {'status': 'ok', ...}
+=== Result: 5/5 passed ===
+```
+
+Servidor Waitress en ejecución: log `Serving on http://0.0.0.0:5000`.
+
+### Funcionalidades agregadas
+
+- Arranque con Waitress: `python run.py`
+
+### Funcionalidades preservadas
+
+- Webhook `/bot`, warm-up, cachés y checklist completo sin cambios.
+
+Para usar en otra máquina: `pip install -r requirements.txt` (incluye `waitress`).
+
+
+
+## Octavo Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 11 — Hosting permanente (sin ngrok) Desplegar en Railway, Render o VPS. **Verificar:** webhook estable 24/7 + latencia menor que con PC + ngrok.]
+
+## Respuesta cursor: ##
+
+**Paso 11 — listo en el repo.** Quedó preparado el despliegue permanente sin ngrok:
+
+- `Dockerfile` + `render.yaml` + `railway.toml`
+- Credenciales Google vía `GOOGLE_SERVICE_ACCOUNT_JSON` (para la nube)
+- `scripts/verify_deployment.py` para comprobar `/health` y latencia de `hola`
+
+**Verificado localmente:** checklist 5/5 y `verify_deployment` OK (`hola` ~857 ms).
+
+**Tu parte:** subir a GitHub, desplegar en Render o Railway con las variables de `.env`, apuntar Twilio a `https://tu-dominio/bot` y ejecutar:
+
+```bash
+DEPLOY_URL=https://tu-app.onrender.com python scripts/verify_deployment.py
+```
+
+
+## Noveno Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 12 — Medir de nuevo y comparar Repetir el Paso 1 y documentar antes/después. **Meta:** respuesta al cliente **< 2 s** en pedidos normales (sin contar red Twilio→teléfono).]
+
+## Respuesta cursor: ## 
+
+### Análisis previo
+
+Paso 12 pide repetir la medición del Paso 1 y comparar con el baseline documentado (~2362 / ~1179 / ~1202 ms), con meta de pedido normal **< 2 s**.
+
+### Cambios implementados
+
+Nuevo script `scripts/measure_latency.py`:
+- Mide `hola`, `menu`, `pedido` y `1 hamburguesa` en secuencia
+- Imprime tabla antes/después
+- Guarda reporte en `data/latency_report.json`
+- Soporta `DEPLOY_URL` para medir en producción
+
+### Archivos modificados
+
+- `scripts/measure_latency.py` (nuevo)
+- `data/latency_report.json` (generado)
+
+### Resultados — antes vs ahora
+
+| Paso | Baseline | Ahora | Cambio | < 2 s |
+|------|----------|-------|--------|-------|
+| `hola` | 2362 ms | **913 ms** | −61% | OK |
+| `menu` | 1179 ms | **513 ms** | −56% | OK |
+| `pedido` (`1 hamburguesa`) | 1202 ms | **214 ms** | −82% | OK |
+
+**Meta cumplida:** pedido normal **214 ms** ≪ 2000 ms.
+
+Checklist: **5/5 passed**.
+
+### Cómo repetir
+
+```bash
+python scripts/measure_latency.py
+DEPLOY_URL=https://tu-app.onrender.com python scripts/measure_latency.py
+```
+
+### Optimizaciones que explican la mejora
+
+Pasos 3–10: caché usuarios/menú/parser, warm-up al arrancar, Twilio async, persistencia con diff, Waitress.
+
+**Plan de optimización (12 pasos): completado.**
+
+
+
+
+#################################################################
+## v0.20
 
 ## Prompt:
 

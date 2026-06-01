@@ -75,6 +75,15 @@ class AdminService:
             logger.exception("Failed to send WhatsApp to %s", to_number)
             return False
 
+    def _send_whatsapp_async(self, to_number: str, body: str) -> None:
+        thread = threading.Thread(
+            target=self._send_whatsapp,
+            args=(to_number, body),
+            daemon=True,
+            name="twilio-outbound",
+        )
+        thread.start()
+
     def notify_new_order(self, order: Dict[str, Any]) -> None:
         if not ADMIN_WHATSAPP_NUMBER:
             logger.warning("ADMIN_WHATSAPP_NUMBER not set; skipping admin notification.")
@@ -91,7 +100,7 @@ class AdminService:
             f"{chr(10).join(lines)}\n\n"
             f"Responde *CONFIRMAR {order.get('order_id')}* o *pedido {order.get('order_id')} listo* para aceptar el pedido."
         )
-        self._send_whatsapp(ADMIN_WHATSAPP_NUMBER, message)
+        self._send_whatsapp_async(ADMIN_WHATSAPP_NUMBER, message)
         self._track_pending_reminder(order.get("order_id", ""))
 
     def handle_admin_message(self, body: str) -> str:
@@ -120,7 +129,7 @@ class AdminService:
             self._clear_reminder(order_id)
             customer = order.get("wa_id", "")
             if customer:
-                self._send_whatsapp(
+                self._send_whatsapp_async(
                     customer,
                     f"Tu pedido *{order_id}* fue confirmado por el restaurante. "
                     "¡Gracias por tu compra!",

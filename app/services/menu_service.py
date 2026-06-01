@@ -9,10 +9,27 @@ class MenuService:
     def __init__(self, sheets: GoogleSheetsClient) -> None:
         self.sheets = sheets
 
-    def get_available_menu(self) -> List[Dict[str, Any]]:
+    def _fetch_available_menu(self) -> List[Dict[str, Any]]:
         return [
             item for item in self.sheets.get_menu() if item.get("disponible", True)
         ]
+
+    def get_available_menu(self) -> List[Dict[str, Any]]:
+        try:
+            from flask import g, has_request_context
+        except ImportError:
+            return self._fetch_available_menu()
+
+        if not has_request_context():
+            return self._fetch_available_menu()
+
+        cached = getattr(g, "_available_menu_cache", None)
+        if cached is not None:
+            return cached
+
+        menu = self._fetch_available_menu()
+        g._available_menu_cache = menu
+        return menu
 
     def format_menu(self) -> str:
         menu = self.get_available_menu()
