@@ -105,8 +105,10 @@ class GoogleSheetsClient:
         self._menu_cache: Optional[List[Dict[str, Any]]] = None
         self._menu_cache_expires: float = 0.0
         self._users_cache: Optional[Dict[str, Dict[str, Any]]] = None
+        self._user_row_index: Optional[Dict[str, int]] = None
         self._orders_cache: Optional[List[Dict[str, Any]]] = None
         self._orders_cache_expires: float = 0.0
+        self._worksheets: Dict[str, Any] = {}
         self._connect()
 
     def _connect(self) -> None:
@@ -150,11 +152,16 @@ class GoogleSheetsClient:
                 current = worksheet.row_values(1)
                 if not current:
                     worksheet.append_row(headers)
+            self._worksheets[sheet_name] = worksheet
 
     def _get_sheet(self, name: str):
         if not self._connected or not self._spreadsheet:
             return None
-        return self._spreadsheet.worksheet(name)
+        if name in self._worksheets:
+            return self._worksheets[name]
+        worksheet = self._spreadsheet.worksheet(name)
+        self._worksheets[name] = worksheet
+        return worksheet
 
     @staticmethod
     def _parse_bool(value: Any) -> bool:
@@ -209,15 +216,45 @@ class GoogleSheetsClient:
 
         sheet = self._get_sheet("USERS")
         users: Dict[str, Dict[str, Any]] = {}
+        row_index: Dict[str, int] = {}
         if sheet:
-            for row in sheet.get_all_records():
+            headers = SHEET_HEADERS["USERS"]
+            for idx, raw in enumerate(sheet.get_all_values()[1:], start=2):
+                if not raw or not str(raw[0]).strip():
+                    continue
+                padded = raw + [""] * (len(headers) - len(raw))
+                row = dict(zip(headers, padded[: len(headers)]))
                 wa_id = str(row.get("wa_id", "")).strip()
                 if wa_id:
                     users[wa_id] = self._user_from_row(wa_id, row)
+                    row_index[wa_id] = idx
 
         with self._cache_lock:
             self._users_cache = users
+            self._user_row_index = row_index
             return self._users_cache
+
+    def _resolve_user_row(self, sheet, wa_id: str) -> Optional[int]:
+        row_idx = self._get_user_row(wa_id)
+        if row_idx:
+            return row_idx
+        try:
+            cell = sheet.find(wa_id, in_column=1)
+        except Exception:
+            return None
+        if not cell:
+            return None
+        with self._cache_lock:
+            if self._user_row_index is not None:
+                self._user_row_index[wa_id] = cell.row
+        return cell.row
+
+    def _get_user_row(self, wa_id: str) -> Optional[int]:
+        self._load_users_cache()
+        with self._cache_lock:
+            if not self._user_row_index:
+                return None
+            return self._user_row_index.get(wa_id)
 
     def _get_orders_records(self) -> List[Dict[str, Any]]:
         now = time.time()
@@ -249,6 +286,10 @@ class GoogleSheetsClient:
         return list(menu)
 
     def get_user(self, wa_id: str) -> Dict[str, Any]:
+        with self._cache_lock:
+            if self._users_cache is not None:
+                return dict(self._users_cache.get(wa_id, {}))
+
         sheet = self._get_sheet("USERS")
         if not sheet:
             return dict(self._demo_users.get(wa_id, {}))
@@ -286,7 +327,6 @@ class GoogleSheetsClient:
             }
             return
 
-        rows = sheet.get_all_records()
         payload_items = json.dumps(merged_items, ensure_ascii=False) if merged_items else ""
         user_payload = {
             "wa_id": wa_id,
@@ -296,30 +336,34 @@ class GoogleSheetsClient:
             "last_order_items": merged_items,
             "last_seen": now,
         }
-        for idx, row in enumerate(rows, start=2):
-            if str(row.get("wa_id")) == wa_id:
-                sheet.update(
-                    f"B{idx}:F{idx}",
+        row_idx = self._resolve_user_row(sheet, wa_id)
+        if row_idx:
+            sheet.update(
+                f"B{row_idx}:F{row_idx}",
+                [
                     [
-                        [
-                            merged_name,
-                            merged_address,
-                            last_order_date,
-                            payload_items,
-                            now,
-                        ]
-                    ],
-                )
-                with self._cache_lock:
-                    if self._users_cache is not None:
-                        self._users_cache[wa_id] = user_payload
-                return
+                        merged_name,
+                        merged_address,
+                        last_order_date,
+                        payload_items,
+                        now,
+                    ]
+                ],
+            )
+            with self._cache_lock:
+                if self._users_cache is not None:
+                    self._users_cache[wa_id] = user_payload
+            return
+
         sheet.append_row(
             [wa_id, merged_name, merged_address, last_order_date, payload_items, now]
         )
+        new_row = len(sheet.get_all_values())
         with self._cache_lock:
             if self._users_cache is not None:
                 self._users_cache[wa_id] = user_payload
+            if self._user_row_index is not None:
+                self._user_row_index[wa_id] = new_row
 
     def create_order(
         self,

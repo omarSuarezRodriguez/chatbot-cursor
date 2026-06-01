@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import sys
+import time
 from pathlib import Path
 from typing import List, Union
 
@@ -88,6 +89,7 @@ def create_app() -> Flask:
 
     @flask_app.post("/bot")
     def bot_webhook():
+        started = time.perf_counter()
         response = MessagingResponse()
         wa_id = request.form.get("WaId") or ""
         profile_name = request.form.get("ProfileName", "")
@@ -101,10 +103,18 @@ def create_app() -> Flask:
             response.message(
                 "No pude identificar tu número. Intenta escribirnos de nuevo."
             )
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            logger.info(
+                "POST /bot completed in %.1f ms wa_id=missing body=%r",
+                elapsed_ms,
+                body[:80],
+            )
             return str(response), 200, {"Content-Type": "application/xml"}
 
+        is_admin = False
         try:
             if admin_service.is_admin(wa_id):
+                is_admin = True
                 reply = admin_service.handle_admin_message(body)
             else:
                 user_service.touch(wa_id=wa_id, name=profile_name)
@@ -123,6 +133,14 @@ def create_app() -> Flask:
             )
 
         _attach_replies(response, reply)
+        elapsed_ms = (time.perf_counter() - started) * 1000
+        logger.info(
+            "POST /bot completed in %.1f ms wa_id=%s admin=%s body=%r",
+            elapsed_ms,
+            wa_id,
+            is_admin,
+            body[:80],
+        )
         return str(response), 200, {"Content-Type": "application/xml"}
 
     @flask_app.post("/bot/reload-flow")

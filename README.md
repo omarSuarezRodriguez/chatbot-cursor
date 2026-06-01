@@ -1,4 +1,4 @@
-## v0.15
+## v0.18
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -1627,3 +1627,542 @@ Funciona con **cualquier producto del menú** cargado (Sheets o demo), porque el
 
 
 
+
+#################################################################
+## v0.17
+
+## Prompt:
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Mira, le mandé este mensaje y no me agarró las cantidades bien, revisa y que por favor siempre quieden bien las cantidades, solo arregla unicamente eso,
+
+mi mensaje: quiero por favor 60 hamburgsdfesas clasiccscas, 2333 hamburgueas mega, 12123 cocas con 777 pirzas harwewaianas y 8 picsas de jamon y quieso
+
+respuesta: Perfecto, actualicé tu pedido.
+
+* 60 x Hamburguesa Clásica — $7500.00
+* 23 x Hamburguesa Mega — $253.00
+* 12123 x Coca Cola — $96984.00
+* 7 x Pizza Hawaiana — $875.00
+* 8 x Pizza de Jamón y Queso — $760.00
+
+Total: $106372.00
+
+
+
+¿Confirmamos tu pedido?
+Responde sí para confirmar o no para modificarlo.
+
+---
+Escribe inicio para volver al inicio
+
+
+---- busca la manera con alguna comprobación check o algo de que siempre los numeros vayan perfecto]
+
+
+## Respuesta cursor:
+
+### Análisis previo
+
+**Causa:** `REPEAT_CHAR_RE` trataba dígitos como letras repetidas:
+- `2333` → `23` (tres `3` seguidas se colapsaban)
+- `777` → `7`
+
+Las cantidades se extraían bien en segmentos básicos, pero `TextNormalizer.advanced()` las corrompía antes del matching.
+
+---
+
+### Cambios implementados (solo `app/core/parser.py`)
+
+1. **`REPEAT_CHAR_RE`** solo colapsa letras (`holaaa` → `hola`), no dígitos.
+2. **`QuantityEngine.resolve()`** — extrae cantidad del segmento sin destructurar números y verifica contra el texto original si hay discrepancia.
+3. **Prueba automática** con tu mensaje exacto (60, 2333, 12123, 777, 8).
+
+---
+
+### Resultado verificado
+
+| Producto | Cantidad esperada | Ahora |
+|---|---|---|
+| Hamburguesa Clásica | 60 | ✅ |
+| Hamburguesa Mega | 2333 | ✅ |
+| Coca Cola | 12123 | ✅ |
+| Pizza Hawaiana | 777 | ✅ |
+| Pizza de Jamón y Queso | 8 | ✅ |
+
+Parser: **21/21 OK**
+
+---
+
+### Archivos modificados
+
+- `app/core/parser.py`
+
+
+
+
+#################################################################
+## v0.18
+
+## Prompt:
+
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Por qué siento que el bot va lento? especialmente después de agregar lo de google sheets? pero no te fijes solamente en eso, quiero que analices y me propongas un plan de acción que yo puead ir implementando prompt por prompt para mejorar la velocidad del bot, pero que sea seguro sin que se rompa nada, osea una mejora incremental, es una optimización sin romper nada, quiero que me verifiques varias veces que todo está correctamente funcionando osea poner eso en el plan de acción, necesito que me hagas el mejor plan de acción pero que también sea corto por ahí unas 10 o 15 como tu creas conveniente, recuerda que es de vital importancia la integridad del proyecto que es una mejora incremental, una  optimización]
+
+
+## Respuesta cursor:
+
+## Por qué se siente lento
+
+No es solo Google Sheets. Hoy el bot hace **todo en serie** antes de responder a Twilio:
+
+| Causa | Impacto | Estado |
+|---|---|---|
+| Llamadas a Google Sheets API (~200–800 ms c/u) | Alto | Parcialmente mitigado (caché 60s menú, usuarios, 30s pedidos) |
+| `upsert_user` sigue leyendo USERS entero para encontrar fila | Medio | Pendiente |
+| Menú se lee varias veces por mensaje (saludo + parser) | Medio | Pendiente |
+| Parser reconstruye catálogo en cada mensaje de pedido | Medio | Pendiente |
+| Twilio outbound síncrono (admin/cliente) dentro del webhook | Medio | Pendiente |
+| Persistencia de estado: escribe JSON completo en disco | Bajo–medio | Pendiente |
+| Flask en modo debug / servidor local + ngrok | Medio (dev) | Entorno |
+| Pedidos muy largos = más parsing | Bajo | Normal |
+
+**Conclusión:** Sheets añadió latencia de red; la caché ya ayuda, pero aún hay cuellos de botella seguros de optimizar.
+
+---
+
+## Plan de acción incremental (12 pasos)
+
+Cada paso = **1 prompt**. Regla: **1 cambio → verificar → commit**. No pasar al siguiente si falla la verificación.
+
+---
+
+### Fase 1 — Medir antes de tocar (sin riesgo)
+
+**Paso 1 — Baseline de tiempos**  
+Agregar logs de duración en `/bot` (solo `time.perf_counter`, sin cambiar lógica).  
+**Verificar:** `python run.py` → enviar `hola`, `menu`, `pedido` → anotar ms en consola.  
+**Meta:** saber cuánto tarda hoy cada tipo de mensaje.
+
+**Paso 2 — Checklist de regresión fijo**  
+Definir 5 pruebas manuales + 2 automáticas que repetirás siempre:
+- `python -m app.core.parser` → 21/21
+- `curl http://localhost:5000/health`
+- WhatsApp: `hola` → 2 mensajes
+- WhatsApp: `menu` → menú de Sheets
+- WhatsApp: pedido corto → confirmación
+
+---
+
+### Fase 2 — Google Sheets (mayor impacto, bajo riesgo)
+
+**Paso 3 — Optimizar `upsert_user`** *(ya hay caché parcial)*  
+Evitar `get_all_records()` en cada `touch`; guardar índice de fila por `wa_id` en caché.  
+**Verificar:** checklist paso 2 + editar nombre en chat no rompe perfil.
+
+**Paso 4 — Caché de menú en `MenuService`**  
+Un solo `get_menu()` por request (no re-leer en saludo + parser).  
+**Verificar:** saludo muestra menú correcto; parser sigue reconociendo productos.
+
+**Paso 5 — TTL configurable en `.env`**  
+`MENU_CACHE_TTL_SECONDS=120` sin cambiar comportamiento por defecto.  
+**Verificar:** cambiar producto en Sheets → aparece antes de 2 min si TTL=120.
+
+**Paso 6 — Precarga al arrancar**  
+Al iniciar Flask, cargar MENU + USERS en caché (warm-up).  
+**Verificar:** primer `hola` después de reinicio ya no es el más lento.
+
+---
+
+### Fase 3 — Flujo interno (riesgo bajo)
+
+**Paso 7 — Reutilizar `OrderParser` por sesión**  
+No reconstruir catálogo en cada mensaje; invalidar solo si expira caché de menú.  
+**Verificar:** parser 21/21 + pedido largo con cantidades (60, 2333, 777…).
+
+**Paso 8 — Persistencia de estado más liviana**  
+Escribir disco solo si el estado cambió (debounce 1–2 s o diff).  
+**Verificar:** flujo pedido completo conserva carrito tras 3 mensajes seguidos.
+
+**Paso 9 — Notificaciones Twilio en background**  
+`notify_new_order` y aviso al cliente: thread/async, no bloquear respuesta al webhook.  
+**Verificar:** cliente recibe respuesta rápido; admin sigue recibiendo WhatsApp.
+
+---
+
+### Fase 4 — Entorno y producción
+
+**Paso 10 — Servidor de producción**  
+Usar `waitress` o `gunicorn` en lugar de Flask debug.  
+**Verificar:** `/health` OK; misma checklist WhatsApp.
+
+**Paso 11 — Hosting permanente**  
+Desplegar (Railway, Render, VPS) en lugar de PC + ngrok.  
+**Verificar:** latencia menor que ngrok; webhook estable 24/7.
+
+**Paso 12 — Documentar tiempos objetivo**  
+Tras pasos 3–9, repetir Paso 1 y comparar.  
+**Meta razonable:** respuesta al cliente **< 2 s** en pedidos normales (sin contar red Twilio→usuario).
+
+---
+
+## Orden recomendado (prioridad)
+
+```
+1 → 2 → 3 → 4 → 6 → 7 → 9 → 5 → 8 → 10 → 11 → 12
+```
+
+Empieza por **medir** y **Sheets** (pasos 1–4, 6): ahí está la mayor ganancia con menor riesgo.
+
+---
+
+## Qué NO hacer (proteger integridad)
+
+- No cambiar endpoints, JSON del flujo ni estados conversacionales.
+- No refactorizar parser + flow + sheets en un solo prompt.
+- No quitar caché ni escritura a Sheets sin alternativa.
+- No pasar al siguiente paso si falla parser 21/21 o el checklist WhatsApp.
+
+---
+
+## Prompt sugerido para tu próximo paso
+
+> *"Implementa solo el Paso 1 del plan de optimización: logs de duración en `/bot` sin cambiar lógica. Verifica health + parser 21/21."*
+
+Cuando quieras, dime **"implementa el paso X"** y lo hacemos uno por uno con verificación incluida.
+
+
+
+## Segundo prompt:
+
+pero me estás dando los pasos en desorden, damelos en orden
+
+
+## Respuesta cursor:
+
+
+## Plan de optimización incremental (en orden)
+
+Cada paso = **1 prompt**. No avances si falla la verificación.
+
+---
+
+### Paso 1 — Medir tiempos actuales (baseline)
+Agregar logs de duración en `/bot` sin cambiar lógica.  
+**Verificar:** `python run.py` → probar `hola`, `menu`, `pedido` → anotar milisegundos en consola.
+
+---
+
+### Paso 2 — Checklist fijo de regresión
+Definir pruebas que repetirás en **todos** los pasos siguientes:
+- `python -m app.core.parser` → 21/21
+- `curl http://localhost:5000/health`
+- WhatsApp: `hola` → 2 mensajes
+- WhatsApp: `menu` → menú de Sheets
+- WhatsApp: pedido corto → confirmación
+
+---
+
+### Paso 3 — Optimizar `upsert_user` en Google Sheets
+Evitar `get_all_records()` en cada `touch`; guardar índice de fila por `wa_id` en caché.  
+**Verificar:** checklist del Paso 2 + perfil/nombre se guardan bien.
+
+---
+
+### Paso 4 — Caché de menú por request en `MenuService`
+Un solo `get_menu()` por mensaje (no releer en saludo + parser).  
+**Verificar:** saludo con menú correcto + parser reconoce productos.
+
+---
+
+### Paso 5 — Precarga de caché al arrancar (warm-up)
+Al iniciar Flask, cargar MENU y USERS en memoria.  
+**Verificar:** el primer `hola` tras reiniciar ya no es el más lento.
+
+---
+
+### Paso 6 — Reutilizar `OrderParser` entre mensajes
+No reconstruir catálogo en cada mensaje; invalidar solo si cambia el menú.  
+**Verificar:** parser 21/21 + pedido largo con cantidades (60, 2333, 777…).
+
+---
+
+### Paso 7 — Notificaciones Twilio en background
+Enviar WhatsApp al admin/cliente en thread/async, sin bloquear la respuesta del webhook.  
+**Verificar:** cliente responde rápido + admin sigue recibiendo notificaciones.
+
+---
+
+### Paso 8 — Persistencia de estado más liviana
+Escribir `user_states.json` solo si hubo cambio (debounce o diff).  
+**Verificar:** flujo de pedido conserva carrito tras varios mensajes.
+
+---
+
+### Paso 9 — TTL de caché configurable en `.env`
+`MENU_CACHE_TTL_SECONDS`, `ORDERS_CACHE_TTL_SECONDS` con defaults actuales.  
+**Verificar:** cambio en Sheets se refleja según TTL; todo lo demás igual.
+
+---
+
+### Paso 10 — Servidor de producción local
+Usar `waitress` o `gunicorn` en lugar de Flask debug.  
+**Verificar:** `/health` OK + checklist WhatsApp del Paso 2.
+
+---
+
+### Paso 11 — Hosting permanente (sin ngrok)
+Desplegar en Railway, Render o VPS.  
+**Verificar:** webhook estable 24/7 + latencia menor que con PC + ngrok.
+
+---
+
+### Paso 12 — Medir de nuevo y comparar
+Repetir el Paso 1 y documentar antes/después.  
+**Meta:** respuesta al cliente **< 2 s** en pedidos normales (sin contar red Twilio→teléfono).
+
+---
+
+## Reglas durante todo el plan
+
+1. Un paso por prompt.  
+2. No cambiar endpoints, JSON del flujo ni estados conversacionales.  
+3. Si falla parser o checklist → corregir antes de continuar.  
+4. Commit después de cada paso verificado.
+
+Cuando quieras empezar: **"Implementa el Paso 1"**.
+
+
+## Tercer prompt: ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Paso 1 — Medir tiempos actuales (baseline)
+Agregar logs de duración en /bot sin cambiar lógica.
+Verificar: python run.py → probar hola, menu, pedido → anotar milisegundos en consola.]
+
+
+## Respuesta cursor:
+
+### Análisis previo
+
+**Funcionalidad solicitada:** Paso 1 del plan — medir tiempos en `/bot` sin cambiar la lógica del bot.
+
+**Archivo afectado:** `app/app.py` únicamente.
+
+---
+
+### Cambios implementados
+
+Se añadió `time.perf_counter()` al inicio y fin de `POST /bot`. Al terminar cada request se registra en consola:
+
+```
+POST /bot completed in 1234.5 ms wa_id=... admin=False body='hola'
+```
+
+Incluye: milisegundos, `wa_id`, si es admin y los primeros 80 caracteres del mensaje.
+
+---
+
+### Verificación
+
+| Prueba | Resultado |
+|---|---|
+| Parser | 21/21 OK |
+| `/health` | 200 |
+| Logs en `hola`, `menu`, `pedido` | OK |
+
+**Baseline medido (cliente, con Google Sheets):**
+
+| Mensaje | Tiempo |
+|---|---|
+| `hola` | ~2362 ms |
+| `menu` | ~1179 ms |
+| `pedido` | ~1202 ms |
+
+*(El primer `hola` suele ser el más lento por cargar Sheets + menú en saludo dual.)*
+
+---
+
+### Cómo usarlo tú
+
+1. `python run.py`
+2. Envía `hola`, `menu`, `pedido` por WhatsApp
+3. Mira la consola las líneas `POST /bot completed in X ms`
+
+Anota esos valores; serán la referencia para comparar después del Paso 3 en adelante.
+
+---
+
+### Archivos modificados
+
+- `app/app.py`
+
+---
+
+### Funcionalidades preservadas
+
+Sin cambios en flujo, respuestas, Sheets, Twilio ni parser. Solo observabilidad.
+
+
+
+## Cuarto prompt: ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 2 — Checklist fijo de regresión
+Definir pruebas que repetirás en **todos** los pasos siguientes:
+- `python -m app.core.parser` → 21/21
+- `curl http://localhost:5000/health`
+- WhatsApp: `hola` → 2 mensajes
+- WhatsApp: `menu` → menú de Sheets
+- WhatsApp: pedido corto → confirmación]
+
+
+## Respuesta cursor: ## 
+
+### Análisis previo
+
+**Funcionalidad solicitada:** Paso 2 — checklist fijo de regresión reutilizable en cada optimización.
+
+**Enfoque:** Un script ejecutable que automatiza lo verificable localmente; las pruebas en WhatsApp real quedan documentadas como complemento manual.
+
+---
+
+### Cambios implementados
+
+Nuevo script `scripts/regression_checklist.py` con 5 pruebas:
+
+| # | Prueba | Qué valida |
+|---|---|---|
+| 1 | `python -m app.core.parser` | 21/21 |
+| 2 | `GET /health` | status 200, `"ok"` |
+| 3 | `POST /bot` + `hola` | 2 mensajes Twilio |
+| 4 | `POST /bot` + `menu` | menú con productos (Sheets si conectado) |
+| 5 | `POST /bot` + pedido corto | prompt *¿Confirmamos tu pedido?* |
+
+---
+
+### Verificación
+
+```
+=== Result: 5/5 passed ===
+Checklist OK. Safe to continue to the next optimization step.
+```
+
+Menú detectado desde **Google Sheets (10 items)**.
+
+---
+
+### Cómo usarlo en cada paso siguiente
+
+```bash
+python scripts/regression_checklist.py
+```
+
+- Exit code **0** → puedes continuar al siguiente paso  
+- Exit code **1** → corregir antes de seguir  
+
+**Manual (opcional):** repetir `hola`, `menu` y un pedido corto en WhatsApp real.
+
+---
+
+### Archivos modificados
+
+- `scripts/regression_checklist.py` *(nuevo)*
+
+---
+
+### Funcionalidades preservadas
+
+Sin cambios en lógica del bot, parser, flow ni Sheets. Solo herramienta de verificación.
+
+
+
+## Quinto prompt: ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Paso 3 — Optimizar `upsert_user` en Google Sheets
+Evitar `get_all_records()` en cada `touch`; guardar índice de fila por `wa_id` en caché.  
+**Verificar:** checklist del Paso 2 + perfil/nombre se guardan bien.]
+
+
+## Respuesta cursor: ##
+
+Cambios en app/integrations/google_sheets.py
+Caché de índice de fila (_user_row_index: wa_id → fila real en la hoja), poblada en la carga inicial con get_all_values() (números de fila correctos, incluso con huecos).
+
+upsert_user optimizado
+
+Usuario existente → sheet.update() con fila cacheada (sin releer toda la hoja).
+Usuario nuevo → append_row() + fila derivada de len(get_all_values()).
+Complementos
+
+get_user() usa caché en memoria sin volver a pedir metadata de la hoja.
+Worksheets cacheados en _worksheets para evitar fetch_sheet_metadata repetido.
+_resolve_user_row() como fallback con find() si el índice no está en caché.
+Verificación
+=== Result: 5/5 passed ===
+Test mock: 2 upsert_user consecutivos → 1 get_all_values + 2 update (sin recarga).
+
+Latencia observada (vs. baseline)
+Mensaje	Antes	Ahora
+hola
+~2362 ms
+~1363 ms
+menu
+~1179 ms
+~190 ms
+pedido
+~1202 ms
+~180–200 ms
+Listo para continuar con el Paso 4 (caché menú por request) cuando quieras.
+
+
+
+
+
+
+#################################################################
+## v0.19
+
+## Prompt:
+
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[]
