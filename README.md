@@ -1,4 +1,4 @@
-## v0.20
+## v0.20.
 
 ## Restaurant WhatsApp Chatbot SaaS
 
