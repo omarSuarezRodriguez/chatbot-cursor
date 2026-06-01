@@ -1,4 +1,4 @@
-## v0.19
+## v0.20
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -2632,4 +2632,331 @@ Lee y aplica completamente AI_RULES.md.
 Cumple todas sus restricciones antes de realizar cambios.
 
 TAREA:
-[]
+[Quiero que que el bot cada 30 segundos guarde el menú osea lo vaya actualizando en el servidor del bot y que el bot acceda directamente a lo que está guardado localmente en su servidor así no depende de la consulta sino accede directamente a un archivo que está ya guardado, y el archivo se va actualizando cada 30 segundos pero de manera independiente, es decir que el bot lee es el local, y el local se actualiza de forma independiente y el bot no depende de nada a la red ya que el toma es el local, eso se actualiza solo pero el bot no depende de la actualización, para evitar tanto delay en cada consulta sino que agarre lo que ya tiene guardado, solo has eso y nada mas no toques nada mas es una mejora incremental]
+
+
+
+## Respuesta cursor: ##
+
+### Cambios (solo `app/integrations/google_sheets.py`)
+
+**Comportamiento:**
+- Al arrancar carga el menú desde `data/menu_cache.json` (o menú demo si no existe).
+- `get_menu()` **solo lee memoria local** — nunca consulta Sheets durante un mensaje.
+- Un thread en background actualiza cada **30 s** desde Sheets → memoria + archivo, de forma independiente.
+
+**Flujo:**
+```
+Sheets ──(cada 30s, background)──► data/menu_cache.json + memoria
+                                         ▲
+Bot / parser / menú ──(instantáneo)──────┘
+```
+
+### Verificación
+
+- Checklist **5/5 OK**
+- Test: `/bot` + `menu` **no llama** a Sheets en el request
+- Log: `Menu local refresh every 30s (reads: .../data/menu_cache.json)`
+
+Tras reiniciar el servidor, el menú queda disponible al instante desde el archivo local; la red solo la usa el refresco en background.
+
+
+## Segundo Prompt ## 
+
+te pregunto solo responde: eso mejora muchisimo la respuesta? que tanto? comparalo a como estaba antes, has un test 
+
+## Respuesta cursor ##
+
+**Respuesta directa:** mejora **sí, pero no es tan brutal** como el plan de 12 pasos. Es un **refinamiento** sobre algo que ya estaba bastante optimizado.
+
+### Test que acabo de correr (8 requests `menu` cada modo)
+
+| Modo | Mediana | Rango típico |
+|------|---------|--------------|
+| **Ahora** (menú local, sin red en el request) | **~196 ms** | 179–208 ms |
+| **Antes simulado** (Sheets en cada `menu`) | **~391 ms** | 375–445 ms |
+| Solo la llamada a Sheets | **~246 ms** | — |
+
+**Ganancia en `menu`:** ~**195 ms menos** → **~50% más rápido** en estado estable.
+
+### Cómo se compara con todo lo anterior
+
+| Etapa | Pedido / menu (orden de magnitud) |
+|-------|-----------------------------------|
+| **Baseline original** | ~1200 ms (`menu` / pedido) |
+| **Tras plan 12 pasos** | ~200 ms |
+| **Este cambio (menú local)** | ~200 ms → ~196 ms en `menu` |
+
+Es decir: **no baja de 200 ms a 20 ms**. Lo que hace es:
+
+1. **Quitar ~250 ms de red** cuando tocaría ir a Sheets (cache vencida, cold start, etc.).
+2. **Evitar picos**: antes podías tener ~400 ms en `menu`; ahora se queda ~180–210 ms.
+3. **Desacoplar**: si Sheets va lento o falla, el bot **sigue respondiendo** con el archivo local.
+
+### ¿“Muchísimo”?
+
+- **Para el flujo completo ya optimizado:** no muchísimo; es **~50% en el comando `menu`** y menos en `hola`/`pedido` (ahí el menú ya estaba en memoria).
+- **Para estabilidad y previsibilidad:** **sí vale la pena** — el bot no espera la red en cada consulta de menú.
+
+**En una frase:** no es otra revolución como pasar de 1,2 s a 200 ms, pero en `menu` ganas **~200 ms estables** y eliminas la dependencia de Sheets en cada mensaje. Eso se nota sobre todo si Sheets está lento o hay muchos usuarios pidiendo menú a la vez.
+
+
+
+## Tercer prompt ##
+
+no hagas nada solo responde: pero yo pienso que si influye porque es el primer contacto, entonces este debería ser rapido, no? así ya la persona sabe que es un bot y esperará respuesta
+
+## Resp cursor ##
+
+Sí, **tienes razón en lo importante**: el primer contacto marca la percepción. Si el `hola` tarda 3 segundos, mucha gente piensa que el bot “no sirve” o se va. Si responde en ~1 s o menos, la persona entiende que hay algo vivo al otro lado y **tolera mejor** que los mensajes siguientes tarden un poco más.
+
+En ese sentido, **sí influye** lo del menú local en el primer contacto, porque el `hola` trae **dos mensajes** y el segundo es el menú completo. Antes, ahí podía colarse una consulta a Sheets (~250 ms o más, y a veces mucho más si hay cuota lenta). Ahora ese menú sale del archivo local → **el saludo no espera la red por el menú**.
+
+Pero hay un matiz honesto: el `hola` **sigue siendo el más lento** (~900 ms en tus pruebas) porque en el **primer contacto** aún hace otras cosas de red:
+
+- registrar/actualizar al usuario en Sheets (`touch`)
+- cargar perfil para personalizar el saludo
+- arrancar el flujo (saludo dual, etc.)
+
+O sea: **menú local acorta el `hola`, pero no lo deja en 200 ms** como un `pedido` ya en caliente. La mejora del menú local en el primer contacto es real, pero el cuello de botella que queda es sobre todo **usuario/perfil en Sheets**, no el menú.
+
+**Resumen:** tu intuición es correcta — **el primer contacto debe ser rápido** y optimizar el menú ahí ayuda. Para que el `hola` baje de ~900 ms a algo más “wow”, habría que atacar el `touch`/usuario en el primer mensaje (similar a lo que ya hicieron con el menú: local o async), no solo el menú. Pero como primer paso, **sí tiene sentido** lo que hiciste: quitar red del menú en el saludo es justo donde más impacto psicológico tiene.
+
+
+
+## Cuarto Prompt ##
+
+te pregunto solo responde:
+
+registrar/actualizar al usuario en Sheets (touch)
+cargar perfil para personalizar el saludo
+arrancar el flujo (saludo dual, etc.)
+
+Eso hay forma de dejarlo local? hay forma de dejar esa información local? osea que la lea es de un archivo local con la información del perfil del cliente y que se actualice eso cada 30 segundos como el otro
+
+no hagas nada solo responde
+
+
+## Resp cursor ##
+
+**Sí, se puede hacer el mismo patrón que con el menú**, con matices.
+
+### Qué se puede dejar local (lectura instantánea)
+
+- **Perfil para el saludo:** nombre, dirección guardada, último pedido, etc.
+- **Lectura en `hola`:** cargar desde `data/users_cache.json` (o similar) en memoria, sin ir a Sheets en el request.
+
+### Qué haría el thread cada 30 s (en background)
+
+- Leer la pestaña **USERS** de Sheets.
+- Actualizar memoria + archivo local.
+- Igual que el menú: el bot **no espera** esa actualización.
+
+### El tema de `touch` (registrar/actualizar usuario)
+
+Ahí no es solo lectura. En cada mensaje quieres guardar `last_seen`, nombre de WhatsApp, etc.
+
+Opciones:
+
+1. **Escritura diferida (recomendable):**  
+   - En el request: actualizar solo memoria + archivo local (rápido).  
+   - Cada X segundos (o cada 30 s): sincronizar cambios pendientes a Sheets en background.  
+   - El `hola` queda rápido; Sheets se entera un poco después.
+
+2. **Solo caché de lectura (más simple):**  
+   - Lectura local para saludo.  
+   - `touch` sigue escribiendo a Sheets en el request → **el primer `hola` sigue lento** si el usuario es nuevo (hay que hacer `append`).
+
+### Limitaciones a tener en cuenta
+
+| Caso | Qué pasa |
+|------|----------|
+| **Usuario nuevo** | Hay que crearlo en algún sitio; puede ser local primero y subir en background. |
+| **Varios servidores** | Cada uno con su copia local; hace falta una sola instancia o Redis/DB compartida. |
+| **Datos “al instante” en Sheets** | Con sync cada 30 s, el admin puede ver el usuario con hasta ~30 s de retraso. |
+| **Pedidos / confirmaciones** | Orders suelen seguir yendo a Sheets en tiempo real; esto es sobre **perfil/saludo**. |
+
+### Conclusión
+
+**Sí:** perfil para personalizar el saludo puede ser **100% local en lectura**, con refresh cada 30 s como el menú.
+
+**Para que el `hola` baje de verdad (~900 ms → ~200 ms):** hace falta también **escritura local + sync en background** del `touch`, no solo cachear lecturas.
+
+Es el mismo enfoque que ya aplicaste al menú, un poco más delicado porque mezcla lectura y escritura, pero **totalmente viable** como mejora incremental.
+
+
+
+## Quinto prompt ##
+
+te pregunto solo responde: 
+
+Para que el hola baje de verdad (~900 ms → ~200 ms): hace falta también escritura local + sync en background del touch, no solo cachear lecturas.
+
+Dame un prompt para poder dejarlo así a 200ms
+
+## Resp cursor ##
+
+**Prompt listo para copiar:**
+
+---
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+
+### Optimizar `touch` y perfil de usuario — lectura/escritura local + sync en background
+
+**Objetivo:** que el primer `hola` baje de ~900 ms a ~200 ms, igual que `pedido`/`menu` en caliente.
+
+**Patrón (igual que el menú local):**
+- El bot **lee siempre** perfil/usuario desde **memoria + archivo local** (`data/users_cache.json` o similar).
+- **Nunca** consulta ni escribe en Google Sheets durante `POST /bot` (ni en `touch`, ni en `get_user`, ni en `_build_node_context` del saludo).
+- Un **thread en background cada 30 s** (independiente del webhook):
+  1. Descarga USERS de Sheets → actualiza memoria + archivo local.
+  2. Sube a Sheets los cambios pendientes de usuarios (cola de `touch` / upserts locales).
+- Si Sheets falla o va lento, el bot sigue respondiendo con datos locales.
+
+**Comportamiento en el request (`touch`):**
+- Actualizar solo caché en memoria + archivo local (nombre, `last_seen`, dirección, etc.).
+- Marcar usuario como `dirty` / pendiente de sync si hubo cambio.
+- Responder al cliente **sin esperar** red.
+
+**Usuario nuevo:**
+- Crearlo primero en caché local + archivo.
+- Encolar sync (append en Sheets) en background; no bloquear el `hola`.
+
+**Restricciones:**
+- Cambio **incremental**; modificar la **mínima** cantidad de archivos (idealmente `google_sheets.py` + `user_service.py` si hace falta).
+- **No** cambiar endpoints, flujo conversacional, JSON del flujo, parser ni contratos públicos.
+- Reutilizar `_users_cache`, `_user_row_index` y la lógica de `upsert_user` donde aplique.
+- Mantener warm-up al arrancar: cargar usuarios desde archivo local; el refresh en background arranca solo si hay conexión a Sheets.
+
+**Verificar:**
+```bash
+python scripts/regression_checklist.py
+python scripts/measure_latency.py
+```
+- `hola` mediana **< 300 ms** (meta ~200 ms) en test client con caché caliente.
+- Test: `POST /bot` + `hola` **no** llama a Sheets de forma síncrona (mock/patch que falle si hay fetch/write en el request).
+- Tras 30–60 s, cambios de `touch` deben aparecer en Sheets (sync background).
+- Saludo personalizado con nombre sigue funcionando.
+- Checklist 5/5.
+
+**No tocar:** menú local ya hecho, Twilio async, parser, flow JSON, admin.
+
+---
+
+Si quieres acotarlo a un solo archivo, añade al final: *«Si puede hacerse solo en `app/integrations/google_sheets.py`, no modifiques otros archivos.»*
+
+
+
+## Sexto prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[### Optimizar `touch` y perfil de usuario — lectura/escritura local + sync en background
+
+**Objetivo:** que el primer `hola` baje de ~900 ms a ~200 ms, igual que `pedido`/`menu` en caliente.
+
+**Patrón (igual que el menú local):**
+- El bot **lee siempre** perfil/usuario desde **memoria + archivo local** (`data/users_cache.json` o similar).
+- **Nunca** consulta ni escribe en Google Sheets durante `POST /bot` (ni en `touch`, ni en `get_user`, ni en `_build_node_context` del saludo).
+- Un **thread en background cada 30 s** (independiente del webhook):
+  1. Descarga USERS de Sheets → actualiza memoria + archivo local.
+  2. Sube a Sheets los cambios pendientes de usuarios (cola de `touch` / upserts locales).
+- Si Sheets falla o va lento, el bot sigue respondiendo con datos locales.
+
+**Comportamiento en el request (`touch`):**
+- Actualizar solo caché en memoria + archivo local (nombre, `last_seen`, dirección, etc.).
+- Marcar usuario como `dirty` / pendiente de sync si hubo cambio.
+- Responder al cliente **sin esperar** red.
+
+**Usuario nuevo:**
+- Crearlo primero en caché local + archivo.
+- Encolar sync (append en Sheets) en background; no bloquear el `hola`.
+
+**Restricciones:**
+- Cambio **incremental**; modificar la **mínima** cantidad de archivos (idealmente `google_sheets.py` + `user_service.py` si hace falta).
+- **No** cambiar endpoints, flujo conversacional, JSON del flujo, parser ni contratos públicos.
+- Reutilizar `_users_cache`, `_user_row_index` y la lógica de `upsert_user` donde aplique.
+- Mantener warm-up al arrancar: cargar usuarios desde archivo local; el refresh en background arranca solo si hay conexión a Sheets.
+
+**Verificar:**
+```bash
+python scripts/regression_checklist.py
+python scripts/measure_latency.py
+```
+- `hola` mediana **< 300 ms** (meta ~200 ms) en test client con caché caliente.
+- Test: `POST /bot` + `hola` **no** llama a Sheets de forma síncrona (mock/patch que falle si hay fetch/write en el request).
+- Tras 30–60 s, cambios de `touch` deben aparecer en Sheets (sync background).
+- Saludo personalizado con nombre sigue funcionando.
+- Checklist 5/5.
+
+**No tocar:** menú local ya hecho, Twilio async, parser, flow JSON, admin.
+
+**«Si puede hacerse solo en `app/integrations/google_sheets.py`, no modifiques otros archivos.»**]
+
+
+## Resp cursor ##
+
+### Análisis previo
+
+El `hola` (~900 ms) esperaba a Sheets en `touch`/`get_user` (lectura + escritura). El menú ya era local; faltaba lo mismo para usuarios.
+
+### Cambios implementados (solo `google_sheets.py`)
+
+- **`data/users_cache.json`**: usuarios, índice de filas y cola `dirty`.
+- **`get_user` / `upsert_user`**: solo memoria + archivo local; marcan `dirty` sin red.
+- **Thread cada 30 s** (unificado con menú):
+  1. Sube usuarios `dirty` → Sheets  
+  2. Refresca menú  
+  3. Refresca usuarios (sin pisar los que siguen `dirty`)
+- **Warm-up**: solo cuenta datos locales (0 ms de red).
+
+### Verificación
+
+```
+=== Result: 5/5 passed ===
+Meta OK: pedido normal 11 ms < 2000 ms
+```
+
+| Prueba | Resultado |
+|--------|-----------|
+| `hola` sin Sheets en request | OK (mock bloquea red) |
+| Saludo con nombre "Ana" | OK |
+| Sync background | `Users synced to Sheets: 1` en log |
+| Mediana `hola` | **~2–5 ms** (test client, caché caliente) |
+
+### Antes vs ahora (`hola`)
+
+| | Antes | Ahora |
+|---|-------|-------|
+| Baseline original | ~2362 ms | ~5 ms |
+| Tras plan 12 pasos | ~913 ms | ~5 ms |
+
+En WhatsApp real verás más ms (red Twilio), pero el servidor ya no espera Sheets en el primer contacto.
+
+### Archivos modificados
+
+- `app/integrations/google_sheets.py`
+
+Reinicia el servidor (`python run.py`) para que cargue el nuevo flujo. Los cambios de `touch` llegan a Sheets en ≤30 s por el sync en background.
+
+
+
+
+
+
+#################################################################
+## v0.21
+
+## Prompt:

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "nombre": "Pizza Hawaiana",
+    "precio": 125.0,
+    "categoria": "Pizzas",
+    "disponible": true
+  },
+  {
+    "id": "2",
+    "nombre": "Pizza Margarita",
+    "precio": 11.0,
+    "categoria": "Pizzas",
+    "disponible": true
+  },
+  {
+    "id": "3",
+    "nombre": "Pizza de Jamón y Queso",
+    "precio": 95.0,
+    "categoria": "Pizzas",
+    "disponible": true
+  },
+  {
+    "id": "4",
+    "nombre": "Pizza Mexicana",
+    "precio": 25.0,
+    "categoria": "Pizzas",
+    "disponible": true
+  },
+  {
+    "id": "5",
+    "nombre": "Pizza Ranchera",
+    "precio": 15.0,
+    "categoria": "Pizzas",
+    "disponible": true
+  },
+  {
+    "id": "6",
+    "nombre": "Coca Cola",
+    "precio": 8.0,
+    "categoria": "Bebidas",
+    "disponible": true
+  },
+  {
+    "id": "",
+    "nombre": "Hamburguesa Clásica",
+    "precio": 125.0,
+    "categoria": "Hamburguesas",
+    "disponible": true
+  },
+  {
+    "id": "",
+    "nombre": "Hamburguesa Mega",
+    "precio": 11.0,
+    "categoria": "Hamburguesas",
+    "disponible": true
+  },
+  {
+    "id": "",
+    "nombre": "Hamburguesa Doble Carne",
+    "precio": 25.0,
+    "categoria": "Hamburguesas",
+    "disponible": true
+  },
+  {
+    "id": "",
+    "nombre": "Hamburguesa Doble Pollo",
+    "precio": 15.0,
+    "categoria": "Hamburguesas",
+    "disponible": true
+  }
+]

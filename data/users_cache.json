@@ -1,0 +1,251 @@
+{
+  "users": {
+    "hola_66e0ea1a": {
+      "wa_id": "hola_66e0ea1a",
+      "name": "Ana",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:45:27.632553"
+    },
+    "regression_39bdbb84": {
+      "wa_id": "regression_39bdbb84",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:45:34.759625"
+    },
+    "35699155990": {
+      "wa_id": "35699155990",
+      "name": "Omar Suarez",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:29:14.935131"
+    },
+    "client_baseline_test": {
+      "wa_id": "client_baseline_test",
+      "name": "Test",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T04:47:06.356774"
+    },
+    "regression_user": {
+      "wa_id": "regression_user",
+      "name": "Test",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T04:48:53.601438"
+    },
+    "regression_46dc90af": {
+      "wa_id": "regression_46dc90af",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T04:49:25.849298"
+    },
+    "regression_4a815f5e": {
+      "wa_id": "regression_4a815f5e",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T04:50:57.443531"
+    },
+    "regression_052b80d7": {
+      "wa_id": "regression_052b80d7",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T04:53:14.610303"
+    },
+    "regression_729374c2": {
+      "wa_id": "regression_729374c2",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T04:54:39.249154"
+    },
+    "regression_92c7df0f": {
+      "wa_id": "regression_92c7df0f",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T04:59:45.433714"
+    },
+    "warmup_d6a85a7a": {
+      "wa_id": "warmup_d6a85a7a",
+      "name": "Warm",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:01:26.550530"
+    },
+    "regression_00bb87e2": {
+      "wa_id": "regression_00bb87e2",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:01:36.542125"
+    },
+    "regression_43f7c1db": {
+      "wa_id": "regression_43f7c1db",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:06:06.123684"
+    },
+    "regression_2c8e0fb3": {
+      "wa_id": "regression_2c8e0fb3",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:07:19.726163"
+    },
+    "regression_dedc7494": {
+      "wa_id": "regression_dedc7494",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:09:00.327518"
+    },
+    "cart_2393756c": {
+      "wa_id": "cart_2393756c",
+      "name": "",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:09:24.528557"
+    },
+    "cart_98587b6d": {
+      "wa_id": "cart_98587b6d",
+      "name": "",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:09:39.835417"
+    },
+    "regression_8ecb3c92": {
+      "wa_id": "regression_8ecb3c92",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:11:42.292310"
+    },
+    "regression_37792836": {
+      "wa_id": "regression_37792836",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:18:25.059861"
+    },
+    "regression_57ab22d6": {
+      "wa_id": "regression_57ab22d6",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:22:20.104006"
+    },
+    "deploy_668dec1b": {
+      "wa_id": "deploy_668dec1b",
+      "name": "DeployTest",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:22:20.692118"
+    },
+    "latency_f592a644": {
+      "wa_id": "latency_f592a644",
+      "name": "Latency",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:27:38.869477"
+    },
+    "regression_612a9ed2": {
+      "wa_id": "regression_612a9ed2",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:27:48.789483"
+    },
+    "menu_local_8dbfaf66": {
+      "wa_id": "menu_local_8dbfaf66",
+      "name": "",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:34:33.565036"
+    },
+    "regression_cf916a6a": {
+      "wa_id": "regression_cf916a6a",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:34:43.666623"
+    },
+    "bench_4e5280eb": {
+      "wa_id": "bench_4e5280eb",
+      "name": "",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:36:08.513486"
+    },
+    "latency_5164becb": {
+      "wa_id": "latency_5164becb",
+      "name": "Latency",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:45:39.821959"
+    }
+  },
+  "row_index": {
+    "hola_66e0ea1a": 26,
+    "35699155990": 2,
+    "client_baseline_test": 3,
+    "regression_user": 4,
+    "regression_46dc90af": 5,
+    "regression_4a815f5e": 6,
+    "regression_052b80d7": 7,
+    "regression_729374c2": 8,
+    "regression_92c7df0f": 9,
+    "warmup_d6a85a7a": 10,
+    "regression_00bb87e2": 11,
+    "regression_43f7c1db": 12,
+    "regression_2c8e0fb3": 13,
+    "regression_dedc7494": 14,
+    "cart_2393756c": 15,
+    "cart_98587b6d": 16,
+    "regression_8ecb3c92": 17,
+    "regression_37792836": 18,
+    "regression_57ab22d6": 19,
+    "deploy_668dec1b": 20,
+    "latency_f592a644": 21,
+    "regression_612a9ed2": 22,
+    "menu_local_8dbfaf66": 23,
+    "regression_cf916a6a": 24,
+    "bench_4e5280eb": 25
+  },
+  "dirty": [
+    "latency_5164becb",
+    "regression_39bdbb84"
+  ]
+}
