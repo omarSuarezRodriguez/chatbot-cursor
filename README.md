@@ -1,6 +1,6 @@
-# Restaurant WhatsApp Chatbot SaaS
+## Restaurant WhatsApp Chatbot SaaS
 
-v0.7
+## v0.9
 
 
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
@@ -1101,3 +1101,178 @@ dos pizzas, dos hamburguesas con dos aguas
 Funcionalidades preservadas
 Pedidos con y, comas, typos, tildes y el resto de conectores ya soportados.
 
+
+
+
+
+#################################################################
+## v0.9
+
+## Prompt: 
+
+No quiero que hagas nada ni edites nada, solo quiero que revises el proyecto y me digas qué hace falta para conectarlo con los documentos online de google y cómo lo hago, dame el paso a paso especifico
+
+
+## Respuesta cursor:
+
+Revisé el proyecto: la conexión con Google Sheets ya está implementada en app/integrations/google_sheets.py. No falta programar eso; falta configurar Google Cloud, la hoja y el .env.
+
+Si no conectas, verás en logs algo como GOOGLE_SPREADSHEET_ID not set. Using demo data. o Google Sheets unavailable (No module named 'gspread') y el bot usa menú demo en memoria.
+
+Qué hace falta (checklist)
+Requisito	Para qué
+Cuenta Google
+Crear proyecto y credenciales
+Google Cloud Project
+APIs de Sheets y Drive
+Service Account + JSON
+Que la app acceda a la hoja
+Google Spreadsheet
+Menú, pedidos, usuarios, reservas
+Compartir la hoja con la service account
+Permiso de lectura/escritura
+.env configurado
+ID de la hoja + ruta del JSON
+pip install -r requirements.txt
+Instala gspread y google-auth
+Paso a paso específico
+1. Instalar dependencias Python
+En la carpeta del proyecto:
+
+cd "c:\Users\Usuario\Desktop\chatbot-cursor"
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+Confirma que existan gspread y google-auth.
+
+2. Crear proyecto en Google Cloud
+Entra a Google Cloud Console.
+Nuevo proyecto (ej.: chatbot-restaurante).
+Selecciónalo como proyecto activo.
+3. Activar APIs necesarias
+En el menú APIs y servicios → Biblioteca, activa:
+
+Google Sheets API
+Google Drive API (la app la usa para abrir el spreadsheet)
+4. Crear Service Account (cuenta de servicio)
+APIs y servicios → Credenciales
+Crear credenciales → Cuenta de servicio
+Nombre: ej. chatbot-sheets
+Rol: Editor (o mínimo acceso a la hoja compartida)
+En la cuenta creada → pestaña Claves
+Agregar clave → Crear clave nueva → JSON
+Se descarga un archivo .json
+5. Guardar el JSON en el proyecto
+Crea la carpeta credentials/ si no existe (ya hay un .gitkeep).
+Guarda el archivo como:
+c:\Users\Usuario\Desktop\chatbot-cursor\credentials\google-service-account.json
+No subas este archivo a GitHub (contiene claves secretas).
+
+Abre el JSON y copia el email, algo como:
+
+chatbot-sheets@tu-proyecto.iam.gserviceaccount.com
+Lo necesitas en el paso 7.
+
+6. Crear el Google Spreadsheet
+Ve a Google Sheets.
+Crea una hoja nueva, ej.: Restaurante Bot.
+Copia el ID de la URL:
+https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
+7. Compartir la hoja con la Service Account
+En la hoja → Compartir
+Pega el email de la service account
+Permiso: Editor
+Guardar
+Sin esto la app no puede leer ni escribir.
+
+8. Configurar .env
+En tu .env (copia de .env.example):
+
+GOOGLE_SHEETS_CREDENTIALS_PATH=credentials/google-service-account.json
+GOOGLE_SPREADSHEET_ID=EL_ID_QUE_COPIASTE_DE_LA_URL
+Ruta relativa al root del proyecto o absoluta.
+
+9. Pestañas que la app usa
+Al arrancar, si faltan, las crea sola con estos nombres exactos:
+
+Pestaña	Columnas (fila 1)
+MENU
+id, nombre, precio, categoria, disponible
+USERS
+wa_id, name, address, last_order_date, last_order_json, last_seen
+ORDERS
+order_id, wa_id, items, total, status, timestamp, customer_name, address, delivery_type
+RESERVATIONS
+reservation_id, wa_id, personas, fecha, hora, status
+Ejemplo de menú en MENU (fila 2 en adelante):
+id	nombre	precio	categoria	disponible
+1
+Pizza Hawaiana
+12.5
+Pizzas
+true
+2
+Hamburguesa Clásica
+9.5
+Hamburguesas
+true
+3
+Coca Cola
+2.5
+Bebidas
+true
+disponible: true, false, si, 1, etc.
+Si nombre está vacío, la fila se ignora.
+Si MENU está vacío, vuelve al menú demo.
+USERS, ORDERS y RESERVATIONS las llena el bot; no hace falta cargarlas a mano.
+
+10. Arrancar y verificar conexión
+python run.py
+Revisa la consola:
+
+✅ Conectado: no debería aparecer Using demo data
+❌ Fallo: Google Sheets unavailable (...) → revisa ID, JSON, permisos o APIs
+Prueba rápida:
+
+curl http://localhost:5000/health
+Luego escribe menu al bot; debería mostrar lo de tu hoja MENU.
+
+11. Qué se guarda automáticamente en Google Sheets
+Acción del cliente	Hoja
+Primer contacto / nombre / dirección
+USERS
+Completa un pedido
+ORDERS
+Admin confirma pedido
+ORDERS (status → confirmed)
+Reserva mesa
+RESERVATIONS
+Errores frecuentes
+Síntoma	Causa probable
+GOOGLE_SPREADSHEET_ID not set
+Falta el ID en .env
+No module named 'gspread'
+No corriste pip install -r requirements.txt
+Google Sheets unavailable
+JSON mal ubicado, APIs off o hoja no compartida
+Sigue menú demo
+MENU vacío o conexión fallida
+403 / Permission denied
+No compartiste la hoja con la service account
+Resumen
+No falta código para conectar con Google Sheets. Falta:
+
+Proyecto Google Cloud + APIs activadas
+Service Account + JSON en credentials/
+Spreadsheet creado y compartido
+GOOGLE_SPREADSHEET_ID en .env
+Productos en la pestaña MENU
+Dependencias instaladas y servidor reiniciado
+Cuando eso esté bien, el bot usa tu menú real y persiste pedidos, usuarios y reservas en la hoja online.
+
+
+
+#################################################################
+## v0.10
+
+## Prompt: 
