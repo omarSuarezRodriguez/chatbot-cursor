@@ -1395,4 +1395,21 @@ Solo **`.env`** (corregir el ID del spreadsheet). No modifiqué código de la ap
 #################################################################
 ## v0.13
 
+## Prompt:
+
+Quiero que solamente y unicamente me edites el siguiente archivo: guardar.py y no toques nada mas, editalo para que al final no le tenga que dar enter sino solo me muestre el mensaje final confirmando si Listo: add, commit y push completados con la logica que tiene de guardar la versión, y nada más, no toques ningun otro archivo, al final me dices qué archivos tocaste
+
+
+## Respuesta cursor:
+
+Listo. Quité los `input()` que pedían Enter al terminar. Al ejecutarlo verás el mensaje final y la ventana se cerrará sola (o volverás al prompt si lo corres desde terminal).
+
+**Archivo modificado:** `guardar.py` únicamente.
+
+
+
+
+#################################################################
+## v0.14
+
 

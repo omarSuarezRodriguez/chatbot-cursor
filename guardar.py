@@ -39,11 +39,8 @@ if __name__ == "__main__":
         main()
     except SystemExit as exc:
         code = exc.code if isinstance(exc.code, int) else 1
-        input(f"\nTerminó con código {code}. Enter para cerrar...")
+        print(f"\nTerminó con código {code}.")
         sys.exit(code)
     except Exception as exc:
         print(f"Error: {exc}")
-        input("\nEnter para cerrar...")
         sys.exit(1)
-    else:
-        input("\nEnter para cerrar...")
