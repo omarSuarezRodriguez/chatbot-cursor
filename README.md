@@ -1,6 +1,6 @@
 ## Restaurant WhatsApp Chatbot SaaS
 
-## v0.9
+## v0.10
 
 
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
@@ -1276,3 +1276,41 @@ Cuando eso esté bien, el bot usa tu menú real y persiste pedidos, usuarios y r
 ## v0.10
 
 ## Prompt: 
+
+no hagas nada ni edites codigo ni nada solo respondeme lo siguiente: aparte del tutorial de google, hay algo más que haya que hacer para dejarlo funcional? que esté pendiente? solo dime
+
+
+## Respuesta cursor:
+
+Sí. Aparte del tutorial de Google, para dejarlo **funcional de verdad por WhatsApp** aún necesitas esto:
+
+### Obligatorio para producción real
+
+1. **Twilio configurado** en `.env` (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`).
+2. **Webhook público** apuntando a tu bot (`POST /bot`) — en local con **ngrok** o similar; en producción con servidor desplegado.
+3. **Unir números al sandbox de Twilio** (o tener WhatsApp Business aprobado si ya no usas sandbox).
+4. **`ADMIN_WHATSAPP_NUMBER`** en `.env` con tu número real de admin.
+5. **`RESTAURANT_NAME`** en `.env` con el nombre de tu restaurante.
+6. **Dependencias instaladas** (`pip install -r requirements.txt`) y **servidor corriendo** (`python run.py`).
+7. **Productos cargados** en la pestaña **MENU** de Google Sheets.
+
+### Recomendable (no bloquea del todo, pero conviene)
+
+8. **`STATE_PERSIST_PATH`** en `.env` para que no se pierda el estado de conversación al reiniciar.
+9. **Probar flujo completo**: saludo → pedido → notificación admin → confirmación → cliente notificado.
+10. **Verificar en Twilio Console** que los mensajes salientes al admin digan `delivered` (antes viste que a veces no llegaban al celular).
+
+### Pendiente / por validar en tu caso
+
+- Que **Twilio envíe de verdad** al admin (config + sandbox + logs).
+- **Despliegue permanente** si no quieres depender de ngrok en tu PC encendida.
+- **`pendientes.md`** no está actualizado; varias tareas de v0.3–v0.5 ya se trabajaron en código, pero **conviene probarlas en WhatsApp real**, no solo asumir que funcionan.
+
+### Resumen
+
+**Google Sheets no basta.** También necesitas **Twilio + webhook + `.env` completo + menú en la hoja + pruebas reales por WhatsApp**. Lo demás del bot ya está en el código; lo que falta es sobre todo **configuración externa y pruebas end-to-end**.
+
+
+#################################################################
+## v0.11
+
