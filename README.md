@@ -1,4 +1,4 @@
-## v0.13
+## v0.15
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -1498,3 +1498,76 @@ Pedidos con `y`, comas, `con`, typos, tildes y el resto de casos de la suite de 
 
 #################################################################
 ## v0.15
+
+
+## Prompt:
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Por qué ahora siento que cuadno le puse la sheet de google va el  bot como más lento? hay alguna manera de reducir latencia? quiero que solo trabejes en eso no te metas con nada mas y que todo funcoine no toques nada solo implementa eso como mejora incremental]
+
+## Respuesta cursor
+
+### Análisis previo
+
+**Por qué se siente más lento con Google Sheets:** cada mensaje de WhatsApp hacía varias llamadas de red a la API de Google (`get_all_records()`), que tarda ~200–800 ms cada una.
+
+En un solo mensaje típico ocurría:
+- Leer **MENU** (al parsear pedido y mostrar menú)
+- Leer **USERS** completo 2–3 veces (`touch` + `get_profile` + `upsert`)
+- Leer **ORDERS** en confirmaciones/admin
+
+En modo demo todo está en memoria; con Sheets cada lectura es una petición HTTP.
+
+**Archivo afectado:** `app/integrations/google_sheets.py` únicamente.
+
+---
+
+### Cambios implementados
+
+Caché en memoria con TTL, sin cambiar APIs ni flujos:
+
+| Dato | Caché | TTL |
+|---|---|---|
+| **MENU** | Sí | 60 s |
+| **USERS** | Sí (carga una vez, actualiza al guardar) | Hasta cambio |
+| **ORDERS** | Sí | 30 s (se invalida al crear/confirmar pedido) |
+
+Así, un mensaje reutiliza datos ya cargados en lugar de volver a pedir la hoja entera a Google.
+
+---
+
+### Archivos modificados
+
+- `app/integrations/google_sheets.py`
+
+---
+
+### Compatibilidad verificada
+
+✅ Parser — 18/18  
+✅ Flask / Twilio / Flow Engine — sin cambios  
+✅ Escrituras (pedidos, usuarios, confirmaciones) — invalidan caché cuando corresponde  
+✅ Modo demo sin Sheets — sigue igual  
+
+---
+
+### Nota
+
+Si editas el **MENU** en Google Sheets, el bot puede tardar hasta **60 segundos** en reflejarlo (TTL del caché). Es el trade-off normal por velocidad.
+
+Reinicia el servidor para aplicar el cambio.
+
+
+
+
+
+
+
+#################################################################
+## v0.16

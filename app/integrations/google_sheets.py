@@ -4,11 +4,16 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
+import time
 import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
+MENU_CACHE_TTL_SECONDS = 60
+ORDERS_CACHE_TTL_SECONDS = 30
 
 DEMO_MENU = [
     {
@@ -96,6 +101,12 @@ class GoogleSheetsClient:
         self._connected = False
         self._demo_users: Dict[str, Dict[str, Any]] = {}
         self._demo_orders: List[Dict[str, Any]] = []
+        self._cache_lock = threading.Lock()
+        self._menu_cache: Optional[List[Dict[str, Any]]] = None
+        self._menu_cache_expires: float = 0.0
+        self._users_cache: Optional[Dict[str, Dict[str, Any]]] = None
+        self._orders_cache: Optional[List[Dict[str, Any]]] = None
+        self._orders_cache_expires: float = 0.0
         self._connect()
 
     def _connect(self) -> None:
@@ -151,14 +162,18 @@ class GoogleSheetsClient:
             return value
         return str(value).strip().lower() in {"1", "true", "si", "sí", "yes", "y"}
 
-    def get_menu(self) -> List[Dict[str, Any]]:
+    def _invalidate_orders_cache(self) -> None:
+        with self._cache_lock:
+            self._orders_cache = None
+            self._orders_cache_expires = 0.0
+
+    def _fetch_menu_rows(self) -> List[Dict[str, Any]]:
         sheet = self._get_sheet("MENU")
         if not sheet:
-            return DEMO_MENU
+            return []
 
-        rows = sheet.get_all_records()
-        menu = []
-        for row in rows:
+        menu: List[Dict[str, Any]] = []
+        for row in sheet.get_all_records():
             if not row.get("nombre"):
                 continue
             menu.append(
@@ -170,29 +185,76 @@ class GoogleSheetsClient:
                     "disponible": self._parse_bool(row.get("disponible", True)),
                 }
             )
-        return menu or DEMO_MENU
+        return menu
+
+    def _user_from_row(self, wa_id: str, row: Dict[str, Any]) -> Dict[str, Any]:
+        last_order = row.get("last_order_json") or ""
+        try:
+            last_order_items = json.loads(last_order) if last_order else []
+        except json.JSONDecodeError:
+            last_order_items = []
+        return {
+            "wa_id": wa_id,
+            "name": str(row.get("name", "")).strip(),
+            "address": str(row.get("address", "")).strip(),
+            "last_order_date": str(row.get("last_order_date", "")).strip(),
+            "last_order_items": last_order_items,
+            "last_seen": str(row.get("last_seen", "")).strip(),
+        }
+
+    def _load_users_cache(self) -> Dict[str, Dict[str, Any]]:
+        with self._cache_lock:
+            if self._users_cache is not None:
+                return self._users_cache
+
+        sheet = self._get_sheet("USERS")
+        users: Dict[str, Dict[str, Any]] = {}
+        if sheet:
+            for row in sheet.get_all_records():
+                wa_id = str(row.get("wa_id", "")).strip()
+                if wa_id:
+                    users[wa_id] = self._user_from_row(wa_id, row)
+
+        with self._cache_lock:
+            self._users_cache = users
+            return self._users_cache
+
+    def _get_orders_records(self) -> List[Dict[str, Any]]:
+        now = time.time()
+        with self._cache_lock:
+            if self._orders_cache is not None and now < self._orders_cache_expires:
+                return self._orders_cache
+
+        sheet = self._get_sheet("ORDERS")
+        rows = sheet.get_all_records() if sheet else []
+
+        with self._cache_lock:
+            self._orders_cache = rows
+            self._orders_cache_expires = now + ORDERS_CACHE_TTL_SECONDS
+            return self._orders_cache
+
+    def get_menu(self) -> List[Dict[str, Any]]:
+        now = time.time()
+        with self._cache_lock:
+            if self._menu_cache is not None and now < self._menu_cache_expires:
+                return list(self._menu_cache)
+
+        menu = self._fetch_menu_rows()
+        if not menu:
+            return DEMO_MENU
+
+        with self._cache_lock:
+            self._menu_cache = menu
+            self._menu_cache_expires = now + MENU_CACHE_TTL_SECONDS
+        return list(menu)
 
     def get_user(self, wa_id: str) -> Dict[str, Any]:
         sheet = self._get_sheet("USERS")
         if not sheet:
             return dict(self._demo_users.get(wa_id, {}))
 
-        for row in sheet.get_all_records():
-            if str(row.get("wa_id")) == wa_id:
-                last_order = row.get("last_order_json") or ""
-                try:
-                    last_order_items = json.loads(last_order) if last_order else []
-                except json.JSONDecodeError:
-                    last_order_items = []
-                return {
-                    "wa_id": wa_id,
-                    "name": str(row.get("name", "")).strip(),
-                    "address": str(row.get("address", "")).strip(),
-                    "last_order_date": str(row.get("last_order_date", "")).strip(),
-                    "last_order_items": last_order_items,
-                    "last_seen": str(row.get("last_seen", "")).strip(),
-                }
-        return {}
+        users = self._load_users_cache()
+        return dict(users.get(wa_id, {}))
 
     def upsert_user(
         self,
@@ -226,6 +288,14 @@ class GoogleSheetsClient:
 
         rows = sheet.get_all_records()
         payload_items = json.dumps(merged_items, ensure_ascii=False) if merged_items else ""
+        user_payload = {
+            "wa_id": wa_id,
+            "name": merged_name,
+            "address": merged_address,
+            "last_order_date": last_order_date,
+            "last_order_items": merged_items,
+            "last_seen": now,
+        }
         for idx, row in enumerate(rows, start=2):
             if str(row.get("wa_id")) == wa_id:
                 sheet.update(
@@ -240,10 +310,16 @@ class GoogleSheetsClient:
                         ]
                     ],
                 )
+                with self._cache_lock:
+                    if self._users_cache is not None:
+                        self._users_cache[wa_id] = user_payload
                 return
         sheet.append_row(
             [wa_id, merged_name, merged_address, last_order_date, payload_items, now]
         )
+        with self._cache_lock:
+            if self._users_cache is not None:
+                self._users_cache[wa_id] = user_payload
 
     def create_order(
         self,
@@ -286,6 +362,7 @@ class GoogleSheetsClient:
         else:
             self._demo_orders.append(payload)
 
+        self._invalidate_orders_cache()
         self.upsert_user(
             wa_id=wa_id,
             name=customer_name,
@@ -316,7 +393,7 @@ class GoogleSheetsClient:
         sheet = self._get_sheet("ORDERS")
         if not sheet:
             return None
-        for row in sheet.get_all_records():
+        for row in self._get_orders_records():
             if str(row.get("order_id", "")).upper() == order_id:
                 try:
                     items = json.loads(row.get("items") or "[]")
@@ -345,10 +422,11 @@ class GoogleSheetsClient:
         sheet = self._get_sheet("ORDERS")
         if not sheet:
             return False
-        rows = sheet.get_all_records()
+        rows = self._get_orders_records()
         for idx, row in enumerate(rows, start=2):
             if str(row.get("order_id", "")).upper() == order_id:
                 sheet.update(f"E{idx}", [[status]])
+                self._invalidate_orders_cache()
                 return True
         return False
 
@@ -362,7 +440,7 @@ class GoogleSheetsClient:
         if not sheet:
             return pending
 
-        for row in sheet.get_all_records():
+        for row in self._get_orders_records():
             if str(row.get("status", "")).lower() != "pending":
                 continue
             try:
