@@ -1,4 +1,4 @@
-## v0.12
+## v0.13
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -1412,4 +1412,89 @@ Listo. Quité los `input()` que pedían Enter al terminar. Al ejecutarlo verás 
 #################################################################
 ## v0.14
 
+OBLIGATORIO:
 
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Solamente quiero que hagas esto y no edites absolutamente nada más, estaba ingresando un pedido y el parser leyó mal, quiero que veas por qué falló y lo soluciones, como mejora incremental que no rehagas nada mas sino una mejora incremental
+el mensaje que yo envié fue este: "quiero por favor dos pizzas de jamon y queso, tres pizzas mexicanas, 4 pizzas rancheras, 5 coca colas, 7 hamburguesas mega ocho hamburguesas doble carne una habasurguesa doble pollo" 
+la respuesta fue: "Perfecto, actualicé tu pedido.
+
+* 3 x Pizza de Jamón y Queso — $285.00
+* 3 x Pizza Mexicana — $75.00
+* 4 x Pizza Ranchera — $60.00
+* 5 x Coca Cola — $40.00
+* 7 x Hamburguesa Doble Pollo — $105.00
+
+Total: $565.00
+
+
+
+¿Confirmamos tu pedido?
+Responde sí para confirmar o no para modificarlo.
+
+---
+Escribe inicio para volver al inicio" 
+
+Pero fijate que yo escribí dos pizzas de jamón y queso y el parser agarró 3 pizzas de jamón y queso, y las hamburguesas no me agarró casi ninguna, y la que agarró agarró mal, yo puse 7 hamburguesas mega ocho hamburguesas doble carne una habmbuguesa doble pollo pero el parser agarró solo 7 hamburguesas doble pollo, osea agarró solo una y mal.
+
+Así que por favor necesito que me solucioens eso como mejora incremental]
+
+
+
+## Respuesta cursor:
+
+### Análisis previo
+
+**Problemas detectados en tu mensaje:**
+
+1. **`jamon y queso` → 3 en vez de 2:** el conector `y` partía `"jamon y queso"` en dos segmentos; `"queso"` solo volvía a matchear la misma pizza y sumaba +1.
+2. **Hamburguesas perdidas:** `"7 hamburguesas mega ocho hamburguesas doble carne una habasurguesa..."` no se partía porque solo se detectaban cantidades numéricas (`7`, `4`), no en palabras (`ocho`, `una`).
+3. **Typo `habasurguesa`:** no se normalizaba a hamburguesa.
+
+---
+
+### Cambios implementados (solo `app/core/parser.py`)
+
+1. **Preservar `de X y Y`** en nombres compuestos (`de jamon y queso` no se parte).
+2. **Separar por cantidades en palabras** (`ocho`, `una`, `dos`, etc.) además de dígitos.
+3. **Sinónimo** `habasurguesa` → `hamburguesa`.
+4. **Prueba automática** con tu pedido exacto.
+
+---
+
+### Resultado verificado
+
+```
+2 x Pizza de Jamon y Queso
+3 x Pizza Mexicana
+4 x Pizza Ranchera
+5 x Coca Cola
+7 x Hamburguesa Mega
+8 x Hamburguesa Doble Carne
+1 x Hamburguesa Doble Pollo
+```
+
+Parser: **18/18 OK**
+
+---
+
+### Archivos modificados
+
+- `app/core/parser.py`
+
+---
+
+### Funcionalidades preservadas
+
+Pedidos con `y`, comas, `con`, typos, tildes y el resto de casos de la suite de pruebas.
+
+
+
+
+
+#################################################################
+## v0.15

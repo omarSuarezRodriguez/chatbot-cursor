@@ -43,6 +43,10 @@ NUMBER_WORDS: Dict[str, int] = {
     "doce": 12,
 }
 
+_QTY_WORD_ALTS = "|".join(
+    re.escape(word) for word in sorted(NUMBER_WORDS.keys(), key=len, reverse=True)
+)
+
 NOISE_WORDS = frozenset(
     {
         "quiero",
@@ -137,6 +141,7 @@ SYNONYM_TOKEN_MAP: Dict[str, str] = {
     "hamburgesa": "hamburguesa",
     "hamburgsa": "hamburguesa",
     "hambrguesa": "hamburguesa",
+    "habasurguesa": "hamburguesa",
     "gaseoza": "coca cola",
     "gaseosa": "coca cola",
     "hamburguesa": "hamburguesa",
@@ -177,6 +182,9 @@ CONNECTOR_SPLIT_RE = re.compile(
     re.IGNORECASE,
 )
 
+COMPOUND_Y_RE = re.compile(r"\bde\s+(\w+)\s+y\s+(\w+)\b", re.IGNORECASE)
+COMPOUND_Y_TOKEN = "__ingy__"
+
 EMOJI_RE = re.compile(
     "["
     "\U0001F300-\U0001FAFF"
@@ -197,7 +205,7 @@ QTY_PREFIX_RE = re.compile(
 QTY_SUFFIX_RE = re.compile(r"^(.+?)\s+(\d+)\s*$")
 
 SEGMENT_BOUNDARY_RE = re.compile(
-    r"(?<!\d)(?:(\d+)\s*[x×]\s*|[x×]\s*(\d+)\s*|[x×](\d+)\s*|(\d+)\s+)",
+    rf"(?<!\d)(?:(\d+)\s*[x×]\s*|[x×]\s*(\d+)\s*|[x×](\d+)\s*|(\d+)\s+|(?:(?:{_QTY_WORD_ALTS})\s+))",
     re.IGNORECASE,
 )
 
@@ -549,6 +557,17 @@ class SegmentEngine:
     """Splits chaotic order text into quantity + product fragments."""
 
     @staticmethod
+    def _preserve_compound_y(text: str) -> str:
+        return COMPOUND_Y_RE.sub(
+            lambda match: f"de {match.group(1)} {COMPOUND_Y_TOKEN} {match.group(2)}",
+            text,
+        )
+
+    @staticmethod
+    def _restore_compound_y(text: str) -> str:
+        return text.replace(COMPOUND_Y_TOKEN, "y")
+
+    @staticmethod
     def _split_by_connectors(raw: str) -> List[str]:
         chunks = [raw.strip()]
         for splitter in (COMMA_SPLIT_RE, PLUS_SPLIT_RE, STAR_SPLIT_RE):
@@ -573,9 +592,10 @@ class SegmentEngine:
             normalized = TextNormalizer.basic(chunk)
             if not normalized:
                 continue
+            normalized = SegmentEngine._preserve_compound_y(normalized)
             parts = CONNECTOR_SPLIT_RE.split(normalized)
             for part in parts:
-                part = part.strip()
+                part = SegmentEngine._restore_compound_y(part.strip())
                 if not part:
                     continue
                 segments.extend(SegmentEngine._split_numeric_boundaries(part))
@@ -1305,6 +1325,35 @@ def run_validation_suite(verbose: bool = True) -> bool:
         "errores ortograficos extremos",
         _qty_for(case13["items"], "hamburguesa") >= 2 and _qty_for(case13["items"], "agua") >= 1,
         str(case13),
+    )
+
+    extended_menu: List[Dict[str, Any]] = [
+        {"id": "p1", "nombre": "Pizza de Jamon y Queso", "precio": 95.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "p2", "nombre": "Pizza Mexicana", "precio": 25.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "p3", "nombre": "Pizza Ranchera", "precio": 15.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "b1", "nombre": "Coca Cola", "precio": 8.0, "categoria": "Bebidas", "disponible": True},
+        {"id": "h1", "nombre": "Hamburguesa Mega", "precio": 20.0, "categoria": "Hamburguesas", "disponible": True},
+        {"id": "h2", "nombre": "Hamburguesa Doble Carne", "precio": 22.0, "categoria": "Hamburguesas", "disponible": True},
+        {"id": "h3", "nombre": "Hamburguesa Doble Pollo", "precio": 15.0, "categoria": "Hamburguesas", "disponible": True},
+    ]
+    user_long_order = (
+        "quiero por favor dos pizzas de jamon y queso, tres pizzas mexicanas, "
+        "4 pizzas rancheras, 5 coca colas, 7 hamburguesas mega ocho hamburguesas "
+        "doble carne una habasurguesa doble pollo"
+    )
+    case14 = OrderIntelligenceEngine(extended_menu).parse(user_long_order)
+    check(
+        "pedido largo jamon y queso y hamburguesas variadas",
+        case14["status"] in {"ok", "needs_clarification"}
+        and len(case14["items"]) == 7
+        and _qty_for(case14["items"], "jamon") == 2
+        and _qty_for(case14["items"], "mexicana") == 3
+        and _qty_for(case14["items"], "ranchera") == 4
+        and _qty_for(case14["items"], "coca") == 5
+        and _qty_for(case14["items"], "mega") == 7
+        and _qty_for(case14["items"], "doble carne") == 8
+        and _qty_for(case14["items"], "doble pollo") == 1,
+        str(case14),
     )
 
     if verbose:
