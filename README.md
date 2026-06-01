@@ -1571,3 +1571,59 @@ Reinicia el servidor para aplicar el cambio.
 
 #################################################################
 ## v0.16
+
+## Prompt:
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[que busque la manera de implementar algo que permita buscar palabras y detectar que palabra es por ejemplo si escribo hbogruesa el me detecte que quise decir hamburguesa, pero no solo para esa palabra sino para cualquiera en general, solo has eso y no toques nada mas, hazlo como mejora incremental]
+
+
+## Respuesta cursor:
+
+### Análisis previo
+
+**Problema:** typos como `hbogruesa` no se reconocían porque:
+1. El `fail_safe` rechazaba palabras sueltas sin coincidencia exacta con el menú.
+2. No había corrección por token contra el vocabulario del catálogo.
+3. Los aliases con typos (`hambrguesa`) competían con la palabra correcta.
+
+**Archivo afectado:** `app/core/parser.py` únicamente.
+
+---
+
+### Cambios implementados
+
+1. **`_correct_typos()`** en `FuzzyMatcher`: cada palabra se compara con el vocabulario del menú (nombres y tokens reales).
+2. **Filtros de seguridad:** similitud mínima 68%, diferencia clara entre 1.º y 2.º candidato, y longitud similar (±3 caracteres).
+3. **`best_match()`** aplica la corrección antes del matching.
+4. **`_has_menu_token_overlap()`** usa la versión corregida para no rechazar typos válidos.
+5. **Pruebas:** `hbogruesa` y `2 piza hawaiana`.
+
+---
+
+### Resultado verificado
+
+| Entrada | Resultado |
+|---|---|
+| `hbogruesa` | 1 x Hamburguesa Clásica |
+| `2 piza hawaiana` | 2 x Pizza Hawaiana |
+| `ensalada cesr` | 1 x Ensalada César |
+
+Parser: **20/20 OK**
+
+Funciona con **cualquier producto del menú** cargado (Sheets o demo), porque el vocabulario se construye dinámicamente del catálogo.
+
+---
+
+### Archivos modificados
+
+- `app/core/parser.py`
+
+
+

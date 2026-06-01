@@ -212,6 +212,9 @@ SEGMENT_BOUNDARY_RE = re.compile(
 ACCEPT_AUTO_SCORE = 0.80
 ACCEPT_REVIEW_SCORE = 0.50
 AMBIGUITY_DELTA = 0.05
+TYPO_CORRECT_MIN_SCORE = 0.68
+TYPO_CORRECT_MIN_GAP = 0.05
+TYPO_VOCAB_MIN_LEN = 4
 
 
 def log_parser_errors(
@@ -431,6 +434,55 @@ class FuzzyMatcher:
 
     def __init__(self, catalog: List[Dict[str, Any]]) -> None:
         self.catalog = catalog
+        self._vocabulary = self._build_vocabulary(catalog)
+
+    @staticmethod
+    def _build_vocabulary(catalog: List[Dict[str, Any]]) -> List[str]:
+        words: set[str] = set()
+        for entry in catalog:
+            words.add(entry["normalized"])
+            for token in entry.get("tokens", []):
+                if len(token) >= TYPO_VOCAB_MIN_LEN:
+                    words.add(token)
+        return sorted(words, key=len, reverse=True)
+
+    def _best_vocab_match(self, token: str) -> Tuple[str, float, float]:
+        token_key = _strip_accents(token.lower())
+        if len(token_key) < TYPO_VOCAB_MIN_LEN:
+            return token, 0.0, 0.0
+        if token_key in self._vocabulary:
+            return token, 1.0, 0.0
+
+        best_word = token
+        best_score = 0.0
+        second_score = 0.0
+        for candidate in self._vocabulary:
+            if abs(len(candidate) - len(token_key)) > 3:
+                continue
+            score = self._ratio(token_key, candidate)
+            if score > best_score or (score == best_score and len(candidate) > len(best_word)):
+                second_score = best_score
+                best_score = score
+                best_word = candidate
+            elif score > second_score:
+                second_score = score
+        return best_word, best_score, second_score
+
+    def _correct_typos(self, text: str) -> str:
+        if not text:
+            return text
+        corrected: List[str] = []
+        for token in text.split():
+            candidate, score, second_score = self._best_vocab_match(token)
+            if (
+                score >= TYPO_CORRECT_MIN_SCORE
+                and (score - second_score) >= TYPO_CORRECT_MIN_GAP
+                and _strip_accents(candidate.lower()) != _strip_accents(token.lower())
+            ):
+                corrected.append(candidate)
+            else:
+                corrected.append(token)
+        return " ".join(corrected)
 
     @staticmethod
     def _ratio(a: str, b: str) -> float:
@@ -492,6 +544,7 @@ class FuzzyMatcher:
             fragment,
             [entry["normalized"] for entry in self.catalog],
         )
+        query = self._correct_typos(query)
         query = self._apply_synonyms(query)
         if not query:
             return None, 0.0, None, 0.0
@@ -892,7 +945,14 @@ class OrderIntelligenceEngine:
         return False
 
     def _has_menu_token_overlap(self, text: str) -> bool:
-        query_tokens = set(TextNormalizer.basic(text).split())
+        basic = TextNormalizer.basic(text)
+        if self._has_exact_menu_token_overlap(basic):
+            return True
+        corrected = self._matcher._correct_typos(basic)
+        return corrected != basic and self._has_exact_menu_token_overlap(corrected)
+
+    def _has_exact_menu_token_overlap(self, text: str) -> bool:
+        query_tokens = set(text.split())
         if not query_tokens:
             return False
         for entry in self._catalog:
@@ -1354,6 +1414,22 @@ def run_validation_suite(verbose: bool = True) -> bool:
         and _qty_for(case14["items"], "doble carne") == 8
         and _qty_for(case14["items"], "doble pollo") == 1,
         str(case14),
+    )
+
+    case15 = demo_engine.parse("hbogruesa")
+    check(
+        "typo general hbogruesa",
+        case15["status"] in {"ok", "needs_clarification"}
+        and _qty_for(case15["items"], "hamburguesa") >= 1,
+        str(case15),
+    )
+
+    case16 = demo_engine.parse("2 piza hawaiana")
+    check(
+        "typo general piza",
+        case16["status"] in {"ok", "needs_clarification"}
+        and _qty_for(case16["items"], "hawaiana") == 2,
+        str(case16),
     )
 
     if verbose:
