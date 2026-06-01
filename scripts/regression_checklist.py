@@ -26,11 +26,6 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from app.app import create_app  # noqa: E402
-from app.config import (  # noqa: E402
-    GOOGLE_SHEETS_CREDENTIALS_PATH,
-    GOOGLE_SPREADSHEET_ID,
-)
-from app.integrations.google_sheets import GoogleSheetsClient  # noqa: E402
 
 
 def _twilio_messages(xml: str) -> list[str]:
@@ -55,8 +50,13 @@ def check_parser() -> bool:
 def check_health(client) -> bool:
     response = client.get("/health")
     payload = response.get_json(silent=True) or {}
-    ok = response.status_code == 200 and payload.get("status") == "ok"
-    print(f"[{'OK' if ok else 'FAIL'}] GET /health -> 200 status=ok")
+    caches = payload.get("caches") or {}
+    ok = (
+        response.status_code == 200
+        and payload.get("status") == "ok"
+        and caches.get("ready") is True
+    )
+    print(f"[{'OK' if ok else 'FAIL'}] GET /health -> 200 status=ok caches.ready")
     return ok
 
 
@@ -71,11 +71,7 @@ def check_hola_two_messages(client, wa_id: str) -> bool:
     return ok
 
 
-def check_menu_from_sheets(client, wa_id: str) -> bool:
-    sheets = GoogleSheetsClient(
-        GOOGLE_SHEETS_CREDENTIALS_PATH,
-        GOOGLE_SPREADSHEET_ID,
-    )
+def check_menu_from_sheets(client, wa_id: str, sheets) -> bool:
     menu_items = sheets.get_menu()
     response = client.post(
         "/bot",
@@ -127,13 +123,14 @@ def main() -> int:
     results = [check_parser()]
 
     app = create_app()
+    sheets = app.config["user_service"].sheets
     wa_id = f"regression_{uuid.uuid4().hex[:8]}"
     with app.test_client() as client:
         results.extend(
             [
                 check_health(client),
                 check_hola_two_messages(client, wa_id),
-                check_menu_from_sheets(client, wa_id),
+                check_menu_from_sheets(client, wa_id, sheets),
                 check_short_order_confirmation(client, wa_id),
             ]
         )

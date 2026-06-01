@@ -32,9 +32,8 @@ REPORT_PATH = ROOT / "data" / "latency_report.json"
 
 
 def _measure_with_test_client() -> dict[str, float]:
-    from app.app import create_app
+    from app.app import app
 
-    app = create_app()
     wa_id = f"latency_{uuid.uuid4().hex[:8]}"
     timings: dict[str, float] = {}
 

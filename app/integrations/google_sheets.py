@@ -12,8 +12,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from app.config import ORDERS_CACHE_TTL_SECONDS
-
 logger = logging.getLogger(__name__)
 
 MENU_LOCAL_REFRESH_SECONDS = 30
@@ -22,6 +20,12 @@ _MENU_LOCAL_PATH = (
 )
 _USERS_LOCAL_PATH = (
     Path(__file__).resolve().parent.parent.parent / "data" / "users_cache.json"
+)
+_ORDERS_LOCAL_PATH = (
+    Path(__file__).resolve().parent.parent.parent / "data" / "orders_cache.json"
+)
+_RESERVATIONS_LOCAL_PATH = (
+    Path(__file__).resolve().parent.parent.parent / "data" / "reservations_cache.json"
 )
 
 DEMO_MENU = [
@@ -116,12 +120,20 @@ class GoogleSheetsClient:
         self._users_cache: Dict[str, Dict[str, Any]] = {}
         self._user_row_index: Dict[str, int] = {}
         self._dirty_users: set[str] = set()
-        self._orders_cache: Optional[List[Dict[str, Any]]] = None
-        self._orders_cache_expires: float = 0.0
+        self._orders_local: Dict[str, Dict[str, Any]] = {}
+        self._order_row_index: Dict[str, int] = {}
+        self._dirty_new_orders: set[str] = set()
+        self._dirty_order_status: Dict[str, str] = {}
+        self._reservations_local: Dict[str, Dict[str, Any]] = {}
+        self._dirty_reservations: set[str] = set()
         self._worksheets: Dict[str, Any] = {}
+        self._cache_warmed = False
         self._load_local_menu()
         self._load_local_users()
+        self._load_local_orders()
+        self._load_local_reservations()
         self._connect()
+        self.warm_up_cache()
         if self._connected:
             self._start_background_sync_loop()
 
@@ -152,28 +164,47 @@ class GoogleSheetsClient:
             self._spreadsheet = self._client.open_by_key(self.spreadsheet_id)
             self._connected = True
             self._ensure_worksheets()
-            self.warm_up_cache()
         except Exception as exc:
             logger.warning("Google Sheets unavailable (%s). Using demo data.", exc)
             self._connected = False
 
     def warm_up_cache(self) -> None:
-        if not self._connected:
-            return
         started = time.perf_counter()
         try:
+            if self._connected:
+                if not _MENU_LOCAL_PATH.exists() or not self._menu_cache:
+                    self._refresh_menu_from_sheets()
+                if not _USERS_LOCAL_PATH.exists() or not self._users_cache:
+                    self._refresh_users_from_sheets()
+                if not _ORDERS_LOCAL_PATH.exists() or not self._orders_local:
+                    self._refresh_orders_from_sheets()
             with self._cache_lock:
                 menu_count = len(self._menu_cache or DEMO_MENU)
                 user_count = len(self._users_cache)
+                order_count = len(self._orders_local)
+            self._cache_warmed = True
             elapsed_ms = (time.perf_counter() - started) * 1000
             logger.info(
-                "Google Sheets cache warm-up: %d menu items (local), %d users (local) in %.1f ms",
+                "Google Sheets cache warm-up: %d menu (local), %d users (local), "
+                "%d orders (local) in %.1f ms",
                 menu_count,
                 user_count,
+                order_count,
                 elapsed_ms,
             )
         except Exception as exc:
             logger.warning("Google Sheets cache warm-up failed (%s).", exc)
+
+    def cache_status(self) -> Dict[str, Any]:
+        with self._cache_lock:
+            menu = self._menu_cache
+            return {
+                "ready": self._cache_warmed,
+                "sheets_connected": self._connected,
+                "menu_items": len(menu) if menu else 0,
+                "users": len(self._users_cache),
+                "orders": len(self._orders_local),
+            }
 
     def _load_local_users(self) -> None:
         if not _USERS_LOCAL_PATH.exists():
@@ -251,8 +282,12 @@ class GoogleSheetsClient:
         def _loop() -> None:
             while True:
                 self._push_dirty_users_to_sheets()
+                self._push_dirty_orders_to_sheets()
+                self._push_dirty_reservations_to_sheets()
                 self._refresh_menu_from_sheets()
                 self._refresh_users_from_sheets()
+                self._refresh_orders_from_sheets()
+                self._refresh_reservations_from_sheets()
                 time.sleep(MENU_LOCAL_REFRESH_SECONDS)
 
         thread = threading.Thread(
@@ -262,10 +297,8 @@ class GoogleSheetsClient:
         )
         thread.start()
         logger.info(
-            "Background sync every %ds (menu: %s, users: %s)",
+            "Background sync every %ds (menu, users, orders, reservations in data/)",
             MENU_LOCAL_REFRESH_SECONDS,
-            _MENU_LOCAL_PATH,
-            _USERS_LOCAL_PATH,
         )
 
     def _ensure_worksheets(self) -> None:
@@ -302,10 +335,299 @@ class GoogleSheetsClient:
             return value
         return str(value).strip().lower() in {"1", "true", "si", "sí", "yes", "y"}
 
-    def _invalidate_orders_cache(self) -> None:
+    def _order_from_row(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            items = json.loads(row.get("items") or "[]")
+        except json.JSONDecodeError:
+            items = []
+        order_id = str(row.get("order_id", "")).upper()
+        return {
+            "order_id": order_id,
+            "wa_id": str(row.get("wa_id", "")),
+            "items": items,
+            "total": float(row.get("total", 0) or 0),
+            "status": str(row.get("status", "pending")),
+            "timestamp": str(row.get("timestamp", "")),
+            "customer_name": str(row.get("customer_name", "")),
+            "address": str(row.get("address", "")),
+            "delivery_type": str(row.get("delivery_type", "")),
+        }
+
+    def _load_local_orders(self) -> None:
+        if not _ORDERS_LOCAL_PATH.exists():
+            return
+        try:
+            with _ORDERS_LOCAL_PATH.open("r", encoding="utf-8") as handle:
+                payload = json.load(handle)
+            if not isinstance(payload, dict):
+                return
+            orders = payload.get("orders", {})
+            row_index = payload.get("row_index", {})
+            dirty_new = payload.get("dirty_new", [])
+            dirty_status = payload.get("dirty_status", {})
+            if isinstance(orders, dict):
+                with self._cache_lock:
+                    self._orders_local = {
+                        str(k).upper(): v for k, v in orders.items()
+                    }
+                    self._order_row_index = {
+                        str(k).upper(): int(v) for k, v in row_index.items()
+                    }
+                    self._dirty_new_orders = {str(o).upper() for o in dirty_new}
+                    self._dirty_order_status = {
+                        str(k).upper(): str(v)
+                        for k, v in dirty_status.items()
+                    }
+        except (json.JSONDecodeError, OSError, ValueError, TypeError) as exc:
+            logger.warning("Local orders cache unreadable (%s).", exc)
+
+    def _save_local_orders(self) -> None:
         with self._cache_lock:
-            self._orders_cache = None
-            self._orders_cache_expires = 0.0
+            payload = {
+                "orders": self._orders_local,
+                "row_index": self._order_row_index,
+                "dirty_new": sorted(self._dirty_new_orders),
+                "dirty_status": self._dirty_order_status,
+            }
+        _ORDERS_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with _ORDERS_LOCAL_PATH.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle, ensure_ascii=False, indent=2)
+
+    def _load_local_reservations(self) -> None:
+        if not _RESERVATIONS_LOCAL_PATH.exists():
+            return
+        try:
+            with _RESERVATIONS_LOCAL_PATH.open("r", encoding="utf-8") as handle:
+                payload = json.load(handle)
+            if not isinstance(payload, dict):
+                return
+            reservations = payload.get("reservations", {})
+            dirty = payload.get("dirty", [])
+            if isinstance(reservations, dict):
+                with self._cache_lock:
+                    self._reservations_local = reservations
+                    self._dirty_reservations = {str(r) for r in dirty}
+        except (json.JSONDecodeError, OSError, ValueError, TypeError) as exc:
+            logger.warning("Local reservations cache unreadable (%s).", exc)
+
+    def _save_local_reservations(self) -> None:
+        with self._cache_lock:
+            payload = {
+                "reservations": self._reservations_local,
+                "dirty": sorted(self._dirty_reservations),
+            }
+        _RESERVATIONS_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with _RESERVATIONS_LOCAL_PATH.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle, ensure_ascii=False, indent=2)
+
+    def _fetch_orders_from_sheets(
+        self,
+    ) -> tuple[Dict[str, Dict[str, Any]], Dict[str, int]]:
+        sheet = self._get_sheet("ORDERS")
+        orders: Dict[str, Dict[str, Any]] = {}
+        row_index: Dict[str, int] = {}
+        if not sheet:
+            return orders, row_index
+
+        headers = SHEET_HEADERS["ORDERS"]
+        for idx, raw in enumerate(sheet.get_all_values()[1:], start=2):
+            if not raw or not str(raw[0]).strip():
+                continue
+            padded = raw + [""] * (len(headers) - len(raw))
+            row = dict(zip(headers, padded[: len(headers)]))
+            order_id = str(row.get("order_id", "")).strip().upper()
+            if order_id:
+                orders[order_id] = self._order_from_row(row)
+                row_index[order_id] = idx
+        return orders, row_index
+
+    def _refresh_orders_from_sheets(self) -> None:
+        if not self._connected:
+            return
+        try:
+            fetched, fetched_rows = self._fetch_orders_from_sheets()
+            if not fetched and not fetched_rows:
+                return
+            with self._cache_lock:
+                pending = set(self._dirty_new_orders) | set(self._dirty_order_status)
+                for order_id, order in fetched.items():
+                    if order_id not in pending:
+                        self._orders_local[order_id] = order
+                for order_id, idx in fetched_rows.items():
+                    if order_id not in pending:
+                        self._order_row_index[order_id] = idx
+            self._save_local_orders()
+            logger.info("Orders local cache refreshed: %d orders", len(fetched))
+        except Exception as exc:
+            logger.warning("Background orders refresh failed (%s).", exc)
+
+    def _create_order_on_sheets(self, order_id: str) -> bool:
+        sheet = self._get_sheet("ORDERS")
+        if not sheet:
+            return False
+        with self._cache_lock:
+            order = dict(self._orders_local.get(order_id, {}))
+        if not order:
+            return False
+
+        items = order.get("items", [])
+        sheet.append_row(
+            [
+                order_id,
+                order.get("wa_id", ""),
+                json.dumps(items, ensure_ascii=False),
+                order.get("total", 0),
+                order.get("status", "pending"),
+                order.get("timestamp", ""),
+                order.get("customer_name", ""),
+                order.get("address", ""),
+                order.get("delivery_type", ""),
+            ]
+        )
+        new_row = len(sheet.get_all_values())
+        with self._cache_lock:
+            self._order_row_index[order_id] = new_row
+        return True
+
+    def _update_order_status_on_sheets(self, order_id: str, status: str) -> bool:
+        sheet = self._get_sheet("ORDERS")
+        if not sheet:
+            return False
+        with self._cache_lock:
+            row_idx = self._order_row_index.get(order_id)
+        if not row_idx:
+            try:
+                cell = sheet.find(order_id, in_column=1)
+            except Exception:
+                return False
+            if not cell:
+                return False
+            row_idx = cell.row
+            with self._cache_lock:
+                self._order_row_index[order_id] = row_idx
+        sheet.update(f"E{row_idx}", [[status]])
+        return True
+
+    def _push_dirty_orders_to_sheets(self) -> None:
+        if not self._connected:
+            return
+        with self._cache_lock:
+            new_orders = list(self._dirty_new_orders)
+            status_updates = dict(self._dirty_order_status)
+
+        synced_new: List[str] = []
+        for order_id in new_orders:
+            try:
+                if self._create_order_on_sheets(order_id):
+                    synced_new.append(order_id)
+            except Exception as exc:
+                logger.warning("Background order create failed for %s (%s).", order_id, exc)
+
+        synced_status: List[str] = []
+        for order_id, status in status_updates.items():
+            try:
+                if self._update_order_status_on_sheets(order_id, status):
+                    synced_status.append(order_id)
+            except Exception as exc:
+                logger.warning(
+                    "Background order status sync failed for %s (%s).", order_id, exc
+                )
+
+        if synced_new or synced_status:
+            with self._cache_lock:
+                for order_id in synced_new:
+                    self._dirty_new_orders.discard(order_id)
+                for order_id in synced_status:
+                    self._dirty_order_status.pop(order_id, None)
+            self._save_local_orders()
+            logger.info(
+                "Orders synced to Sheets: %d new, %d status",
+                len(synced_new),
+                len(synced_status),
+            )
+
+    def _fetch_reservations_from_sheets(self) -> Dict[str, Dict[str, Any]]:
+        sheet = self._get_sheet("RESERVATIONS")
+        reservations: Dict[str, Dict[str, Any]] = {}
+        if not sheet:
+            return reservations
+        for row in sheet.get_all_records():
+            reservation_id = str(row.get("reservation_id", "")).strip()
+            if not reservation_id:
+                continue
+            reservations[reservation_id] = {
+                "reservation_id": reservation_id,
+                "wa_id": str(row.get("wa_id", "")),
+                "personas": int(row.get("personas", 0) or 0),
+                "fecha": str(row.get("fecha", "")),
+                "hora": str(row.get("hora", "")),
+                "status": str(row.get("status", "confirmed")),
+            }
+        return reservations
+
+    def _refresh_reservations_from_sheets(self) -> None:
+        if not self._connected:
+            return
+        try:
+            fetched = self._fetch_reservations_from_sheets()
+            if not fetched:
+                return
+            with self._cache_lock:
+                dirty = set(self._dirty_reservations)
+                for res_id, reservation in fetched.items():
+                    if res_id not in dirty:
+                        self._reservations_local[res_id] = reservation
+            self._save_local_reservations()
+            logger.info("Reservations local cache refreshed: %d", len(fetched))
+        except Exception as exc:
+            logger.warning("Background reservations refresh failed (%s).", exc)
+
+    def _create_reservation_on_sheets(self, reservation_id: str) -> bool:
+        sheet = self._get_sheet("RESERVATIONS")
+        if not sheet:
+            return False
+        with self._cache_lock:
+            reservation = dict(self._reservations_local.get(reservation_id, {}))
+        if not reservation:
+            return False
+        sheet.append_row(
+            [
+                reservation_id,
+                reservation.get("wa_id", ""),
+                reservation.get("personas", 0),
+                reservation.get("fecha", ""),
+                reservation.get("hora", ""),
+                reservation.get("status", "confirmed"),
+            ]
+        )
+        return True
+
+    def _push_dirty_reservations_to_sheets(self) -> None:
+        if not self._connected:
+            return
+        with self._cache_lock:
+            pending = list(self._dirty_reservations)
+        if not pending:
+            return
+
+        synced: List[str] = []
+        for reservation_id in pending:
+            try:
+                if self._create_reservation_on_sheets(reservation_id):
+                    synced.append(reservation_id)
+            except Exception as exc:
+                logger.warning(
+                    "Background reservation sync failed for %s (%s).",
+                    reservation_id,
+                    exc,
+                )
+
+        if synced:
+            with self._cache_lock:
+                for reservation_id in synced:
+                    self._dirty_reservations.discard(reservation_id)
+            self._save_local_reservations()
+            logger.info("Reservations synced to Sheets: %d", len(synced))
 
     def _fetch_menu_rows(self) -> List[Dict[str, Any]]:
         sheet = self._get_sheet("MENU")
@@ -462,19 +784,50 @@ class GoogleSheetsClient:
             self._save_local_users()
             logger.info("Users synced to Sheets: %d", len(synced))
 
-    def _get_orders_records(self) -> List[Dict[str, Any]]:
-        now = time.time()
-        with self._cache_lock:
-            if self._orders_cache is not None and now < self._orders_cache_expires:
-                return self._orders_cache
+    def create_order(
+        self,
+        wa_id: str,
+        items: List[Dict[str, Any]],
+        total: float,
+        status: str = "pending",
+        customer_name: str = "",
+        address: str = "",
+        delivery_type: str = "",
+    ) -> str:
+        order_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
+        payload = {
+            "order_id": order_id,
+            "wa_id": wa_id,
+            "items": items,
+            "total": total,
+            "status": status,
+            "timestamp": datetime.utcnow().isoformat(),
+            "customer_name": customer_name,
+            "address": address,
+            "delivery_type": delivery_type,
+        }
 
-        sheet = self._get_sheet("ORDERS")
-        rows = sheet.get_all_records() if sheet else []
+        if not self._connected:
+            self._demo_orders.append(payload)
+            self.upsert_user(
+                wa_id=wa_id,
+                name=customer_name,
+                address=address,
+                last_order_items=items,
+            )
+            return order_id
 
         with self._cache_lock:
-            self._orders_cache = rows
-            self._orders_cache_expires = now + ORDERS_CACHE_TTL_SECONDS
-            return self._orders_cache
+            self._orders_local[order_id] = payload
+            self._dirty_new_orders.add(order_id)
+        self._save_local_orders()
+        self.upsert_user(
+            wa_id=wa_id,
+            name=customer_name,
+            address=address,
+            last_order_items=items,
+        )
+        return order_id
 
     def get_menu(self) -> List[Dict[str, Any]]:
         with self._cache_lock:
@@ -527,56 +880,6 @@ class GoogleSheetsClient:
             self._dirty_users.add(wa_id)
         self._save_local_users()
 
-    def create_order(
-        self,
-        wa_id: str,
-        items: List[Dict[str, Any]],
-        total: float,
-        status: str = "pending",
-        customer_name: str = "",
-        address: str = "",
-        delivery_type: str = "",
-    ) -> str:
-        order_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
-        payload = {
-            "order_id": order_id,
-            "wa_id": wa_id,
-            "items": items,
-            "total": total,
-            "status": status,
-            "timestamp": datetime.utcnow().isoformat(),
-            "customer_name": customer_name,
-            "address": address,
-            "delivery_type": delivery_type,
-        }
-
-        sheet = self._get_sheet("ORDERS")
-        if sheet:
-            sheet.append_row(
-                [
-                    order_id,
-                    wa_id,
-                    json.dumps(items, ensure_ascii=False),
-                    total,
-                    status,
-                    payload["timestamp"],
-                    customer_name,
-                    address,
-                    delivery_type,
-                ]
-            )
-        else:
-            self._demo_orders.append(payload)
-
-        self._invalidate_orders_cache()
-        self.upsert_user(
-            wa_id=wa_id,
-            name=customer_name,
-            address=address,
-            last_order_items=items,
-        )
-        return order_id
-
     def get_last_order(self, wa_id: str) -> Optional[Dict[str, Any]]:
         user = self.get_user(wa_id)
         items = user.get("last_order_items") or []
@@ -592,49 +895,29 @@ class GoogleSheetsClient:
 
     def get_order(self, order_id: str) -> Optional[Dict[str, Any]]:
         order_id = order_id.upper()
+        with self._cache_lock:
+            if order_id in self._orders_local:
+                return dict(self._orders_local[order_id])
         for order in self._demo_orders:
-            if order.get("order_id") == order_id:
+            if str(order.get("order_id", "")).upper() == order_id:
                 return dict(order)
-
-        sheet = self._get_sheet("ORDERS")
-        if not sheet:
-            return None
-        for row in self._get_orders_records():
-            if str(row.get("order_id", "")).upper() == order_id:
-                try:
-                    items = json.loads(row.get("items") or "[]")
-                except json.JSONDecodeError:
-                    items = []
-                return {
-                    "order_id": row.get("order_id"),
-                    "wa_id": str(row.get("wa_id", "")),
-                    "items": items,
-                    "total": float(row.get("total", 0) or 0),
-                    "status": str(row.get("status", "pending")),
-                    "timestamp": str(row.get("timestamp", "")),
-                    "customer_name": str(row.get("customer_name", "")),
-                    "address": str(row.get("address", "")),
-                    "delivery_type": str(row.get("delivery_type", "")),
-                }
         return None
 
     def update_order_status(self, order_id: str, status: str) -> bool:
         order_id = order_id.upper()
         for order in self._demo_orders:
-            if order.get("order_id") == order_id:
+            if str(order.get("order_id", "")).upper() == order_id:
                 order["status"] = status
                 return True
 
-        sheet = self._get_sheet("ORDERS")
-        if not sheet:
-            return False
-        rows = self._get_orders_records()
-        for idx, row in enumerate(rows, start=2):
-            if str(row.get("order_id", "")).upper() == order_id:
-                sheet.update(f"E{idx}", [[status]])
-                self._invalidate_orders_cache()
-                return True
-        return False
+        with self._cache_lock:
+            if order_id not in self._orders_local:
+                return False
+            self._orders_local[order_id]["status"] = status
+            if order_id not in self._dirty_new_orders:
+                self._dirty_order_status[order_id] = status
+        self._save_local_orders()
+        return True
 
     def get_pending_orders(self) -> List[Dict[str, Any]]:
         pending: List[Dict[str, Any]] = []
@@ -642,30 +925,10 @@ class GoogleSheetsClient:
             if order.get("status") == "pending":
                 pending.append(dict(order))
 
-        sheet = self._get_sheet("ORDERS")
-        if not sheet:
-            return pending
-
-        for row in self._get_orders_records():
-            if str(row.get("status", "")).lower() != "pending":
-                continue
-            try:
-                items = json.loads(row.get("items") or "[]")
-            except json.JSONDecodeError:
-                items = []
-            pending.append(
-                {
-                    "order_id": row.get("order_id"),
-                    "wa_id": str(row.get("wa_id", "")),
-                    "items": items,
-                    "total": float(row.get("total", 0) or 0),
-                    "status": "pending",
-                    "timestamp": str(row.get("timestamp", "")),
-                    "customer_name": str(row.get("customer_name", "")),
-                    "address": str(row.get("address", "")),
-                    "delivery_type": str(row.get("delivery_type", "")),
-                }
-            )
+        with self._cache_lock:
+            for order in self._orders_local.values():
+                if str(order.get("status", "")).lower() == "pending":
+                    pending.append(dict(order))
         return pending
 
     def create_reservation(
@@ -677,9 +940,39 @@ class GoogleSheetsClient:
         status: str = "confirmed",
     ) -> str:
         reservation_id = f"RES-{uuid.uuid4().hex[:8].upper()}"
-        sheet = self._get_sheet("RESERVATIONS")
-        if sheet:
-            sheet.append_row(
-                [reservation_id, wa_id, personas, fecha, hora, status]
-            )
+        payload = {
+            "reservation_id": reservation_id,
+            "wa_id": wa_id,
+            "personas": personas,
+            "fecha": fecha,
+            "hora": hora,
+            "status": status,
+        }
+
+        if not self._connected:
+            return reservation_id
+
+        with self._cache_lock:
+            self._reservations_local[reservation_id] = payload
+            self._dirty_reservations.add(reservation_id)
+        self._save_local_reservations()
         return reservation_id
+
+
+_sheets_client_singleton: Optional[GoogleSheetsClient] = None
+_sheets_client_lock = threading.Lock()
+
+
+def get_google_sheets_client(
+    credentials_path: str,
+    spreadsheet_id: str,
+) -> GoogleSheetsClient:
+    """Return one GoogleSheetsClient per process (shared by create_app and scripts)."""
+    global _sheets_client_singleton
+    with _sheets_client_lock:
+        if _sheets_client_singleton is None:
+            _sheets_client_singleton = GoogleSheetsClient(
+                credentials_path,
+                spreadsheet_id,
+            )
+        return _sheets_client_singleton

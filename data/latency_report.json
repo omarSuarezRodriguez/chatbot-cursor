@@ -7,32 +7,32 @@
     "pedido_flow": 1202
   },
   "current_ms": {
-    "hola": 4.9,
-    "menu": 7.3,
-    "pedido": 4.2,
-    "pedido_short": 11.3,
-    "pedido_flow": 11.3
+    "hola": 3.0,
+    "menu": 3.1,
+    "pedido": 4.1,
+    "pedido_short": 5.5,
+    "pedido_flow": 5.5
   },
   "comparison": [
     {
       "step": "hola",
       "baseline_ms": 2362,
-      "current_ms": 4.9,
+      "current_ms": 3.0,
       "delta_pct": "-100%",
       "under_2s": true
     },
     {
       "step": "menu",
       "baseline_ms": 1179,
-      "current_ms": 7.3,
-      "delta_pct": "-99%",
+      "current_ms": 3.1,
+      "delta_pct": "-100%",
       "under_2s": true
     },
     {
       "step": "pedido_flow",
       "baseline_ms": 1202,
-      "current_ms": 11.3,
-      "delta_pct": "-99%",
+      "current_ms": 5.5,
+      "delta_pct": "-100%",
       "under_2s": true
     }
   ],

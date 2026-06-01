@@ -1,0 +1,28 @@
+{
+  "orders": {
+    "ORD-BD074F0A": {
+      "order_id": "ORD-BD074F0A",
+      "wa_id": "order_f614b0f0",
+      "items": [
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 25.0,
+      "status": "pending",
+      "timestamp": "2026-06-01T05:57:03.944488",
+      "customer_name": "Pedro",
+      "address": "",
+      "delivery_type": "recoger"
+    }
+  },
+  "row_index": {
+    "ORD-BD074F0A": 3
+  },
+  "dirty_new": [],
+  "dirty_status": {}
+}

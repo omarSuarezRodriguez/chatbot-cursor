@@ -22,7 +22,7 @@
       "address": "",
       "last_order_date": "",
       "last_order_items": [],
-      "last_seen": "2026-06-01T05:29:14.935131"
+      "last_seen": "2026-06-01T06:40:41.952181"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
@@ -215,6 +215,78 @@
       "last_order_date": "",
       "last_order_items": [],
       "last_seen": "2026-06-01T05:45:39.821959"
+    },
+    "order_f614b0f0": {
+      "wa_id": "order_f614b0f0",
+      "name": "Pedro",
+      "address": "",
+      "last_order_date": "2026-06-01T05:57:03.945682",
+      "last_order_items": [
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "last_seen": "2026-06-01T05:57:03.945682"
+    },
+    "regression_be377403": {
+      "wa_id": "regression_be377403",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T05:57:11.196151"
+    },
+    "latency_04623ab7": {
+      "wa_id": "latency_04623ab7",
+      "name": "Latency",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T06:01:48.571141"
+    },
+    "regression_f9a66a1f": {
+      "wa_id": "regression_f9a66a1f",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T06:01:45.438969"
+    },
+    "cold_7dd59447": {
+      "wa_id": "cold_7dd59447",
+      "name": "Cold",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T06:01:59.397065"
+    },
+    "deploy_15c81f39": {
+      "wa_id": "deploy_15c81f39",
+      "name": "DeployTest",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T06:03:03.820991"
+    },
+    "deploy_0a1212e0": {
+      "wa_id": "deploy_0a1212e0",
+      "name": "DeployTest",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T06:03:29.712741"
+    },
+    "deploy_5a74c798": {
+      "wa_id": "deploy_5a74c798",
+      "name": "DeployTest",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-01T06:04:09.166318"
     }
   },
   "row_index": {
@@ -242,10 +314,17 @@
     "regression_612a9ed2": 22,
     "menu_local_8dbfaf66": 23,
     "regression_cf916a6a": 24,
-    "bench_4e5280eb": 25
+    "bench_4e5280eb": 25,
+    "latency_5164becb": 28,
+    "regression_39bdbb84": 27,
+    "order_f614b0f0": 29,
+    "regression_be377403": 30,
+    "latency_04623ab7": 31,
+    "regression_f9a66a1f": 32,
+    "cold_7dd59447": 33,
+    "deploy_15c81f39": 34,
+    "deploy_0a1212e0": 35,
+    "deploy_5a74c798": 36
   },
-  "dirty": [
-    "latency_5164becb",
-    "regression_39bdbb84"
-  ]
+  "dirty": []
 }

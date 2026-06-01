@@ -40,7 +40,15 @@ def main() -> int:
         health_ms = (time.perf_counter() - started) * 1000
         payload = response.json()
         if response.status_code == 200 and payload.get("status") == "ok":
-            print(f"[OK] GET /health -> {health_ms:.0f} ms status=ok")
+            caches = payload.get("caches") or {}
+            ready = caches.get("ready", False)
+            print(
+                f"[OK] GET /health -> {health_ms:.0f} ms status=ok "
+                f"caches.ready={ready}"
+            )
+            if not ready:
+                ok = False
+                print("[FAIL] caches not ready after warm-up")
         else:
             ok = False
             print(f"[FAIL] GET /health -> {response.status_code} {payload}")

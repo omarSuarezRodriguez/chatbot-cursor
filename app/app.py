@@ -5,9 +5,11 @@ from __future__ import annotations
 import logging
 import os
 import sys
+import threading
 import time
+from collections import defaultdict
 from pathlib import Path
-from typing import List, Union
+from typing import Dict, List, Union
 
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
@@ -26,7 +28,7 @@ from app.config import (  # noqa: E402
 )
 from app.core.flow_engine import FlowEngine  # noqa: E402
 from app.core.state_manager import StateManager  # noqa: E402
-from app.integrations.google_sheets import GoogleSheetsClient  # noqa: E402
+from app.integrations.google_sheets import get_google_sheets_client  # noqa: E402
 from app.services.admin_service import AdminService  # noqa: E402
 from app.services.menu_service import MenuService  # noqa: E402
 from app.services.order_service import OrderService  # noqa: E402
@@ -41,22 +43,89 @@ logger = logging.getLogger(__name__)
 
 Reply = Union[str, List[str]]
 
+LATENCY_STATS_EVERY = 100
+_latency_by_body: Dict[str, List[float]] = defaultdict(list)
+_latency_lock = threading.Lock()
+_latency_request_count = 0
 
-def _attach_replies(response: MessagingResponse, reply: Reply) -> None:
-    if isinstance(reply, list):
-        for part in reply:
-            if part and str(part).strip():
-                response.message(str(part).strip())
-    elif reply and str(reply).strip():
-        response.message(str(reply).strip())
+_app_instance: Flask | None = None
+
+
+def _body_latency_key(body: str) -> str:
+    normalized = (body or "").strip().lower()
+    return normalized[:40] if normalized else "(empty)"
+
+
+def _latency_percentile(samples: List[float], pct: float) -> float:
+    if not samples:
+        return 0.0
+    ordered = sorted(samples)
+    index = min(len(ordered) - 1, int(len(ordered) * pct / 100))
+    return ordered[index]
+
+
+def _record_bot_latency(body: str, elapsed_ms: float) -> None:
+    global _latency_request_count
+    key = _body_latency_key(body)
+    with _latency_lock:
+        bucket = _latency_by_body[key]
+        bucket.append(elapsed_ms)
+        if len(bucket) > 500:
+            bucket.pop(0)
+        _latency_request_count += 1
+        should_log = _latency_request_count % LATENCY_STATS_EVERY == 0
+
+    if should_log:
+        _log_bot_latency_stats()
+
+
+def _log_bot_latency_stats() -> None:
+    with _latency_lock:
+        snapshot = {
+            key: list(samples)
+            for key, samples in _latency_by_body.items()
+            if samples
+        }
+
+    parts: List[str] = []
+    for key in sorted(snapshot):
+        samples = snapshot[key]
+        if len(samples) < 2:
+            continue
+        parts.append(
+            f"{key}: p50={_latency_percentile(samples, 50):.0f}ms "
+            f"p95={_latency_percentile(samples, 95):.0f}ms n={len(samples)}"
+        )
+    if parts:
+        logger.info("POST /bot latency stats | %s", " | ".join(parts))
+
+
+def _log_bot_completion(
+    elapsed_ms: float,
+    wa_id: str,
+    is_admin: bool,
+    body: str,
+) -> None:
+    logger.info(
+        "POST /bot completed in %.1f ms wa_id=%s admin=%s body=%r",
+        elapsed_ms,
+        wa_id,
+        is_admin,
+        body[:80],
+    )
+    _record_bot_latency(body, elapsed_ms)
 
 
 def create_app() -> Flask:
+    global _app_instance
+    if _app_instance is not None:
+        return _app_instance
+
     flask_app = Flask(__name__)
 
-    sheets_client = GoogleSheetsClient(
-        credentials_path=GOOGLE_SHEETS_CREDENTIALS_PATH,
-        spreadsheet_id=GOOGLE_SPREADSHEET_ID,
+    sheets_client = get_google_sheets_client(
+        GOOGLE_SHEETS_CREDENTIALS_PATH,
+        GOOGLE_SPREADSHEET_ID,
     )
     state_manager = StateManager(persist_path=STATE_PERSIST_PATH)
     menu_service = MenuService(sheets_client)
@@ -86,6 +155,7 @@ def create_app() -> Flask:
             "service": "restaurant-chatbot",
             "restaurant": RESTAURANT_NAME,
             "admin_configured": bool(ADMIN_WHATSAPP_NUMBER),
+            "caches": sheets_client.cache_status(),
         }
 
     @flask_app.post("/bot")
@@ -105,11 +175,7 @@ def create_app() -> Flask:
                 "No pude identificar tu número. Intenta escribirnos de nuevo."
             )
             elapsed_ms = (time.perf_counter() - started) * 1000
-            logger.info(
-                "POST /bot completed in %.1f ms wa_id=missing body=%r",
-                elapsed_ms,
-                body[:80],
-            )
+            _log_bot_completion(elapsed_ms, "missing", False, body)
             return str(response), 200, {"Content-Type": "application/xml"}
 
         is_admin = False
@@ -135,13 +201,7 @@ def create_app() -> Flask:
 
         _attach_replies(response, reply)
         elapsed_ms = (time.perf_counter() - started) * 1000
-        logger.info(
-            "POST /bot completed in %.1f ms wa_id=%s admin=%s body=%r",
-            elapsed_ms,
-            wa_id,
-            is_admin,
-            body[:80],
-        )
+        _log_bot_completion(elapsed_ms, wa_id, is_admin, body)
         return str(response), 200, {"Content-Type": "application/xml"}
 
     @flask_app.post("/bot/reload-flow")
@@ -149,7 +209,17 @@ def create_app() -> Flask:
         flow_engine.reload_flow()
         return {"status": "flow reloaded"}
 
+    _app_instance = flask_app
     return flask_app
+
+
+def _attach_replies(response: MessagingResponse, reply: Reply) -> None:
+    if isinstance(reply, list):
+        for part in reply:
+            if part and str(part).strip():
+                response.message(str(part).strip())
+    elif reply and str(reply).strip():
+        response.message(str(reply).strip())
 
 
 app = create_app()

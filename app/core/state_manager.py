@@ -14,12 +14,15 @@ DEFAULT_STATE = {
     "data": {},
 }
 
+STATE_PERSIST_DEBOUNCE_SECONDS = 2.0
+
 
 class StateManager:
     def __init__(self, persist_path: Optional[str] = None) -> None:
         self._lock = threading.RLock()
         self._states: Dict[str, Dict[str, Any]] = {}
         self._persist_path = Path(persist_path) if persist_path else None
+        self._save_timer: Optional[threading.Timer] = None
         self._load()
 
     def _load(self) -> None:
@@ -36,9 +39,43 @@ class StateManager:
     def _save(self) -> None:
         if not self._persist_path:
             return
+        with self._lock:
+            snapshot = deepcopy(self._states)
         self._persist_path.parent.mkdir(parents=True, exist_ok=True)
         with self._persist_path.open("w", encoding="utf-8") as handle:
-            json.dump(self._states, handle, ensure_ascii=False, indent=2)
+            json.dump(snapshot, handle, ensure_ascii=False, indent=2)
+
+    def _cancel_save_timer(self) -> None:
+        if self._save_timer is not None:
+            self._save_timer.cancel()
+            self._save_timer = None
+
+    def _schedule_save(self) -> None:
+        self._cancel_save_timer()
+        timer = threading.Timer(STATE_PERSIST_DEBOUNCE_SECONDS, self._flush_save)
+        timer.daemon = True
+        self._save_timer = timer
+        timer.start()
+
+    def _flush_save(self) -> None:
+        with self._lock:
+            self._save_timer = None
+        self._save()
+
+    @staticmethod
+    def _critical_state_changed(
+        previous: Optional[Dict[str, Any]],
+        current: Dict[str, Any],
+    ) -> bool:
+        if previous is None:
+            return True
+        if previous.get("step") != current.get("step"):
+            return True
+        if previous.get("flow") != current.get("flow"):
+            return True
+        prev_cart = (previous.get("data") or {}).get("cart", [])
+        curr_cart = (current.get("data") or {}).get("cart", [])
+        return prev_cart != curr_cart
 
     def _persist_if_changed(
         self,
@@ -48,7 +85,11 @@ class StateManager:
     ) -> None:
         if previous == current:
             return
-        self._save()
+        if self._critical_state_changed(previous, current):
+            self._cancel_save_timer()
+            self._save()
+        else:
+            self._schedule_save()
 
     def get(self, wa_id: str) -> Dict[str, Any]:
         with self._lock:

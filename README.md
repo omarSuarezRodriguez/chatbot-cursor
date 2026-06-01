@@ -1,4 +1,4 @@
-## v0.20.
+## v0.21
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -60,6 +60,14 @@ copy .env.example .env
 4. Configura `GOOGLE_SPREADSHEET_ID` en `.env`.
 
 > Sin credenciales, el bot funciona en modo demo con menú local y persistencia en memoria.
+
+## Despliegue (Render / Railway)
+
+- Despliega desde GitHub con `python run.py` (Waitress en el puerto `PORT`).
+- En la nube, pega el JSON de la service account en `GOOGLE_SERVICE_ACCOUNT_JSON` (no subas el archivo al repo).
+- Configura el resto de variables de `.env` (Twilio, `GOOGLE_SPREADSHEET_ID`, etc.).
+- En Twilio, apunta el webhook WhatsApp a `https://tu-dominio/bot`.
+- En plan gratuito, el servicio puede dormir: el primer mensaje tras reinicio tarda más (cold start); usa plan de pago si necesitas respuesta constante menor a 2 s 24/7.
 
 ## Twilio + ngrok
 
@@ -2958,5 +2966,512 @@ Reinicia el servidor (`python run.py`) para que cargue el nuevo flujo. Los cambi
 
 #################################################################
 ## v0.21
+(prompt en auto)
+
+## Prompt:
+
+Quiero que hagas lo siguiente pero que no modifiques el proyecto ni lo toques, solo quiero que lo visualices y hagas esto:
+
+Proponme un plan de 3 prompts donde incluyas todas las mejoras posibles y necesarias para poder optimizar la velocidad del chatbot en cuanto a latencia, que sean profesionales los prompts pero también los necesito que ahorren tokens pero que sean las mejores mejoras que se le puedan implementar como si fueras un senior de 15 años
+
+## Respuesta cursor ##
+
+Ya tienes **menú y usuarios 100% locales** (~5 ms en servidor). Lo que sigue limitando latencia **en WhatsApp real** no es el `hola`, sino **pedidos/reservas/admin** que aún pueden ir a Sheets en el request, más **cold start** en hosting free.
+
+Plan en **3 prompts** (ordenados por impacto). Cada uno es autocontenido, corto y con verificación.
+
+---
+
+## Prompt 1 — Pedidos y reservas: escritura local + sync (máximo impacto en flujo real)
+
+```
+OBLIGATORIO: Lee y aplica AI_RULES.md. Cambio incremental; mínimos archivos.
+
+TAREA: Pedidos/reservas sin Sheets en POST /bot.
+
+Hoy create_order / create_reservation bloquean en append/update. Mismo patrón que users/menu:
+- Respuesta al cliente solo con memoria + data/orders_cache.json (y reservations si aplica).
+- Cola dirty; thread cada 30s sube a Sheets (reutilizar loop en google_sheets.py).
+- get_order / get_pending_orders leen local primero; refresh background.
+
+NO tocar: menú/users local, Twilio async, parser, flow JSON, endpoints.
+
+Verificar:
+python scripts/regression_checklist.py
+python scripts/measure_latency.py
+Medir POST /bot tras flujo: pedido → confirmar → guardar pedido: sin _get_sheet en request (mock).
+Meta: confirmación pedido <300ms servidor (test_client).
+```
+
+**Por qué primero:** es el camino donde el usuario **sigue esperando red** después de optimizar saludo.
+
+---
+
+## Prompt 2 — Producción estable y sin cold start lento
+
+```
+OBLIGATORIO: AI_RULES.md. Solo lo necesario para latencia 24/7.
+
+TAREA: Reducir latencia primera petición tras deploy/reinicio.
+
+1) Un solo GoogleSheetsClient por proceso (create_app singleton; no recrear en tests salvo necesario).
+2) Warm-up al import/arranque: menú+users+orders locales antes del primer /bot.
+3) Health check que confirme cachés cargadas (opcional campo en GET /health).
+4) Documentar en README 5 líneas: Render/Railway, variables GOOGLE_SERVICE_ACCOUNT_JSON, webhook /bot, plan pago si cold start.
+
+NO refactor grande. NO cambiar contratos JSON.
+
+Verificar:
+python run.py → curl /health
+DEPLOY_URL=... python scripts/verify_deployment.py
+Primer hola tras reinicio <2s en servidor (log POST /bot completed).
+```
+
+**Por qué segundo:** en local ya vas rápido; en cloud el **primer mensaje** tras dormir es lo que el cliente nota.
+
+---
+
+## Prompt 3 — Afinado senior: menos trabajo por mensaje + observabilidad
+
+```
+OBLIGATORIO: AI_RULES.md. 1-2 archivos max si posible.
+
+TAREA: Micro-optimizaciones sin cambiar UX.
+
+1) user_service.touch: un solo upsert_user (hoy get_user+upsert redundante).
+2) OrderService: invalidar parser solo si cambió menu_cache.json (mtime/hash), no cada request.
+3) state_manager: debounce escritura user_states.json (ej. flush cada 2s o solo al cambiar step/cart).
+4) Log p50/p95 por body en /bot (una línea agregada cada N requests o al final del request).
+
+Verificar: regression 5/5 + measure_latency.py sin regresión >10% vs Paso 12.
+
+NO nuevas capas. NO Redis salvo que documentes por qué no aplica en 1 instancia.
+```
+
+**Por qué tercero:** ganancias pequeñas pero **profesionales**; útil cuando 1-2 ya están en producción.
+
+---
+
+## Mapa rápido (qué ya tienes vs qué falta)
+
+| Área | Estado | Prompt |
+|------|--------|--------|
+| Menú local + refresh 30s | Hecho | — |
+| Usuarios/touch local + sync | Hecho | — |
+| Parser cache por menú | Hecho | 3 (mtime) |
+| Twilio admin async | Hecho | — |
+| Waitress + deploy | Hecho | 2 |
+| **Pedidos/reservas async** | Pendiente | **1** |
+| **Cold start producción** | Parcial | **2** |
+| touch duplicado / state debounce | Pendiente | **3** |
+
+---
+
+## Expectativa realista
+
+- **Servidor (test_client):** ya ~5–15 ms; poco margen.
+- **WhatsApp real:** meta **<2 s** servidor en pedido completo = Prompt **1** + hosting estable (**2**).
+- **No optimizar más** sin métricas en producción (`measure_latency` + logs Twilio `delivered`).
+
+Copia cada bloque en un chat nuevo, uno por uno, en orden 1 → 2 → 3.
+
+
+
+## Segundo Prompt:
+(en composer 2.5 fast)
+
+
+OBLIGATORIO: Lee y aplica AI_RULES.md. Cambio incremental; mínimos archivos.
+
+TAREA: [Pedidos/reservas sin Sheets en POST /bot.
+
+Hoy create_order / create_reservation bloquean en append/update. Mismo patrón que users/menu:
+- Respuesta al cliente solo con memoria + data/orders_cache.json (y reservations si aplica).
+- Cola dirty; thread cada 30s sube a Sheets (reutilizar loop en google_sheets.py).
+- get_order / get_pending_orders leen local primero; refresh background.
+
+NO tocar: menú/users local, Twilio async, parser, flow JSON, endpoints.
+
+Verificar:
+python scripts/regression_checklist.py
+python scripts/measure_latency.py
+Medir POST /bot tras flujo: pedido → confirmar → guardar pedido: sin _get_sheet en request (mock).
+Meta: confirmación pedido <300ms servidor (test_client).]
+
+
+
+## Respuesta cursor ##
+
+Tarea completada. Pedidos y reservas siguen el mismo patrón local que menú/usuarios.
+
+## Qué cambió
+
+En `app/integrations/google_sheets.py`:
+
+- **Caché local**: `data/orders_cache.json` y `data/reservations_cache.json`
+- **Escritura en request**: `create_order`, `update_order_status`, `create_reservation` solo tocan memoria + JSON y marcan dirty
+- **Lectura en request**: `get_order` y `get_pending_orders` leen local primero
+- **Sync en background** (cada 30s): push de dirty orders/reservations + refresh desde Sheets
+
+## Verificación
+
+| Check | Resultado |
+|-------|-----------|
+| Flujo pedido → confirmar → recoger con `_get_sheet` mockeado | **~12 ms**, pedido en caché local, sin Sheets en request |
+| `scripts/regression_checklist.py` | **5/5** |
+| `scripts/measure_latency.py` | hola ~3.7 ms, menu ~5.8 ms, pedido_flow ~8.8 ms |
+
+Meta de confirmación de pedido **<300 ms** cumplida con margen amplio.
+
+El sync a Sheets sigue ocurriendo en el thread de background (logs: `Orders synced to Sheets: 1 new`).
+
+¿Quieres que ejecute `guardar.py` para commitear?
+
+
+
+## Tercer Prompt: ##
+
+
+OBLIGATORIO: Lee y aplica AI_RULES.md. Cambio incremental; mínimos archivos.
+
+TAREA: [TAREA: Reducir latencia primera petición tras deploy/reinicio.
+
+1) Un solo GoogleSheetsClient por proceso (create_app singleton; no recrear en tests salvo necesario).
+2) Warm-up al import/arranque: menú+users+orders locales antes del primer /bot.
+3) Health check que confirme cachés cargadas (opcional campo en GET /health).
+4) Documentar en README 5 líneas: Render/Railway, variables GOOGLE_SERVICE_ACCOUNT_JSON, webhook /bot, plan pago si cold start.
+
+NO refactor grande. NO cambiar contratos JSON.
+
+Verificar:
+python run.py → curl /health
+DEPLOY_URL=... python scripts/verify_deployment.py
+Primer hola tras reinicio <2s en servidor (log POST /bot completed).
+```]
+
+
+
+
+## Respuesta cursor ##
+
+La tarea de **cold start (Prompt 2)** quedó completada: singleton de Sheets, warm-up al arranque, `caches` en `/health`, docs en README, y verificaciones OK (regression 5/5, `hola` ~21 ms en servidor).
+
+Los errores de los shells 1692 y 98110 son normales: eran procesos Waitress que se cerraron al liberar el puerto 5000 (había instancias viejas sirviendo código sin `caches`).
+
+El servidor local está de nuevo en marcha con `python run.py` en el puerto 5000.
+
+
+## Cuarto Prompt: ##
+
+
+OBLIGATORIO: Lee y aplica AI_RULES.md. Cambio incremental; mínimos archivos.
+
+TAREA: [TAREA: Micro-optimizaciones sin cambiar UX.
+
+1) user_service.touch: un solo upsert_user (hoy get_user+upsert redundante).
+2) OrderService: invalidar parser solo si cambió menu_cache.json (mtime/hash), no cada request.
+3) state_manager: debounce escritura user_states.json (ej. flush cada 2s o solo al cambiar step/cart).
+4) Log p50/p95 por body en /bot (una línea agregada cada N requests o al final del request).
+
+Verificar: regression 5/5 + measure_latency.py sin regresión >10% vs Paso 12.
+
+NO nuevas capas. NO Redis salvo que documentes por qué no aplica en 1 instancia.]
+
+
+
+## Respuesta cursor ##
+
+### Análisis previo
+
+Cuatro micro-optimizaciones puntuales sin cambiar UX: menos trabajo redundante por mensaje y mejor observabilidad, respetando la arquitectura actual.
+
+### Cambios implementados
+
+1. **`user_service.touch`**: una sola llamada a `upsert_user` (ya mergea nombre/dirección en caché).
+2. **`OrderService`**: el parser se invalida solo si cambia el `mtime` de `data/menu_cache.json`, no en cada request.
+3. **`state_manager`**: escritura inmediata al cambiar `step`, `flow` o `cart`; resto de cambios con debounce de 2 s.
+4. **`app.py`**: acumula latencias por `body` y loguea p50/p95 cada 100 requests.
+
+### Archivos modificados
+
+- `app/services/user_service.py`
+- `app/services/order_service.py`
+- `app/core/state_manager.py`
+- `app/app.py`
+
+### Compatibilidad verificada
+
+| Check | Resultado |
+|-------|-----------|
+| `regression_checklist.py` | **5/5** |
+| `measure_latency.py` | hola 3.0 ms, menu 3.1 ms, pedido 5.5 ms |
+| Regresión vs reporte Paso 12 | **<10%** (mejora leve) |
+
+### Funcionalidades preservadas
+
+Parser, flow, endpoints, contratos JSON, Twilio, Sheets async — sin cambios de UX.
+
+
+
+
+
+## Quinto Prompt ##
+
+No hagas nada ni modifiques nada solo responde: quiero que hagas un analisis del antes de todas las optimizaciones y después, a ver que tanto y me das una comparativa 
+
+## Respuesta cursor ##
+
+## Análisis comparativo: antes vs después de todas las optimizaciones
+
+### Punto de partida (baseline original — Paso 1)
+
+Medición con Google Sheets conectado, **cada mensaje pegaba a la API de Google** (`get_all_records`, `append_row`, etc.). Tiempos medidos en servidor (`POST /bot completed in X ms`):
+
+| Acción | Antes (baseline) | Cuellos de botella principales |
+|--------|------------------|--------------------------------|
+| `hola` | **~2 362 ms** | Menú + usuario + Sheets en el mismo request |
+| `menu` | **~1 179 ms** | Lectura completa de pestaña MENU |
+| `pedido` (`1 hamburguesa`) | **~1 202 ms** | Menú + parser + estado + posible touch a Sheets |
+
+**Meta del plan:** respuesta al cliente **< 2 s** en pedidos normales (sin contar Twilio → teléfono).
+
+---
+
+### Evolución por fases
+
+| Fase | Qué se hizo | `hola` | `menu` | `pedido` |
+|------|-------------|--------|--------|----------|
+| **0 — Baseline** | Sin optimizaciones | ~2 362 ms | ~1 179 ms | ~1 202 ms |
+| **1 — Plan 12 pasos** (Pasos 3–10) | Caché usuarios, menú por request, warm-up, parser reutilizado, Twilio async, state diff, Waitress | ~913 ms (−61 %) | ~513 ms (−56 %) | ~214 ms (−82 %) |
+| **2 — Menú 100 % local** | `data/menu_cache.json` + refresh cada 30 s en background | ~900 ms (casi igual) | ~196 ms | ~200 ms |
+| **3 — Usuarios/touch local** | `data/users_cache.json` + dirty sync 30 s | **~2–5 ms** | ~5 ms | ~8 ms |
+| **4 — Pedidos/reservas local** | `orders_cache.json` + sync background | ~5 ms | ~5 ms | confirmar/guardar **~12 ms** |
+| **5 — Cold start prod** | Singleton Sheets + warm-up al arranque + `/health` con `caches` | ~21 ms (HTTP servidor) | ~3 ms | ~6 ms |
+| **6 — Micro-opts** (actual) | touch 1× upsert, parser por mtime, state debounce, logs p50/p95 | **~3 ms** | **~3 ms** | **~5,5 ms** |
+
+---
+
+### Estado final (ahora)
+
+Según `data/latency_report.json` (test client, caché caliente):
+
+| Paso | Baseline | Ahora | Mejora | Factor |
+|------|----------|-------|--------|--------|
+| `hola` | 2 362 ms | **3,0 ms** | −99,9 % | **~787× más rápido** |
+| `menu` | 1 179 ms | **3,1 ms** | −99,7 % | **~380× más rápido** |
+| `pedido_flow` | 1 202 ms | **5,5 ms** | −99,5 % | **~218× más rápido** |
+
+**Meta < 2 s:** cumplida con margen enorme (todo bajo **10 ms** en servidor con caché caliente).
+
+En **servidor real** (`python run.py` + HTTP), el primer `hola` tras arranque quedó en **~21 ms** (vs ~800–900 ms antes de usuarios locales, y ~2,3 s en el baseline).
+
+---
+
+### Qué cambió arquitecturalmente
+
+| Área | Antes | Después |
+|------|-------|---------|
+| **Menú** | Sheets en cada request | Memoria + JSON local; Sheets solo en background (30 s) |
+| **Usuarios / touch** | `get_user` + `upsert` → red | Un `upsert_user` local + sync background |
+| **Pedidos / reservas** | `append_row` / `update` bloqueantes | Local + cola dirty + sync 30 s |
+| **Parser** | Reconstruido a menudo | Reutilizado; invalida solo si cambia `menu_cache.json` |
+| **Estado** | Escritura en cada cambio | Diff + debounce 2 s (inmediato en step/cart) |
+| **Twilio admin** | Síncrono en webhook | Thread en background |
+| **Arranque** | Primera petición pagaba conexión Sheets | Warm-up + singleton al import |
+| **Observabilidad** | Solo log por request | p50/p95 por `body` cada 100 requests |
+
+Patrón común: **responder al cliente solo con memoria/disco local; Sheets es eventual (background)**.
+
+---
+
+### Dónde sigue habiendo latencia (honesto)
+
+1. **Twilio → teléfono:** no se optimizó; el usuario puede seguir viendo 1–3 s extra por la red de WhatsApp.
+2. **Cold start en hosting free** (Render/Railway): si el servicio duerme, el primer mensaje puede tardar segundos en **despertar el contenedor**, no en el bot en sí.
+3. **Sync background:** cada 30 s hay tráfico a Sheets; no afecta al cliente, pero el servidor sigue dependiendo de Google para persistencia.
+
+---
+
+### Resumen en una frase
+
+Pasaste de un bot donde **cada mensaje esperaba Google Sheets (~1,2–2,4 s)** a uno donde el servidor responde en **~3–6 ms** en flujo normal, porque casi todo (menú, usuarios, pedidos) vive en caché local y Sheets quedó relegado a sincronización en segundo plano.
+
+La mejora más grande no fue un solo cambio, sino la **secuencia**: cachés y warm-up (plan 12 pasos) → **desacoplar red del request** (menú, users, orders locales) → **singleton + micro-opts** para pulir lo que quedaba.
+
+
+
+
+
+## Sexto Prompt ##
+
+No hagas nada solo responde: qué opinas? si es una buena mejora? si crees que está bien optimizado frente a los otros del mercado? crees que fue buena idea plantearlo así? por cache? tu qu eopinas
+
+
+
+
+## Respuesta cursor ##
+
+## Mi opinión honesta
+
+**Sí, es una buena mejora.** Pasar de ~1–2 s en servidor a ~3–6 ms no es cosmético: cambia la experiencia real del cliente y reduce mucho el riesgo de timeouts de Twilio (que suelen estar en torno a 15 s, pero cuanto más lento respondes, peor se siente el bot).
+
+**¿Está bien optimizado frente al mercado?**
+
+Depende con qué lo compares:
+
+- **Frente a bots caseros con Sheets directo** (muy común en restaurantes pequeños): sí, quedó **muy por encima**. Muchos proyectos siguen haciendo `get_all_records()` en cada mensaje y nunca lo arreglan.
+- **Frente a soluciones “serias” de producción** (Redis, Postgres, colas, workers, CDN, etc.): estás en un **punto intermedio sensato** para tu escala. No es over-engineering, pero tampoco es lo que haría un producto SaaS con miles de restaurantes.
+
+Para **1 instancia, 1 restaurante, bajo tráfico WhatsApp**, el enfoque de caché local + sync en background es **apropiado y defendible**. No necesitabas Redis ni Kafka.
+
+**¿Fue buena idea plantearlo así (incremental, por fases)?**
+
+Sí, **muy buena idea**, por tres razones:
+
+1. **Mediste antes/después** — sin baseline, no sabes si mejoraste o solo moviste código.
+2. **Checklist 5/5 en cada paso** — evita el clásico “optimicé y rompí el flujo de pedidos”.
+3. **Atacaste el cuello real** — Sheets en el request path era el problema; no perdiste tiempo en micro-optimizar Python mientras seguías esperando 800 ms de Google.
+
+Ese estilo encaja bien con `AI_RULES.md` y con un bot que ya funciona en producción.
+
+**¿Qué opino del enfoque por caché (JSON local + dirty + thread 30 s)?**
+
+**A favor:**
+
+- Simple de entender, depurar y desplegar.
+- Encaja con Render/Railway sin servicios extra.
+- El patrón “read local, write local, sync async” es el mismo que usan muchos sistemas a escala (solo que ellos usan Redis/DB en vez de JSON).
+
+**En contra / límites (importante ser honesto):**
+
+- **Consistencia eventual**: si el servidor cae antes del sync, pierdes hasta ~30 s de datos (o lo que no haya flushado).
+- **Una sola instancia**: si escalas a 2+ réplicas, cada una tendría su JSON y se pisarían — ahí ya no alcanza este diseño.
+- **Disco efímero en cloud free**: tras reinicio pierdes caché local hasta que el warm-up vuelve a leer Sheets (mitigado con warm-up, pero existe).
+- **No es “caché pura”**: sigues dependiendo de Sheets como source of truth; es más un **write-behind buffer**, y está bien nombrado mentalmente así.
+
+---
+
+## Veredicto
+
+| Pregunta | Respuesta |
+|----------|-----------|
+| ¿Buena mejora? | **Sí**, clara y medible. |
+| ¿Bien para tu contexto? | **Sí**, para bot WhatsApp + Sheets + 1 instancia. |
+| ¿A la altura del “mercado premium”? | **No del todo**, pero no compites en esa liga todavía — y no hacía falta. |
+| ¿Buen plan incremental? | **Sí**, de los mejores enfoques para este tipo de proyecto. |
+| ¿Buena idea la caché local? | **Sí**, fue la decisión correcta; el error hubiera sido seguir pegándole a Sheets en cada `hola`. |
+
+**En una frase:** no es la arquitectura más sofisticada del mundo, pero **sí es la optimización inteligente** para lo que es: un chatbot de restaurante incremental, estable y sin inflar infraestructura. Plantearlo por fases con caché local fue, en mi opinión, **la decisión correcta** — mejor que un refactor grande o meter Redis “porque suena pro”.
+
+
+## Septimo prompt ##
+
+No hagas nada ni modifiques nada solo responde: el warm--up está programado para que se ejecute cada vez que arranca el servidor? por ejemplo si se cae el servidor, en 30 segundo se actualizaria solo el caché?
+
+
+## Repsp cursor ##
+
+Casi, pero no exactamente “en 30 segundos”.
+
+Cuando el servidor vuelve a arrancar:
+
+Al instante corre el warm-up: carga los JSON locales si existen (milisegundos).
+Casi al instante arranca el loop de sync y hace una primera actualización antes de esperar 30 s.
+Así que la caché suele estar lista en segundos (o al momento si los archivos locales siguen en disco), no hace falta esperar 30 s.
+
+Los 30 segundos son el intervalo entre actualizaciones siguientes, mientras el servidor siga corriendo.
+
+Excepción: si el servidor estuvo caído y además se borró el disco (típico en hosting free), el warm-up tiene que volver a leer Sheets al arrancar; eso puede tardar unos segundos, pero no necesariamente 30.
+
+
+
+## Octavo prompt ##
+
+no hagas nada solo dime:  que más es necesario meterle o implementar o mejorar del bot o así está perfecto ya para vender?
+
+
+## Respuesta cursor ##
+
+## ¿Está listo para vender?
+
+**Para un restaurante concreto (1 cliente, tú lo despliegas y lo mantienes):** sí, está en buen punto como **MVP productivo**. La base técnica es sólida y la latencia ya no es un problema.
+
+**Para venderlo como producto/SaaS** (varios restaurantes, self-service, “comprá y usá”): **todavía no**. Falta capa de producto, no tanto de chatbot.
+
+---
+
+## Lo que ya tienes bien
+
+- Flujo conversacional funcional (pedido, menú, reservas)
+- Integración WhatsApp + Sheets
+- Optimización de rendimiento hecha bien
+- Checklist de regresión y deploy documentado
+- Modo demo sin Sheets
+
+Eso basta para **pilotear con 1–3 restaurantes** si tú haces el onboarding manual.
+
+---
+
+## Lo que falta para “vender en serio”
+
+### Producto / negocio
+- **Multi-restaurante**: hoy es 1 spreadsheet, 1 instancia, 1 flujo. Un SaaS necesita tenant por cliente (datos aislados, config por restaurante).
+- **Panel admin web** (no solo WhatsApp admin): ver pedidos en vivo, cambiar menú, pausar platos, horarios, métricas.
+- **Onboarding**: alta de cliente, conectar su WhatsApp, su Sheet, su menú — sin que tú entres al código.
+- **Precios/planes**: qué incluye cada plan, límites, facturación.
+
+### Operación / confiabilidad
+- **Persistencia real en cloud**: JSON local en disco efímero es frágil; para vender conviene Postgres/Redis o al menos volumen persistente + backups.
+- **Cola de mensajes / reintentos** si Twilio o Sheets fallan.
+- **Alertas** (Sentry, uptime, “Sheets no sincronizó hace 5 min”).
+- **Logs estructurados** por restaurante/pedido (auditoría).
+
+### Seguridad y legal
+- Validación de webhook Twilio (firma), rate limiting.
+- Política de privacidad / datos de clientes (WhatsApp, nombres, direcciones).
+- Términos de servicio si cobras suscripción.
+
+### UX del bot
+- Mensajes de error más claros cuando algo falla.
+- Horarios (“cerrado ahora”), stock agotado, tiempos de entrega estimados.
+- Confirmación de pedido más rica (resumen, total, ID de seguimiento).
+- Idioma/tono configurable por restaurante.
+
+### WhatsApp / Twilio (importante para escalar)
+- Pasar de **Sandbox** a **número aprobado** por restaurante (Meta Business).
+- Plantillas HSM si necesitas mensajes proactivos fuera de la ventana 24 h.
+
+### Calidad
+- Tests automatizados más allá del checklist manual (CI en cada push).
+- Pruebas de carga básicas (10–50 mensajes concurrentes).
+
+---
+
+## Mi veredicto honesto
+
+| Objetivo | ¿Listo? |
+|----------|---------|
+| Usar en **tu** restaurante o 1 cliente piloto | **Sí** |
+| Vender como **servicio hecho a medida** (tú instalas y das soporte) | **Casi sí**, con panel mínimo y contrato claro |
+| Vender como **SaaS escalable** “plug and play” | **No todavía** |
+
+---
+
+## Prioridad si quieres acercarte a vender
+
+1. **Panel web simple** (pedidos pendientes + menú on/off) — el dueño no quiere vivir en Sheets.
+2. **Multi-tenant o despliegue 1-click por cliente** — aunque sea 1 instancia por restaurante al principio.
+3. **Persistencia/backup** — que un reinicio no asuste.
+4. **Onboarding documentado** + **precio** + **soporte**.
+
+**En resumen:** como bot optimizado para un restaurante, está muy bien. Para **venderlo como producto**, no está “perfecto”; le falta la capa comercial y operativa que convierte un buen proyecto técnico en un negocio repetible. Lo sensato es venderlo primero como **piloto manual** con 1–2 clientes y construir el SaaS con lo que te pidan de verdad.
+
+
+
+
+
+
+#################################################################
+## v0.22
 
 ## Prompt:

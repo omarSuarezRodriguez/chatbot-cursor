@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from app.core.parser import OrderParser
 from app.integrations.google_sheets import GoogleSheetsClient
 from app.services.menu_service import MenuService
+
+_MENU_CACHE_PATH = (
+    Path(__file__).resolve().parent.parent.parent / "data" / "menu_cache.json"
+)
 
 
 class OrderService:
@@ -12,27 +17,21 @@ class OrderService:
         self.sheets = sheets
         self.menu_service = menu_service
         self._cached_parser: Optional[OrderParser] = None
-        self._parser_menu_key: Optional[tuple] = None
+        self._parser_menu_mtime: float = -1.0
 
     @staticmethod
-    def _menu_cache_key(menu: List[Dict[str, Any]]) -> tuple:
-        return tuple(
-            (
-                str(item.get("id", "")),
-                str(item.get("nombre", "")),
-                float(item.get("precio", 0) or 0),
-                bool(item.get("disponible", True)),
-            )
-            for item in menu
-        )
+    def _menu_cache_mtime() -> float:
+        if not _MENU_CACHE_PATH.exists():
+            return 0.0
+        return _MENU_CACHE_PATH.stat().st_mtime
 
     def _parser(self) -> OrderParser:
-        menu = self.menu_service.get_available_menu()
-        key = self._menu_cache_key(menu)
-        if self._cached_parser is not None and self._parser_menu_key == key:
+        mtime = self._menu_cache_mtime()
+        if self._cached_parser is not None and self._parser_menu_mtime == mtime:
             return self._cached_parser
+        menu = self.menu_service.get_available_menu()
         self._cached_parser = OrderParser(menu)
-        self._parser_menu_key = key
+        self._parser_menu_mtime = mtime
         return self._cached_parser
 
     def parse_order_text(

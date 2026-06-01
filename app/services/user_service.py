@@ -10,12 +10,7 @@ class UserService:
         self.sheets = sheets
 
     def touch(self, wa_id: str, name: str = "") -> None:
-        profile = self.sheets.get_user(wa_id)
-        self.sheets.upsert_user(
-            wa_id=wa_id,
-            name=name or profile.get("name", ""),
-            address=profile.get("address", ""),
-        )
+        self.sheets.upsert_user(wa_id=wa_id, name=name)
 
     def get_profile(self, wa_id: str) -> Dict[str, Any]:
         return self.sheets.get_user(wa_id)
