@@ -195,7 +195,7 @@ EMOJI_RE = re.compile(
     flags=re.UNICODE,
 )
 
-REPEAT_CHAR_RE = re.compile(r"(.)\1{2,}", re.UNICODE)
+REPEAT_CHAR_RE = re.compile(r"([a-z])\1{2,}", re.UNICODE)
 
 QTY_PREFIX_RE = re.compile(
     r"^(?:(\d+)\s*[x×]\s*|[x×]\s*(\d+)\s*|[x×](\d+)\s*|(\d+)\s+)(.*)$",
@@ -733,6 +733,25 @@ class QuantityEngine:
 
         return 1, cleaned
 
+    @staticmethod
+    def resolve(segment: str, catalog_norms: Optional[List[str]] = None) -> Tuple[int, str]:
+        """Extract quantity from the raw segment, then product text for matching."""
+        basic = TextNormalizer.basic(segment)
+        qty, product_text = QuantityEngine.extract(basic)
+        if not product_text:
+            return qty, ""
+
+        normalized = TextNormalizer.advanced(product_text, catalog_norms)
+        _, product_text = QuantityEngine.extract(normalized)
+        qty_check, _ = QuantityEngine.extract(
+            TextNormalizer.advanced(segment, catalog_norms)
+        )
+        if qty_check != qty:
+            raw_numbers = [int(value) for value in re.findall(r"\d+", basic)]
+            if raw_numbers and raw_numbers[0] == qty:
+                return qty, product_text or normalized
+        return qty, product_text or normalized
+
 
 # ---------------------------------------------------------------------------
 # Order Intelligence Engine (core)
@@ -806,11 +825,9 @@ class OrderIntelligenceEngine:
         needs_review = False
 
         for segment in segments:
-            prepped = TextNormalizer.advanced(segment, catalog_norms)
-            if not prepped:
+            qty, product_text = QuantityEngine.resolve(segment, catalog_norms)
+            if not product_text:
                 continue
-            qty, product_text = QuantityEngine.extract(prepped)
-            product_text = TextNormalizer.advanced(product_text, catalog_norms)
             product_text = FuzzyMatcher._apply_synonyms(product_text)
             if not product_text:
                 continue
@@ -1430,6 +1447,29 @@ def run_validation_suite(verbose: bool = True) -> bool:
         case16["status"] in {"ok", "needs_clarification"}
         and _qty_for(case16["items"], "hawaiana") == 2,
         str(case16),
+    )
+
+    large_qty_menu: List[Dict[str, Any]] = [
+        {"id": "p1", "nombre": "Pizza de Jamon y Queso", "precio": 95.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "p2", "nombre": "Pizza Hawaiana", "precio": 125.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "h1", "nombre": "Hamburguesa Clasica", "precio": 125.0, "categoria": "Hamburguesas", "disponible": True},
+        {"id": "h2", "nombre": "Hamburguesa Mega", "precio": 11.0, "categoria": "Hamburguesas", "disponible": True},
+        {"id": "b1", "nombre": "Coca Cola", "precio": 8.0, "categoria": "Bebidas", "disponible": True},
+    ]
+    large_qty_order = (
+        "quiero por favor 60 hamburgsdfesas clasiccscas, 2333 hamburgueas mega, "
+        "12123 cocas con 777 pirzas harwewaianas y 8 picsas de jamon y quieso"
+    )
+    case17 = OrderIntelligenceEngine(large_qty_menu).parse(large_qty_order)
+    check(
+        "cantidades grandes y repetidas",
+        case17["status"] in {"ok", "needs_clarification"}
+        and _qty_for(case17["items"], "clasica") == 60
+        and _qty_for(case17["items"], "mega") == 2333
+        and _qty_for(case17["items"], "coca") == 12123
+        and _qty_for(case17["items"], "hawaiana") == 777
+        and _qty_for(case17["items"], "jamon") == 8,
+        str(case17),
     )
 
     if verbose:
