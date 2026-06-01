@@ -1,4 +1,4 @@
-## v0.11
+## v0.12
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -1345,5 +1345,54 @@ Al terminar espera que pulses Enter para que veas el resultado antes de cerrar l
 
 #################################################################
 ## v0.12
+
+## Prompt:
+
+ya hice todo revisa que funcione y pon el menú que tenemos de prueba ahi en los google sheeets, solo haz eso no hagas nada mas ni edites nada mas, osea solo dejalo funcional con ese menú de prueba ahí funcional ya, no toques ni hagas nada mas, si puedes hacerlo todo sin editar mucho codigo mejor, trata de usar el menor codigo posible y de no afectar ni dañar nada, revisa que todo quede funcional 
+
+## Respuesta cursor:
+
+Listo. Google Sheets queda funcional con el menú de prueba.
+
+### Qué impedía que funcionara
+
+1. **`GOOGLE_SPREADSHEET_ID` en `.env`** tenía la URL completa; el código necesita solo el ID. Lo dejé así:
+   ```
+   110zzaM2G4hX9Kqc9lhgbnZd1w9-9_ziTufEbkY_yRYg
+   ```
+2. **Faltaba `gspread`** en el entorno Python. Lo instalé con `python -m pip install gspread google-auth`.
+
+### Qué quedó en Google Sheets
+
+Pestaña **MENU** con los 6 productos de prueba:
+
+| Producto | Precio | Categoría |
+|---|---|---|
+| Pizza Hawaiana | $12.50 | Pizzas |
+| Pizza Margarita | $11.00 | Pizzas |
+| Hamburguesa Clásica | $9.50 | Hamburguesas |
+| Coca Cola | $2.50 | Bebidas |
+| Agua Mineral | $1.50 | Bebidas |
+| Ensalada César | $8.00 | Ensaladas |
+
+También se crearon las pestañas **USERS**, **ORDERS** y **RESERVATIONS** (las llena el bot al usarse).
+
+### Verificado
+
+- Conexión a Google Sheets: OK  
+- Menú leído desde la hoja (no demo en memoria): OK  
+- Bot responde `menu` con esos productos: OK  
+
+### Qué toqué
+
+Solo **`.env`** (corregir el ID del spreadsheet). No modifiqué código de la app.
+
+**Importante:** reinicia el servidor (`python run.py`) si ya estaba corriendo para que cargue el `.env` nuevo. Si en otra máquina no conecta, ejecuta `python -m pip install -r requirements.txt`.
+
+
+
+
+#################################################################
+## v0.13
 
 
