@@ -105,6 +105,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 BOT_HEALTH_URL = os.environ.get("BOT_HEALTH_URL", "http://127.0.0.1:5000/health")

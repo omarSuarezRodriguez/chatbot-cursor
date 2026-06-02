@@ -1,62 +1,39 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "operations/partials/head_assets.html" %}
   <title>{% block title %}Dashboard operativo{% endblock %}</title>
-  <style>
-    :root { font-family: system-ui, sans-serif; color: #1a1a1a; }
-    body { margin: 0; padding: 0 1rem 2rem; max-width: 960px; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.75rem; padding: 1rem 0; border-bottom: 1px solid #ddd; margin-bottom: 1.5rem; }
-    nav a { color: #0b57d0; text-decoration: none; }
-    nav a.active { font-weight: 600; text-decoration: underline; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
-    th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #eee; }
-    th { background: #f5f5f5; }
-    .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.85rem; }
-    .badge-pending { background: #fff3cd; }
-    .badge-confirmed { background: #d1e7dd; }
-    .muted { color: #666; font-size: 0.9rem; }
-    pre { background: #f8f8f8; padding: 1rem; overflow-x: auto; font-size: 0.85rem; }
-    h1 { font-size: 1.4rem; margin-top: 0; }
-    .banner { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.95rem; }
-    .banner-readonly { background: #fff3cd; border: 1px solid #ffc107; }
-    .flash-messages { list-style: none; padding: 0; margin: 0 0 1rem; }
-    .flash { padding: 0.6rem 0.9rem; border-radius: 6px; margin-bottom: 0.5rem; }
-    .flash-success { background: #d1e7dd; }
-    .flash-error { background: #f8d7da; }
-    .flash-warning { background: #fff3cd; }
-    button.btn { padding: 0.4rem 0.75rem; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #f5f5f5; font: inherit; }
-    button.btn-primary { background: #0b57d0; color: #fff; border-color: #0b57d0; }
-    button.btn-danger { background: #dc3545; color: #fff; border-color: #dc3545; }
-  </style>
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-  <nav>
-    <a href="{% url 'operations:orders' %}"{% if request.path == '/' or '/pedidos' in request.path %} class="active"{% endif %}>Pedidos</a>
-    <a href="{% url 'operations:reservations' %}"{% if '/reservas' in request.path %} class="active"{% endif %}>Reservas</a>
-    <a href="{% url 'operations:menu' %}"{% if '/menu' in request.path %} class="active"{% endif %}>Menú</a>
-    <a href="{% url 'operations:users' %}"{% if '/usuarios' in request.path %} class="active"{% endif %}>Usuarios</a>
-    <a href="{% url 'operations:system_status' %}"{% if '/estado' in request.path %} class="active"{% endif %}>Estado</a>
-    <a href="/admin/">Admin Django</a>
-    {% if user.is_authenticated %}
-      <span class="muted" style="margin-left:auto;">{{ user.username }}</span>
-      <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;margin:0;">
-        {% csrf_token %}
-        <button type="submit" style="background:none;border:none;color:#0b57d0;cursor:pointer;padding:0;font:inherit;">Salir</button>
-      </form>
-    {% endif %}
-  </nav>
-  {% if messages %}
-  <ul class="flash-messages">
-    {% for message in messages %}
-    <li class="flash flash-{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-  {% if not dashboard_writes_enabled %}
-  <p class="banner banner-readonly">Modo solo lectura. Para confirmar pedidos o editar menú, define <code>DASHBOARD_ENABLE_WRITES=1</code> en <code>.env.dashboard</code> y reinicia el servidor.</p>
-  {% endif %}
-  {% block content %}{% endblock %}
+  {% include "operations/partials/icons_sprite.html" %}
+  <div class="app-shell">
+    {% include "operations/partials/sidebar.html" %}
+    <div class="app-main">
+      <header class="app-topbar">
+        <button type="button" class="btn btn-icon btn-ghost app-topbar__menu-btn" id="sidebar-toggle" aria-expanded="false" aria-controls="app-sidebar" aria-label="Abrir menú">
+          {% include "operations/partials/icon.html" with name="menu" %}
+        </button>
+        <h1 class="app-topbar__title">{% block page_heading %}Dashboard{% endblock %}</h1>
+        <div class="app-topbar__actions">
+          {% block topbar_actions %}
+          {% include "operations/partials/theme_toggle.html" %}
+          {% endblock %}
+        </div>
+      </header>
+      <main class="app-content" id="main-content">
+        {% include "operations/partials/toasts.html" %}
+        {% if not dashboard_writes_enabled %}
+        {% include "operations/partials/readonly_banner.html" %}
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+  <script src="{% static 'js/theme.js' %}" defer></script>
+  <script src="{% static 'js/shell.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

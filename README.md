@@ -1,6 +1,8 @@
-## v0.27
+## v0.28
 
 ## Restaurant WhatsApp Chatbot SaaS
+
+en run.py está el bot, con runall.py se arranca todo para el bot (local solo hace falta ngrok) y guardar.py sube a github el proyecto actual y le pone de commit la versión que se encuentra al comienzo de readme.md
 
 
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
@@ -4908,6 +4910,354 @@ El servicio **`postgresql-x64-17`** está en ejecución y **5432** acepta conexi
 
 Para el dashboard falta la base/usuario que usa el proyecto (`dashboard` / `dashboard` en `DATABASE_URL`). Eso lo crea **Docker** con `.\dev.cmd db`, o tú en pgAdmin/psql con la contraseña de `postgres` que pusiste en el instalador. Después: `.\dev.cmd dashboard` o `.\dev.cmd all`.
 
+
+
+######################################################################
+## v0.27
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[No quiero que hagas nada, solo que analices el proyecto, y me propongas un plan de acción de 4 fases para implementar, como mejora incremental, que la dashboard se vea con un diseño profesional, Diseño premium tipo Stripe, Linear, Notion, Vercel o HubSpot.
+Apariencia limpia, minimalista y moderna.
+Responsive para desktop, tablet y móvil.
+Espaciado consistente y excelente jerarquía visual.
+Iconografía moderna.
+Tarjetas con sombras suaves y bordes redondeados.
+Tabla de pedidos profesional con búsqueda, filtros y paginación.
+Dashboard con métricas visuales (pedidos, ventas, clientes, conversaciones).
+Estados visuales para pedidos (pendiente, confirmado, entregado, cancelado).
+Tema claro y oscuro.
+Animaciones sutiles y profesionales.
+UX enfocada en productividad, Importante:
+
+Todo debe ser editable desde la interfaz.
+Crear formularios CRUD completos para clientes, pedidos, productos y configuraciones.
+Permitir crear, editar y eliminar registros sin tocar la base de datos manualmente.
+Agregar validaciones.
+Agregar mensajes de éxito y error.
+Agregar panel de administración avanzado.
+Mantener código limpio y escalable.
+
+Quiero que parezca un software comercial que podría venderse a clientes reales.
+
+
+Dame un plan corto conciso pero completo y profesoinal que cumpla ocn todo, 3 o 4 fases maximo, condensa todo ahí]
+
+Recuerda no hacer nada, solo propón el plan de acción
+
+
+## Respuesta cursor ##
+
+
+Aquí tienes las **4 fases listas para pegar** (en `README.md`, `prompts.md` o en cada chat de Cursor) y el **prompt completo** de cada una. Todos respetan `AI_RULES.md` y el stack actual (Django dashboard + `bot_bridge`, sin tocar Flask/Twilio salvo que la fase lo exija explícitamente).
+
+---
+
+## Cómo usarlas
+
+1. **Una fase por sesión** (o por PR): no mezcles Fase 2 y 3 en el mismo prompt.
+2. Siempre incluye al inicio: *“Lee y aplica completamente AI_RULES.md”*.
+3. Al terminar cada fase, prueba con `.\dev.cmd dashboard` (o `all`) antes de pasar a la siguiente.
+
+---
+
+## Fase 1 — Diseño premium (fundación visual)
+
+**Qué colocar como título en tu lista de fases:**
+> Fase 1: Sistema de diseño, layout responsive y tema claro/oscuro (sin cambiar lógica de negocio)
+
+**Prompt:**
+
+```
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md antes de cualquier cambio.
+
+CONTEXTO:
+Proyecto chatbot restaurante (Flask + Twilio) + dashboard Django en /dashboard.
+El bot NO debe modificarse en esta fase. Solo UI del panel en dashboard/apps/operations/templates y dashboard/static/.
+
+TAREA — FASE 1 (solo diseño y shell):
+Implementar la base visual premium tipo Stripe/Linear/Notion/Vercel:
+- Design system con tokens CSS (tipografía, espaciado, colores, radios, sombras suaves).
+- Layout: sidebar + topbar + área de contenido; responsive desktop/tablet/móvil.
+- Componentes reutilizables: card, button, input, badge, empty-state, toasts (mensajes Django).
+- Iconografía moderna (SVG/Lucide o similar, estático en dashboard/static).
+- Tema claro y oscuro (variables CSS + toggle + localStorage).
+- Animaciones sutiles (transiciones hover/focus, respetar prefers-reduced-motion).
+- Refactorizar operations/base.html en partials; mover CSS inline a static/css/app.css.
+- Unificar diseño de registration/login.html con el panel.
+
+RESTRICCIONES:
+- No cambiar URLs, endpoints Flask, contratos JSON ni bot_bridge.
+- No añadir CRUD ni nuevas vistas de negocio en esta fase.
+- Cambios mínimos de archivos; solo lo necesario para el shell visual.
+- Mantener todas las vistas actuales funcionando (pedidos, reservas, menú, usuarios, estado).
+
+ENTREGABLE:
+Código implementado + breve resumen en formato AI_RULES (análisis, archivos, compatibilidad).
+```
+
+---
+
+## Fase 2 — Home con métricas y tabla de pedidos pro
+
+**Qué colocar:**
+> Fase 2: Dashboard con KPIs, gráficos y tabla de pedidos (búsqueda, filtros, paginación)
+
+**Prompt:**
+
+```
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md.
+
+CONTEXTO:
+Fase 1 ya aplicada (design system y base.html premium).
+Dashboard Django lee datos con dashboard/apps/operations/services/readers.py.
+Escrituras siguen en bot_bridge; esta fase es principalmente lectura + UX de listados.
+
+TAREA — FASE 2:
+1) Home operativo (/ o ruta dedicada /dashboard/):
+   - Tarjetas KPI: pedidos, ventas (suma totales), clientes, conversaciones/reservas (según datos disponibles en readers/caché).
+   - 1–2 gráficos ligeros (Chart.js o similar, sin SPA) con datos reales agregados en Python.
+
+2) Tabla profesional de pedidos:
+   - Búsqueda por ID/cliente.
+   - Filtros: estado (pending, confirmed, delivered, cancelled), rango de fechas si hay timestamp.
+   - Ordenación y paginación server-side en OrderListView.
+   - Badges visuales por estado con iconos y colores del design system.
+
+3) Mejorar vista detalle de pedido con layout de producto (resumen + ítems + acciones visibles).
+
+RESTRICCIONES:
+- Agregar funciones de agregación en readers.py si hace falta; no cambiar estructura JSON del bot.
+- No implementar CRUD completo aún (eso es Fase 3).
+- No nuevos endpoints Flask.
+- Reutilizar estilos y componentes de Fase 1.
+
+ENTREGABLE:
+Implementación + prueba manual descrita (cómo filtrar/buscar un pedido) + resumen AI_RULES.
+```
+
+---
+
+## Fase 3 — CRUD desde la interfaz
+
+**Qué colocar:**
+> Fase 3: Formularios CRUD (clientes, pedidos, productos, configuración) vía bot_bridge
+
+**Prompt:**
+
+```
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md.
+
+CONTEXTO:
+Fases 1–2 completas (UI premium + home + tabla pedidos).
+Escrituras del panel deben ir por dashboard/services/bot_bridge.py reutilizando MenuService, OrderService, UserService del bot — NO crear endpoints Flask nuevos.
+DASHBOARD_ENABLE_WRITES controla escrituras.
+
+TAREA — FASE 3:
+CRUD completo editable desde la UI (crear, editar, eliminar):
+
+A) Productos / menú: alta, edición, baja lógica o eliminación, precio, categoría, disponibilidad.
+B) Pedidos: crear manual, editar estado/ítems donde el servicio lo permita, cancelar.
+C) Clientes: WA ID, nombre, notas; listado + formularios.
+D) Configuración del panel: preferencias operativas (modelo Django ligero en PG o JSON en data/, elige la opción de menor impacto y documéntala).
+
+Para cada módulo:
+- Formularios Django con validación servidor (campos requeridos, precios > 0, IDs únicos).
+- Mensajes éxito/error con django.contrib.messages.
+- Confirmación antes de eliminar.
+- Permisos: operador vs admin (grupos Django).
+- log_audit en cada POST de escritura.
+
+Extender bot_bridge con funciones nuevas; reutilizar app/utils/validators.py cuando aplique.
+Tras writes, asegurar coherencia con caché/Sheets como hace el bot hoy.
+
+RESTRICCIONES:
+- No modificar parser.py, flow_engine, Twilio salvo bug bloqueante documentado.
+- No cambiar POST /bot ni contratos JSON existentes.
+- Cambios incrementales; un módulo CRUD a la vez si reduce riesgo.
+
+ENTREGABLE:
+CRUD funcional con DASHBOARD_ENABLE_WRITES=1 + resumen AI_RULES y lista de flujos probados.
+```
+
+---
+
+## Fase 4 — Admin avanzado, pulido y calidad
+
+**Qué colocar:**
+> Fase 4: Panel admin avanzado, micro-interacciones, permisos, tests y documentación
+
+**Prompt:**
+
+```
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md.
+
+CONTEXTO:
+Fases 1–3 completas. El panel debe sentirse como software comercial vendible.
+
+TAREA — FASE 4:
+1) Panel de administración avanzado unificado:
+   - Vista de auditoría (accounts/audit).
+   - Estado sistema (bot health, Sheets/caché) integrado al diseño premium.
+   - Gestión usuarios del panel; Django /admin/ solo para superusuarios con enlace discreto.
+   - Documentar en UI qué requiere DASHBOARD_ENABLE_WRITES.
+
+2) Reservas y usuarios: mismas tablas premium; CRUD donde aún falte.
+
+3) Pulido comercial:
+   - Empty states, loading/skeleton donde aporte.
+   - Micro-animaciones consistentes con Fase 1.
+   - Accesibilidad básica (focus, contraste, reduced-motion).
+
+4) Calidad:
+   - Tests de vistas críticas (filtros pedidos, permisos, bot_bridge mockeado).
+   - Checklist responsive 320 / 768 / 1280 px.
+   - Actualizar README sección “Dashboard local” con guía del operador.
+
+RESTRICCIONES:
+- Cero regresión del webhook WhatsApp y servicios del bot.
+- No refactors masivos; solo lo necesario para cerrar el producto.
+
+ENTREGABLE:
+Panel listo para demo a cliente + resumen AI_RULES + test plan ejecutado.
+```
+
+---
+
+## Bloque corto para tu README (solo títulos)
+
+Puedes pegar esto como índice y debajo cada prompt completo:
+
+```markdown
+### Mejora dashboard — roadmap
+
+- [ ] **Fase 1** — Diseño premium, layout, tema claro/oscuro
+- [ ] **Fase 2** — KPIs, gráficos, tabla pedidos (búsqueda/filtros/paginación)
+- [ ] **Fase 3** — CRUD menú, pedidos, clientes, configuración (bot_bridge)
+- [ ] **Fase 4** — Admin avanzado, pulido, tests, documentación
+```
+
+---
+
+## Orden recomendado si algo falla
+
+| Si en la fase… | No avances hasta… |
+|----------------|-------------------|
+| 1 | Ver todas las rutas actuales con el nuevo layout |
+| 2 | KPIs y paginación con datos reales de `data/*_cache.json` |
+| 3 | Un CRUD de punta a punta con `DASHBOARD_ENABLE_WRITES=1` |
+| 4 | Demo completa sin tocar el bot en producción |
+
+Si quieres, en el siguiente mensaje puedo volcar estos cuatro prompts tal cual en `prompts.md` del repo (solo si me lo pides explícitamente).
+
+
+
+## Segundo Prompt ##
+
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md antes de cualquier cambio.
+
+CONTEXTO:
+Proyecto chatbot restaurante (Flask + Twilio) + dashboard Django en /dashboard.
+El bot NO debe modificarse en esta fase. Solo UI del panel en dashboard/apps/operations/templates y dashboard/static/.
+
+TAREA — FASE 1 (solo diseño y shell):
+Implementar la base visual premium tipo Stripe/Linear/Notion/Vercel:
+- Design system con tokens CSS (tipografía, espaciado, colores, radios, sombras suaves).
+- Layout: sidebar + topbar + área de contenido; responsive desktop/tablet/móvil.
+- Componentes reutilizables: card, button, input, badge, empty-state, toasts (mensajes Django).
+- Iconografía moderna (SVG/Lucide o similar, estático en dashboard/static).
+- Tema claro y oscuro (variables CSS + toggle + localStorage).
+- Animaciones sutiles (transiciones hover/focus, respetar prefers-reduced-motion).
+- Refactorizar operations/base.html en partials; mover CSS inline a static/css/app.css.
+- Unificar diseño de registration/login.html con el panel.
+
+RESTRICCIONES:
+- No cambiar URLs, endpoints Flask, contratos JSON ni bot_bridge.
+- No añadir CRUD ni nuevas vistas de negocio en esta fase.
+- Cambios mínimos de archivos; solo lo necesario para el shell visual.
+- Mantener todas las vistas actuales funcionando (pedidos, reservas, menú, usuarios, estado).
+
+ENTREGABLE:
+Código implementado + breve resumen en formato AI_RULES (análisis, archivos, compatibilidad).
+
+
+## Respuesta cursor ##
+
+Fase 1 del shell visual del panel implementada siguiendo **AI_RULES.md** (cambios incrementales, solo dashboard).
+
+---
+
+### Análisis previo
+
+- El panel usaba `base.html` con CSS inline y navegación horizontal simple.
+- No existía `dashboard/static/`; Django solo tenía `STATIC_URL`.
+- Las vistas hijas dependen de clases existentes (`.badge`, `.btn`, `.flash`, tablas) — se mantuvieron para no romper plantillas.
+- Sin tocar Flask, Twilio, `bot_bridge`, URLs ni `views.py`.
+
+### Cambios implementados
+
+| Área | Detalle |
+|------|---------|
+| **Design system** | `tokens.css`, `components.css`, `layout.css`, `app.css` (Inter, espaciado, colores, radios, sombras) |
+| **Layout** | Sidebar fija + topbar sticky + contenido; menú móvil con backdrop |
+| **Componentes** | card, btn, input, badge, empty-state, toasts, banner readonly |
+| **Iconos** | Sprite SVG inline (estilo Lucide) + copia en `static/icons/sprite.svg` |
+| **Tema** | Claro/oscuro con `data-theme`, script en `<head>` anti-flash, `theme.js` + `localStorage` |
+| **Animaciones** | Transiciones hover/focus; `prefers-reduced-motion` desactiva duraciones |
+| **Partials** | `head_assets`, `sidebar`, `toasts`, `readonly_banner`, `theme_toggle`, `icons_sprite`, `icon` |
+| **Auth** | `layout_auth.html` + `login.html` unificado con el panel |
+
+### Archivos modificados
+
+- `dashboard/config/settings.py` — `STATICFILES_DIRS`
+- `dashboard/apps/operations/templates/operations/base.html`
+- `dashboard/apps/accounts/templates/registration/login.html`
+- Plantillas de listado/detalle (solo `{% block page_heading %}` y filtros de pedidos)
+- **Nuevos:** `dashboard/static/css/*`, `dashboard/static/js/*`, `dashboard/static/icons/sprite.svg`, `operations/partials/*`, `operations/layout_auth.html`
+
+### Riesgos mitigados
+
+- Clases CSS legacy conservadas en `app.css` (tablas, badges, botones, flashes).
+- Bloques Django (`title`, `page_heading`, `content`) en `base.html`, no en includes.
+- Sprite SVG inline para `<use href="#icon-…">` (compatible en todos los navegadores).
+- Sin cambios en rutas, vistas ni integración con el bot.
+
+### Compatibilidad verificada
+
+- `python manage.py check` — sin errores.
+- `findstatic css/app.css` / `js/theme.js` — resueltos correctamente.
+- Parser, Flask, Twilio, flow engine, order service y bot: **no modificados**.
+
+### Funcionalidades agregadas
+
+- Shell premium responsive (desktop / tablet / móvil).
+- Tema claro/oscuro persistente.
+- Toasts para mensajes Django.
+- Login alineado visualmente con el panel.
+
+### Funcionalidades preservadas
+
+- Pedidos, reservas, menú, usuarios, estado del sistema.
+- Confirmación de pedidos, marcar menú no disponible (con escrituras activas).
+- Banner modo solo lectura, logout, admin Django, mismas URLs.
+
+---
+
+**Cómo probar:** desde `dashboard/`, `python manage.py runserver` y abrir `/` y `/accounts/login/`. Prueba el toggle de tema y, en viewport &lt;768px, el botón de menú del topbar.
+
+**Fase 2 (fuera de alcance):** refinar páginas con cards/empty-states explícitos y reducir el `h1` duplicado en contenido si quieres un topbar único como título.
 
 
 ######################################################################

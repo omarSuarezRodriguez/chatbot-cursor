@@ -1,5 +1,6 @@
 {% extends "operations/base.html" %}
 {% block title %}{{ order.order_id }} — Pedido{% endblock %}
+{% block page_heading %}Pedido {{ order.order_id }}{% endblock %}
 {% block content %}
 <p><a href="{% url 'operations:orders' %}">← Volver a pedidos</a></p>
 <h1>Pedido {{ order.order_id }}</h1>

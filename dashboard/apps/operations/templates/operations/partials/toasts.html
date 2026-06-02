@@ -1,0 +1,9 @@
+{% if messages %}
+<div class="toast-region" role="status" aria-live="polite">
+  <ul class="flash-messages">
+    {% for message in messages %}
+    <li class="toast flash flash-{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

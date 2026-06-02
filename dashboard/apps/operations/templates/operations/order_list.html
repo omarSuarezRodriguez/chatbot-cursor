@@ -1,14 +1,15 @@
 {% extends "operations/base.html" %}
 {% block title %}Pedidos — Dashboard{% endblock %}
+{% block page_heading %}Pedidos{% endblock %}
 {% block content %}
 <h1>Pedidos</h1>
 <p class="muted">
   Solo lectura desde <code>data/orders_cache.json</code>.
   {% if status_filter %}Filtro: <strong>{{ status_filter }}</strong>{% endif %}
 </p>
-<p>
-  <a href="{% url 'operations:orders' %}">Todos</a> ·
-  <a href="{% url 'operations:orders' %}?status=pending">Pendientes</a> ·
+<p class="app-filter-links">
+  <a href="{% url 'operations:orders' %}">Todos</a>
+  <a href="{% url 'operations:orders' %}?status=pending">Pendientes</a>
   <a href="{% url 'operations:orders' %}?status=confirmed">Confirmados</a>
 </p>
 {% if orders %}
