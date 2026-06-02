@@ -3,9 +3,12 @@ from django.contrib.auth import views as auth_views
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path("", lambda request: redirect("operations:home", permanent=False)),
+    path("login", RedirectView.as_view(url="/login/", permanent=False)),
+    path("mipanel", RedirectView.as_view(url="/mipanel/", permanent=False)),
     path("health", lambda _request: JsonResponse({"status": "ok", "service": "dashboard"})),
     path("health/", lambda _request: JsonResponse({"status": "ok", "service": "dashboard"})),
     path(
