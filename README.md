@@ -1,4 +1,4 @@
-## v0.22
+## v0.23
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4190,3 +4190,123 @@ ENTREGA
 
 ## Respuesta cursor:
 
+## Análisis previo
+
+La tarea corresponde a **Fase 1 — Fundación** de `AUDITORIA.md`: proyecto Django aislado, PostgreSQL en Docker, documentación, **cero impacto en el bot**.
+
+**Plan ejecutado:**
+1. Crear `dashboard/` con `manage.py` y `config/` (settings, urls, wsgi, asgi).
+2. Añadir `docker-compose.yml` con PostgreSQL 16.
+3. Crear `requirements-dashboard.txt` (Django 5.1 LTS + psycopg2-binary).
+4. Crear `.env.dashboard.example`.
+5. Documentar arranque en README y actualizar `.gitignore`.
+6. Validar regresión del bot.
+
+**Archivos creados:** `dashboard/**`, `docker-compose.yml`, `requirements-dashboard.txt`, `.env.dashboard.example`
+
+**Archivos modificados:** `README.md`, `.gitignore`
+
+**No tocados:** `app/app.py`, `app/core/*`, `flows/*`, `requirements.txt`
+
+**Riesgos:** Bajo. Rollback = borrar `dashboard/`, `docker-compose.yml`, `requirements-dashboard.txt`, `.env.dashboard.example` y revertir README/.gitignore.
+
+---
+
+## Cambios implementados
+
+Proyecto Django mínimo en `dashboard/config/` con PostgreSQL vía `DATABASE_URL`, carga opcional de `.env.dashboard` sin dependencias extra, y admin Django en `/admin/`.
+
+---
+
+## Archivos creados
+
+| Archivo | Propósito |
+|---------|-----------|
+| `dashboard/manage.py` | CLI Django |
+| `dashboard/config/settings.py` | Config PG + env |
+| `dashboard/config/urls.py` | Rutas (admin) |
+| `dashboard/config/wsgi.py`, `asgi.py` | Arranque WSGI/ASGI |
+| `docker-compose.yml` | PostgreSQL 16 local |
+| `requirements-dashboard.txt` | Django 5.1 LTS + psycopg2-binary |
+| `.env.dashboard.example` | Plantilla de variables |
+
+---
+
+## Archivos modificados
+
+- `README.md` — sección **Dashboard local (desarrollo)** con arranque en dos terminales.
+- `.gitignore` — ignora `.env.dashboard` y `dashboard/.env`.
+
+---
+
+## Validaciones realizadas
+
+| Check | Resultado |
+|-------|-----------|
+| `python scripts/regression_checklist.py` | **5/5 OK** (parser 21/21, health, hola, menu, pedido) |
+| `python dashboard/manage.py check` | **OK** (sin issues) |
+| `docker compose up -d db` | No ejecutable aquí (Docker no instalado en este entorno) |
+| `migrate` / `runserver :8000` | Pendiente en tu máquina tras levantar PG |
+
+---
+
+## Instrucciones de arranque
+
+```powershell
+# Terminal 1 — bot (puerto 5000)
+python run.py
+
+# Terminal 2 — dashboard
+pip install -r requirements-dashboard.txt
+copy .env.dashboard.example .env.dashboard
+docker compose up -d db
+python dashboard/manage.py migrate
+python dashboard/manage.py runserver 8000
+```
+
+- Bot: http://localhost:5000/health  
+- Dashboard: http://localhost:8000/admin/
+
+---
+
+## Riesgos restantes
+
+- **Docker requerido** para PostgreSQL; sin él, `migrate` fallará al conectar.
+- Dashboard **LOCAL ONLY** — no desplegar en Render/Railway sin decisión explícita (`AUDITORIA.md` §6).
+- Si bot y dashboard corren en local escribiendo `data/`, evitar escrituras desde el panel (Fase 2+ será solo lectura).
+
+---
+
+## Rollback (Fase 1)
+
+```powershell
+docker compose down -v   # opcional: borrar volumen PG
+# Eliminar: dashboard/, docker-compose.yml, requirements-dashboard.txt, .env.dashboard.example
+# Revertir cambios en README.md y .gitignore
+```
+
+El bot sigue operando con `python run.py` sin Django.
+
+---
+
+## Compatibilidad verificada
+
+- Endpoints Flask intactos (`POST /bot`, `GET /health`, `POST /bot/reload-flow`).
+- `requirements.txt` del bot sin cambios.
+- Bot arranca sin importar Django.
+- No se implementó trabajo de fases 2–4.
+
+---
+
+## Confirmación AUDITORIA.md
+
+Cumplimiento **Fase 1**: fundación Django + PostgreSQL local documentada, proceso dual (bot :5000 / dashboard :8000), cambios mínimos, bot intacto.
+
+
+
+
+
+#################################################################
+## v0.24
+
+## Prompt:
