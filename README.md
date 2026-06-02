@@ -1,4 +1,4 @@
-## v0.23
+## v0.24
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -3541,6 +3541,87 @@ Arreglalo e implementa mejoras para que cosas así no vuelvan a pasar, solo mejo
 - Segmentación por conectores y consolidación de ítems repetidos.
 
 
+
+
+
+##############################################################
+## v0.24
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Arregla en el bot, que hay veces que si tiene un pedido anterior ahí guardado y dice "Responde sí para repetir tu pedido anterior o no para elegir otra opción." y le doy no, me lleva al inicio pero cuando vuelvo a pedido me marca de nuevo lo mismo, arregla ese error de flujo
+]
+
+
+## Respuesta cursor ##
+
+### Análisis previo
+
+El problema venía de un bucle de estado: cuando respondías *no* a “¿Deseas repetir tu pedido anterior?”, el flujo volvía a `start`, pero ese mismo `start` reactivaba `awaiting_repeat_order`, por lo que al volver a escribir `pedido` te pedía de nuevo *sí/no* en vez de dejarte ordenar.
+
+### Cambios implementados
+
+Se aplicó un ajuste incremental y de bajo impacto en `app/core/flow_engine.py`:
+
+- En el rechazo del flujo de repetición se guarda una bandera temporal `skip_repeat_order_once=True`.
+- En la bienvenida (`_action_welcome_customer`), si esa bandera está activa, se consume una sola vez y se evita volver a preguntar por el pedido anterior en ese retorno inmediato a inicio.
+
+Código clave aplicado:
+
+```161:168:app/core/flow_engine.py
+        if is_rejection(text):
+            self.state_manager.patch_data(
+                wa_id,
+                awaiting_repeat_order=False,
+                skip_repeat_order_once=True,
+            )
+            return self._process_node(wa_id, "start", include_navigation=True)
+```
+
+```380:389:app/core/flow_engine.py
+    def _action_welcome_customer(self, wa_id: str, text: str = "") -> Tuple[str, Optional[str]]:
+        state = self.state_manager.get(wa_id)
+        data = state.get("data", {})
+        if data.get("skip_repeat_order_once"):
+            self.state_manager.patch_data(
+                wa_id,
+                skip_repeat_order_once=False,
+                awaiting_repeat_order=False,
+            )
+            return "", None
+```
+
+### Archivos modificados
+
+- `app/core/flow_engine.py`
+
+### Riesgos mitigados
+
+- Se evitó refactorizar flujos completos.
+- No se alteraron contratos públicos, endpoints ni estructura JSON externa.
+- Cambio encapsulado en el manejo de estado interno y solo para este caso puntual.
+
+### Compatibilidad verificada
+
+- Sin errores de linter en `app/core/flow_engine.py`.
+- Se mantiene compatibilidad con parser, Flow Engine, persistencia y estados existentes (solo se añadió una bandera interna temporal).
+
+### Funcionalidades agregadas
+
+- Nuevo control de flujo para **saltar una vez** la pregunta de “repetir pedido anterior” justo después de responder *no*.
+
+### Funcionalidades preservadas
+
+- Si responde *sí*, sigue repitiendo pedido anterior como antes.
+- Si existe historial, el bot puede seguir ofreciendo repetición en escenarios normales.
+- El flujo de `inicio`, `pedido`, `menu` y `reservar` sigue intacto.
 
 
 

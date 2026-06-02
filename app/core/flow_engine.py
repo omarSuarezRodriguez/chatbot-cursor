@@ -159,7 +159,11 @@ class FlowEngine:
             self.state_manager.set_step(wa_id, "order_review", "order")
             return self._process_node(wa_id, "order_review", include_navigation=False)
         if is_rejection(text):
-            self.state_manager.patch_data(wa_id, awaiting_repeat_order=False)
+            self.state_manager.patch_data(
+                wa_id,
+                awaiting_repeat_order=False,
+                skip_repeat_order_once=True,
+            )
             return self._process_node(wa_id, "start", include_navigation=True)
         return "Responde *sí* para repetir tu pedido anterior o *no* para elegir otra opción."
 
@@ -374,6 +378,16 @@ class FlowEngine:
         return {"welcome_line": welcome, "address_prompt": address_prompt}
 
     def _action_welcome_customer(self, wa_id: str, text: str = "") -> Tuple[str, Optional[str]]:
+        state = self.state_manager.get(wa_id)
+        data = state.get("data", {})
+        if data.get("skip_repeat_order_once"):
+            self.state_manager.patch_data(
+                wa_id,
+                skip_repeat_order_once=False,
+                awaiting_repeat_order=False,
+            )
+            return "", None
+
         profile = self.user_service.get_profile(wa_id)
         last_items = profile.get("last_order_items") or []
         if last_items:
