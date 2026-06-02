@@ -1,4 +1,4 @@
-## v0.25
+## v0.26
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -3861,3 +3861,67 @@ Si quieres, en otro mensaje armo solo la **hoja de cálculo de comisiones** con 
 
 
 ##########################################################
+## v0.26
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Por qué cuando creo un pedido, no le llega un mensaje al whatsapp del admin el que es para confirmar? debería el bot enviarle, revisa y arregla]
+
+
+## Resp cursor ## 
+
+### Análisis previo
+
+- El flujo **sí llama** a `notify_new_order` al guardar el pedido (`flow_engine._action_save_order`).
+- El envío al admin iba con `_send_whatsapp_async` (hilo daemon). En hosting en la nube el webhook puede terminar **antes** de que el hilo envíe el mensaje → el admin no recibe nada.
+- Si el carrito tenía ítems con formato raro, `OrderParser.format_cart` podía lanzar `KeyError` y cortar la notificación.
+
+### Cambios implementados
+
+En `app/services/admin_service.py`:
+
+1. **Notificación al admin síncrona** (`_send_whatsapp` directo) para que se envíe dentro del mismo request del pedido.
+2. **Formato defensivo del carrito** si `format_cart` falla.
+3. **Direcciones WhatsApp normalizadas** siempre como `whatsapp:+57…`.
+4. **Logs claros**: `Admin WhatsApp notified for order …` o error si Twilio no está configurado.
+
+### Archivos modificados
+
+- `app/services/admin_service.py`
+
+### Riesgos mitigados
+
+- Confirmación al cliente y recordatorios siguen en async (no bloquean tanto como antes solo el aviso crítico al admin).
+- Sin cambios en endpoints, flujo JSON ni parser.
+
+### Compatibilidad verificada
+
+- Pedido completo de prueba → 1 envío síncrono al admin, 0 async en ese paso.
+- Log: `Admin WhatsApp notified for order ORD-…`
+
+### Qué debes revisar en tu `.env`
+
+```env
+ADMIN_WHATSAPP_NUMBER=whatsapp:+573001234567
+TWILIO_ACCOUNT_SID=...
+TWILIO_AUTH_TOKEN=...
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+```
+
+- Reinicia el servidor tras cambiar `.env`.
+- En **Twilio Sandbox**, el número del admin debe estar unido al sandbox.
+- En consola, al crear un pedido debe aparecer: `Admin WhatsApp notified for order ORD-…`. Si ves `NOT sent`, faltan credenciales Twilio o el sandbox no permite ese número.
+
+### Funcionalidades preservadas
+
+- Comandos admin `CONFIRMAR ORD-…`, recordatorios cada 5 min y confirmación al cliente sin cambios.
+
+
+

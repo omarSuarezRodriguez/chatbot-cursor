@@ -50,10 +50,10 @@ class AdminService:
     def _format_whatsapp_address(self, number: str) -> str:
         stripped = number.replace("whatsapp:", "").strip()
         digits = "".join(ch for ch in stripped if ch.isdigit())
-        if digits and not stripped.startswith("+"):
-            stripped = f"+{digits}"
-        prefix = "whatsapp:" if not number.startswith("whatsapp:") else ""
-        return f"{prefix}{stripped}" if prefix else stripped
+        if not digits:
+            return number.strip()
+        e164 = stripped if stripped.startswith("+") else f"+{digits}"
+        return f"whatsapp:{e164}"
 
     def _send_whatsapp(self, to_number: str, body: str) -> bool:
         if not (TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_WHATSAPP_FROM):
@@ -64,11 +64,7 @@ class AdminService:
 
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
             to = self._format_whatsapp_address(to_number)
-            if not to.startswith("whatsapp:"):
-                to = f"whatsapp:{to}"
             from_ = self._format_whatsapp_address(TWILIO_WHATSAPP_FROM)
-            if not from_.startswith("whatsapp:"):
-                from_ = f"whatsapp:{from_}"
             client.messages.create(body=body, from_=from_, to=to)
             return True
         except Exception:
@@ -84,24 +80,72 @@ class AdminService:
         )
         thread.start()
 
+    @staticmethod
+    def _format_order_lines(items: List[Dict[str, Any]]) -> List[str]:
+        if not items:
+            return ["(vacío)"]
+        lines: List[str] = []
+        for item in items:
+            name = (
+                item.get("product")
+                or item.get("nombre")
+                or item.get("name")
+                or "Producto"
+            )
+            qty = item.get("qty", item.get("quantity", 1))
+            try:
+                qty = int(qty)
+            except (TypeError, ValueError):
+                qty = 1
+            subtotal = item.get("subtotal")
+            if subtotal is None:
+                unit = float(item.get("unit_price") or item.get("precio") or 0)
+                subtotal = round(qty * unit, 2)
+            else:
+                subtotal = float(subtotal)
+            lines.append(f"• {qty} x {name} — ${subtotal:.2f}")
+        return lines
+
+    def _order_lines_for_admin(self, items: List[Dict[str, Any]]) -> List[str]:
+        if not items:
+            return ["(vacío)"]
+        try:
+            formatted = OrderParser.format_cart(items)
+            return formatted.split("\n") if formatted else ["(vacío)"]
+        except (KeyError, TypeError, ValueError):
+            logger.warning(
+                "Admin notify: using fallback cart format (%d items)", len(items)
+            )
+            return self._format_order_lines(items)
+
     def notify_new_order(self, order: Dict[str, Any]) -> None:
         if not ADMIN_WHATSAPP_NUMBER:
             logger.warning("ADMIN_WHATSAPP_NUMBER not set; skipping admin notification.")
             return
 
+        order_id = order.get("order_id", "")
         items = order.get("items", [])
-        lines = OrderParser.format_cart(items).split("\n") if items else ["(vacío)"]
+        lines = self._order_lines_for_admin(items)
         message = (
-            f"*Nuevo pedido {order.get('order_id')}*\n"
+            f"*Nuevo pedido {order_id}*\n"
             f"Cliente: {order.get('customer_name') or 'Sin nombre'}\n"
             f"Teléfono: {order.get('wa_id')}\n"
             f"Dirección: {order.get('address') or 'N/A'}\n"
             f"Entrega: {order.get('delivery_type') or 'N/A'}\n\n"
             f"{chr(10).join(lines)}\n\n"
-            f"Responde *CONFIRMAR {order.get('order_id')}* o *pedido {order.get('order_id')} listo* para aceptar el pedido."
+            f"Responde *CONFIRMAR {order_id}* o *pedido {order_id} listo* "
+            "para aceptar el pedido."
         )
-        self._send_whatsapp_async(ADMIN_WHATSAPP_NUMBER, message)
-        self._track_pending_reminder(order.get("order_id", ""))
+        # Synchronous send: daemon threads may not finish before the webhook returns
+        # (common on cloud hosting), so the admin would never get the alert.
+        if self._send_whatsapp(ADMIN_WHATSAPP_NUMBER, message):
+            logger.info("Admin WhatsApp notified for order %s", order_id)
+        else:
+            logger.error(
+                "Admin WhatsApp NOT sent for order %s (check Twilio env and sandbox)",
+                order_id,
+            )
+        self._track_pending_reminder(order_id)
 
     def handle_admin_message(self, body: str) -> str:
         if not is_admin_confirm(body):

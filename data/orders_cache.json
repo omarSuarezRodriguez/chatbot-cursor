@@ -487,6 +487,91 @@
       "customer_name": "Omar Suarez",
       "address": "",
       "delivery_type": "recoger"
+    },
+    "ORD-B52BF328": {
+      "order_id": "ORD-B52BF328",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        },
+        {
+          "product_id": "6",
+          "product": "Coca Cola",
+          "qty": 1,
+          "unit_price": 8.0,
+          "subtotal": 8.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Clásica",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        }
+      ],
+      "total": 508.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T22:46:02.283913",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-F6AE334B": {
+      "order_id": "ORD-F6AE334B",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "123",
+          "product": "Marrano",
+          "qty": 2,
+          "unit_price": 2.0,
+          "subtotal": 4.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Mega",
+          "qty": 3,
+          "unit_price": 11.0,
+          "subtotal": 33.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 62.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T22:50:15.443791",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-90F8538B": {
+      "order_id": "ORD-90F8538B",
+      "wa_id": "573009998877",
+      "items": [
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 25.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T22:53:08.699374",
+      "customer_name": "Test",
+      "address": "",
+      "delivery_type": "recoger"
     }
   },
   "row_index": {
@@ -507,7 +592,10 @@
     "ORD-CE00139B": 19,
     "ORD-7C23AFB7": 20,
     "ORD-55955B33": 21,
-    "ORD-0B21DE71": 22
+    "ORD-0B21DE71": 22,
+    "ORD-B52BF328": 23,
+    "ORD-F6AE334B": 24,
+    "ORD-90F8538B": 25
   },
   "dirty_new": [],
   "dirty_status": {}
