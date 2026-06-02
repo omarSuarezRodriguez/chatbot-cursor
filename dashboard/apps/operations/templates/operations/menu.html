@@ -6,7 +6,7 @@
 {% for category, items in menu_by_category.items %}
 <h2>{{ category }}</h2>
 <table>
-  <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Disponible</th></tr></thead>
+  <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Disponible</th>{% if dashboard_writes_enabled %}<th></th>{% endif %}</tr></thead>
   <tbody>
     {% for item in items %}
     <tr>
@@ -14,6 +14,18 @@
       <td>{{ item.nombre }}</td>
       <td>{{ item.precio }} €</td>
       <td>{% if item.disponible %}Sí{% else %}No{% endif %}</td>
+      {% if dashboard_writes_enabled and item.disponible and item.id %}
+      <td>
+        <form method="post" action="{% url 'operations:menu' %}" style="margin:0;">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="unavailable">
+          <input type="hidden" name="item_id" value="{{ item.id }}">
+          <button type="submit" class="btn btn-danger" onclick="return confirm('¿Marcar {{ item.nombre }} como no disponible?');">No disponible</button>
+        </form>
+      </td>
+      {% elif dashboard_writes_enabled %}
+      <td></td>
+      {% endif %}
     </tr>
     {% endfor %}
   </tbody>

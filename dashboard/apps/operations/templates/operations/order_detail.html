@@ -12,6 +12,15 @@
   <dt>Total</dt><dd><strong>{{ order.total }} €</strong></dd>
   <dt>Fecha</dt><dd class="muted">{{ order.timestamp }}</dd>
 </dl>
+{% if can_confirm %}
+<form method="post" action="" style="margin:1rem 0;">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="confirm">
+  <button type="submit" class="btn btn-primary" onclick="return confirm('¿Confirmar pedido {{ order.order_id }}?');">Confirmar pedido</button>
+</form>
+{% elif order.status == "pending" and not dashboard_writes_enabled %}
+<p class="muted">Pedido pendiente — activa escrituras en <code>.env.dashboard</code> para confirmarlo desde el panel.</p>
+{% endif %}
 <h2>Ítems</h2>
 {% if items %}
 <table>

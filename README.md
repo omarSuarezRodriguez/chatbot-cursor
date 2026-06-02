@@ -1,4 +1,4 @@
-## v0.25
+## v0.26
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4633,6 +4633,172 @@ curl -I http://localhost:8000/
 
 **Sí:** PG solo para staff/auditoría/config UI; negocio en Sheets/JSON; bot sin cambios; alcance limitado a Fase 3; sin `StaffProfile` extra (no requerido en el prompt de tarea; se puede añadir en Fase 4 si hace falta).
 
+
+
+
+
+######################################################################
+## v0.26
+
+## Prompt ##
+
+Existe una auditoría y arquitectura aprobadas para este proyecto.
+
+Antes de realizar cualquier análisis o modificación debes leer completamente el archivo:
+
+AUDITORIA.md
+
+ubicado en la raíz del proyecto.
+
+La auditoría es la fuente de verdad para arquitectura, fases, restricciones, riesgos, validaciones y alcance.
+
+Debes respetarla estrictamente.
+
+REGLAS INMUTABLES
+
+* Modifica lo mínimo posible.
+* Implementa únicamente mejoras incrementales.
+* No rompas funcionalidad existente.
+* No refactorices código no relacionado.
+* No cambies APIs, contratos ni integraciones.
+* No alteres la arquitectura definida en AUDITORIA.md.
+* No implementes trabajo de fases futuras.
+* Mantén compatibilidad total con el sistema actual.
+* Prioriza estabilidad, simplicidad y bajo mantenimiento.
+* Evita dependencias innecesarias.
+* Reutiliza componentes, servicios y lógica existente siempre que sea posible.
+* Si detectas una contradicción entre esta tarea y AUDITORIA.md, prevalece AUDITORIA.md.
+* Si detectas riesgo alto, detente y explícalo antes de continuar.
+
+TAREA
+
+[Contexto: Dashboard Django autenticado, lectura operativa. Bot en app/ con AdminService y GoogleSheetsClient.
+
+Tarea Fase 4 — Acciones seguras:
+1. Variable DASHBOARD_ENABLE_WRITES (default 0). Si 0, UI solo lectura con mensaje.
+2. Acción confirmar pedido: reutilizar OrderService.confirm_order y notificación cliente como AdminService (extraer helper si evita duplicar, cambio mínimo).
+3. Implementar vía dashboard/services/bot_bridge.py o management command, NO nuevo endpoint Flask público.
+4. Opcional: marcar plato no disponible en Sheet MENU — un método acotado en GoogleSheetsClient si no existe; sin reescribir dirty logic.
+5. NO editar user_states.json ni restaurant_flow.json desde UI.
+6. AuditLog cada confirmación.
+
+Verificar con spreadsheet de prueba: confirmar pedido desde panel; WhatsApp admin deja de recordar; regression_checklist.py; cliente recibe confirmación si Twilio configurado.
+
+Restricciones: AI_RULES.md; no cambiar POST /bot ni formato XML.
+Entregar: bridge, flag env, checklist Fase 4, riesgos residuales.]
+
+ANTES DE MODIFICAR
+
+1. Leer AUDITORIA.md completo.
+2. Analizar el proyecto actual.
+3. Verificar que la tarea corresponde a la fase indicada en AUDITORIA.md.
+4. Explicar el plan de implementación.
+5. Listar archivos a crear.
+6. Listar archivos a modificar.
+7. Explicar riesgos potenciales.
+8. Confirmar que el alcance está limitado únicamente a esta fase.
+
+IMPLEMENTACIÓN
+
+* Realiza únicamente lo necesario para completar la tarea.
+* Mantén los cambios lo más pequeños posible.
+* No añadas funcionalidades fuera del alcance.
+* No modifiques componentes no relacionados.
+* Reutiliza la arquitectura existente siempre que sea posible.
+
+VALIDACIÓN
+
+* Verifica que el proyecto siga funcionando.
+* Verifica que no existan regresiones.
+* Ejecuta las validaciones definidas en AUDITORIA.md para esta fase.
+* Confirma compatibilidad con el sistema actual.
+* Confirma que no se han afectado fases futuras.
+
+ENTREGA
+
+* Resumen de cambios.
+* Archivos creados.
+* Archivos modificados.
+* Validaciones realizadas.
+* Riesgos restantes.
+* Rollback específico de esta fase.
+* Confirmación explícita de cumplimiento de AUDITORIA.md.
+
+
+## Respuesta cursor ##
+
+## Fase 4 — Acciones seguras (implementada)
+
+Alcance verificado contra **AUDITORIA.md** § Fase 4. Sin cambios en `POST /bot`, `parser.py`, `restaurant_flow.json` ni `user_states.json`.
+
+### Plan ejecutado
+
+| Requisito | Implementación |
+|-----------|----------------|
+| `DASHBOARD_ENABLE_WRITES` (default 0) | `settings.py` + `.env.dashboard.example`; banner en todas las vistas |
+| Confirmar pedido | `bot_bridge.confirm_order()` → `OrderService.confirm_order` + `AdminService.notify_customer_order_confirmed` |
+| Sin endpoint Flask nuevo | Bridge + `manage.py bot_confirm_order` |
+| Menú no disponible (opcional) | `GoogleSheetsClient.set_menu_item_availability` + POST en vista menú |
+| AuditLog | `confirm_order` y `menu_unavailable` en cada acción |
+
+### Archivos creados
+
+- `dashboard/services/__init__.py`
+- `dashboard/services/bot_bridge.py`
+- `dashboard/config/context_processors.py`
+- `dashboard/apps/operations/management/commands/bot_confirm_order.py`
+
+### Archivos modificados
+
+- `dashboard/config/settings.py` — flag + context processor
+- `dashboard/apps/operations/views.py` — POST confirmar / marcar menú
+- `dashboard/apps/operations/templates/operations/base.html`, `order_detail.html`, `menu.html`
+- `.env.dashboard.example`
+- `app/services/admin_service.py` — `notify_customer_order_confirmed()` (reutilizado por WhatsApp y panel)
+- `app/integrations/google_sheets.py` — `set_menu_item_availability()` acotado
+
+### Uso
+
+1. En `.env.dashboard`: `DASHBOARD_ENABLE_WRITES=1` (solo entorno de prueba).
+2. Reiniciar `runserver`.
+3. Pedido pendiente → detalle → **Confirmar pedido**.
+4. CLI alternativa:
+
+```powershell
+cd dashboard
+python manage.py bot_confirm_order ORD-XXXXXXXX
+```
+
+5. Revisar entradas en `/admin/` → **AuditLog**.
+
+### Validaciones
+
+- `python scripts/regression_checklist.py` → **5/5**
+- `python manage.py check` → sin issues
+
+**Pendiente manual (checklist Fase 4 con spreadsheet de prueba):** confirmar un `ORD-…` real con `DASHBOARD_ENABLE_WRITES=1`, Twilio y bot en marcha; comprobar Sheets/caché, WhatsApp al cliente y que el admin deje de recibir recordatorios.
+
+### Riesgos residuales
+
+| Riesgo | Nota |
+|--------|------|
+| Dos procesos en `data/` | Si bot y dashboard corren en local escribiendo a la vez, posible conflicto en JSON; mitigación: escritura vía `GoogleSheetsClient` (dirty), no editar JSON a mano |
+| Recordatorios admin en memoria del bot | El panel no limpia `_reminder_state` del proceso Flask; dejan de enviarse al salir de `pending` en Sheets (~30 s) |
+| Menú | Actualización directa a Sheets; sin cola dirty de menú (acotado, como indica la auditoría) |
+
+### Rollback Fase 4
+
+1. `DASHBOARD_ENABLE_WRITES=0` en `.env.dashboard`.
+2. Revertir commit de `dashboard/services/bot_bridge.py`, vistas/templates y cambios opcionales en `google_sheets.py` / `admin_service.py`.
+
+El bot sigue operando sin dashboard.
+
+### Cumplimiento AUDITORIA.md
+
+- Fase 4 únicamente; sin fases futuras.
+- APIs Flask y contratos intactos.
+- Escrituras detrás de flag; auditoría en PG; bridge reutiliza servicios del bot.
+- No edición de `user_states.json` ni flujo desde UI.
 
 
 

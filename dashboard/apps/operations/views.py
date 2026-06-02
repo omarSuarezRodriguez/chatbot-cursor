@@ -5,12 +5,14 @@ import urllib.error
 import urllib.request
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views import View
 
 from apps.accounts.audit import log_audit
+from services import bot_bridge
 
 from .services import readers
 
@@ -55,8 +57,42 @@ class OrderDetailView(LoginRequiredMixin, View):
         return render(
             request,
             "operations/order_detail.html",
-            {"order": order, "items": items},
+            {
+                "order": order,
+                "items": items,
+                "can_confirm": (
+                    bot_bridge.writes_enabled()
+                    and str(order.get("status", "")).lower() == "pending"
+                ),
+            },
         )
+
+    def post(self, request, order_id: str):
+        if request.POST.get("action") != "confirm":
+            raise Http404()
+        order = readers.read_order(order_id)
+        if not order:
+            raise Http404("Pedido no encontrado")
+
+        result = bot_bridge.confirm_order(order_id)
+        log_audit(
+            request,
+            action="confirm_order",
+            entity="order",
+            entity_id=order_id.upper(),
+            metadata={
+                "ok": result.ok,
+                "already_confirmed": result.already_confirmed,
+                "message": result.message,
+            },
+        )
+        if result.ok:
+            messages.success(request, result.message)
+        elif result.already_confirmed:
+            messages.warning(request, result.message)
+        else:
+            messages.error(request, result.message)
+        return redirect("operations:order_detail", order_id=order_id.upper())
 
 
 class ReservationListView(LoginRequiredMixin, View):
@@ -75,6 +111,24 @@ class MenuView(LoginRequiredMixin, View):
             "operations/menu.html",
             {"menu_by_category": readers.menu_by_category()},
         )
+
+    def post(self, request):
+        if request.POST.get("action") != "unavailable":
+            raise Http404()
+        item_id = request.POST.get("item_id", "").strip()
+        ok, message = bot_bridge.set_menu_item_unavailable(item_id)
+        log_audit(
+            request,
+            action="menu_unavailable",
+            entity="menu_item",
+            entity_id=item_id,
+            metadata={"ok": ok, "message": message},
+        )
+        if ok:
+            messages.success(request, message)
+        else:
+            messages.error(request, message)
+        return redirect("operations:menu")
 
 
 class UserListView(LoginRequiredMixin, View):

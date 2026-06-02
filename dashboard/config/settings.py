@@ -78,6 +78,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "config.context_processors.dashboard_flags",
             ],
         },
     },
@@ -107,6 +108,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 BOT_HEALTH_URL = os.environ.get("BOT_HEALTH_URL", "http://127.0.0.1:5000/health")
+DASHBOARD_ENABLE_WRITES = os.environ.get("DASHBOARD_ENABLE_WRITES", "0") == "1"
 
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "/"

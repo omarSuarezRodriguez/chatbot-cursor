@@ -835,6 +835,48 @@ class GoogleSheetsClient:
                 return list(self._menu_cache)
         return list(DEMO_MENU)
 
+    def set_menu_item_availability(self, item_id: str, disponible: bool) -> bool:
+        """Update local menu cache and Sheet MENU column 'disponible' (no dirty-queue)."""
+        item_id = str(item_id).strip()
+        if not item_id:
+            return False
+        with self._cache_lock:
+            menu = self._menu_cache
+            if not menu:
+                return False
+            found = False
+            for item in menu:
+                if str(item.get("id", "")).strip() == item_id:
+                    item["disponible"] = disponible
+                    found = True
+                    break
+            if not found:
+                return False
+            menu_copy = list(menu)
+        self._save_local_menu(menu_copy)
+        if self._connected:
+            try:
+                self._update_menu_availability_on_sheets(item_id, disponible)
+            except Exception:
+                logger.exception(
+                    "Failed to push menu availability for %s to Sheets", item_id
+                )
+        return True
+
+    def _update_menu_availability_on_sheets(self, item_id: str, disponible: bool) -> bool:
+        sheet = self._get_sheet("MENU")
+        if not sheet:
+            return False
+        try:
+            cell = sheet.find(item_id, in_column=1)
+        except Exception:
+            return False
+        if not cell:
+            return False
+        value = "TRUE" if disponible else "FALSE"
+        sheet.update_cell(cell.row, 5, value)
+        return True
+
     def get_user(self, wa_id: str) -> Dict[str, Any]:
         with self._cache_lock:
             if wa_id in self._users_cache:

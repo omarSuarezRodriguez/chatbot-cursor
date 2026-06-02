@@ -19,6 +19,16 @@
     .muted { color: #666; font-size: 0.9rem; }
     pre { background: #f8f8f8; padding: 1rem; overflow-x: auto; font-size: 0.85rem; }
     h1 { font-size: 1.4rem; margin-top: 0; }
+    .banner { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.95rem; }
+    .banner-readonly { background: #fff3cd; border: 1px solid #ffc107; }
+    .flash-messages { list-style: none; padding: 0; margin: 0 0 1rem; }
+    .flash { padding: 0.6rem 0.9rem; border-radius: 6px; margin-bottom: 0.5rem; }
+    .flash-success { background: #d1e7dd; }
+    .flash-error { background: #f8d7da; }
+    .flash-warning { background: #fff3cd; }
+    button.btn { padding: 0.4rem 0.75rem; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #f5f5f5; font: inherit; }
+    button.btn-primary { background: #0b57d0; color: #fff; border-color: #0b57d0; }
+    button.btn-danger { background: #dc3545; color: #fff; border-color: #dc3545; }
   </style>
 </head>
 <body>
@@ -37,6 +47,16 @@
       </form>
     {% endif %}
   </nav>
+  {% if messages %}
+  <ul class="flash-messages">
+    {% for message in messages %}
+    <li class="flash flash-{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if not dashboard_writes_enabled %}
+  <p class="banner banner-readonly">Modo solo lectura. Para confirmar pedidos o editar menú, define <code>DASHBOARD_ENABLE_WRITES=1</code> en <code>.env.dashboard</code> y reinicia el servidor.</p>
+  {% endif %}
   {% block content %}{% endblock %}
 </body>
 </html>

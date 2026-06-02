@@ -84,6 +84,15 @@ class AdminService:
         )
         thread.start()
 
+    def notify_customer_order_confirmed(self, order_id: str, wa_id: str) -> None:
+        if not wa_id:
+            return
+        self._send_whatsapp_async(
+            wa_id,
+            f"Tu pedido *{order_id}* fue confirmado por el restaurante. "
+            "¡Gracias por tu compra!",
+        )
+
     def notify_new_order(self, order: Dict[str, Any]) -> None:
         if not ADMIN_WHATSAPP_NUMBER:
             logger.warning("ADMIN_WHATSAPP_NUMBER not set; skipping admin notification.")
@@ -127,13 +136,7 @@ class AdminService:
 
         if self.order_service.confirm_order(order_id):
             self._clear_reminder(order_id)
-            customer = order.get("wa_id", "")
-            if customer:
-                self._send_whatsapp_async(
-                    customer,
-                    f"Tu pedido *{order_id}* fue confirmado por el restaurante. "
-                    "¡Gracias por tu compra!",
-                )
+            self.notify_customer_order_confirmed(order_id, order.get("wa_id", ""))
             return f"Pedido *{order_id}* confirmado correctamente."
 
         return f"No pude actualizar el pedido *{order_id}*."
