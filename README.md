@@ -1,4 +1,4 @@
-## v0.24
+## v0.25
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -72,13 +72,17 @@ python run.py
 ```bash
 docker compose up -d db
 python dashboard/manage.py migrate
+python dashboard/manage.py createsuperuser
 python dashboard/manage.py runserver 8000
 ```
+
+`createsuperuser` crea el usuario staff para login en el panel (`/accounts/login/`) y en `/admin/`. Sin usuario, las rutas operativas redirigen al login.
 
 Verifica:
 
 - Bot: `http://localhost:5000/health`
-- Dashboard: `http://localhost:8000/admin/` (página Django admin; crear superusuario con `python dashboard/manage.py createsuperuser` cuando lo necesites en fases posteriores)
+- Dashboard operativo: `http://localhost:8000/` (requiere login; pedidos, menú, etc.)
+- Django admin: `http://localhost:8000/admin/` (mismo usuario staff; ver `AuditLog` y `DashboardSettings`)
 
 Para detener PostgreSQL: `docker compose down` (añade `-v` solo si quieres borrar el volumen de datos).
 
@@ -4455,3 +4459,182 @@ Sí: solo lectura operativa, proceso dual, sin endpoints Flask nuevos, sin tocar
 
 
 
+
+
+######################################################################
+## v0.24
+
+## Prompt ##
+
+
+Existe una auditoría y arquitectura aprobadas para este proyecto.
+
+Antes de realizar cualquier análisis o modificación debes leer completamente el archivo:
+
+AUDITORIA.md
+
+ubicado en la raíz del proyecto.
+
+La auditoría es la fuente de verdad para arquitectura, fases, restricciones, riesgos, validaciones y alcance.
+
+Debes respetarla estrictamente.
+
+REGLAS INMUTABLES
+
+* Modifica lo mínimo posible.
+* Implementa únicamente mejoras incrementales.
+* No rompas funcionalidad existente.
+* No refactorices código no relacionado.
+* No cambies APIs, contratos ni integraciones.
+* No alteres la arquitectura definida en AUDITORIA.md.
+* No implementes trabajo de fases futuras.
+* Mantén compatibilidad total con el sistema actual.
+* Prioriza estabilidad, simplicidad y bajo mantenimiento.
+* Evita dependencias innecesarias.
+* Reutiliza componentes, servicios y lógica existente siempre que sea posible.
+* Si detectas una contradicción entre esta tarea y AUDITORIA.md, prevalece AUDITORIA.md.
+* Si detectas riesgo alto, detente y explícalo antes de continuar.
+
+TAREA
+
+[Contexto: Fases 1-2 OK. Dashboard muestra datos en lectura.
+
+Tarea Fase 3 — Auth staff + PostgreSQL panel:
+1. App accounts: modelo AuditLog y opcional DashboardSettings.
+2. Login/logout Django; todas las vistas operations requieren login.
+3. Migraciones PG; crear superuser vía manage.py documentado.
+4. Registrar en AuditLog accesos a vistas sensibles (listar pedidos).
+5. NO almacenar en PG pedidos/menú como fuente de verdad (solo metadatos de panel).
+6. Bot sin cambios en endpoints.
+
+Verificar: anónimo no accede; regression_checklist bot OK.
+Entregar: modelos, migraciones, instrucciones createsuperuser.]
+
+ANTES DE MODIFICAR
+
+1. Leer AUDITORIA.md completo.
+2. Analizar el proyecto actual.
+3. Verificar que la tarea corresponde a la fase indicada en AUDITORIA.md.
+4. Explicar el plan de implementación.
+5. Listar archivos a crear.
+6. Listar archivos a modificar.
+7. Explicar riesgos potenciales.
+8. Confirmar que el alcance está limitado únicamente a esta fase.
+
+IMPLEMENTACIÓN
+
+* Realiza únicamente lo necesario para completar la tarea.
+* Mantén los cambios lo más pequeños posible.
+* No añadas funcionalidades fuera del alcance.
+* No modifiques componentes no relacionados.
+* Reutiliza la arquitectura existente siempre que sea posible.
+
+VALIDACIÓN
+
+* Verifica que el proyecto siga funcionando.
+* Verifica que no existan regresiones.
+* Ejecuta las validaciones definidas en AUDITORIA.md para esta fase.
+* Confirma compatibilidad con el sistema actual.
+* Confirma que no se han afectado fases futuras.
+
+ENTREGA
+
+* Resumen de cambios.
+* Archivos creados.
+* Archivos modificados.
+* Validaciones realizadas.
+* Riesgos restantes.
+* Rollback específico de esta fase.
+* Confirmación explícita de cumplimiento de AUDITORIA.md.
+
+
+
+## Respuesta cursor ##
+
+## Plan (previo a implementar — Fase 3 AUDITORIA.md)
+
+| Punto | Decisión |
+|--------|----------|
+| Alcance | Solo auth staff + metadatos PG; pedidos/menú siguen en `data/*.json` / Sheets |
+| App nueva | `accounts` con `AuditLog` + `DashboardSettings` |
+| Protección | `LoginRequiredMixin` en todas las vistas `operations` |
+| Auditoría | `log_audit` al listar pedidos (`action=view`, `entity=orders`) |
+| Bot | Sin cambios en `app/` ni endpoints Flask |
+
+---
+
+## Fase 3 completada — Auth staff + PostgreSQL panel
+
+### Resumen de cambios
+
+- App **`accounts`** con modelos `AuditLog` y `DashboardSettings` (solo metadatos del panel).
+- Login/logout en `/accounts/login/` y `/accounts/logout/` (POST para salir).
+- Todas las vistas operativas requieren sesión staff; anónimo redirige al login.
+- Cada visita a la lista de pedidos registra una fila en `AuditLog`.
+- README actualizado: `createsuperuser` obligatorio tras `migrate`.
+
+### Archivos creados
+
+- `dashboard/apps/accounts/` — `apps.py`, `models.py`, `audit.py`, `admin.py`, `urls.py`
+- `dashboard/apps/accounts/migrations/0001_initial.py`
+- `dashboard/apps/accounts/templates/registration/login.html`
+
+### Archivos modificados
+
+- `dashboard/config/settings.py` — `apps.accounts`, `LOGIN_URL`, `LOGIN_REDIRECT_URL`, `LOGOUT_REDIRECT_URL`
+- `dashboard/config/urls.py` — include `accounts`
+- `dashboard/apps/operations/views.py` — `LoginRequiredMixin` + auditoría en pedidos
+- `dashboard/apps/operations/templates/operations/base.html` — usuario + botón Salir
+- `README.md` — arranque con `createsuperuser`
+
+### Arranque (tras Docker PG)
+
+```powershell
+docker compose up -d db
+python dashboard/manage.py migrate
+python dashboard/manage.py createsuperuser
+python dashboard/manage.py runserver 8000
+```
+
+- Panel: http://localhost:8000/ → login requerido  
+- Admin: http://localhost:8000/admin/ → mismo usuario; ver `AuditLog`
+
+### Validaciones realizadas
+
+| Check | Resultado |
+|--------|-------------|
+| `python scripts/regression_checklist.py` | **5/5 OK** (bot intacto) |
+| `python dashboard/manage.py check` | Sin issues |
+| `makemigrations accounts` | `0001_initial.py` generada |
+| Auth anónimo / PG | No ejecutable aquí (Docker no disponible en este entorno) |
+
+En tu máquina, con PG levantado:
+
+```powershell
+# Sin login → 302 a /accounts/login/
+curl -I http://localhost:8000/
+
+# Tras login en navegador, revisar AuditLog en /admin/
+```
+
+### Rollback Fase 3
+
+1. Quitar `"apps.accounts"` de `INSTALLED_APPS` y la ruta `accounts/` en `urls.py`.
+2. Quitar `LoginRequiredMixin` y `log_audit` de `operations/views.py`.
+3. `docker compose down -v` si quieres borrar tablas PG (el bot no las usa).
+
+### Riesgos restantes
+
+- `/admin/` sigue siendo superficie Django estándar: proteger con contraseña fuerte (solo local).
+- Fase 4 (escrituras a Sheets) pendiente; `DashboardSettings` aún sin uso en templates.
+- Sin Docker, `migrate` fallará hasta levantar PostgreSQL.
+
+### Cumplimiento AUDITORIA.md
+
+**Sí:** PG solo para staff/auditoría/config UI; negocio en Sheets/JSON; bot sin cambios; alcance limitado a Fase 3; sin `StaffProfile` extra (no requerido en el prompt de tarea; se puede añadir en Fase 4 si hace falta).
+
+
+
+
+
+######################################################################

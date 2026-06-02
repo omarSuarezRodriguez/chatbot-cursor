@@ -29,6 +29,13 @@
     <a href="{% url 'operations:users' %}"{% if '/usuarios' in request.path %} class="active"{% endif %}>Usuarios</a>
     <a href="{% url 'operations:system_status' %}"{% if '/estado' in request.path %} class="active"{% endif %}>Estado</a>
     <a href="/admin/">Admin Django</a>
+    {% if user.is_authenticated %}
+      <span class="muted" style="margin-left:auto;">{{ user.username }}</span>
+      <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;margin:0;">
+        {% csrf_token %}
+        <button type="submit" style="background:none;border:none;color:#0b57d0;cursor:pointer;padding:0;font:inherit;">Salir</button>
+      </form>
+    {% endif %}
   </nav>
   {% block content %}{% endblock %}
 </body>

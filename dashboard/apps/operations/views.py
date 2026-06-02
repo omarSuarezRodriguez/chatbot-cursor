@@ -5,16 +5,25 @@ import urllib.error
 import urllib.request
 
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import render
 from django.views import View
 
+from apps.accounts.audit import log_audit
+
 from .services import readers
 
 
-class OrderListView(View):
+class OrderListView(LoginRequiredMixin, View):
     def get(self, request):
         status_filter = request.GET.get("status", "").strip().lower()
+        log_audit(
+            request,
+            action="view",
+            entity="orders",
+            metadata={"status_filter": status_filter or None},
+        )
         orders = readers.read_orders()
         if status_filter:
             orders = [
@@ -32,7 +41,7 @@ class OrderListView(View):
         )
 
 
-class OrderDetailView(View):
+class OrderDetailView(LoginRequiredMixin, View):
     def get(self, request, order_id: str):
         order = readers.read_order(order_id)
         if not order:
@@ -50,7 +59,7 @@ class OrderDetailView(View):
         )
 
 
-class ReservationListView(View):
+class ReservationListView(LoginRequiredMixin, View):
     def get(self, request):
         return render(
             request,
@@ -59,7 +68,7 @@ class ReservationListView(View):
         )
 
 
-class MenuView(View):
+class MenuView(LoginRequiredMixin, View):
     def get(self, request):
         return render(
             request,
@@ -68,7 +77,7 @@ class MenuView(View):
         )
 
 
-class UserListView(View):
+class UserListView(LoginRequiredMixin, View):
     def get(self, request):
         return render(
             request,
@@ -77,7 +86,7 @@ class UserListView(View):
         )
 
 
-class SystemStatusView(View):
+class SystemStatusView(LoginRequiredMixin, View):
     def get(self, request):
         bot_health, bot_health_error = _fetch_bot_health()
         bot_health_text = (

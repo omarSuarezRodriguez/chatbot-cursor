@@ -303,6 +303,14 @@
       "last_order_date": "",
       "last_order_items": [],
       "last_seen": "2026-06-02T02:36:31.942912"
+    },
+    "regression_2ab28297": {
+      "wa_id": "regression_2ab28297",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-02T02:40:33.172281"
     }
   },
   "row_index": {
@@ -344,6 +352,7 @@
   },
   "dirty": [
     "regression_191b5ce1",
+    "regression_2ab28297",
     "regression_38173feb"
   ]
 }
