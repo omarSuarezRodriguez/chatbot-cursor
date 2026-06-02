@@ -164,7 +164,9 @@ def _sheets_client():
             def _records(self, tab_name: str) -> List[Dict[str, Any]]:
                 spreadsheet_id = os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
                 json_blob = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
-                if not spreadsheet_id or not json_blob:
+                creds_path = os.environ.get("GOOGLE_SHEETS_CREDENTIALS_PATH", "").strip()
+                default_creds = settings.PROJECT_ROOT / "credentials" / "google-service-account.json"
+                if not spreadsheet_id or (not json_blob and not creds_path and not default_creds.is_file()):
                     return []
                 try:
                     import gspread
@@ -174,10 +176,17 @@ def _sheets_client():
                         "https://www.googleapis.com/auth/spreadsheets.readonly",
                         "https://www.googleapis.com/auth/drive.readonly",
                     ]
-                    creds = Credentials.from_service_account_info(
-                        json.loads(json_blob),
-                        scopes=scopes,
-                    )
+                    if json_blob:
+                        creds = Credentials.from_service_account_info(
+                            json.loads(json_blob),
+                            scopes=scopes,
+                        )
+                    else:
+                        resolved_path = Path(creds_path) if creds_path else default_creds
+                        creds = Credentials.from_service_account_file(
+                            str(resolved_path),
+                            scopes=scopes,
+                        )
                     client = gspread.authorize(creds)
                     ws = client.open_by_key(spreadsheet_id).worksheet(tab_name)
                     return ws.get_all_records()

@@ -10,6 +10,7 @@ import threading
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -68,16 +69,25 @@ def _bot_services():
             def __init__(self) -> None:
                 spreadsheet_id = os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
                 json_blob = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
-                if not spreadsheet_id or not json_blob:
+                creds_path = os.environ.get("GOOGLE_SHEETS_CREDENTIALS_PATH", "").strip()
+                default_creds = settings.PROJECT_ROOT / "credentials" / "google-service-account.json"
+                if not spreadsheet_id or (not json_blob and not creds_path and not default_creds.is_file()):
                     raise RuntimeError("Missing Google Sheets credentials in dashboard service")
                 scopes = [
                     "https://www.googleapis.com/auth/spreadsheets",
                     "https://www.googleapis.com/auth/drive",
                 ]
-                creds = Credentials.from_service_account_info(
-                    json.loads(json_blob),
-                    scopes=scopes,
-                )
+                if json_blob:
+                    creds = Credentials.from_service_account_info(
+                        json.loads(json_blob),
+                        scopes=scopes,
+                    )
+                else:
+                    resolved_path = Path(creds_path) if creds_path else default_creds
+                    creds = Credentials.from_service_account_file(
+                        str(resolved_path),
+                        scopes=scopes,
+                    )
                 client = gspread.authorize(creds)
                 self.spreadsheet = client.open_by_key(spreadsheet_id)
 

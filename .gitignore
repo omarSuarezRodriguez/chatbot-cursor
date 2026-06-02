@@ -1,6 +1,7 @@
 # Environment
 .env
 .env.dashboard
+.env.unified
 dashboard/.env
 venv/
 .venv/

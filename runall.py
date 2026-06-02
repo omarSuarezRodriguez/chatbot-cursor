@@ -67,6 +67,14 @@ def _ensure_env_dashboard() -> None:
         print("  → Copiado .env.dashboard desde .env.dashboard.example")
 
 
+def _ensure_env_unified() -> None:
+    dst = ROOT / ".env.unified"
+    src = ROOT / ".env.unified.example"
+    if not dst.exists() and src.exists():
+        shutil.copy(src, dst)
+        print("  → Copiado .env.unified desde .env.unified.example")
+
+
 def _start_postgres() -> None:
     if _port_in_use(5432):
         print("[runall] PostgreSQL ya escucha en :5432 (Docker o instalación local).")
@@ -98,6 +106,7 @@ def main() -> None:
     print(f"[runall] Python: {python}")
     print(f"[runall] Raíz:   {ROOT}\n")
 
+    _ensure_env_unified()
     _ensure_env_dashboard()
     _start_postgres()
     _migrate(python)

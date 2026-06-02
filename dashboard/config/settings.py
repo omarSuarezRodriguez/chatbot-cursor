@@ -21,6 +21,13 @@ else:
 
 
 def _load_env_file(path: Path) -> None:
+    _load_env_file_with_policy(path, override_loaded=False)
+
+
+_loaded_from_files: set[str] = set()
+
+
+def _load_env_file_with_policy(path: Path, *, override_loaded: bool) -> None:
     if not path.exists():
         return
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -28,11 +35,20 @@ def _load_env_file(path: Path) -> None:
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, _, value = line.partition("=")
-        os.environ.setdefault(key.strip(), value.strip())
+        key = key.strip()
+        value = value.strip()
+        if key in os.environ and key not in _loaded_from_files:
+            # Respect environment injected by hosting/provider.
+            continue
+        if key in _loaded_from_files and not override_loaded:
+            continue
+        os.environ[key] = value
+        _loaded_from_files.add(key)
 
 
+_load_env_file_with_policy(PROJECT_ROOT / ".env.unified", override_loaded=False)
 _load_env_file(PROJECT_ROOT / ".env")
-_load_env_file(PROJECT_ROOT / ".env.dashboard")
+_load_env_file_with_policy(PROJECT_ROOT / ".env.dashboard", override_loaded=True)
 
 
 def _database_from_url(url: str) -> dict:

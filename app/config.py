@@ -4,7 +4,31 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+_loaded_from_files: set[str] = set()
+
+
+def _load_env_file(path: Path, *, override_loaded: bool = False) -> None:
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip()
+        if key in os.environ and key not in _loaded_from_files:
+            # Respect real process env vars (Render/Railway, shell export, etc).
+            continue
+        if key in _loaded_from_files and not override_loaded:
+            continue
+        os.environ[key] = value
+        _loaded_from_files.add(key)
+
+
+_load_env_file(BASE_DIR / ".env.unified", override_loaded=False)
+_load_env_file(BASE_DIR / ".env", override_loaded=True)
+load_dotenv(BASE_DIR / ".env", override=False)
 
 RESTAURANT_NAME = os.getenv("RESTAURANT_NAME", "La Casa del Sabor")
 GOOGLE_SHEETS_CREDENTIALS_PATH = os.getenv(
