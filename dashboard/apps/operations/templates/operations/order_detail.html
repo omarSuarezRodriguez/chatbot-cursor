@@ -2,44 +2,87 @@
 {% block title %}{{ order.order_id }} — Pedido{% endblock %}
 {% block page_heading %}Pedido {{ order.order_id }}{% endblock %}
 {% block content %}
-<p><a href="{% url 'operations:orders' %}">← Volver a pedidos</a></p>
-<h1>Pedido {{ order.order_id }}</h1>
-<dl>
-  <dt>Estado</dt><dd><span class="badge badge-{{ order.status }}">{{ order.status }}</span></dd>
-  <dt>WhatsApp ID</dt><dd><code>{{ order.wa_id }}</code></dd>
-  <dt>Cliente</dt><dd>{{ order.customer_name|default:"—" }}</dd>
-  <dt>Dirección</dt><dd>{{ order.address|default:"—" }}</dd>
-  <dt>Tipo entrega</dt><dd>{{ order.delivery_type|default:"—" }}</dd>
-  <dt>Total</dt><dd><strong>{{ order.total }} €</strong></dd>
-  <dt>Fecha</dt><dd class="muted">{{ order.timestamp }}</dd>
-</dl>
-{% if can_confirm %}
-<form method="post" action="" style="margin:1rem 0;">
-  {% csrf_token %}
-  <input type="hidden" name="action" value="confirm">
-  <button type="submit" class="btn btn-primary" onclick="return confirm('¿Confirmar pedido {{ order.order_id }}?');">Confirmar pedido</button>
-</form>
-{% elif order.status == "pending" and not dashboard_writes_enabled %}
-<p class="muted">Pedido pendiente — activa escrituras en <code>.env.dashboard</code> para confirmarlo desde el panel.</p>
-{% endif %}
-<h2>Ítems</h2>
-{% if items %}
-<table>
-  <thead>
-    <tr><th>Producto</th><th>Cant.</th><th>P. unit.</th><th>Subtotal</th></tr>
-  </thead>
-  <tbody>
-    {% for item in items %}
-    <tr>
-      <td>{% firstof item.product item.nombre "—" %}</td>
-      <td>{{ item.qty|default:1 }}</td>
-      <td>{{ item.unit_price }} €</td>
-      <td>{{ item.subtotal }} €</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p class="muted">Sin líneas de pedido.</p>
-{% endif %}
+<nav class="order-detail__back">
+  <a href="{% url 'operations:orders' %}" class="btn btn-ghost">
+    {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
+    Volver a pedidos
+  </a>
+</nav>
+
+<header class="order-detail__header card">
+  <div class="order-detail__header-main">
+    <h1 class="order-detail__id">{{ order.order_id }}</h1>
+    <p class="muted order-detail__meta">{{ order.timestamp }}</p>
+  </div>
+  <div class="order-detail__header-aside">
+    {% include "operations/partials/order_status_badge.html" with status=order.status %}
+    <p class="order-detail__total"><span class="muted">Total</span> <strong>{{ order.total }} €</strong></p>
+  </div>
+</header>
+
+<div class="order-detail__grid">
+  <section class="card order-detail__summary">
+    <h2>Resumen</h2>
+    <dl class="detail-dl">
+      <dt>Cliente</dt>
+      <dd>{{ order.customer_name|default:"—" }}</dd>
+      <dt>WhatsApp</dt>
+      <dd><code>{{ order.wa_id }}</code></dd>
+      <dt>Dirección</dt>
+      <dd>{{ order.address|default:"—" }}</dd>
+      <dt>Entrega</dt>
+      <dd>{{ order.delivery_type|default:"—" }}</dd>
+    </dl>
+    {% if can_confirm %}
+    <form method="post" action="" class="order-detail__actions">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="confirm">
+      <button type="submit" class="btn btn-primary" onclick="return confirm('¿Confirmar pedido {{ order.order_id }}?');">
+        {% include "operations/partials/icon.html" with name="check-circle" class="icon--sm" %}
+        Confirmar pedido
+      </button>
+    </form>
+    {% elif order.status == "pending" and not dashboard_writes_enabled %}
+    <p class="banner banner-readonly" style="margin-top:var(--space-4);margin-bottom:0;">
+      Pedido pendiente — activa <code>DASHBOARD_ENABLE_WRITES=1</code> en <code>.env.dashboard</code> para confirmarlo.
+    </p>
+    {% endif %}
+  </section>
+
+  <section class="card order-detail__items">
+    <h2>Ítems del pedido</h2>
+    {% if items %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>P. unit.</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{% firstof item.product item.nombre "—" %}</td>
+            <td>{{ item.qty|default:1 }}</td>
+            <td>{{ item.unit_price }} €</td>
+            <td><strong>{{ item.subtotal }} €</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="muted" style="text-align:right;">Total pedido</td>
+            <td><strong>{{ order.total }} €</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">Sin líneas de pedido en caché.</p>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}

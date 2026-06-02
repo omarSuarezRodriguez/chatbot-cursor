@@ -2,42 +2,108 @@
 {% block title %}Pedidos — Dashboard{% endblock %}
 {% block page_heading %}Pedidos{% endblock %}
 {% block content %}
-<h1>Pedidos</h1>
-<p class="muted">
-  Solo lectura desde <code>data/orders_cache.json</code>.
-  {% if status_filter %}Filtro: <strong>{{ status_filter }}</strong>{% endif %}
-</p>
-<p class="app-filter-links">
-  <a href="{% url 'operations:orders' %}">Todos</a>
-  <a href="{% url 'operations:orders' %}?status=pending">Pendientes</a>
-  <a href="{% url 'operations:orders' %}?status=confirmed">Confirmados</a>
-</p>
+<div class="app-page-header">
+  <h1>Pedidos</h1>
+  <p class="muted">Lectura desde <code>data/orders_cache.json</code> — búsqueda, filtros y paginación en servidor.</p>
+</div>
+
+<form class="data-toolbar card" method="get" action="{% url 'operations:orders' %}">
+  <div class="data-toolbar__row">
+    <label class="sr-only" for="order-q">Buscar</label>
+    <div class="input-with-icon">
+      {% include "operations/partials/icon.html" with name="search" class="icon--sm input-with-icon__icon" %}
+      <input type="search" id="order-q" name="q" value="{{ q }}" placeholder="ID o cliente…" class="input">
+    </div>
+    <label class="sr-only" for="order-status">Estado</label>
+    <select id="order-status" name="status" class="input data-toolbar__select">
+      <option value="">Todos los estados</option>
+      {% for st in order_statuses %}
+      <option value="{{ st }}"{% if status_filter == st %} selected{% endif %}>{{ st }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="data-toolbar__row">
+    <label class="label" for="date-from">Desde</label>
+    <input type="date" id="date-from" name="date_from" value="{{ date_from }}" class="input data-toolbar__date">
+    <label class="label" for="date-to">Hasta</label>
+    <input type="date" id="date-to" name="date_to" value="{{ date_to }}" class="input data-toolbar__date">
+    <input type="hidden" name="sort" value="{{ sort }}">
+    <input type="hidden" name="dir" value="{{ direction }}">
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <a href="{% url 'operations:orders' %}" class="btn btn-ghost">Limpiar</a>
+  </div>
+</form>
+
 {% if orders %}
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Total</th>
-      <th>Estado</th>
-      <th>Fecha</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for order in orders %}
-    <tr>
-      <td><a href="{% url 'operations:order_detail' order.order_id %}">{{ order.order_id }}</a></td>
-      <td>{{ order.customer_name|default:"—" }}</td>
-      <td>{{ order.total }} €</td>
-      <td>
-        <span class="badge badge-{{ order.status }}">{{ order.status }}</span>
-      </td>
-      <td class="muted">{{ order.timestamp }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>
+          <a class="table-sort{% if sort == 'order_id' %} is-active{% endif %}"
+             href="?{% if base_query %}{{ base_query }}&{% endif %}sort=order_id&dir={% if sort == 'order_id' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+            ID{% if sort == 'order_id' %} <span aria-hidden="true">{% if direction == 'asc' %}↑{% else %}↓{% endif %}</span>{% endif %}
+          </a>
+        </th>
+        <th>
+          <a class="table-sort{% if sort == 'customer_name' %} is-active{% endif %}"
+             href="?{% if base_query %}{{ base_query }}&{% endif %}sort=customer_name&dir={% if sort == 'customer_name' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+            Cliente{% if sort == 'customer_name' %} <span aria-hidden="true">{% if direction == 'asc' %}↑{% else %}↓{% endif %}</span>{% endif %}
+          </a>
+        </th>
+        <th>
+          <a class="table-sort{% if sort == 'total' %} is-active{% endif %}"
+             href="?{% if base_query %}{{ base_query }}&{% endif %}sort=total&dir={% if sort == 'total' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+            Total{% if sort == 'total' %} <span aria-hidden="true">{% if direction == 'asc' %}↑{% else %}↓{% endif %}</span>{% endif %}
+          </a>
+        </th>
+        <th>
+          <a class="table-sort{% if sort == 'status' %} is-active{% endif %}"
+             href="?{% if base_query %}{{ base_query }}&{% endif %}sort=status&dir={% if sort == 'status' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+            Estado{% if sort == 'status' %} <span aria-hidden="true">{% if direction == 'asc' %}↑{% else %}↓{% endif %}</span>{% endif %}
+          </a>
+        </th>
+        <th>
+          <a class="table-sort{% if sort == 'timestamp' %} is-active{% endif %}"
+             href="?{% if base_query %}{{ base_query }}&{% endif %}sort=timestamp&dir={% if sort == 'timestamp' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+            Fecha{% if sort == 'timestamp' %} <span aria-hidden="true">{% if direction == 'asc' %}↑{% else %}↓{% endif %}</span>{% endif %}
+          </a>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td><a href="{% url 'operations:order_detail' order.order_id %}" class="order-id-link">{{ order.order_id }}</a></td>
+        <td>{{ order.customer_name|default:"—" }}</td>
+        <td><strong>{{ order.total }} €</strong></td>
+        <td>{% include "operations/partials/order_status_badge.html" with status=order.status %}</td>
+        <td class="muted">{{ order.timestamp|truncatechars:19 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<nav class="pagination" aria-label="Paginación de pedidos">
+  <p class="pagination__info muted">
+    {{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ page_obj.paginator.count }}
+  </p>
+  <div class="pagination__links">
+    {% if page_obj.has_previous %}
+    <a class="btn btn-ghost" href="?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+    <span class="pagination__current">Página {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a class="btn btn-ghost" href="?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente</a>
+    {% endif %}
+  </div>
+</nav>
 {% else %}
-<p>No hay pedidos en caché.</p>
+<div class="empty-state card">
+  <p class="empty-state__title">Sin resultados</p>
+  <p class="empty-state__desc">Prueba otro término de búsqueda o amplía el rango de fechas.</p>
+  <a href="{% url 'operations:orders' %}" class="btn btn-primary" style="margin-top:var(--space-4);">Ver todos</a>
+</div>
 {% endif %}
 {% endblock %}

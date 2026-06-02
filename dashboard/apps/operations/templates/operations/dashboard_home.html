@@ -1,0 +1,129 @@
+{% extends "operations/base.html" %}
+{% load static %}
+{% block title %}Inicio — Dashboard{% endblock %}
+{% block page_heading %}Resumen operativo{% endblock %}
+{% block content %}
+<div class="kpi-grid">
+  <a href="{% url 'operations:orders' %}" class="kpi-card card">
+    <span class="kpi-card__icon kpi-card__icon--accent" aria-hidden="true">
+      {% include "operations/partials/icon.html" with name="orders" %}
+    </span>
+    <div class="kpi-card__body">
+      <p class="kpi-card__label">Pedidos</p>
+      <p class="kpi-card__value">{{ kpis.orders_count }}</p>
+    </div>
+  </a>
+  <div class="kpi-card card">
+    <span class="kpi-card__icon kpi-card__icon--success" aria-hidden="true">
+      {% include "operations/partials/icon.html" with name="euro" %}
+    </span>
+    <div class="kpi-card__body">
+      <p class="kpi-card__label">Ventas (total)</p>
+      <p class="kpi-card__value">{{ kpis.sales_total }} €</p>
+    </div>
+  </div>
+  <a href="{% url 'operations:users' %}" class="kpi-card card">
+    <span class="kpi-card__icon kpi-card__icon--violet" aria-hidden="true">
+      {% include "operations/partials/icon.html" with name="users" %}
+    </span>
+    <div class="kpi-card__body">
+      <p class="kpi-card__label">Clientes</p>
+      <p class="kpi-card__value">{{ kpis.customers_count }}</p>
+    </div>
+  </a>
+  <a href="{% url 'operations:reservations' %}" class="kpi-card card">
+    <span class="kpi-card__icon kpi-card__icon--warning" aria-hidden="true">
+      {% include "operations/partials/icon.html" with name="calendar" %}
+    </span>
+    <div class="kpi-card__body">
+      <p class="kpi-card__label">Reservas</p>
+      <p class="kpi-card__value">{{ kpis.reservations_count }}</p>
+      <p class="kpi-card__hint muted">{{ kpis.conversations_count }} conversaciones en caché</p>
+    </div>
+  </a>
+</div>
+
+<div class="chart-grid">
+  <section class="card chart-card">
+    <h2 class="chart-card__title">Pedidos por estado</h2>
+    <div class="chart-card__canvas-wrap">
+      <canvas id="chart-orders-status" height="220" aria-label="Gráfico de pedidos por estado"></canvas>
+    </div>
+  </section>
+  <section class="card chart-card">
+    <h2 class="chart-card__title">Ventas últimos 14 días</h2>
+    <div class="chart-card__canvas-wrap">
+      <canvas id="chart-sales-day" height="220" aria-label="Gráfico de ventas por día"></canvas>
+    </div>
+  </section>
+</div>
+
+<p class="muted">Datos desde caché local (<code>data/*_cache.json</code>). Sin escritura en esta fase.</p>
+
+{{ chart_by_status|json_script:"chart-by-status" }}
+{{ chart_sales|json_script:"chart-sales-day" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+<script defer>
+document.addEventListener("DOMContentLoaded", function () {
+  if (typeof Chart === "undefined") return;
+  var styles = getComputedStyle(document.documentElement);
+  var accent = styles.getPropertyValue("--color-accent").trim() || "#2563eb";
+  var success = styles.getPropertyValue("--color-success").trim() || "#16a34a";
+  var warning = styles.getPropertyValue("--color-warning").trim() || "#ca8a04";
+  var danger = styles.getPropertyValue("--color-danger").trim() || "#dc2626";
+  var muted = styles.getPropertyValue("--color-text-muted").trim() || "#71717a";
+  var border = styles.getPropertyValue("--color-border").trim() || "#e4e4e7";
+  var palette = [warning, success, accent, danger, muted];
+
+  var statusEl = document.getElementById("chart-by-status");
+  if (statusEl) {
+    var statusData = JSON.parse(statusEl.textContent);
+    new Chart(document.getElementById("chart-orders-status"), {
+      type: "doughnut",
+      data: {
+        labels: statusData.labels,
+        datasets: [{
+          data: statusData.values,
+          backgroundColor: palette.slice(0, statusData.values.length),
+          borderWidth: 0,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom" } },
+      },
+    });
+  }
+
+  var salesEl = document.getElementById("chart-sales-day");
+  if (salesEl) {
+    var salesData = JSON.parse(salesEl.textContent);
+    new Chart(document.getElementById("chart-sales-day"), {
+      type: "bar",
+      data: {
+        labels: salesData.labels,
+        datasets: [{
+          label: "€",
+          data: salesData.values,
+          backgroundColor: accent,
+          borderRadius: 6,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, grid: { color: border } },
+          x: { grid: { display: false } },
+        },
+        plugins: { legend: { display: false } },
+      },
+    });
+  }
+});
+</script>
+{% endblock %}

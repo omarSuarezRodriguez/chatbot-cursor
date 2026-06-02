@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import json
 import sys
+from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from django.conf import settings
 
@@ -14,6 +15,9 @@ MENU_PATH = DATA_DIR / "menu_cache.json"
 ORDERS_PATH = DATA_DIR / "orders_cache.json"
 USERS_PATH = DATA_DIR / "users_cache.json"
 RESERVATIONS_PATH = DATA_DIR / "reservations_cache.json"
+
+ORDER_STATUSES = ("pending", "confirmed", "delivered", "cancelled")
+ORDER_SORT_FIELDS = ("timestamp", "total", "customer_name", "order_id", "status")
 
 
 def _load_json(path: Path) -> Any:
@@ -158,3 +162,146 @@ def _sort_reservations(reservations: List[Dict[str, Any]]) -> List[Dict[str, Any
         key=lambda r: (str(r.get("fecha", "")), str(r.get("hora", ""))),
         reverse=True,
     )
+
+
+def _order_total(order: Dict[str, Any]) -> float:
+    try:
+        return float(order.get("total") or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _parse_order_date(order: Dict[str, Any]) -> Optional[date]:
+    raw = order.get("timestamp")
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(str(raw)).date()
+    except ValueError:
+        return None
+
+
+def dashboard_kpis() -> Dict[str, Any]:
+    orders = read_orders()
+    return {
+        "orders_count": len(orders),
+        "sales_total": round(sum(_order_total(o) for o in orders), 2),
+        "customers_count": len(read_users()),
+        "reservations_count": len(read_reservations()),
+        "conversations_count": len(read_users()),
+    }
+
+
+def chart_orders_by_status() -> Dict[str, Any]:
+    labels_es = {
+        "pending": "Pendientes",
+        "confirmed": "Confirmados",
+        "delivered": "Entregados",
+        "cancelled": "Cancelados",
+    }
+    counts = {s: 0 for s in ORDER_STATUSES}
+    other = 0
+    for order in read_orders():
+        status = str(order.get("status", "")).lower() or "pending"
+        if status in counts:
+            counts[status] += 1
+        else:
+            other += 1
+    labels: List[str] = [labels_es[s] for s in ORDER_STATUSES if counts[s]]
+    values: List[int] = [counts[s] for s in ORDER_STATUSES if counts[s]]
+    if other:
+        labels.append("Otros")
+        values.append(other)
+    return {"labels": labels, "values": values}
+
+
+def chart_sales_by_day(days: int = 14) -> Dict[str, Any]:
+    days = max(1, min(days, 90))
+    end = date.today()
+    start = end - timedelta(days=days - 1)
+    buckets: Dict[str, float] = {}
+    cursor = start
+    while cursor <= end:
+        buckets[cursor.isoformat()] = 0.0
+        cursor += timedelta(days=1)
+    for order in read_orders():
+        order_date = _parse_order_date(order)
+        if not order_date or order_date < start or order_date > end:
+            continue
+        key = order_date.isoformat()
+        buckets[key] = buckets.get(key, 0.0) + _order_total(order)
+    labels = [
+        datetime.fromisoformat(k).strftime("%d/%m")
+        for k in sorted(buckets.keys())
+    ]
+    values = [round(buckets[k], 2) for k in sorted(buckets.keys())]
+    return {"labels": labels, "values": values}
+
+
+def query_orders(
+    *,
+    q: str = "",
+    status: str = "",
+    date_from: str = "",
+    date_to: str = "",
+    sort: str = "timestamp",
+    direction: str = "desc",
+) -> List[Dict[str, Any]]:
+    orders = read_orders()
+    needle = q.strip().lower()
+    status_filter = status.strip().lower()
+    from_date = _parse_date_param(date_from)
+    to_date = _parse_date_param(date_to)
+
+    if needle:
+        orders = [
+            o
+            for o in orders
+            if needle in str(o.get("order_id", "")).lower()
+            or needle in str(o.get("customer_name", "")).lower()
+            or needle in str(o.get("wa_id", "")).lower()
+        ]
+    if status_filter:
+        orders = [
+            o
+            for o in orders
+            if str(o.get("status", "")).lower() == status_filter
+        ]
+    if from_date or to_date:
+        filtered: List[Dict[str, Any]] = []
+        for order in orders:
+            order_date = _parse_order_date(order)
+            if not order_date:
+                continue
+            if from_date and order_date < from_date:
+                continue
+            if to_date and order_date > to_date:
+                continue
+            filtered.append(order)
+        orders = filtered
+
+    sort_field = sort if sort in ORDER_SORT_FIELDS else "timestamp"
+    reverse = direction.lower() != "asc"
+    return sorted(orders, key=lambda o: _order_sort_key(o, sort_field), reverse=reverse)
+
+
+def _parse_date_param(value: str) -> Optional[date]:
+    value = (value or "").strip()
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def _order_sort_key(order: Dict[str, Any], field: str) -> Tuple[Any, ...]:
+    if field == "total":
+        return (_order_total(order),)
+    if field == "customer_name":
+        return (str(order.get("customer_name", "")).lower(),)
+    if field == "order_id":
+        return (str(order.get("order_id", "")).upper(),)
+    if field == "status":
+        return (str(order.get("status", "")).lower(),)
+    return (str(order.get("timestamp", "")),)

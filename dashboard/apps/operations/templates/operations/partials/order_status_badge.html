@@ -1,0 +1,21 @@
+{% with st=status|default:""|lower %}
+<span class="badge badge-{{ st }} badge--icon">
+  {% if st == "pending" %}
+  {% include "operations/partials/icon.html" with name="clock" class="icon--sm" %}
+  {% elif st == "confirmed" %}
+  {% include "operations/partials/icon.html" with name="check-circle" class="icon--sm" %}
+  {% elif st == "delivered" %}
+  {% include "operations/partials/icon.html" with name="truck" class="icon--sm" %}
+  {% elif st == "cancelled" %}
+  {% include "operations/partials/icon.html" with name="x-circle" class="icon--sm" %}
+  {% endif %}
+  <span>
+    {% if st == "pending" %}Pendiente
+    {% elif st == "confirmed" %}Confirmado
+    {% elif st == "delivered" %}Entregado
+    {% elif st == "cancelled" %}Cancelado
+    {% else %}{{ status|default:"—" }}
+    {% endif %}
+  </span>
+</span>
+{% endwith %}

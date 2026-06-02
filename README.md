@@ -1,4 +1,4 @@
-## v0.28
+## v0.29
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -5258,6 +5258,155 @@ Fase 1 del shell visual del panel implementada siguiendo **AI_RULES.md** (cambio
 **Cómo probar:** desde `dashboard/`, `python manage.py runserver` y abrir `/` y `/accounts/login/`. Prueba el toggle de tema y, en viewport &lt;768px, el botón de menú del topbar.
 
 **Fase 2 (fuera de alcance):** refinar páginas con cards/empty-states explícitos y reducir el `h1` duplicado en contenido si quieres un topbar único como título.
+
+
+######################################################################
+## v0.29
+
+
+
+## prompt ##
+
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md.
+
+CONTEXTO:
+Fase 1 ya aplicada (design system y base.html premium).
+Dashboard Django lee datos con dashboard/apps/operations/services/readers.py.
+Escrituras siguen en bot_bridge; esta fase es principalmente lectura + UX de listados.
+
+TAREA — FASE 2:
+1) Home operativo (/ o ruta dedicada /dashboard/):
+   - Tarjetas KPI: pedidos, ventas (suma totales), clientes, conversaciones/reservas (según datos disponibles en readers/caché).
+   - 1–2 gráficos ligeros (Chart.js o similar, sin SPA) con datos reales agregados en Python.
+
+2) Tabla profesional de pedidos:
+   - Búsqueda por ID/cliente.
+   - Filtros: estado (pending, confirmed, delivered, cancelled), rango de fechas si hay timestamp.
+   - Ordenación y paginación server-side en OrderListView.
+   - Badges visuales por estado con iconos y colores del design system.
+
+3) Mejorar vista detalle de pedido con layout de producto (resumen + ítems + acciones visibles).
+
+RESTRICCIONES:
+- Agregar funciones de agregación en readers.py si hace falta; no cambiar estructura JSON del bot.
+- No implementar CRUD completo aún (eso es Fase 3).
+- No nuevos endpoints Flask.
+- Reutilizar estilos y componentes de Fase 1.
+
+ENTREGABLE:
+Implementación + prueba manual descrita (cómo filtrar/buscar un pedido) + resumen AI_RULES.
+
+
+## Respuesta cursor ##
+
+Fase 2 del dashboard operativo quedó implementada siguiendo **AI_RULES.md** (cambios incrementales, sin tocar Flask/bot JSON).
+
+---
+
+### Análisis previo
+
+- **Fase 1** ya aporta `base.html`, tokens y componentes reutilizables.
+- **Lectura** centralizada en `readers.py`; la home y los listados solo agregan/filtran en Python.
+- **`/`** pasa a ser resumen KPI; **`/pedidos/`** conserva el listado (antes `/` era pedidos).
+
+---
+
+### Cambios implementados
+
+1. **Home (`/` y `/dashboard/`)**  
+   - 4 tarjetas KPI: pedidos, ventas (suma de `total`), clientes, reservas (+ hint de conversaciones = usuarios en caché).  
+   - 2 gráficos Chart.js (CDN): dona por estado y barras de ventas (14 días).
+
+2. **Listado de pedidos** (`/pedidos/`)  
+   - Búsqueda por ID/cliente/`wa_id`.  
+   - Filtros: estado (`pending`, `confirmed`, `delivered`, `cancelled`) y rango de fechas (`timestamp` ISO).  
+   - Ordenación por columnas y paginación server-side (20/página).  
+   - Badges con iconos y colores del design system.
+
+3. **Detalle de pedido**  
+   - Cabecera con ID, estado, total; grid resumen + tabla de ítems; acción de confirmar visible cuando aplica.
+
+---
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `dashboard/apps/operations/services/readers.py` | KPIs, gráficos, `query_orders()` |
+| `dashboard/apps/operations/views.py` | `DashboardHomeView`, `OrderListView` ampliado |
+| `dashboard/apps/operations/urls.py` | Rutas home/dashboard |
+| `dashboard/apps/operations/templates/operations/dashboard_home.html` | Nuevo |
+| `dashboard/apps/operations/templates/operations/order_list.html` | Toolbar + tabla + paginación |
+| `dashboard/apps/operations/templates/operations/order_detail.html` | Layout producto |
+| `dashboard/apps/operations/templates/operations/partials/order_status_badge.html` | Nuevo |
+| `dashboard/apps/operations/templates/operations/partials/sidebar.html` | Enlace Inicio |
+| `dashboard/apps/operations/templates/operations/partials/icons_sprite.html` | Iconos nuevos |
+| `dashboard/static/css/components.css` | Badges `delivered` / `cancelled` |
+| `dashboard/static/css/app.css` | KPI, charts, toolbar, detalle |
+
+---
+
+### Riesgos mitigados
+
+- Sin cambios en JSON del bot ni en `bot_bridge` / Flask.  
+- Agregaciones solo en lectura; fallos de Sheets siguen el flujo existente de `readers`.  
+- `python manage.py check` sin errores.
+
+---
+
+### Compatibilidad verificada
+
+- Parser, Flask, Twilio, flow engine y order service **no modificados**.  
+- Confirmación de pedido (POST en detalle) **igual** que antes.  
+- `LOGIN_REDIRECT_URL = "/"` lleva al nuevo resumen.
+
+---
+
+### Funcionalidades agregadas
+
+- Dashboard KPI + gráficos con datos reales de caché.  
+- Listado profesional con búsqueda, filtros, sort y paginación server-side.  
+- Detalle con layout en dos columnas y badges con iconos.
+
+---
+
+### Funcionalidades preservadas
+
+- Lectura desde `data/*_cache.json` y fallback Sheets.  
+- Menú, reservas, usuarios, estado del sistema, login, banner solo lectura, confirmar pedido (Fase 3 CRUD pendiente).
+
+---
+
+## Prueba manual
+
+1. Arranca el dashboard (como en tu README / `runall.py`).
+2. Inicia sesión → debes ver **`/`** con KPIs y gráficos.
+3. Ve a **Pedidos** (`/pedidos/`).
+4. **Buscar**: en “ID o cliente…” escribe `Pedro` o `ORD-BD` → **Filtrar** → debe aparecer `ORD-BD074F0A`.
+5. **Estado**: elige `pending` → solo pendientes.
+6. **Fechas**: `Desde` / `Hasta` = `2026-06-01` → filtra por `timestamp`.
+7. **Ordenar**: clic en **Fecha** o **Total** (alterna ↑/↓).
+8. **Detalle**: clic en el ID → resumen + ítems; si hay escrituras activas, botón **Confirmar pedido**.
+9. **Limpiar** restablece filtros.
+
+---
+
+## Resumen AI_RULES (cumplimiento)
+
+| Regla | Cómo se aplicó |
+|--------|----------------|
+| Evolucionar, no reconstruir | Extensión de vistas/plantillas existentes |
+| Menor impacto / pocos archivos | Lógica de agregación en `readers.py`; sin capas nuevas |
+| No cambiar APIs/JSON/endpoints Flask | Solo Django + templates + CSS estático |
+| Reutilizar código | `base.html`, cards, badges, tokens Fase 1 |
+| Componentes críticos del bot | Sin toques |
+| Entregable con prueba manual | Descrita arriba |
+
+Si quieres, en Fase 3 podemos añadir CRUD y más acciones sobre el mismo layout.
+
+
+
 
 
 ######################################################################

@@ -7,6 +7,7 @@ import urllib.request
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.views import View
@@ -16,29 +17,80 @@ from services import bot_bridge
 
 from .services import readers
 
+ORDERS_PER_PAGE = 20
+
+
+class DashboardHomeView(LoginRequiredMixin, View):
+    def get(self, request):
+        log_audit(request, action="view", entity="dashboard_home")
+        return render(
+            request,
+            "operations/dashboard_home.html",
+            {
+                "kpis": readers.dashboard_kpis(),
+                "chart_by_status": readers.chart_orders_by_status(),
+                "chart_sales": readers.chart_sales_by_day(),
+            },
+        )
+
 
 class OrderListView(LoginRequiredMixin, View):
     def get(self, request):
+        q = request.GET.get("q", "").strip()
         status_filter = request.GET.get("status", "").strip().lower()
+        date_from = request.GET.get("date_from", "").strip()
+        date_to = request.GET.get("date_to", "").strip()
+        sort = request.GET.get("sort", "timestamp").strip()
+        direction = request.GET.get("dir", "desc").strip()
+        try:
+            page_num = max(1, int(request.GET.get("page", "1")))
+        except ValueError:
+            page_num = 1
+
         log_audit(
             request,
             action="view",
             entity="orders",
-            metadata={"status_filter": status_filter or None},
+            metadata={
+                "status_filter": status_filter or None,
+                "q": q or None,
+                "date_from": date_from or None,
+                "date_to": date_to or None,
+                "sort": sort,
+                "dir": direction,
+                "page": page_num,
+            },
         )
-        orders = readers.read_orders()
-        if status_filter:
-            orders = [
-                o
-                for o in orders
-                if str(o.get("status", "")).lower() == status_filter
-            ]
+        orders = readers.query_orders(
+            q=q,
+            status=status_filter,
+            date_from=date_from,
+            date_to=date_to,
+            sort=sort,
+            direction=direction,
+        )
+        paginator = Paginator(orders, ORDERS_PER_PAGE)
+        page_obj = paginator.get_page(page_num)
+
+        query_params = request.GET.copy()
+        query_params.pop("page", None)
+        base_query = query_params.urlencode()
+
         return render(
             request,
             "operations/order_list.html",
             {
-                "orders": orders,
+                "page_obj": page_obj,
+                "orders": page_obj.object_list,
+                "q": q,
                 "status_filter": status_filter,
+                "date_from": date_from,
+                "date_to": date_to,
+                "sort": sort,
+                "direction": direction,
+                "order_statuses": readers.ORDER_STATUSES,
+                "sort_fields": readers.ORDER_SORT_FIELDS,
+                "base_query": base_query,
             },
         )
 

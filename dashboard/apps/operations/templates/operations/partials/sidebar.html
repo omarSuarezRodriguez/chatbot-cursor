@@ -1,12 +1,16 @@
 <aside class="app-sidebar" id="app-sidebar" aria-label="Navegación principal">
-  <a href="{% url 'operations:orders' %}" class="app-sidebar__brand">
+  <a href="{% url 'operations:home' %}" class="app-sidebar__brand">
     <span class="app-sidebar__brand-mark" aria-hidden="true">R</span>
     <span>Restaurante</span>
   </a>
   <nav class="app-sidebar__nav">
     <div class="app-sidebar__section">
       <p class="app-sidebar__label">Operaciones</p>
-      <a href="{% url 'operations:orders' %}" class="app-nav-link{% if request.path == '/' or '/pedidos' in request.path %} active{% endif %}">
+      <a href="{% url 'operations:home' %}" class="app-nav-link{% if request.path == '/' or request.path == '/dashboard/' %} active{% endif %}">
+        {% include "operations/partials/icon.html" with name="home" %}
+        Inicio
+      </a>
+      <a href="{% url 'operations:orders' %}" class="app-nav-link{% if '/pedidos' in request.path %} active{% endif %}">
         {% include "operations/partials/icon.html" with name="orders" %}
         Pedidos
       </a>
