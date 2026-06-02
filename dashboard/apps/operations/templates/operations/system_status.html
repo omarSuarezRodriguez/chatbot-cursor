@@ -1,19 +1,80 @@
 {% extends "operations/base.html" %}
-{% block title %}Estado del sistema{% endblock %}
+{% block title %}Estado del sistema — Dashboard{% endblock %}
 {% block page_heading %}Estado del sistema{% endblock %}
 {% block content %}
-<h1>Estado del sistema</h1>
+<div class="app-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;">
+  <div>
+    <h1>Estado del sistema</h1>
+    <p class="muted">Bot Flask y cachés locales. Lectura segura — no modifica el webhook WhatsApp.</p>
+  </div>
+  {% if is_dashboard_admin %}
+  <a href="{% url 'operations:admin_hub' %}" class="btn btn-ghost">← Administración</a>
+  {% endif %}
+</div>
 
-<h2>Bot Flask</h2>
-<p class="muted">GET <code>{{ bot_health_url }}</code></p>
-{% if bot_health_text %}
-<pre>{{ bot_health_text }}</pre>
-{% else %}
-<p><strong>No disponible:</strong> {{ bot_health_error }}</p>
-<p class="muted">Arranca el bot con <code>python run.py</code> en el puerto 5000.</p>
-{% endif %}
+<div class="status-cards animate-fade-in">
+  <article class="status-card card">
+    <header class="status-card__head">
+      <h2>Bot Flask</h2>
+      <span class="status-pill {{ bot_summary.status_class }}">{{ bot_summary.status_label }}</span>
+    </header>
+    <dl class="detail-dl">
+      <dt>URL</dt>
+      <dd><code>{{ bot_health_url }}</code></dd>
+      <dt>Restaurante</dt>
+      <dd>{{ bot_summary.restaurant }}</dd>
+      <dt>Admin WhatsApp</dt>
+      <dd>{% if bot_summary.admin_configured %}<span class="status-pill status-pill--success">Configurado</span>{% else %}<span class="status-pill status-pill--warning">No configurado</span>{% endif %}</dd>
+      <dt>Escrituras panel</dt>
+      <dd>{% if writes_enabled %}<span class="status-pill status-pill--success">ON</span>{% else %}<span class="status-pill status-pill--warning">OFF</span>{% endif %}
+        — <a href="{% url 'operations:writes_help' %}">guía</a></dd>
+    </dl>
+    {% if bot_health_error %}
+    <p class="form-error" role="alert"><strong>Sin conexión:</strong> {{ bot_health_error }}</p>
+    <p class="muted">Arranca el bot con <code>python run.py</code> (puerto 5000).</p>
+    {% endif %}
+  </article>
 
-<h2>Caché Google Sheets (proceso dashboard)</h2>
-<pre>{{ sheets_cache_text }}</pre>
-<p class="muted">Lectura vía <code>GoogleSheetsClient.cache_status()</code> — sin escrituras desde el panel.</p>
+  <article class="status-card card">
+    <header class="status-card__head">
+      <h2>Caché Sheets (dashboard)</h2>
+      <span class="status-pill {% if cache_summary %}status-pill--success{% else %}status-pill--warning{% endif %}">
+        {% if cache_summary %}{{ cache_summary|length }} módulos{% else %}Sin datos{% endif %}
+      </span>
+    </header>
+    {% if cache_summary %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Módulo</th><th>Registros</th><th>Pendientes sync</th><th>Última sync</th></tr>
+        </thead>
+        <tbody>
+          {% for row in cache_summary %}
+          <tr>
+            <td><code>{{ row.name }}</code></td>
+            <td>{{ row.count }}</td>
+            <td>{{ row.dirty }}</td>
+            <td class="muted">{{ row.last_sync }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">No se pudo leer <code>cache_status()</code> o el bot no está en marcha.</p>
+    {% endif %}
+  </article>
+</div>
+
+<details class="card status-details animate-fade-in" style="margin-top:var(--space-6);">
+  <summary>JSON técnico (depuración)</summary>
+  <h3 class="muted">Respuesta <code>/health</code></h3>
+  {% if bot_health_text %}
+  <pre>{{ bot_health_text }}</pre>
+  {% else %}
+  <p class="muted">—</p>
+  {% endif %}
+  <h3 class="muted">Caché proceso dashboard</h3>
+  <pre>{{ sheets_cache_text }}</pre>
+</details>
 {% endblock %}

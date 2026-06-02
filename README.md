@@ -1,4 +1,4 @@
-## v0.30
+## v0.31
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -117,6 +117,35 @@ python dashboard/manage.py runserver 8000
 ```
 
 `createsuperuser` crea el usuario staff para login en el panel (`/accounts/login/`) y en `/admin/`. Sin usuario, las rutas operativas redirigen al login.
+
+### Guía del operador (panel Fase 4)
+
+| Área | Ruta | Quién |
+|------|------|--------|
+| Inicio / KPIs | `/` | Cualquier usuario autenticado |
+| Pedidos, reservas, menú, clientes | `/pedidos/`, `/reservas/`, `/menu/`, `/usuarios/` | Autenticado |
+| Centro de administración | `/administracion/` | Rol **dashboard_admin** |
+| Auditoría | `/accounts/audit/` | Admin |
+| Accesos al panel (usuarios Django) | `/administracion/accesos/` | Admin |
+| Estado bot + caché Sheets | `/estado/` | Autenticado |
+| Qué requiere escrituras | `/administracion/escrituras/` | Autenticado |
+| Preferencias UI | `/configuracion/` | Admin |
+| Django `/admin/` | Enlace discreto en menú | Solo **superusuario** |
+
+**Roles:** ejecuta una vez `python dashboard/manage.py setup_dashboard_groups`. Asigna operador o admin con `--operator` / `--assign`. Operador: pedidos, clientes, disponibilidad menú. Admin: CRUD menú, eliminar clientes, configuración y administración.
+
+**Modo solo lectura (por defecto):** `DASHBOARD_ENABLE_WRITES=0` en `.env.dashboard`. El banner amarillo y la [guía de escrituras](http://localhost:8000/administracion/escrituras/) listan qué acciones necesitan `=1` y reinicio de `runserver`. Las preferencias del panel (PostgreSQL) no dependen de esa variable.
+
+**Escrituras activas (entorno de prueba):** `DASHBOARD_ENABLE_WRITES=1`, bot en marcha (`python run.py`), spreadsheet de prueba. Confirmar un pedido desde detalle; comprobar Sheets/caché y que el webhook WhatsApp no se ha tocado.
+
+**Tests del dashboard:**
+
+```bash
+cd dashboard
+python manage.py test apps.operations.tests.test_views -v 2 --settings=config.test_settings
+```
+
+**Checklist responsive (manual, Chrome DevTools):** 320px (móvil: menú hamburguesa, tablas con scroll horizontal), 768px (tablet: sidebar colapsable), 1280px (escritorio: grid KPI y admin hub en columnas). Respetar `prefers-reduced-motion` en animaciones.
 
 > **LOCAL ONLY:** no desplegar el dashboard en Render/Railway junto al bot sin decisión explícita (ver `AUDITORIA.md`).
 
@@ -5555,3 +5584,137 @@ python manage.py runserver
 
 
 ######################################################################
+## v0.31
+
+## Prompt ##
+
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md.
+
+CONTEXTO:
+Fases 1–3 completas. El panel debe sentirse como software comercial vendible.
+
+TAREA — FASE 4:
+1) Panel de administración avanzado unificado:
+   - Vista de auditoría (accounts/audit).
+   - Estado sistema (bot health, Sheets/caché) integrado al diseño premium.
+   - Gestión usuarios del panel; Django /admin/ solo para superusuarios con enlace discreto.
+   - Documentar en UI qué requiere DASHBOARD_ENABLE_WRITES.
+
+2) Reservas y usuarios: mismas tablas premium; CRUD donde aún falte.
+
+3) Pulido comercial:
+   - Empty states, loading/skeleton donde aporte.
+   - Micro-animaciones consistentes con Fase 1.
+   - Accesibilidad básica (focus, contraste, reduced-motion).
+
+4) Calidad:
+   - Tests de vistas críticas (filtros pedidos, permisos, bot_bridge mockeado).
+   - Checklist responsive 320 / 768 / 1280 px.
+   - Actualizar README sección “Dashboard local” con guía del operador.
+
+RESTRICCIONES:
+- Cero regresión del webhook WhatsApp y servicios del bot.
+- No refactors masivos; solo lo necesario para cerrar el producto.
+
+ENTREGABLE:
+Panel listo para demo a cliente + resumen AI_RULES + test plan ejecutado.
+
+## Respuesta cursor ##
+
+
+Fase 4 completada. El panel queda listo para demo comercial sin tocar Flask, Twilio ni el webhook.
+
+---
+
+### Análisis previo
+
+- Fases 1–3 ya tenían CRUD de clientes/pedidos/menú vía `bot_bridge`; faltaba administración unificada, auditoría en UI, gestión de accesos Django y pulido comercial.
+- Reservas: solo lectura (el bot las crea por WhatsApp); se alinearon tablas premium + detalle, sin nuevo bridge (evita regresión).
+- Tests: PostgreSQL local sin permiso de `CREATE DATABASE`; se añadió `config.test_settings` con SQLite.
+
+---
+
+### Cambios implementados
+
+1. **Administración unificada** (`/administracion/`): hub con enlaces a auditoría, accesos, estado, escrituras y configuración.
+2. **Auditoría** (`/accounts/audit/`): filtros, paginación, tabla premium (solo admin).
+3. **Accesos al panel** (`/administracion/accesos/`): CRUD usuarios Django con grupos operador/admin.
+4. **Estado del sistema** (`/estado/`): tarjetas de salud del bot y caché Sheets; JSON técnico en `<details>`.
+5. **Guía escrituras** (`/administracion/escrituras/`): qué requiere `DASHBOARD_ENABLE_WRITES`; banner con enlace.
+6. **Reservas / clientes**: tablas `data-table`, búsqueda en reservas, detalle de reserva, empty states.
+7. **Sidebar**: sección Administración; Django `/admin/` solo superusuarios (enlace discreto).
+8. **CSS**: status pills, admin hub, skeleton, `animate-fade-in`, `prefers-reduced-motion`, breakpoint ~480px.
+9. **Tests**: 10 tests (filtros, permisos, `bot_bridge` mockeado).
+10. **README**: guía del operador + comando de tests.
+
+---
+
+### Archivos modificados
+
+| Área | Archivos |
+|------|----------|
+| Vistas/URLs | `accounts/views.py`, `accounts/urls.py`, `operations/views.py`, `operations/urls.py`, `operations/forms.py`, `readers.py`, `context_processors.py` |
+| Plantillas | `audit_list.html`, `admin_hub.html`, `writes_help.html`, `panel_staff_*.html`, `system_status.html`, `reservation_*.html`, `user_list.html`, `sidebar.html`, `readonly_banner.html`, `empty_state.html` |
+| Estilos | `components.css`, `layout.css` |
+| Tests/docs | `operations/tests/test_views.py`, `config/test_settings.py`, `README.md` |
+
+**Sin cambios** en `app/`, `bot_bridge` (solo lectura desde vistas), webhook ni servicios del bot.
+
+---
+
+### Riesgos mitigados
+
+- Escrituras siguen detrás de `DASHBOARD_ENABLE_WRITES` + roles.
+- Reservas sin CRUD en panel → sin conflicto con `ReservationService`/WhatsApp.
+- `/admin/` Django oculto a no-superusuarios.
+- Tests aislados con SQLite (`--settings=config.test_settings`).
+
+---
+
+### Compatibilidad verificada
+
+- Parser, Flask, Twilio, flow engine, order service, Sheets y estados conversacionales: **no modificados**.
+- `bot_bridge` y endpoints existentes: **intactos**.
+
+---
+
+### Funcionalidades agregadas
+
+- Centro admin, auditoría UI, gestión accesos panel, guía de escrituras, estado premium, reservas con detalle/búsqueda, empty states y animaciones, 10 tests automatizados.
+
+---
+
+### Funcionalidades preservadas
+
+- Login, KPIs, pedidos (filtros/CRUD), menú, clientes, configuración panel, banner solo lectura, `log_audit` en acciones existentes.
+
+---
+
+### Test plan ejecutado
+
+```bash
+cd dashboard
+python manage.py test apps.operations.tests.test_views -v 2 --settings=config.test_settings
+```
+
+**Resultado: 10/10 OK** (login, filtros pedidos, permisos audit/panel staff, `bot_bridge` create/confirm, estado sistema, guía escrituras).
+
+**Checklist responsive (manual):** 320px (menú hamburguesa, toolbar en columna), 768px (sidebar off-canvas), 1280px (grids admin/KPI). Documentado en README.
+
+---
+
+### Demo rápida para cliente
+
+1. `.\dev.cmd all` → http://localhost:8000/
+2. Admin: `/administracion/` → auditoría y accesos.
+3. Operador: pedidos/reservas/clientes (lectura por defecto).
+4. Prueba escrituras: `DASHBOARD_ENABLE_WRITES=1` en `.env.dashboard` → reiniciar dashboard → confirmar pedido de prueba.
+
+
+
+
+
+
+######################################################################
+

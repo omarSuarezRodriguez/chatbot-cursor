@@ -1,0 +1,68 @@
+{% extends "operations/base.html" %}
+{% block title %}Auditoría — Dashboard{% endblock %}
+{% block page_heading %}Auditoría{% endblock %}
+{% block content %}
+<div class="app-page-header">
+  <div>
+    <h1>Auditoría del panel</h1>
+    <p class="muted">Acciones registradas en PostgreSQL (<code>accounts.AuditLog</code>). No incluye mensajes WhatsApp.</p>
+  </div>
+  <a href="{% url 'operations:admin_hub' %}" class="btn btn-ghost">← Administración</a>
+</div>
+
+<form class="data-toolbar card" method="get" action="{% url 'accounts:audit' %}">
+  <div class="data-toolbar__row">
+    <label class="sr-only" for="audit-action">Acción</label>
+    <input type="search" id="audit-action" name="action" value="{{ action_filter }}" placeholder="Acción…" class="input">
+    <label class="sr-only" for="audit-entity">Entidad</label>
+    <input type="search" id="audit-entity" name="entity" value="{{ entity_filter }}" placeholder="Entidad…" class="input">
+    <label class="sr-only" for="audit-user">Usuario</label>
+    <input type="search" id="audit-user" name="user" value="{{ user_filter }}" placeholder="Usuario panel…" class="input">
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <a href="{% url 'accounts:audit' %}" class="btn btn-ghost">Limpiar</a>
+  </div>
+</form>
+
+{% if entries %}
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Usuario</th>
+        <th>Acción</th>
+        <th>Entidad</th>
+        <th>ID</th>
+        <th>Detalle</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in entries %}
+      <tr>
+        <td class="muted">{{ entry.timestamp|date:"d/m/Y H:i" }}</td>
+        <td>{{ entry.user.username|default:"—" }}</td>
+        <td><code>{{ entry.action }}</code></td>
+        <td>{{ entry.entity|default:"—" }}</td>
+        <td><code>{{ entry.entity_id|default:"—" }}</code></td>
+        <td class="muted audit-meta">{% if entry.metadata %}{{ entry.metadata|truncatechars:80 }}{% else %}—{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<nav class="pagination" aria-label="Paginación auditoría">
+  <p class="pagination__info muted">{{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ page_obj.paginator.count }}</p>
+  <div class="pagination__links">
+    {% if page_obj.has_previous %}
+    <a class="btn btn-ghost" href="?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+    <span class="pagination__current">Página {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a class="btn btn-ghost" href="?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente</a>
+    {% endif %}
+  </div>
+</nav>
+{% else %}
+{% include "operations/partials/empty_state.html" with title="Sin entradas de auditoría" description="Aún no hay registros o los filtros no coinciden." %}
+{% endif %}
+{% endblock %}

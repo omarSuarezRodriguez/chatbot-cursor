@@ -299,3 +299,18 @@ body {
     max-width: none;
   }
 }
+
+@media (max-width: 480px) {
+  .app-content {
+    padding: var(--space-3);
+  }
+
+  .data-toolbar__row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-hub-grid {
+    grid-template-columns: 1fr;
+  }
+}

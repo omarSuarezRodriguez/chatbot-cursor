@@ -1,0 +1,47 @@
+{% extends "operations/base.html" %}
+{% block title %}Accesos al panel — Dashboard{% endblock %}
+{% block page_heading %}Accesos al panel{% endblock %}
+{% block content %}
+<div class="app-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;">
+  <div>
+    <h1>Usuarios del panel</h1>
+    <p class="muted">Cuentas Django con grupo <code>dashboard_operator</code> o <code>dashboard_admin</code>.</p>
+  </div>
+  <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;">
+    <a href="{% url 'operations:admin_hub' %}" class="btn btn-ghost">← Administración</a>
+    <a href="{% url 'operations:panel_staff_create' %}" class="btn btn-primary">Nuevo acceso</a>
+  </div>
+</div>
+
+{% if staff_users %}
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr><th>Usuario</th><th>Email</th><th>Rol</th><th>Activo</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for u in staff_users %}
+      <tr>
+        <td><strong>{{ u.username }}</strong>{% if u.is_superuser %} <span class="badge badge-confirmed">super</span>{% endif %}</td>
+        <td class="muted">{{ u.email|default:"—" }}</td>
+        <td>
+          {% if u.groups.all %}
+            {% for g in u.groups.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          {% else %}—{% endif %}
+        </td>
+        <td>{% if u.is_active %}<span class="status-pill status-pill--success">Sí</span>{% else %}<span class="status-pill status-pill--danger">No</span>{% endif %}</td>
+        <td><a href="{% url 'operations:panel_staff_edit' u.pk %}" class="btn btn-ghost btn-sm">Editar</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state card animate-fade-in">
+  <p class="empty-state__title">Sin usuarios del panel</p>
+  <p class="empty-state__desc">Crea el primer acceso o asigna grupos con <code>setup_dashboard_groups</code>.</p>
+  <a href="{% url 'operations:panel_staff_create' %}" class="btn btn-primary" style="margin-top:var(--space-4);">Nuevo acceso</a>
+</div>
+{% endif %}
+<p class="muted" style="margin-top:var(--space-6);">Comando: <code>python dashboard/manage.py setup_dashboard_groups --assign tu_usuario</code></p>
+{% endblock %}

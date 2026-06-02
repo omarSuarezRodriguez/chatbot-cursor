@@ -189,6 +189,16 @@ def _sort_reservations(reservations: List[Dict[str, Any]]) -> List[Dict[str, Any
     )
 
 
+def read_reservation(reservation_id: str) -> Optional[Dict[str, Any]]:
+    rid = str(reservation_id).strip().upper()
+    if not rid:
+        return None
+    for reservation in read_reservations():
+        if str(reservation.get("reservation_id", "")).strip().upper() == rid:
+            return reservation
+    return None
+
+
 def _order_total(order: Dict[str, Any]) -> float:
     try:
         return float(order.get("total") or 0)

@@ -7,6 +7,7 @@ import urllib.request
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group, User
 from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -22,8 +23,11 @@ from .forms import (
     OrderItemsForm,
     OrderStatusForm,
     PanelSettingsForm,
+    PanelStaffForm,
 )
 from .permissions import (
+    GROUP_ADMIN,
+    GROUP_OPERATOR,
     AdminRequiredMixin,
     OperatorRequiredMixin,
     user_is_dashboard_admin,
@@ -242,10 +246,44 @@ class OrderDetailView(LoginRequiredMixin, View):
 
 class ReservationListView(LoginRequiredMixin, View):
     def get(self, request):
+        q = request.GET.get("q", "").strip().lower()
+        reservations = readers.read_reservations()
+        if q:
+            reservations = [
+                r
+                for r in reservations
+                if q in str(r.get("reservation_id", "")).lower()
+                or q in str(r.get("wa_id", "")).lower()
+                or q in str(r.get("status", "")).lower()
+            ]
+        log_audit(
+            request,
+            action="view",
+            entity="reservations",
+            metadata={"q": q or None, "count": len(reservations)},
+        )
         return render(
             request,
             "operations/reservation_list.html",
-            {"reservations": readers.read_reservations()},
+            {"reservations": reservations, "q": q},
+        )
+
+
+class ReservationDetailView(LoginRequiredMixin, View):
+    def get(self, request, reservation_id: str):
+        reservation = readers.read_reservation(reservation_id)
+        if not reservation:
+            raise Http404("Reserva no encontrada")
+        log_audit(
+            request,
+            action="view",
+            entity="reservation",
+            entity_id=str(reservation.get("reservation_id", "")),
+        )
+        return render(
+            request,
+            "operations/reservation_detail.html",
+            {"reservation": reservation},
         )
 
 
@@ -572,6 +610,111 @@ class PanelSettingsView(AdminRequiredMixin, LoginRequiredMixin, View):
         return redirect("operations:panel_settings")
 
 
+class AdminHubView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        log_audit(request, action="view", entity="admin_hub")
+        return render(request, "operations/admin_hub.html")
+
+
+class WritesHelpView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, "operations/writes_help.html")
+
+
+class PanelStaffListView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        staff = _panel_staff_users()
+        return render(
+            request,
+            "operations/panel_staff_list.html",
+            {"staff_users": staff, "can_manage": True},
+        )
+
+
+class PanelStaffCreateView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        return render(
+            request,
+            "operations/panel_staff_form.html",
+            {"form": PanelStaffForm(is_new=True), "is_new": True},
+        )
+
+    def post(self, request):
+        form = PanelStaffForm(request.POST, is_new=True)
+        if not form.is_valid():
+            return render(
+                request,
+                "operations/panel_staff_form.html",
+                {"form": form, "is_new": True},
+            )
+        data = form.cleaned_data
+        user = User.objects.create_user(
+            username=data["username"],
+            email=data.get("email", ""),
+            password=data["password1"],
+            is_staff=True,
+        )
+        user.is_active = data.get("is_active", True)
+        user.save()
+        _apply_panel_role(user, data["role"])
+        log_audit(
+            request,
+            action="create_panel_user",
+            entity="panel_user",
+            entity_id=user.username,
+            metadata={"role": data["role"]},
+        )
+        messages.success(request, f"Usuario {user.username} creado.")
+        return redirect("operations:panel_staff_list")
+
+
+class PanelStaffEditView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request, user_id: int):
+        user = _get_panel_user(user_id)
+        form = PanelStaffForm(
+            initial={
+                "username": user.username,
+                "email": user.email,
+                "role": _panel_role_for_user(user),
+                "is_active": user.is_active,
+            },
+            is_new=False,
+        )
+        return render(
+            request,
+            "operations/panel_staff_form.html",
+            {"form": form, "is_new": False, "staff_user": user},
+        )
+
+    def post(self, request, user_id: int):
+        user = _get_panel_user(user_id)
+        form = PanelStaffForm(request.POST, is_new=False)
+        if not form.is_valid():
+            return render(
+                request,
+                "operations/panel_staff_form.html",
+                {"form": form, "is_new": False, "staff_user": user},
+            )
+        data = form.cleaned_data
+        if data["username"] != user.username:
+            user.username = data["username"]
+        user.email = data.get("email", "")
+        user.is_active = data.get("is_active", False)
+        if data.get("password1"):
+            user.set_password(data["password1"])
+        user.save()
+        _apply_panel_role(user, data["role"])
+        log_audit(
+            request,
+            action="update_panel_user",
+            entity="panel_user",
+            entity_id=user.username,
+            metadata={"role": data["role"], "is_active": user.is_active},
+        )
+        messages.success(request, f"Usuario {user.username} actualizado.")
+        return redirect("operations:panel_staff_list")
+
+
 class SystemStatusView(LoginRequiredMixin, View):
     def get(self, request):
         bot_health, bot_health_error = _fetch_bot_health()
@@ -584,6 +727,9 @@ class SystemStatusView(LoginRequiredMixin, View):
         sheets_cache_text = json.dumps(
             sheets_cache, indent=2, ensure_ascii=False
         )
+        bot_summary = _summarize_bot_health(bot_health)
+        cache_summary = _summarize_sheets_cache(sheets_cache)
+        log_audit(request, action="view", entity="system_status")
         return render(
             request,
             "operations/system_status.html",
@@ -592,6 +738,9 @@ class SystemStatusView(LoginRequiredMixin, View):
                 "bot_health_error": bot_health_error,
                 "sheets_cache_text": sheets_cache_text,
                 "bot_health_url": settings.BOT_HEALTH_URL,
+                "bot_summary": bot_summary,
+                "cache_summary": cache_summary,
+                "writes_enabled": bot_bridge.writes_enabled(),
             },
         )
 
@@ -606,3 +755,79 @@ def _fetch_bot_health():
         return None, str(exc)
     except (json.JSONDecodeError, TimeoutError, OSError) as exc:
         return None, str(exc)
+
+
+def _summarize_bot_health(data: dict | None) -> dict:
+    if not data:
+        return {
+            "online": False,
+            "status_label": "Sin conexión",
+            "status_class": "status-pill--danger",
+            "restaurant": "—",
+            "admin_configured": False,
+        }
+    ok = str(data.get("status", "")).lower() == "ok"
+    return {
+        "online": ok,
+        "status_label": "En línea" if ok else str(data.get("status", "desconocido")),
+        "status_class": "status-pill--success" if ok else "status-pill--warning",
+        "restaurant": data.get("restaurant") or data.get("service") or "—",
+        "admin_configured": bool(data.get("admin_configured")),
+        "service": data.get("service", ""),
+    }
+
+
+def _summarize_sheets_cache(cache: dict) -> list[dict]:
+    rows: list[dict] = []
+    if not isinstance(cache, dict):
+        return rows
+    for key, value in cache.items():
+        if isinstance(value, dict):
+            rows.append(
+                {
+                    "name": key,
+                    "count": value.get("count", value.get("items", "—")),
+                    "dirty": value.get("dirty", value.get("dirty_count", 0)),
+                    "last_sync": value.get("last_sync", value.get("updated", "—")),
+                }
+            )
+        else:
+            rows.append({"name": key, "count": value, "dirty": "—", "last_sync": "—"})
+    return rows
+
+
+def _panel_staff_users():
+    return (
+        User.objects.filter(groups__name__in=[GROUP_OPERATOR, GROUP_ADMIN])
+        .distinct()
+        .prefetch_related("groups")
+        .order_by("username")
+    )
+
+
+def _get_panel_user(user_id: int) -> User:
+    user = User.objects.filter(pk=user_id).first()
+    if not user or not user.groups.filter(
+        name__in=[GROUP_OPERATOR, GROUP_ADMIN]
+    ).exists():
+        if not (user and user.is_superuser):
+            raise Http404("Usuario del panel no encontrado")
+    return user
+
+
+def _panel_role_for_user(user: User) -> str:
+    if user.groups.filter(name=GROUP_ADMIN).exists() or user.is_superuser:
+        return PanelStaffForm.ROLE_ADMIN
+    return PanelStaffForm.ROLE_OPERATOR
+
+
+def _apply_panel_role(user: User, role: str) -> None:
+    operator_group, _ = Group.objects.get_or_create(name=GROUP_OPERATOR)
+    admin_group, _ = Group.objects.get_or_create(name=GROUP_ADMIN)
+    user.groups.remove(operator_group, admin_group)
+    user.is_staff = True
+    user.save(update_fields=["is_staff"])
+    if role == PanelStaffForm.ROLE_ADMIN:
+        user.groups.add(admin_group, operator_group)
+    else:
+        user.groups.add(operator_group)

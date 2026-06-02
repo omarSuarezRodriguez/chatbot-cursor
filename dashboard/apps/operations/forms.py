@@ -141,6 +141,80 @@ class CustomerForm(forms.Form):
         return wa_id
 
 
+class PanelStaffForm(forms.Form):
+    """Django users with dashboard_operator / dashboard_admin groups."""
+
+    ROLE_OPERATOR = "operator"
+    ROLE_ADMIN = "admin"
+
+    username = forms.CharField(
+        label="Usuario",
+        max_length=150,
+        widget=forms.TextInput(attrs={"class": "input", "autocomplete": "username"}),
+    )
+    email = forms.EmailField(
+        label="Email",
+        required=False,
+        widget=forms.EmailInput(attrs={"class": "input", "autocomplete": "email"}),
+    )
+    role = forms.ChoiceField(
+        label="Rol del panel",
+        choices=[
+            (ROLE_OPERATOR, "Operador (pedidos, clientes, menú disponibilidad)"),
+            (ROLE_ADMIN, "Admin (CRUD menú, eliminar clientes, configuración)"),
+        ],
+        widget=forms.Select(attrs={"class": "input"}),
+    )
+    is_active = forms.BooleanField(label="Activo", required=False, initial=True)
+    password1 = forms.CharField(
+        label="Contraseña",
+        required=False,
+        widget=forms.PasswordInput(attrs={"class": "input", "autocomplete": "new-password"}),
+    )
+    password2 = forms.CharField(
+        label="Confirmar contraseña",
+        required=False,
+        widget=forms.PasswordInput(attrs={"class": "input", "autocomplete": "new-password"}),
+    )
+
+    def __init__(self, *args, is_new: bool = False, **kwargs):
+        self.is_new = is_new
+        super().__init__(*args, **kwargs)
+        if not is_new:
+            self.fields["password1"].required = False
+            self.fields["password2"].required = False
+            self.fields["password1"].help_text = "Dejar vacío para no cambiar la contraseña."
+        else:
+            self.fields["password1"].required = True
+            self.fields["password2"].required = True
+
+    def clean_username(self):
+        from django.contrib.auth.models import User
+
+        username = self.cleaned_data["username"].strip()
+        if not username:
+            raise forms.ValidationError("El usuario es obligatorio.")
+        exists = User.objects.filter(username=username).exists()
+        if self.is_new and exists:
+            raise forms.ValidationError("Ese nombre de usuario ya existe.")
+        if not self.is_new and not exists:
+            raise forms.ValidationError("Usuario no encontrado.")
+        return username
+
+    def clean(self):
+        cleaned = super().clean()
+        p1 = cleaned.get("password1", "")
+        p2 = cleaned.get("password2", "")
+        if p1 or p2:
+            if p1 != p2:
+                self.add_error("password2", "Las contraseñas no coinciden.")
+            elif len(p1) < 8:
+                self.add_error("password1", "Mínimo 8 caracteres.")
+        elif self.is_new:
+            self.add_error("password1", "La contraseña es obligatoria al crear.")
+        return cleaned
+
+
 class PanelSettingsForm(forms.Form):
     """Operative preferences stored in accounts.DashboardSettings (PostgreSQL)."""
 

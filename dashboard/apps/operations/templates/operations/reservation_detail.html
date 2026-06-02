@@ -1,0 +1,26 @@
+{% extends "operations/base.html" %}
+{% block title %}{{ reservation.reservation_id }} — Reserva{% endblock %}
+{% block page_heading %}Reserva{% endblock %}
+{% block content %}
+<p class="order-detail__back"><a href="{% url 'operations:reservations' %}">← Reservas</a></p>
+<div class="order-detail__header card animate-fade-in">
+  <div>
+    <p class="order-detail__id"><code>{{ reservation.reservation_id }}</code></p>
+    <p class="order-detail__meta muted">Cliente <code>{{ reservation.wa_id }}</code></p>
+  </div>
+  <span class="badge badge-confirmed badge--icon">{{ reservation.status|default:"confirmada" }}</span>
+</div>
+<div class="card animate-fade-in" style="margin-top:var(--space-4);">
+  <dl class="detail-dl">
+    <dt>Personas</dt>
+    <dd>{{ reservation.personas }}</dd>
+    <dt>Fecha</dt>
+    <dd>{{ reservation.fecha }}</dd>
+    <dt>Hora</dt>
+    <dd>{{ reservation.hora }}</dd>
+    <dt>Estado</dt>
+    <dd>{{ reservation.status|default:"—" }}</dd>
+  </dl>
+</div>
+<p class="muted" style="margin-top:var(--space-6);">Las reservas se crean y confirman por el flujo WhatsApp; el panel no las modifica para evitar conflictos con el bot.</p>
+{% endblock %}

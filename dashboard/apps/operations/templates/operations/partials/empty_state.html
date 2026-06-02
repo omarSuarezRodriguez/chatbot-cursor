@@ -1,0 +1,7 @@
+<div class="empty-state card animate-fade-in" role="status">
+  <p class="empty-state__title">{{ title|default:"Sin datos" }}</p>
+  <p class="empty-state__desc">{{ description|default:"No hay registros para mostrar." }}</p>
+  {% if action_url and action_label %}
+  <a href="{{ action_url }}" class="btn btn-primary" style="margin-top:var(--space-4);">{{ action_label }}</a>
+  {% endif %}
+</div>

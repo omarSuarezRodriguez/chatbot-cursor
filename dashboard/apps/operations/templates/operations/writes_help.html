@@ -1,0 +1,63 @@
+{% extends "operations/base.html" %}
+{% block title %}Escrituras del panel — Dashboard{% endblock %}
+{% block page_heading %}Escrituras del panel{% endblock %}
+{% block content %}
+<div class="app-page-header">
+  <div>
+    <h1>Qué requiere <code>DASHBOARD_ENABLE_WRITES</code></h1>
+    <p class="muted">Por defecto el panel es solo lectura. Las preferencias en PostgreSQL no dependen de esta variable.</p>
+  </div>
+  {% if is_dashboard_admin %}
+  <a href="{% url 'operations:admin_hub' %}" class="btn btn-ghost">← Administración</a>
+  {% endif %}
+</div>
+
+<div class="writes-help card animate-fade-in">
+  <p class="writes-help__state">
+    Estado actual:
+    {% if dashboard_writes_enabled %}
+    <span class="status-pill status-pill--success">Escrituras activas</span>
+    {% else %}
+    <span class="status-pill status-pill--warning">Solo lectura</span>
+    {% endif %}
+  </p>
+  <p>Activa en <code>.env.dashboard</code>:</p>
+  <pre class="writes-help__code">DASHBOARD_ENABLE_WRITES=1</pre>
+  <p class="muted">Reinicia <code>runserver</code> tras cambiar la variable. Las operaciones usan <code>dashboard/services/bot_bridge.py</code> (mismos servicios que el bot, sin nuevos endpoints Flask).</p>
+</div>
+
+<div class="writes-grid">
+  <section class="card">
+    <h2>Requiere escrituras + rol</h2>
+    <ul class="writes-list">
+      <li>Confirmar, cancelar o editar pedidos</li>
+      <li>Crear pedido manual</li>
+      <li>Crear / editar clientes (WhatsApp)</li>
+      <li>Marcar plato no disponible</li>
+      <li>CRUD de platos (solo admin del panel)</li>
+      <li>Eliminar cliente (solo admin del panel)</li>
+    </ul>
+  </section>
+  <section class="card">
+    <h2>No requiere <code>DASHBOARD_ENABLE_WRITES</code></h2>
+    <ul class="writes-list">
+      <li>Listados, filtros, KPIs y gráficos</li>
+      <li>Detalle de pedidos, reservas y clientes</li>
+      <li>Preferencias del panel (<code>configuracion/</code>)</li>
+      <li>Auditoría y estado del sistema</li>
+      <li>Gestión de usuarios del panel (PostgreSQL)</li>
+    </ul>
+  </section>
+  <section class="card">
+    <h2>Roles del panel</h2>
+    <dl class="detail-dl">
+      <dt>Operador</dt>
+      <dd>Pedidos, clientes, disponibilidad menú</dd>
+      <dt>Admin</dt>
+      <dd>CRUD menú, eliminar clientes, configuración, administración</dd>
+      <dt>Superusuario</dt>
+      <dd>Acceso a <code>/admin/</code> Django (enlace discreto en menú)</dd>
+    </dl>
+  </section>
+</div>
+{% endblock %}

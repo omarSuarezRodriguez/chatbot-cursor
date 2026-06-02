@@ -124,5 +124,12 @@
     "precio": 15.0,
     "categoria": "Hamburguesas",
     "disponible": true
+  },
+  {
+    "id": "123",
+    "nombre": "Marrano",
+    "precio": 2.0,
+    "categoria": "Marranos",
+    "disponible": true
   }
 ]

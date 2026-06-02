@@ -32,6 +32,12 @@
 </table>
 </div>
 {% else %}
-<p>No hay usuarios en caché.</p>
+<div class="empty-state card animate-fade-in">
+  <p class="empty-state__title">Sin clientes</p>
+  <p class="empty-state__desc">Aún no hay usuarios en caché o el bot no ha registrado conversaciones.</p>
+  {% if can_create %}
+  <a href="{% url 'operations:customer_create' %}" class="btn btn-primary" style="margin-top:var(--space-4);">Nuevo cliente</a>
+  {% endif %}
+</div>
 {% endif %}
 {% endblock %}

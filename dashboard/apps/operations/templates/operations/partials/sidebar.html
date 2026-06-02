@@ -26,23 +26,44 @@
         {% include "operations/partials/icon.html" with name="users" %}
         Clientes
       </a>
-      {% if is_dashboard_admin %}
+    </div>
+    {% if is_dashboard_admin %}
+    <div class="app-sidebar__section">
+      <p class="app-sidebar__label">Administración</p>
+      <a href="{% url 'operations:admin_hub' %}" class="app-nav-link{% if '/administracion/' in request.path and '/accesos' not in request.path and '/escrituras' not in request.path %} active{% endif %}">
+        {% include "operations/partials/icon.html" with name="settings" %}
+        Centro admin
+      </a>
+      <a href="{% url 'accounts:audit' %}" class="app-nav-link{% if '/accounts/audit' in request.path %} active{% endif %}">
+        {% include "operations/partials/icon.html" with name="activity" %}
+        Auditoría
+      </a>
+      <a href="{% url 'operations:panel_staff_list' %}" class="app-nav-link{% if '/administracion/accesos' in request.path %} active{% endif %}">
+        {% include "operations/partials/icon.html" with name="users" %}
+        Accesos panel
+      </a>
       <a href="{% url 'operations:panel_settings' %}" class="app-nav-link{% if '/configuracion' in request.path %} active{% endif %}">
         {% include "operations/partials/icon.html" with name="settings" %}
         Configuración
       </a>
-      {% endif %}
+    </div>
+    {% endif %}
+    <div class="app-sidebar__section">
+      <p class="app-sidebar__label">Sistema</p>
       <a href="{% url 'operations:system_status' %}" class="app-nav-link{% if '/estado' in request.path %} active{% endif %}">
         {% include "operations/partials/icon.html" with name="activity" %}
         Estado
       </a>
-    </div>
-    <div class="app-sidebar__section">
-      <p class="app-sidebar__label">Sistema</p>
-      <a href="/admin/" class="app-nav-link">
+      <a href="{% url 'operations:writes_help' %}" class="app-nav-link{% if '/escrituras' in request.path %} active{% endif %}">
         {% include "operations/partials/icon.html" with name="settings" %}
-        Admin Django
+        Guía escrituras
       </a>
+      {% if show_django_admin_link %}
+      <a href="/admin/" class="app-nav-link app-nav-link--subtle" title="Solo superusuarios">
+        {% include "operations/partials/icon.html" with name="settings" %}
+        Django admin
+      </a>
+      {% endif %}
     </div>
   </nav>
   {% if user.is_authenticated %}

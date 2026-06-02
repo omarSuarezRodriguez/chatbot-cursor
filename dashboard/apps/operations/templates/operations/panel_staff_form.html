@@ -1,0 +1,40 @@
+{% extends "operations/base.html" %}
+{% block title %}{% if is_new %}Nuevo acceso{% else %}Editar acceso{% endif %} — Dashboard{% endblock %}
+{% block page_heading %}{% if is_new %}Nuevo acceso al panel{% else %}Editar acceso{% endif %}{% endblock %}
+{% block content %}
+<p class="order-detail__back"><a href="{% url 'operations:panel_staff_list' %}">← Accesos al panel</a></p>
+<form method="post" class="card form-stack animate-fade-in" style="max-width:32rem;">
+  {% csrf_token %}
+  <div class="form-field{% if form.username.errors %} form-field--error{% endif %}">
+    <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+    {{ form.username }}
+    {% for e in form.username.errors %}<p class="form-error">{{ e }}</p>{% endfor %}
+  </div>
+  <div class="form-field">
+    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+    {{ form.email }}
+  </div>
+  <div class="form-field">
+    <label for="{{ form.role.id_for_label }}">{{ form.role.label }}</label>
+    {{ form.role }}
+  </div>
+  <div class="form-field">
+    <label>{{ form.is_active }} {{ form.is_active.label }}</label>
+  </div>
+  <div class="form-field{% if form.password1.errors %} form-field--error{% endif %}">
+    <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+    {{ form.password1 }}
+    {% if form.password1.help_text %}<p class="muted">{{ form.password1.help_text }}</p>{% endif %}
+    {% for e in form.password1.errors %}<p class="form-error">{{ e }}</p>{% endfor %}
+  </div>
+  <div class="form-field{% if form.password2.errors %} form-field--error{% endif %}">
+    <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+    {{ form.password2 }}
+    {% for e in form.password2.errors %}<p class="form-error">{{ e }}</p>{% endfor %}
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'operations:panel_staff_list' %}" class="btn btn-ghost">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

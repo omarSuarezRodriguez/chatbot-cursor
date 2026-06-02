@@ -11,6 +11,28 @@ urlpatterns = [
     path("pedidos/nuevo/", views.OrderCreateView.as_view(), name="order_create"),
     path("pedidos/<str:order_id>/", views.OrderDetailView.as_view(), name="order_detail"),
     path("reservas/", views.ReservationListView.as_view(), name="reservations"),
+    path(
+        "reservas/<str:reservation_id>/",
+        views.ReservationDetailView.as_view(),
+        name="reservation_detail",
+    ),
+    path("administracion/", views.AdminHubView.as_view(), name="admin_hub"),
+    path("administracion/escrituras/", views.WritesHelpView.as_view(), name="writes_help"),
+    path(
+        "administracion/accesos/",
+        views.PanelStaffListView.as_view(),
+        name="panel_staff_list",
+    ),
+    path(
+        "administracion/accesos/nuevo/",
+        views.PanelStaffCreateView.as_view(),
+        name="panel_staff_create",
+    ),
+    path(
+        "administracion/accesos/<int:user_id>/editar/",
+        views.PanelStaffEditView.as_view(),
+        name="panel_staff_edit",
+    ),
     path("menu/", views.MenuView.as_view(), name="menu"),
     path("menu/nuevo/", views.MenuItemCreateView.as_view(), name="menu_create"),
     path("menu/<str:item_id>/editar/", views.MenuItemEditView.as_view(), name="menu_edit"),

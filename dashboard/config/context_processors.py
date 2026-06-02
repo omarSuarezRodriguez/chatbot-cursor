@@ -10,7 +10,11 @@ def dashboard_flags(request):
 def dashboard_roles(request):
     user = request.user
     if not user.is_authenticated:
-        return {"is_dashboard_admin": False, "is_dashboard_operator": False}
+        return {
+            "is_dashboard_admin": False,
+            "is_dashboard_operator": False,
+            "show_django_admin_link": False,
+        }
     from apps.operations.permissions import (
         user_is_dashboard_admin,
         user_is_dashboard_operator,
@@ -19,4 +23,5 @@ def dashboard_roles(request):
     return {
         "is_dashboard_admin": user_is_dashboard_admin(user),
         "is_dashboard_operator": user_is_dashboard_operator(user),
+        "show_django_admin_link": user.is_superuser,
     }

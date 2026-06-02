@@ -1,0 +1,37 @@
+{% extends "operations/base.html" %}
+{% block title %}Administración — Dashboard{% endblock %}
+{% block page_heading %}Administración{% endblock %}
+{% block content %}
+<div class="app-page-header">
+  <h1>Centro de administración</h1>
+  <p class="muted">Auditoría, accesos al panel y documentación de escrituras.</p>
+</div>
+
+<div class="admin-hub-grid">
+  <a href="{% url 'accounts:audit' %}" class="admin-hub-card card animate-fade-in">
+    {% include "operations/partials/icon.html" with name="activity" %}
+    <h2>Auditoría</h2>
+    <p>Historial de acciones del equipo en el panel.</p>
+  </a>
+  <a href="{% url 'operations:panel_staff_list' %}" class="admin-hub-card card animate-fade-in">
+    {% include "operations/partials/icon.html" with name="users" %}
+    <h2>Accesos al panel</h2>
+    <p>Usuarios Django con rol operador o admin.</p>
+  </a>
+  <a href="{% url 'operations:system_status' %}" class="admin-hub-card card animate-fade-in">
+    {% include "operations/partials/icon.html" with name="activity" %}
+    <h2>Estado del sistema</h2>
+    <p>Salud del bot Flask y caché de Google Sheets.</p>
+  </a>
+  <a href="{% url 'operations:writes_help' %}" class="admin-hub-card card animate-fade-in">
+    {% include "operations/partials/icon.html" with name="settings" %}
+    <h2>Escrituras del panel</h2>
+    <p>Qué acciones requieren <code>DASHBOARD_ENABLE_WRITES=1</code>.</p>
+  </a>
+  <a href="{% url 'operations:panel_settings' %}" class="admin-hub-card card animate-fade-in">
+    {% include "operations/partials/icon.html" with name="settings" %}
+    <h2>Preferencias</h2>
+    <p>Filtros por defecto y notas operativas (PostgreSQL).</p>
+  </a>
+</div>
+{% endblock %}
