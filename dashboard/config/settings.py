@@ -12,6 +12,13 @@ if str(BASE_DIR) not in sys.path:
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+try:
+    import whitenoise  # noqa: F401
+except Exception:
+    HAS_WHITENOISE = False
+else:
+    HAS_WHITENOISE = True
+
 
 def _load_env_file(path: Path) -> None:
     if not path.exists():
@@ -43,8 +50,34 @@ def _database_from_url(url: str) -> dict:
 
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-dev-only")
-DEBUG = os.environ.get("DEBUG", "0") == "1"
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
+DEBUG = os.environ.get("DJANGO_DEBUG", os.environ.get("DEBUG", "0")) == "1"
+_allowed_hosts_raw = os.environ.get(
+    "DJANGO_ALLOWED_HOSTS",
+    "localhost,127.0.0.1,testserver",
+)
+ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts_raw.split(",") if h.strip()]
+_csrf_trusted_origins_raw = os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").strip()
+if _csrf_trusted_origins_raw:
+    CSRF_TRUSTED_ORIGINS = [
+        origin.strip()
+        for origin in _csrf_trusted_origins_raw.split(",")
+        if origin.strip()
+    ]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{host}"
+        for host in ALLOWED_HOSTS
+        if host not in {"localhost", "127.0.0.1", "testserver"}
+    ] + [
+        f"http://{host}"
+        for host in ALLOWED_HOSTS
+        if host not in {"localhost", "127.0.0.1", "testserver"}
+    ]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+_secure_cookies_default = "0" if DEBUG else "1"
+CSRF_COOKIE_SECURE = os.environ.get("DJANGO_CSRF_COOKIE_SECURE", _secure_cookies_default) == "1"
+SESSION_COOKIE_SECURE = os.environ.get("DJANGO_SESSION_COOKIE_SECURE", _secure_cookies_default) == "1"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -66,6 +99,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+if HAS_WHITENOISE:
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 ROOT_URLCONF = "config.urls"
 
@@ -88,11 +123,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-_database_url = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://dashboard:dashboard@localhost:5432/dashboard",
-)
-DATABASES = {"default": _database_from_url(_database_url)}
+_database_url = os.environ.get("DATABASE_URL", "").strip()
+if _database_url:
+    DATABASES = {"default": _database_from_url(_database_url)}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": str(BASE_DIR / "data" / "dashboard.sqlite3"),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -106,8 +146,11 @@ TIME_ZONE = "Europe/Madrid"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+if HAS_WHITENOISE:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 BOT_HEALTH_URL = os.environ.get("BOT_HEALTH_URL", "http://127.0.0.1:5000/health")
