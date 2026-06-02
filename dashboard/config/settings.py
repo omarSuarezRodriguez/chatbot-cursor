@@ -76,7 +76,11 @@ _auto_hosts = {
     "kiresoft.com",
     "www.kiresoft.com",
 }
-for _env_name in ("RAILWAY_PUBLIC_DOMAIN", "RAILWAY_STATIC_URL"):
+for _env_name in (
+    "RAILWAY_PUBLIC_DOMAIN",
+    "RAILWAY_STATIC_URL",
+    "RAILWAY_PRIVATE_DOMAIN",
+):
     _env_value = os.environ.get(_env_name, "").strip()
     if not _env_value:
         continue
