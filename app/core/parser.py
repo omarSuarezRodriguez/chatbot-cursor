@@ -105,8 +105,13 @@ NOISE_WORDS = frozenset(
         "por",
         "para",
         "mi",
+        "le",
         "mio",
         "mía",
+        "escribi",
+        "escribí",
+        "escribo",
+        "escribe",
         "de",
         "del",
         "la",
@@ -1470,6 +1475,19 @@ def run_validation_suite(verbose: bool = True) -> bool:
         and _qty_for(case17["items"], "hawaiana") == 777
         and _qty_for(case17["items"], "jamon") == 8,
         str(case17),
+    )
+
+    case18 = demo_engine.parse(
+        "le escribi dos pizzas hawaianas, dos cocacolas dos hamburguesas de carne y un agua"
+    )
+    check(
+        "prefijo conversacional no suma items fantasma",
+        case18["status"] in {"ok", "needs_clarification"}
+        and _qty_for(case18["items"], "hawaiana") == 2
+        and _qty_for(case18["items"], "coca") == 2
+        and _qty_for(case18["items"], "hamburguesa") == 2
+        and _qty_for(case18["items"], "agua") == 1,
+        str(case18),
     )
 
     if verbose:

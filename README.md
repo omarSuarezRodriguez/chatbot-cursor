@@ -1,4 +1,4 @@
-## v0.22
+## v0.23
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -3475,3 +3475,73 @@ Eso basta para **pilotear con 1–3 restaurantes** si tú haces el onboarding ma
 ## v0.22
 
 ## Prompt:
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[analiza solo parser.py y arregla lo siguiente
+
+le escribí dos pizzas hawaianas, dos cocacolas dos hamburguesas de carne y un agua
+
+y me agarró * 2 x Pizza Hawaiana — $250.00
+
+3 x Coca Cola — $24.00
+2 x Hamburguesa Doble Carne — $50.00
+Arreglalo e implementa mejoras para que cosas así no vuelvan a pasar, solo mejoras incrementales en parser.py y solo puedes tocar ese]
+
+
+## Respuesta cursor ##
+
+### Análisis previo
+
+- El fallo venía de un segmento conversacional residual (`"le escribi"`) que el parser no estaba filtrando como ruido.
+- Ese segmento llegaba al matcher y, con confianza baja pero suficiente para revisión, podía sumar un producto fantasma (en mi reproducción sumaba 1 hamburguesa extra).
+- La corrección más segura y de menor impacto era reforzar el filtrado de ruido en `parser.py`, sin tocar contratos ni flujo externo.
+
+### Cambios implementados
+
+- Amplié `NOISE_WORDS` en `parser.py` con términos conversacionales frecuentes que no son productos:
+  - `le`
+  - `escribi`, `escribí`, `escribo`, `escribe`
+- Agregué una prueba de regresión en la suite interna (`run_validation_suite`) con tu frase:
+  - `"le escribi dos pizzas hawaianas, dos cocacolas dos hamburguesas de carne y un agua"`
+  - Verifica cantidades correctas: 2 hawaianas, 2 cocas, 2 hamburguesas, 1 agua.
+
+### Archivos modificados
+
+- `app/core/parser.py`
+
+### Riesgos mitigados
+
+- Se evita que prefijos conversacionales se interpreten como ítems del menú.
+- Se reduce la probabilidad de “sumas fantasma” por texto residual antes del pedido real.
+- La prueba agregada protege contra regresiones futuras en ese patrón.
+
+### Compatibilidad verificada
+
+- No cambié APIs públicas, contratos de salida ni estructura JSON.
+- No se alteró integración con Flask/Twilio/flow ni servicios externos.
+- Validación ejecutada:
+  - Caso problemático: ahora retorna cantidades correctas y `status: ok`.
+  - Suite interna completa: `PARSER VALIDATION: OK (22/22)`.
+
+### Funcionalidades agregadas
+
+- Detección más robusta de ruido conversacional previo al pedido.
+- Nueva cobertura de prueba para el escenario reportado.
+
+### Funcionalidades preservadas
+
+- Extracción de cantidades (`2x`, número en texto, sufijos numéricos).
+- Fuzzy matching y sinónimos de productos.
+- Segmentación por conectores y consolidación de ítems repetidos.
+
+
+
+
+
+##############################################################
