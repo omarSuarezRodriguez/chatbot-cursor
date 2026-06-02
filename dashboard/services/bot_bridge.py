@@ -388,15 +388,28 @@ def _notify_customer_order_confirmed(order_id: str, wa_id: str) -> None:
 def _notify_customer_order_confirmed_with_service(
     order_id: str, wa_id: str, admin_service: Any
 ) -> None:
-    """Prefer the already-resolved AdminService used for this write."""
+    """Prefer resolved AdminService and force reliable send from dashboard."""
     if not wa_id:
+        logger.warning("Skipping customer notify for %s: empty wa_id", order_id)
         return
+    body = (
+        f"Tu pedido *{order_id}* fue confirmado por el restaurante. "
+        "¡Gracias por tu compra!"
+    )
     try:
         from app.services.admin_service import AdminService
 
         if isinstance(admin_service, AdminService):
-            admin_service.notify_customer_order_confirmed(order_id, wa_id)
-            return
+            # Dashboard confirmations run in HTTP requests; send synchronously here
+            # to avoid losing daemon-thread delivery on short-lived workers.
+            sent = admin_service._send_whatsapp(wa_id, body)
+            if sent:
+                return
+            logger.warning(
+                "AdminService sync notify failed for %s (%s). Falling back.",
+                order_id,
+                wa_id,
+            )
     except Exception:
         logger.debug(
             "Resolved AdminService notify unavailable; using fallback notifier.",
@@ -456,7 +469,7 @@ def confirm_order(order_id: str) -> ConfirmOrderResult:
     if not order_id:
         return WriteResult(ok=False, message="ID de pedido vacío.")
 
-    _, _, order_service, admin_service, _ = _bot_services()
+    _, _, order_service, _, _ = _bot_services()
     order = order_service.get_order(order_id)
     if not order:
         return WriteResult(ok=False, message=f"No encontré el pedido {order_id}.")
@@ -622,7 +635,7 @@ def update_order_status(order_id: str, status: str) -> WriteResult:
     if status not in ORDER_STATUSES:
         return WriteResult(ok=False, message=f"Estado inválido: {status}.")
 
-    _, _, order_service, _, _ = _bot_services()
+    _, _, order_service, admin_service, _ = _bot_services()
     order = order_service.get_order(order_id)
     if not order:
         return WriteResult(ok=False, message=f"No encontré el pedido {order_id}.")

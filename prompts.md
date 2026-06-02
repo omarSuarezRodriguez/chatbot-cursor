@@ -12,7 +12,9 @@ Despliega a producción lo último que ya dejamos listo en local, verifica en vi
 
 ## Prompt para implementar mejoras incrementales al chatbot
 
-@BOT_RULES.md
+@BOT_RULES.md and @DASHBOARD_RULES.md
+
+PRIORIDAD: TODOS LOS CAMBIOS DEBEN SER PENSADOS PARA SER HECHOS EN PRODUCCIÓN, PERO SE HARÁ LOCAL PARA LUEGO CON PUSH SUBIR LOS CAMBIOS A PRODUCCIÓN, ES DECIR, LO QUE HAY EN PRODUCCIÓN ES LA PRIORIDAD, EL PROYECTO SE MANEJA EN LOCAL PERO PENSADO EN PRODUCCIÓN
 
 TAREA: []
 
@@ -22,7 +24,6 @@ Reglas:
 - No asumir deploy (no hacer)
 - no asumir producción (no hacer)
 - explicar cambios
-- dar pasos de prueba local (runall.py para ejecutar flask y django)
 - Dar comando manual de deploy (git push)
 IMPORTANTISIMO: NO DESPLIEGUES, EL CAMBIO SOLO DEBE SER LOCAL.]
 

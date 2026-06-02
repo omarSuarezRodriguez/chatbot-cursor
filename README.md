@@ -1,4 +1,4 @@
-## v0.38.
+## v0.41
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -7222,3 +7222,35 @@ IMPORTANTISIMO: NO DESPLIEGUES, QUIERO QUE LOS CAMBIOS LOS HAGAS EN LOCAL PERO C
 ################################################################ v0.40
 
 ## Prompt ## 
+
+sigue sin llegar la confrimación, revisa bien por que
+
+
+## Respuesta cursor ##
+
+Revisé a fondo y sí había un problema real en el flujo de dashboard.
+
+Hice 2 correcciones en `dashboard/services/bot_bridge.py`:
+
+- Arreglé una ruta rota: cuando se actualizaba estado a `confirmed` desde `update_status`, se intentaba usar `admin_service` sin estar inicializado en esa función.
+- Endurecí el envío de WhatsApp desde dashboard: ahora, al confirmar, usa envío **sincrónico** con `AdminService` para evitar perder el mensaje por hilos daemon en requests HTTP cortas; si falla, cae al fallback existente.
+
+Eso ataca justo el caso “desde dashboard no llega, pero desde admin bot sí”.
+
+### Qué probar ahora (local)
+1. Levanta todo con `python runall.py`.
+2. Confirma un pedido desde dashboard.
+3. Verifica llegada al cliente.
+
+Si no llega aún, te pido este dato para cerrarlo al 100%:
+- El `order_id` exacto de la prueba.
+- Si lo confirmaste con botón de “Confirmar” o cambiando estado manualmente a “confirmed”.
+
+Con eso te saco la causa final (incluyendo si Twilio está devolviendo error de entrega para ese número).  
+No hice deploy. Comando manual de deploy cuando tú quieras: `git push`.
+
+
+
+
+##############################################################
+## v0.42

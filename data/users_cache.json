@@ -20,7 +20,7 @@
       "wa_id": "35699155990",
       "name": "Omar Suarez",
       "address": "",
-      "last_order_date": "2026-06-02T12:37:21.678749",
+      "last_order_date": "2026-06-02T12:47:46.432244",
       "last_order_items": [
         {
           "product_id": "1",
@@ -44,7 +44,7 @@
           "subtotal": 25.0
         }
       ],
-      "last_seen": "2026-06-02T12:37:21.678749"
+      "last_seen": "2026-06-02T12:47:46.432244"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
