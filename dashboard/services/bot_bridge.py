@@ -385,6 +385,26 @@ def _notify_customer_order_confirmed(order_id: str, wa_id: str) -> None:
     _send_whatsapp_async(wa_id, body)
 
 
+def _notify_customer_order_confirmed_with_service(
+    order_id: str, wa_id: str, admin_service: Any
+) -> None:
+    """Prefer the already-resolved AdminService used for this write."""
+    if not wa_id:
+        return
+    try:
+        from app.services.admin_service import AdminService
+
+        if isinstance(admin_service, AdminService):
+            admin_service.notify_customer_order_confirmed(order_id, wa_id)
+            return
+    except Exception:
+        logger.debug(
+            "Resolved AdminService notify unavailable; using fallback notifier.",
+            exc_info=True,
+        )
+    _notify_customer_order_confirmed(order_id, wa_id)
+
+
 def _sync_local_order_status(order_id: str, status: str) -> None:
     """Keep data/orders_cache.json aligned after dashboard writes (standalone Sheets path)."""
     order_id = order_id.strip().upper()
@@ -457,7 +477,9 @@ def confirm_order(order_id: str) -> ConfirmOrderResult:
         )
 
     _sync_local_order_status(order_id, "confirmed")
-    _notify_customer_order_confirmed(order_id, order.get("wa_id", ""))
+    _notify_customer_order_confirmed_with_service(
+        order_id, order.get("wa_id", ""), admin_service
+    )
     return WriteResult(
         ok=True,
         message=f"Pedido {order_id} confirmado correctamente.",
@@ -614,7 +636,9 @@ def update_order_status(order_id: str, status: str) -> WriteResult:
         )
     _sync_local_order_status(order_id, status)
     if status == "confirmed" and previous_status != "confirmed":
-        _notify_customer_order_confirmed(order_id, order.get("wa_id", ""))
+        _notify_customer_order_confirmed_with_service(
+            order_id, order.get("wa_id", ""), admin_service
+        )
     return WriteResult(
         ok=True,
         message=f"Pedido {order_id} → {status}.",

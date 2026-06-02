@@ -1,4 +1,4 @@
-## v0.37
+## v0.38
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -7196,3 +7196,22 @@ Comando manual de deploy (cuando tú decidas):
 
 ##############################################################
 ## v0.38
+
+
+## Prompt ##
+
+@BOT_RULES.md and @DASHBOARD_RULES.md
+
+PRIORIDAD: TODOS LOS CAMBIOS DEBEN SER PENSADOS PARA SER HECHOS EN PRODUCCIÓN, PERO SE HARÁ LOCAL PARA LUEGO CON PUSH SUBIR LOS CAMBIOS A PRODUCCIÓN, ES DECIR, LO QUE HAY EN PRODUCCIÓN ES LA PRIORIDAD, EL PROYECTO SE MANEJA EN LOCAL PERO PENSADO EN PRODUCCIÓN
+
+TAREA: [Has que la dashboard le envíe notificación al cliente cuando confirma, quiero que revises de qué forma lo hace el admin, que cuando la dashboard confirme pedido se dispare la misma acción que hace el bot cuando el admin de whatsapp le confirma, verifica que si se haga]
+
+100% OBLIGATORIO: [Haz este cambio SOLO en local (no despliegues). 
+Reglas:
+- Solo cambios en local
+- No asumir deploy (no hacer)
+- no asumir producción (no hacer)
+- explicar cambios
+- dar pasos de prueba local (runall.py para ejecutar flask y django)
+- Dar comando manual de deploy (git push)
+IMPORTANTISIMO: NO DESPLIEGUES, QUIERO QUE LOS CAMBIOS LOS HAGAS EN LOCAL PERO CON TODOS LOS VALORES NECESARIOS PARA SER DESPLEGADO EN PRODUCCION]
