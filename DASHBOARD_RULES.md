@@ -1,15 +1,15 @@
 # DASHBOARD_RULES.md
 
-`@DASHBOARD_RULES.md` + TAREA. Alcance `dashboard/`. **AI_RULES §1 manda.**
+`@DASHBOARD_RULES.md` + TAREA. Alcance `dashboard/`. **La Sección 1 (AI_RULES) manda.**
 
 ## 0 Agente
 
 | ✓ | ✗ |
 |---|---|
-| Código directo; mapa §4–5; regla 1→2→3 | Pseudocódigo, planes, explicar antes; grep/glob/búsqueda; explorar `app/` |
+| Código directo; mapa (Secciones 4 y 5); regla 1→2→3 | Pseudocódigo, planes, explicar antes; grep/glob/búsqueda; explorar `app/` |
 | UI → template + `dashboard/static/css/components.css` | `views.py` si solo UI |
 
-Respuesta: **solo §6** (1 bullet/ítem). Riesgo (`app/`, contratos): parar, 1 línea, pedir OK.
+Respuesta: **solo Sección 6** (1 bullet/ítem). Riesgo (`app/`, contratos): parar, 1 línea, pedir OK.
 
 ## 1 AI_RULES
 
@@ -25,7 +25,7 @@ Caché `data/{menu,orders,users,reservations}_cache.json` · Ctx `dashboard_writ
 
 ## 4 Mapa pantalla
 
-Tpl en §2 salvo login. `components.css`=`dashboard/static/css/components.css`. Solo tpl + includes + fila «leer».
+Tpl en Sección 2 salvo login. `components.css`=`dashboard/static/css/components.css`. Solo tpl + includes + fila «leer».
 
 | Pantalla | URL | template | leer |
 |----------|-----|----------|------|
@@ -54,11 +54,11 @@ Tpl en §2 salvo login. `components.css`=`dashboard/static/css/components.css`. 
 
 ## 5 Mapa vivo
 
-Si la TAREA modifica estructura, agrega pantalla/URL/backend/partial nueva o deja un dato útil para ahorrar tokens en futuros prompts → actualizar §3–4 de este archivo (solo delta, compacto). Si no aplica, no tocar. §6: bullet **Mapa §5:** sí/no + qué.
+Si la TAREA modifica estructura, agrega pantalla/URL/backend/partial nueva o deja un dato útil para ahorrar tokens en futuros prompts → actualizar Secciones 3 y 4 de este archivo (solo delta, compacto). Si no aplica, no tocar. En la Sección 6, bullet **Mapa vivo (Sección 5):** sí/no + qué.
 
 ## 6 Entrega + prompt
 
-Secciones (1 bullet c/u): Análisis previo · Cambios · Archivos · Riesgos · Compatibilidad · Agregadas · Preservadas · Mapa §5
+Secciones (1 bullet c/u): Análisis previo · Cambios · Archivos · Riesgos · Compatibilidad · Agregadas · Preservadas · Mapa vivo (Sección 5)
 
 ```
 @DASHBOARD_RULES.md

@@ -343,6 +343,23 @@ class MenuView(LoginRequiredMixin, View):
             else:
                 messages.error(request, message)
             return redirect("operations:menu")
+        if action == "available":
+            if not user_is_dashboard_operator(request.user):
+                raise Http404()
+            item_id = request.POST.get("item_id", "").strip()
+            ok, message = bot_bridge.set_menu_item_availability(item_id, True)
+            log_audit(
+                request,
+                action="menu_available",
+                entity="menu_item",
+                entity_id=item_id,
+                metadata={"ok": ok, "message": message},
+            )
+            if ok:
+                messages.success(request, message)
+            else:
+                messages.error(request, message)
+            return redirect("operations:menu")
         raise Http404()
 
 

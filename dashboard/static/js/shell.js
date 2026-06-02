@@ -178,4 +178,115 @@
   document.querySelectorAll("form[data-confirm]").forEach(function (form) {
     bindConfirm(form, form.getAttribute("data-confirm") || "¿Continuar?");
   });
+
+  // Menu workspace: quick filters for large catalogs
+  var menuSearchInput = document.getElementById("menu-search");
+  if (menuSearchInput) {
+    var categoryFilter = document.querySelector("[data-menu-category-filter]");
+    var statusFilter = document.querySelector("[data-menu-status-filter]");
+    var visibleProductsEl = document.querySelector("[data-menu-visible-products]");
+    var totalProductsEl = document.querySelector("[data-menu-total-products]");
+    var menuCategories = Array.prototype.slice.call(
+      document.querySelectorAll("[data-menu-category]")
+    );
+    var allMenuRows = Array.prototype.slice.call(
+      document.querySelectorAll("[data-menu-item]")
+    );
+
+    if (totalProductsEl) {
+      totalProductsEl.textContent = String(allMenuRows.length);
+    }
+
+    function normalize(str) {
+      return (str || "").toLowerCase();
+    }
+
+    function matchesItem(row, query) {
+      if (!query) {
+        return true;
+      }
+      var name = normalize(row.getAttribute("data-menu-item-name"));
+      var category = normalize(row.getAttribute("data-menu-item-category"));
+      var id = normalize(row.getAttribute("data-menu-item-id"));
+      return (
+        name.indexOf(query) !== -1 ||
+        category.indexOf(query) !== -1 ||
+        (id && id.indexOf(query) !== -1)
+      );
+    }
+
+    function applyMenuSearch(query) {
+      var trimmed = query.trim().toLowerCase();
+      var selectedCategory = categoryFilter ? normalize(categoryFilter.value) : "";
+      var selectedStatus = statusFilter ? normalize(statusFilter.value) : "";
+      var visibleProducts = 0;
+
+      menuCategories.forEach(function (categoryEl) {
+        var categoryName = normalize(
+          categoryEl.getAttribute("data-menu-category-name")
+        );
+        var categoryCountEl = categoryEl.querySelector("[data-menu-category-count]");
+        var rows = Array.prototype.slice.call(
+          categoryEl.querySelectorAll("[data-menu-item]")
+        );
+        var visibleInCategory = 0;
+        rows.forEach(function (row) {
+          var rowAvailable = row.getAttribute("data-menu-item-available") === "1";
+          var passesText = matchesItem(row, trimmed);
+          var passesCategory = !selectedCategory || categoryName === selectedCategory;
+          var passesStatus =
+            !selectedStatus ||
+            (selectedStatus === "available" && rowAvailable) ||
+            (selectedStatus === "unavailable" && !rowAvailable);
+          var show = passesText && passesCategory && passesStatus;
+
+          row.style.display = show ? "" : "none";
+          if (show) {
+            visibleInCategory += 1;
+            visibleProducts += 1;
+          }
+        });
+        if (categoryCountEl) {
+          categoryCountEl.textContent = String(visibleInCategory);
+        }
+        categoryEl.style.display = visibleInCategory > 0 ? "" : "none";
+      });
+
+      if (visibleProductsEl) {
+        visibleProductsEl.textContent = String(visibleProducts);
+      }
+    }
+
+    menuSearchInput.addEventListener("input", function (e) {
+      applyMenuSearch(e.target.value || "");
+    });
+    if (categoryFilter) {
+      categoryFilter.addEventListener("change", function () {
+        applyMenuSearch(menuSearchInput.value || "");
+      });
+    }
+    if (statusFilter) {
+      statusFilter.addEventListener("change", function () {
+        applyMenuSearch(menuSearchInput.value || "");
+      });
+    }
+
+    document.querySelectorAll("[data-menu-jump]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var categoryName = normalize(btn.getAttribute("data-menu-jump"));
+        if (categoryFilter) {
+          categoryFilter.value = categoryName;
+        }
+        applyMenuSearch(menuSearchInput.value || "");
+        var target = document.querySelector(
+          '[data-menu-category-anchor="' + categoryName + '"]'
+        );
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    });
+
+    applyMenuSearch("");
+  }
 })();

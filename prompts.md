@@ -24,10 +24,10 @@ TAREA: []
 @DASHBOARD_RULES.md
 
 TAREA: Sincronizar mapa (solo documentación).
-Comparar dashboard/ real con §3–4 de este archivo.
+Comparar dashboard/ real con las Secciones 3 y 4 de este archivo.
 Actualizar solo lo desfasado: pantallas, URLs, templates, partials, backend y datos útiles para futuros prompts.
 Reglas: no tocar código del bot ni app/*; no refactorizar; mantener formato compacto del archivo; no reescribir secciones que ya estén bien.
-Entrega §6 completa; Mapa §5: sí + listado de deltas.
+Entrega la Sección 6 completa; en «Mapa vivo (Sección 5)»: sí + listado de deltas.
 
 
 ## Prompt para actualizar bot_rules (actualizar su estructura)
@@ -35,10 +35,10 @@ Entrega §6 completa; Mapa §5: sí + listado de deltas.
 @BOT_RULES.md
 
 TAREA: Sincronizar mapa (solo documentación).
-Comparar app/, flows/ y servicios reales con §3–4 de este archivo.
+Comparar app/, flows/ y servicios reales con las Secciones 3 y 4 de este archivo.
 Actualizar solo lo desfasado: módulos, endpoints, nodos, flujos, acciones y datos útiles para futuros prompts.
 Reglas: no tocar dashboard/*; no refactorizar; mantener formato compacto; no reescribir secciones que ya estén bien.
-Entrega §6 completa; Mapa §5: sí + listado de deltas.
+Entrega la Sección 6 completa; en «Mapa vivo (Sección 5)»: sí + listado de deltas.
 
 
 

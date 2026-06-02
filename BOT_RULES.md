@@ -1,14 +1,14 @@
 # BOT_RULES.md
 
-`@BOT_RULES.md` + TAREA. Alcance `app/`, `flows/`, `data/` vía servicios. **AI_RULES §1 manda.**
+`@BOT_RULES.md` + TAREA. Alcance `app/`, `flows/`, `data/` vía servicios. **La Sección 1 (AI_RULES) manda.**
 
 ## 0 Agente
 
 | ✓ | ✗ |
 |---|---|
-| Código directo; mapa §4–5; regla 1→2→3 | Pseudocódigo, planes, explicar antes; grep/glob/búsqueda; explorar `dashboard/` |
+| Código directo; mapa (Secciones 4 y 5); regla 1→2→3 | Pseudocódigo, planes, explicar antes; grep/glob/búsqueda; explorar `dashboard/` |
 
-Respuesta: **solo §6** (1 bullet/ítem). Riesgo (contratos, estados, endpoints): parar, 1 línea, pedir OK.
+Respuesta: **solo Sección 6** (1 bullet/ítem). Riesgo (contratos, estados, endpoints): parar, 1 línea, pedir OK.
 
 ## 1 AI_RULES
 
@@ -67,11 +67,11 @@ Solo estos + import directo necesario.
 
 ## 5 Mapa vivo
 
-Si la TAREA modifica estructura, agrega módulo/endpoint/nodo/flujo/acción nueva o deja un dato útil para ahorrar tokens en futuros prompts → actualizar §3–4 de este archivo (solo delta, compacto). Si no aplica, no tocar. §6: bullet **Mapa §5:** sí/no + qué.
+Si la TAREA modifica estructura, agrega módulo/endpoint/nodo/flujo/acción nueva o deja un dato útil para ahorrar tokens en futuros prompts → actualizar Secciones 3 y 4 de este archivo (solo delta, compacto). Si no aplica, no tocar. En la Sección 6, bullet **Mapa vivo (Sección 5):** sí/no + qué.
 
 ## 6 Entrega + prompt
 
-Secciones (1 bullet c/u): Análisis previo · Cambios · Archivos · Riesgos · Compatibilidad · Agregadas · Preservadas · Mapa §5
+Secciones (1 bullet c/u): Análisis previo · Cambios · Archivos · Riesgos · Compatibilidad · Agregadas · Preservadas · Mapa vivo (Sección 5)
 
 ```
 @BOT_RULES.md

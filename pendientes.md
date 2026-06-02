@@ -38,5 +38,21 @@ quiero que le quites el --- y lo que dice Escribe inicio para volver al inicio
 
 
 
+## Pendientes antes de lanzar v0.33
+(dashboard)
+1. Quiero que el menú de la izquierda quede así: Administración (como titulo), luego abajo Inicio, Pedidos, clientes, menú, ventas, reportes, configuración.
+(Y dentro de Ventas:
+
+Resumen
+Ingresos
+Productos más vendidos
+Clientes recurrentes
+Métricas)
+2. 
+
+
+
+
+
 
 

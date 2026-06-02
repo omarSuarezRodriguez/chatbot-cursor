@@ -1,4 +1,4 @@
-## v0.32.
+## v0.33
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4337,7 +4337,7 @@ python dashboard/manage.py runserver 8000
 ## Riesgos restantes
 
 - **Docker requerido** para PostgreSQL; sin él, `migrate` fallará al conectar.
-- Dashboard **LOCAL ONLY** — no desplegar en Render/Railway sin decisión explícita (`AUDITORIA.md` §6).
+- Dashboard **LOCAL ONLY** — no desplegar en Render/Railway sin decisión explícita (`AUDITORIA.md`, Sección 6).
 - Si bot y dashboard corren en local escribiendo `data/`, evitar escrituras desde el panel (Fase 2+ será solo lectura).
 
 ---
@@ -4512,7 +4512,7 @@ Quitar `"apps.operations"` de `INSTALLED_APPS` y la línea `include("apps.operat
 
 ### Riesgos restantes
 - Vistas **públicas** hasta Fase 3.
-- Fallback `GoogleSheetsClient` puede arrancar hilo de sync (escritura en `data/` del **proceso dashboard**); con bot y dashboard locales, evitar escrituras simultáneas (AUDITORIA §2.3).
+- Fallback `GoogleSheetsClient` puede arrancar hilo de sync (escritura en `data/` del **proceso dashboard**); con bot y dashboard locales, evitar escrituras simultáneas (AUDITORIA, Sección 2.3).
 - `/estado/` instancia el cliente Sheets al cargar la página.
 
 ### Cumplimiento AUDITORIA.md
@@ -4790,7 +4790,7 @@ ENTREGA
 
 ## Fase 4 — Acciones seguras (implementada)
 
-Alcance verificado contra **AUDITORIA.md** § Fase 4. Sin cambios en `POST /bot`, `parser.py`, `restaurant_flow.json` ni `user_states.json`.
+Alcance verificado contra **AUDITORIA.md**, Fase 4. Sin cambios en `POST /bot`, `parser.py`, `restaurant_flow.json` ni `user_states.json`.
 
 ### Plan ejecutado
 
@@ -6018,6 +6018,680 @@ El formulario `data-toolbar` queda envuelto en `{% if status_filter == "delivere
 @DASHBOARD_RULES.md
 
 TAREA: [
-1. 
+  Modo: solo auditoría/plan. Anula §0 (no código, no grep exploratorio).
 
+Menú `/menu/` — auditar + priorizar + plan 3 fases. Sin código/PR.
+
+**Sí:** listado, form, disponibilidad, permisos operador/admin. **No:** sidebar, bot, `app/`, contrato JSON salvo compat.
+
+**Leer:** `menu.html`, `menu_form.html`, `forms.py` (MenuItemForm), `views.py` (MenuView), `readers.py` (id|nombre|precio|categoria|disponible), `permissions.py`, `app.css`+`components.css`, `bot_bridge.py`.
+
+**Objetivo:** ver carta · buscar plato · agotado/precio rápido · alta sin fricción · sin errores graves · móvil cocina/mostrador.
+
+**Ref:** POS carta (Square/Toast/Lightspeed), delivery, CMS carta. **Visual:** premium SaaS (Stripe/Linear/Shopify/Notion); P0/P1/P2 solo UI.
+
+**Futuro:** tpl+css+`shell.js` primero; backend solo iteración aparte. ≤3 archivos/fase. Schema+permisos+bridge+1→2→3 intactos. Microcopy ES sin jerga.
+
+**Salida:** 1 bullet/ítem (máx. 2 niveles). Compacto, cero relleno.
+
+1. **Análisis** — fortalezas · debilidades · fricción operador/admin
+2. **Benchmark** — 5–8 patrones (copiar / no aplica)
+3. **Propuestas** — P0/P1/P2: qué · por qué · S/M/L · archivos · riesgo
+4. **Flujos** — 2–3 críticos (ascii/mermaid breve)
+5. **Riesgos** — bot · permisos · writes off · destructivas
+6. **Compat** — contratos/reglas
+7. **Agregadas** — valor P0+P1
+8. **Preservadas** — invariantes
+9. **Mapa vivo (§5)** — sí/no + delta
+
+**# Visual premium** — P0 · P1 · P2
+
+**Plan 3 fases** (núcleo; 1 fila = 1 fase implementable):
+
+| Fase | Cambio (1 línea) | P0/P1/P2 | Archivos ≤3 | Backend | Hecho (1 línea) |
+|------|------------------|----------|-------------|---------|-----------------|
+| 1 | | | | sí/no | |
+| 2 | | | | | |
+| 3 | | | | | |
+
+Fusionar en misma fase lo que comparta tpl+css. Backend al final si hace falta.
+
+Cierre (3 bullets): primero · por qué · mejora día a día (lenguaje restaurante).
 ]
+
+
+## Respuesta cursor ##
+
+
+1. **Análisis** — fortalezas · debilidades · fricción operador/admin  
+   - Fortalezas: separación clara `dashboard_operator` vs `dashboard_admin` en `apps/operations/permissions.py` y gating UI en `apps/operations/views.py::MenuView` + `dashboard/apps/operations/templates/operations/menu.html` (operador solo marca “no disponible”; admin hace CRUD).  
+   - Fortalezas: acciones destructivas con doble ruta “dado de baja” vs “eliminar permanente” (con confirm) en `menu.html` y ejecución/seguridad en `MenuItemDeleteView` + `bot_bridge.delete_menu_item(hard=...)`.  
+   - Debilidades/fricción: (a) operador no puede re-activar un plato desde el listado (solo admin lo edita en `menu_form.html`), lo que frena cocina/mostrador; (b) si estás en modo “solo lectura” (writes deshabilitadas), no hay un banner explicando por qué desaparecen las acciones; (c) el empty-state dice “el bot los carga desde Google Sheets” aunque `readers.read_menu()` también puede quedar vacío si Sheets falla.
+
+2. **Benchmark** — 5–8 patrones (copiar / no aplica)  
+   - Copiar: “permisos en UI + permisos en backend” (`MenuView`/mixins + `menu.html` condicionales).  
+   - Copiar: “feature flag de escritura” (`bot_bridge.writes_enabled()` corta writes).  
+   - Copiar: “doble nivel de destrucción” (`hard=0` vs `hard=1`, con confirm distintos).  
+   - Copiar: “validación de unicidad/consistencia antes y al escribir” (`MenuItemForm.clean_item_id()` + checks en `bot_bridge.save_menu_item()`).  
+   - Copiar: “cache-first + fallback a Sheets” (`readers.py` usa `data/menu_cache.json` y si no, llama al cliente).  
+   - Revisar/no aplica: “confirm vía `data-confirm`” depende de JS global; CSS existe (`.confirm-dialog`), pero hay que asegurar que realmente se activa en `menu.html` (si no, las confirmaciones no detendrían acciones).
+
+3. **Propuestas** — P0/P1/P2: qué · por qué · S/M/L · archivos · riesgo  
+   - **P0 (Fase 1, solo UI; S; bajo riesgo)**: añadir en `menu.html` un mini-aviso cuando no hay acciones (modo solo lectura o sin permisos) y dejar una frase explícita para operador: “Como operador solo puedes marcar como no disponible; para volver a disponible se necesita admin”.  
+     - Por qué: elimina el “¿por qué no me sale el botón?” en cocina/mostrador.  
+     - Archivos ≤3: `dashboard/apps/operations/templates/operations/menu.html` (posible reuse de `.banner-readonly` en `components.css`).  
+     - Backend: no.  
+   - **P1 (Fase 2, solo UI; S/M; bajo riesgo)**: ajustar legibilidad en móvil en el listado del menú (priorizar nombre + precio + estado; limitar ruido del ID en pantalla chica).  
+     - Por qué: lectura rápida con manos ocupadas.  
+     - Archivos ≤3: `menu.html` + `dashboard/static/css/app.css` (reglas responsive para `.menu-item-id`/espaciado si hace falta).  
+     - Backend: no.  
+   - **P2 (Fase 3, funcional; M; riesgo medio)**: permitir “Marcar disponible” al operador desde el mismo listado (además de “Marcar no disponible”).  
+     - Por qué: reduce dependencia de admin para reactivar platos.  
+     - Qué cambia: `menu.html` añade botón/form para `disponible -> true` y `apps/operations/views.py::MenuView.post` maneja `action="available"` llamando a `bot_bridge.set_menu_item_availability(item_id, True)` + `log_audit`.  
+     - Archivos ≤3: `menu.html`, `apps/operations/views.py`.  
+     - Riesgo: medio por seguridad/flujo (hay que mantener confirm y asegurarnos de que la semántica soft/hard no se rompe).
+
+4. **Flujos** — 2–3 críticos (breve)  
+   - **Ver menú (roles + modo escritura)**  
+     ```mermaid
+     flowchart TD
+       A[GET /menu/] --> B[MenuView.get]
+       B --> C[can_admin / can_operate / can_create con writes_enabled]
+       B --> D[readers.menu_by_category()]
+       D --> E[Render menu.html con acciones condicionadas]
+     ```
+   - **Operador: marcar “no disponible”**  
+     ```mermaid
+     flowchart TD
+       A[Click "Marcar no disponible"] --> B[Confirm UI (data-confirm)]
+       B --> C[POST /menu/ action=unavailable]
+       C --> D[MenuView.post: valida operator]
+       D --> E[bot_bridge.set_menu_item_unavailable()]
+       E --> F[log_audit + messages + redirect /menu]
+     ```
+   - **Admin: eliminar permanente**  
+     ```mermaid
+     flowchart TD
+       A[Click "Eliminar permanente"] --> B[Confirm UI]
+       B --> C[POST /menu_delete/{id}/ hard=1]
+       C --> D[AdminRequiredMixin]
+       D --> E[bot_bridge.delete_menu_item(hard=True)]
+       E --> F[log_audit + flash + redirect /menu]
+     ```
+
+5. **Riesgos** — bot · permisos · writes off · destructivas  
+   - **Bot offline / Sheets falla**: `readers.read_menu()` puede devolver vacío; el empty-state de `menu.html` puede confundir (“se carga desde Google Sheets”).  
+   - **Permisos**: `MenuView.post` valida operator en `unavailable`; si se añade “available”, hay que repetir exactamente esa validación para evitar escaladas.  
+   - **Writes off**: aunque la UI oculte acciones, llamadas forjadas podrían llegar; `bot_bridge` debe seguir bloqueando por `writes_enabled` (ya lo hace).  
+   - **Destructivas**: confirmar que “Dar de baja” realmente es *soft* (hard=False) en `menu_service.remove_item(...)`; si no, el texto y la expectativa del admin se rompen.
+
+6. **Compat** — contratos/reglas  
+   - Mantener: contrato de `bot_bridge` (firmas `set_menu_item_unavailability`, `set_menu_item_availability`, `delete_menu_item(item_id, hard=...)`) y nombres de acciones HTTP actuales (`action="unavailable"`, `hard=1`).  
+   - Mantener: grupos `dashboard_operator`/`dashboard_admin` y la lógica de `user_is_dashboard_operator()` en `permissions.py`.
+
+7. **Agregadas** — valor P0+P1  
+   - Menos fricción inmediata: operador entiende por qué no ve reactivación y por qué a veces no ve acciones.  
+   - Mejor operativa en sala: listado más “scan-friendly” (nombre/estado/precio) para decisiones rápidas.
+
+8. **Preservadas** — invariantes  
+   - ID como clave (unicidad en `MenuItemForm.clean_item_id()` + chequeo en `bot_bridge.save_menu_item()`).  
+   - CRUD protegido por roles (`AdminRequiredMixin` para crear/editar/eliminar; operador solo disponibilidad).  
+   - Confirmaciones para rutas destructivas y mensajes de feedback vía `messages`.
+
+9. **Mapa vivo (§5)** — sí/no + delta  
+   - **No**: la auditoría no requiere cambiar estructura/URL/backend nuevos; delta solo si en P2 se añade acción nueva (`action="available"`), entonces habría que reflejarlo como “cambio en pantalla Menú” dentro del mapa de trabajo futuro.
+
+
+
+
+
+## Segundo Prompt ##
+@DASHBOARD_RULES.md
+TAREA: [
+Modo: aplicar cambios (no solo auditoría).
+
+Menú `/menu/` — P0:
+- Cuando en el listado no haya acciones disponibles (por rol o por writes off), quiero un aviso visual claro y microcopy corto para el operador explicando por qué no ve botones.
+- Mantener backend intacto: solo tocar `menu.html` y reusar estilos existentes (`.banner-readonly`, `.banner`, `.muted`, etc.) en `components.css`.
+
+Cambios concretos:
+- En `dashboard/apps/operations/templates/operations/menu.html`:
+  - Detectar situación “sin acciones” (p.ej. `not can_operate and not can_create` o writes off si ya viene en contexto) y mostrar un bloque tipo banner encima de las tablas o del empty-state, con copy como:
+    - Título: “Panel en modo solo lectura” (si aplica writes off) o “Acciones limitadas para este usuario”.
+    - Texto: “Como operador puedes marcar platos no disponibles. Para volver a ponerlos disponibles o editar precios, necesita entrar un admin.” (ajusta el texto según el contexto que tengas en plantilla).
+- No introducir lógica nueva de permisos ni cambiar `MenuView`; solo usar variables de contexto ya existentes.
+
+Objetivo:
+- El operador entiende de inmediato por qué no ve botones de edición/eliminación/reactivación.
+- El empty-state y la tabla mantienen consistencia visual con el resto del dashboard.
+
+Respeta:
+- Contratos actuales (`bot_bridge`, `readers`, permisos).
+- Estilos base (`components.css`, `app.css`).
+
+Entrega:
+- Aplica los cambios en plantilla/CSS necesarios (máximo 2 archivos: `menu.html` + `components.css` si hace falta).
+- Explica brevemente al final qué tocaste (archivo + 1 línea).
+]
+
+
+## Resp cursor ##
+
+
+### Análisis previo
+- **Contexto**: `/menu/` ya recibe `can_operate`, `can_create` y (según reglas) `dashboard_writes_enabled`, y oculta la columna de acciones cuando no hay permisos.
+- **Patrón existente**: El modo solo lectura por writes off se comunica con `.banner.banner-readonly`, usando el partial `operations/partials/readonly_banner.html`.
+
+### Cambios
+- **Lógica de banner sobre la tabla/empty-state**:
+  - Justo después del `page_header` en `menu.html` añadí:
+    - **Caso writes off** (`not dashboard_writes_enabled`): reutiliza el partial `readonly_banner.html` para mostrar “Modo solo lectura” con copy ya estandarizado en el dashboard.
+    - **Caso sin acciones por permisos** (`not can_operate and not can_create` con writes activos): muestra un banner `.banner.banner-readonly` explicando que las acciones de edición/alta/baja están reservadas a perfiles con permisos de administración.
+
+### Código relevante
+
+```5:18:dashboard/apps/operations/templates/operations/menu.html
+{% block content %}
+{% if can_create %}
+{% url 'operations:menu_create' as menu_create_url %}
+{% include "operations/partials/page_header.html" with title="Menú" subtitle="Platos del bot, agrupados por categoría. Edita precios, disponibilidad y altas desde aquí." action_url=menu_create_url action_label="Nuevo plato" %}
+{% else %}
+{% include "operations/partials/page_header.html" with title="Menú" subtitle="Platos del bot, agrupados por categoría." %}
+{% endif %}
+
+{% if not dashboard_writes_enabled %}
+{% include "operations/partials/readonly_banner.html" %}
+{% elif not can_operate and not can_create %}
+<p class="banner banner-readonly" role="status">
+  <strong>Acciones limitadas para este usuario.</strong>
+  <span class="muted">Solo los perfiles con permisos de administración pueden editar precios, dar de alta o baja platos o cambiar su disponibilidad. Si necesitas hacer cambios, pide a un admin que entre al panel.</span>
+</p>
+{% endif %}
+
+{% for category, items in menu_by_category.items %}
+```  
+
+### Archivos tocados
+- **`menu.html`**: Añadido bloque condicional de banner sobre la tabla/empty-state, reutilizando `readonly_banner.html` y clases `.banner`, `.banner-readonly`, `.muted`.  
+
+(0 cambios en `components.css`, se reutilizan estilos existentes).
+
+
+
+
+## Tercer prompt ##
+
+@DASHBOARD_RULES.md
+TAREA: [
+Modo: aplicar cambios (no solo auditoría).
+
+Menú `/menu/` — P1:
+- Mejorar arquitectura visual del listado por categoría para lectura rápida en escritorio y móvil:
+  - Priorizar nombre del plato, precio y estado.
+  - Reducir el ruido visual del ID (por ejemplo, menos prominente, solo si hace falta; en móvil podría ocultarse o ponerse en una segunda línea discreta).
+  - Mantener la tabla y las acciones actuales sin romper el layout.
+
+Cambios concretos (UI/tpl+css):
+- En `dashboard/apps/operations/templates/operations/menu.html`:
+  - Revisar la celda de nombre/ID (`.menu-item-name`, `.menu-item-id`) y reorganizar jerarquía visual (nombre arriba, ID secundario).
+  - Asegurarte de que el estado (badge de disponibilidad) quede alineado y legible junto al precio.
+- En `dashboard/static/css/app.css` (y, si hace falta, `components.css`):
+  - Añadir/ajustar reglas para `.menu-item-name`, `.menu-item-id`, `.menu-item-price` y filas de la data-table:
+    - En pantallas estrechas, priorizar nombre + estado; el ID puede tener fuente más pequeña y menor contraste o incluso ocultarse si el espacio es muy limitado (usando media queries).
+    - Mantener el aspecto “premium SaaS” del resto del dashboard.
+
+Restricciones:
+- No cambiar contratos ni backend (sin tocar `views.py`, `bot_bridge.py`, `readers.py`).
+- Máx. 3 archivos en total (idealmente `menu.html` + `app.css`; `components.css` solo si es imprescindible).
+
+Objetivo:
+- El operador puede “scannear” categorías y platos con 1–2 segundos por pantalla, incluso en móvil o en un portátil pequeño.
+- Diseño consistente con el resto del dashboard.
+
+Entrega:
+- Aplica cambios de plantilla y CSS.
+- Cierra con un resumen muy breve (1–2 frases) de qué mejoró a nivel visual.
+]
+
+
+## Resp cursor ##
+
+### Resumen de cambios
+
+- **Jerarquía visual del plato**: el nombre queda en la parte superior con mayor peso, y el ID pasa a una línea secundaria, más discreta y con tipografía monoespaciada y tamaño reducido, manteniendo la tabla y acciones intactas.
+- **Precio + estado alineados**: el precio y el badge de disponibilidad se agrupan en el mismo bloque para escritorio, y en móvil el estado se prioriza mostrándose en su propia celda con tamaño compacto, facilitando el escaneo rápido por categoría y plato en pantallas pequeñas.
+
+
+## Cuarto prompt ##
+
+@DASHBOARD_RULES.md
+TAREA: [
+Modo: aplicar cambios (UI + backend mínimos).
+
+Menú `/menu/` — P2:
+- Extender la pantalla para que el operador pueda volver a marcar un plato como “Disponible” desde el mismo listado (además de “Marcar no disponible”), manteniendo:
+  - Seguridad de permisos.
+  - Respeto a `writes_enabled`.
+  - Confirm dialogs coherentes.
+
+Cambios concretos:
+- En `dashboard/apps/operations/templates/operations/menu.html`:
+  - En el action menu por plato, añadir una acción “Marcar disponible” solo cuando `item.disponible` sea falso y el usuario tenga permisos operativos (`can_operate` y/o `can_create` según patrón actual).
+  - Usar el mismo patrón de formulario POST + `data-confirm` que “Marcar no disponible”, pero con `action="available"` y copy ajustado.
+- En `dashboard/apps/operations/views.py` (`MenuView.post`):
+  - Mantener el branch existente para `action == "unavailable"`.
+  - Añadir un branch simétrico para `action == "available"`:
+    - Reutilizar validación de operador (`user_is_dashboard_operator`) y el mismo patrón de audit log (`log_audit`) y `messages`.
+    - Llamar a `bot_bridge.set_menu_item_availability(item_id, True)` con manejo del resultado análogo a `set_menu_item_unavailable`.
+- En `dashboard/services/bot_bridge.py`:
+  - Reutilizar la función ya existente `set_menu_item_availability(item_id, disponible)` sin cambiar su firma ni comportamiento global.
+  - Si algo de la lógica necesita mínimo ajuste para este nuevo uso, que sea totalmente compatible hacia atrás (no romper menú ni otros flujos).
+
+Restricciones:
+- Mantener contratos (`WriteResult`, firmas `bot_bridge`, `readers`, permisos).
+- Respetar la separación de roles:
+  - Solo operadores/admin pueden cambiar disponibilidad desde `/menu/`.
+- No tocar `app/*`, ni `data/*.json`.
+
+Objetivo:
+- Flujo operativo: operador puede marcar un plato como no disponible y, más tarde, volverlo a disponible desde el mismo listado, sin depender de un admin para esa operación.
+- UX consistente con el resto del dashboard (misma acción-menu, mismas confirmaciones, mismos toasts).
+
+Entrega:
+- Actualiza `menu.html`, `operations/views.py` y, solo si es imprescindible, un pequeño ajuste en `bot_bridge.py`.
+- Termina con un resumen de 2–3 frases: qué cambió y cómo lo usa el operador día a día.
+]
+
+
+## Resp cursor ##
+
+
+### Prompt Fase 1 — P0 (UI: aviso modo solo lectura / sin permisos)
+
+```text
+@DASHBOARD_RULES.md
+TAREA: [
+Modo: aplicar cambios (no solo auditoría).
+
+Menú `/menu/` — P0:
+- Cuando en el listado no haya acciones disponibles (por rol o por writes off), quiero un aviso visual claro y microcopy corto para el operador explicando por qué no ve botones.
+- Mantener backend intacto: solo tocar `menu.html` y reusar estilos existentes (`.banner-readonly`, `.banner`, `.muted`, etc.) en `components.css`.
+
+Cambios concretos:
+- En `dashboard/apps/operations/templates/operations/menu.html`:
+  - Detectar situación “sin acciones” (p.ej. `not can_operate and not can_create` o writes off si ya viene en contexto) y mostrar un bloque tipo banner encima de las tablas o del empty-state, con copy como:
+    - Título: “Panel en modo solo lectura” (si aplica writes off) o “Acciones limitadas para este usuario”.
+    - Texto: “Como operador puedes marcar platos no disponibles. Para volver a ponerlos disponibles o editar precios, necesita entrar un admin.” (ajusta el texto según el contexto que tengas en plantilla).
+- No introducir lógica nueva de permisos ni cambiar `MenuView`; solo usar variables de contexto ya existentes.
+
+Objetivo:
+- El operador entiende de inmediato por qué no ve botones de edición/eliminación/reactivación.
+- El empty-state y la tabla mantienen consistencia visual con el resto del dashboard.
+
+Respeta:
+- Contratos actuales (`bot_bridge`, `readers`, permisos).
+- Estilos base (`components.css`, `app.css`).
+
+Entrega:
+- Aplica los cambios en plantilla/CSS necesarios (máximo 2 archivos: `menu.html` + `components.css` si hace falta).
+- Explica brevemente al final qué tocaste (archivo + 1 línea).
+]
+```
+
+---
+
+### Prompt Fase 2 — P1 (UI: legibilidad y arquitectura visual del listado por categoría)
+
+```text
+@DASHBOARD_RULES.md
+TAREA: [
+Modo: aplicar cambios (no solo auditoría).
+
+Menú `/menu/` — P1:
+- Mejorar arquitectura visual del listado por categoría para lectura rápida en escritorio y móvil:
+  - Priorizar nombre del plato, precio y estado.
+  - Reducir el ruido visual del ID (por ejemplo, menos prominente, solo si hace falta; en móvil podría ocultarse o ponerse en una segunda línea discreta).
+  - Mantener la tabla y las acciones actuales sin romper el layout.
+
+Cambios concretos (UI/tpl+css):
+- En `dashboard/apps/operations/templates/operations/menu.html`:
+  - Revisar la celda de nombre/ID (`.menu-item-name`, `.menu-item-id`) y reorganizar jerarquía visual (nombre arriba, ID secundario).
+  - Asegurarte de que el estado (badge de disponibilidad) quede alineado y legible junto al precio.
+- En `dashboard/static/css/app.css` (y, si hace falta, `components.css`):
+  - Añadir/ajustar reglas para `.menu-item-name`, `.menu-item-id`, `.menu-item-price` y filas de la data-table:
+    - En pantallas estrechas, priorizar nombre + estado; el ID puede tener fuente más pequeña y menor contraste o incluso ocultarse si el espacio es muy limitado (usando media queries).
+    - Mantener el aspecto “premium SaaS” del resto del dashboard.
+
+Restricciones:
+- No cambiar contratos ni backend (sin tocar `views.py`, `bot_bridge.py`, `readers.py`).
+- Máx. 3 archivos en total (idealmente `menu.html` + `app.css`; `components.css` solo si es imprescindible).
+
+Objetivo:
+- El operador puede “scannear” categorías y platos con 1–2 segundos por pantalla, incluso en móvil o en un portátil pequeño.
+- Diseño consistente con el resto del dashboard.
+
+Entrega:
+- Aplica cambios de plantilla y CSS.
+- Cierra con un resumen muy breve (1–2 frases) de qué mejoró a nivel visual.
+]
+```
+
+---
+
+### Prompt Fase 3 — P2 (Funcional+UI: operador puede “Marcar disponible”)
+
+```text
+@DASHBOARD_RULES.md
+TAREA: [
+Modo: aplicar cambios (UI + backend mínimos).
+
+Menú `/menu/` — P2:
+- Extender la pantalla para que el operador pueda volver a marcar un plato como “Disponible” desde el mismo listado (además de “Marcar no disponible”), manteniendo:
+  - Seguridad de permisos.
+  - Respeto a `writes_enabled`.
+  - Confirm dialogs coherentes.
+
+Cambios concretos:
+- En `dashboard/apps/operations/templates/operations/menu.html`:
+  - En el action menu por plato, añadir una acción “Marcar disponible” solo cuando `item.disponible` sea falso y el usuario tenga permisos operativos (`can_operate` y/o `can_create` según patrón actual).
+  - Usar el mismo patrón de formulario POST + `data-confirm` que “Marcar no disponible”, pero con `action="available"` y copy ajustado.
+- En `dashboard/apps/operations/views.py` (`MenuView.post`):
+  - Mantener el branch existente para `action == "unavailable"`.
+  - Añadir un branch simétrico para `action == "available"`:
+    - Reutilizar validación de operador (`user_is_dashboard_operator`) y el mismo patrón de audit log (`log_audit`) y `messages`.
+    - Llamar a `bot_bridge.set_menu_item_availability(item_id, True)` con manejo del resultado análogo a `set_menu_item_unavailable`.
+- En `dashboard/services/bot_bridge.py`:
+  - Reutilizar la función ya existente `set_menu_item_availability(item_id, disponible)` sin cambiar su firma ni comportamiento global.
+  - Si algo de la lógica necesita mínimo ajuste para este nuevo uso, que sea totalmente compatible hacia atrás (no romper menú ni otros flujos).
+
+Restricciones:
+- Mantener contratos (`WriteResult`, firmas `bot_bridge`, `readers`, permisos).
+- Respetar la separación de roles:
+  - Solo operadores/admin pueden cambiar disponibilidad desde `/menu/`.
+- No tocar `app/*`, ni `data/*.json`.
+
+Objetivo:
+- Flujo operativo: operador puede marcar un plato como no disponible y, más tarde, volverlo a disponible desde el mismo listado, sin depender de un admin para esa operación.
+- UX consistente con el resto del dashboard (misma acción-menu, mismas confirmaciones, mismos toasts).
+
+Entrega:
+- Actualiza `menu.html`, `operations/views.py` y, solo si es imprescindible, un pequeño ajuste en `bot_bridge.py`.
+- Termina con un resumen de 2–3 frases: qué cambió y cómo lo usa el operador día a día.
+]
+```
+
+
+
+
+## Quinto prompt ##
+
+Rediseñar completamente el módulo MENÚ del restaurante.
+
+NO quiero un retoque visual.
+
+NO quiero mover dos botones y cambiar colores.
+
+Quiero una experiencia completamente profesional, moderna y lista para venderse como SaaS comercial.
+
+Tienes libertad total para modificar:
+
+* Layout
+* Jerarquía visual
+* Distribución
+* Componentes
+* Espaciado
+* Navegación interna
+* Organización de categorías
+* Presentación de productos
+* Formularios
+* Estados
+* Acciones
+
+SIEMPRE que mantengas compatibilidad con:
+
+* Contratos existentes
+* Backend actual
+* Permisos actuales
+* Integraciones actuales
+* Lógica del bot
+
+No romper funcionalidades existentes.
+
+---
+
+# PROCESO OBLIGATORIO
+
+Antes de tocar código:
+
+1. Analiza la implementación actual.
+2. Identifica los problemas de UX.
+3. Identifica los problemas visuales.
+4. Identifica cuellos de botella operativos.
+5. Compara la pantalla actual contra productos líderes del mercado.
+6. Diseña una solución superior.
+7. Implementa la nueva experiencia.
+
+NO te limites por la interfaz actual.
+
+Piensa desde cero.
+
+---
+
+# REFERENCIAS OBLIGATORIAS
+
+Tomar inspiración de:
+
+* Shopify Admin
+* Toast POS
+* Square Dashboard
+* Lightspeed Restaurant
+* Stripe Dashboard
+* Linear
+* Notion
+
+NO copiar estilos.
+
+Copiar principios:
+
+* Claridad
+* Escaneabilidad
+* Rapidez
+* Jerarquía visual
+* Simplicidad
+* Productividad
+
+---
+
+# OBJETIVO PRINCIPAL
+
+Un encargado de restaurante debe poder:
+
+* Encontrar cualquier producto en segundos.
+* Crear productos rápidamente.
+* Modificar precios rápidamente.
+* Marcar agotados rápidamente.
+* Gestionar cientos de productos sin sentirse perdido.
+
+La pantalla debe sentirse:
+
+* Premium
+* Moderna
+* Profesional
+* Limpia
+* Muy rápida
+
+---
+
+# ARQUITECTURA RECOMENDADA
+
+Si encuentras una arquitectura superior, puedes cambiarla.
+
+Sin embargo, prioriza esta estructura:
+
+## Nivel 1
+
+Encabezado
+
+* MENÚ
+* Descripción corta
+* Botón principal "Nuevo producto"
+
+---
+
+## Nivel 2
+
+Barra de gestión
+
+* Búsqueda
+* Categorías
+* Estado
+* Total productos
+
+Debe permanecer visible y ser extremadamente rápida de usar.
+
+---
+
+## Nivel 3
+
+Contenido principal
+
+Organizar por categorías.
+
+Cada categoría debe actuar como una sección clara.
+
+Ejemplo:
+
+Hamburguesas
+Bebidas
+Pizzas
+Postres
+
+Mostrar cantidad de productos.
+
+---
+
+## Nivel 4
+
+Productos
+
+Cada producto debe mostrar sin abrir nada:
+
+* Nombre
+* Precio
+* Estado
+* Acciones
+
+No obligar al usuario a entrar al detalle para operaciones simples.
+
+---
+
+# EXPERIENCIA PREMIUM
+
+Aplicar principios de:
+
+* Fitts Law
+* Progressive Disclosure
+* Visual Hierarchy
+* Cognitive Load Reduction
+
+Eliminar:
+
+* Ruido visual
+* Bordes innecesarios
+* Contenedores redundantes
+* Espaciados inconsistentes
+
+---
+
+# FORMULARIOS
+
+Rediseñar completamente la experiencia de:
+
+* Crear producto
+* Editar producto
+
+Objetivo:
+
+Que un usuario sin experiencia pueda crear un producto en menos de 20 segundos.
+
+Agrupar campos de forma lógica.
+
+Reducir complejidad visual.
+
+Eliminar fricción.
+
+---
+
+# ESTADOS
+
+La disponibilidad debe ser visible instantáneamente.
+
+No depender únicamente del color.
+
+Usar badges claros.
+
+---
+
+# ACCIONES
+
+Las acciones frecuentes deben ser visibles.
+
+Prioridad:
+
+1. Editar
+2. Disponible / Agotado
+3. Eliminar
+
+Evitar esconder operaciones importantes.
+
+---
+
+# MÓVIL
+
+El diseño debe funcionar correctamente en:
+
+* Desktop
+* Tablet
+* Móvil
+
+Manteniendo jerarquía visual.
+
+---
+
+# CRITERIO DE ÉXITO
+
+Al finalizar:
+
+Si un dueño de restaurante abre la pantalla por primera vez debe entender en menos de 5 segundos:
+
+* Dónde están sus productos.
+* Cómo encontrarlos.
+* Cómo editarlos.
+* Cómo crear nuevos.
+
+Y debe percibir inmediatamente que está utilizando un producto SaaS premium comparable con herramientas comerciales modernas.
+
+Si durante la implementación encuentras una solución mejor que esta especificación, puedes adoptarla siempre que aumente claridad, velocidad y facilidad de uso.
+
+
+No quiero que toques nada más, esto es una mejora incremental y solo vas a mejorar ese ítem, no toques nada más, y tampoco des explicaciones de nada solo al final un resumen, y verifica que todo quede totalmente correcto, osea no toques nada más solo puedes mejorar eso que está aquí
+
+
+## Resp cursor ##
+
+Rediseño completo del módulo `MENÚ` aplicado y validado, sin tocar contratos ni lógica backend.
+
+- Reemplacé la vista por una experiencia tipo SaaS: encabezado profesional, barra de gestión fija, búsqueda instantánea, filtros por categoría/estado, métricas en vivo y navegación rápida por categorías.
+- Reorganicé el contenido por secciones de categoría con tarjetas de producto de alta escaneabilidad (nombre, precio, estado, ID y acciones visibles sin entrar al detalle).
+- Priorizé acciones operativas en línea: `Editar`, `Marcar disponible/agotado` y menú de eliminación, manteniendo permisos y endpoints existentes.
+- Rediseñé completamente formularios de crear/editar producto para carga rápida: agrupación lógica, jerarquía clara, toggle de disponibilidad y checklist operativo.
+- Apliqué estilo responsive premium para desktop/tablet/móvil con jerarquía visual consistente y reducción de ruido visual.
+- Implementé comportamiento JS para filtros combinados, conteos dinámicos, navegación por chips de categoría y actualización de visibilidad en tiempo real.
+- Verificación final ejecutada: `python manage.py check` en `dashboard` sin errores.
+
+
+
+
+
+########################################################
+
