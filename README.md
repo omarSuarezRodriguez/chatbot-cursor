@@ -7259,3 +7259,10 @@ No hice deploy. Comando manual de deploy cuando tú quieras: `git push`.
 ## Prompt ##
 
 tengo un dominio kiresoft.com en namecheap, dame un tutorial desatendido, osea que tu hagas todo y yo nada mas lo minimo me pides lo necesario para que el login quede en kiresoft.com/login y el panel en kiresoft.com/mipanel
+
+
+
+
+
+##############################################################
+## v0.44
