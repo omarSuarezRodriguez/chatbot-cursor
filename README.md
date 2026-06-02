@@ -1,4 +1,4 @@
-## v0.36
+## v0.36.
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -7095,7 +7095,7 @@ Reglas:
 - explicar cambios
 - dar pasos de prueba local (runall.py para ejecutar flask y django)
 - Dar comando manual de deploy (git push)
-IMPORTANTISIMO: NO DESPLIEGUES, EL CAMBIO SOLO DEBE SER LOCAL.]
+IMPORTANTISIMO: NO DESPLIEGUES, QUIERO QUE LOS CAMBIOS LOS HAGAS EN LOCAL PERO CON TODOS LOS VALORES NECESARIOS PARA SER DESPLEGADO EN PRODUCCION]
 
 
 ## respuesta cursor ##
@@ -7136,3 +7136,4 @@ No ejecuté ese comando.
 
 
 ##############################################################
+## v0.37

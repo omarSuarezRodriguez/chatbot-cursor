@@ -20,14 +20,14 @@
       "wa_id": "35699155990",
       "name": "Omar Suarez",
       "address": "",
-      "last_order_date": "2026-06-02T11:36:56.143218",
+      "last_order_date": "2026-06-02T12:30:15.356433",
       "last_order_items": [
         {
           "product_id": "1",
           "product": "Pizza Hawaiana",
-          "qty": 1,
+          "qty": 2,
           "unit_price": 125.0,
-          "subtotal": 125.0
+          "subtotal": 250.0
         },
         {
           "product_id": "6",
@@ -35,9 +35,16 @@
           "qty": 1,
           "unit_price": 8.0,
           "subtotal": 8.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
         }
       ],
-      "last_seen": "2026-06-02T11:36:56.143218"
+      "last_seen": "2026-06-02T12:30:15.356433"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
