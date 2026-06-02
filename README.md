@@ -1,4 +1,4 @@
-## v0.33.
+## v0.35
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -6997,6 +6997,84 @@ Ese valor (`5s`) es el mínimo seguro típico para polling sin castigar demasiad
 
 
 
+#################################################################
+## v0.35
 
-## Septimo prompt ##
+## prompt ##
 
+@BOT_RULES.md and @DASHBOARD_RULES.md
+
+TAREA: [Solo quiero que me digas por qué en producción apenas un cliente creó un pedido nuevo con el chatbot, me apareció, pero desapareció por un momento y volvió y apareció, y luego le di confirmar pedido y desapaareció pero no me llegó la alerta por el bot de confirmado, quiero que lo arregles en local y yo luego manualmente hago git push]
+
+100% OBLIGATORIO: [Haz este cambio SOLO en local (no despliegues). 
+Reglas:
+- Solo cambios en local
+- No asumir deploy (no hacer)
+- no asumir producción (no hacer)
+- explicar cambios
+- dar pasos de prueba local (runall.py para ejecutar flask y django)
+- Dar comando manual de deploy (git push)
+IMPORTANTISIMO: NO DESPLIEGUES, EL CAMBIO SOLO DEBE SER LOCAL.]
+
+
+## Respuesta cursor ##
+
+
+## Qué pasaba
+
+Había **tres fallos encadenados** en el dashboard (no en el bot de WhatsApp del cliente):
+
+1. **`_load_json` estaba roto** en `readers.py`: el código que lee `data/orders_cache.json` había quedado partido y la función casi nunca devolvía datos del archivo local.
+
+2. **`read_orders()` alternaba fuentes mal**: con credenciales de Google, si había *cualquier* pedido remoto, ignoraba la caché local del bot. Además llamaba a `get_pending_orders()`, que en el cliente real del bot **solo devuelve pedidos `pending`**, no confirmados ni entregados. Con el auto-refresh cada 5 s en `/pedidos/`, la lista **parpadeaba** (aparece / desaparece / vuelve).
+
+3. **Al confirmar desde el panel**, en despliegues tipo Docker del dashboard (sin paquete `app/`) se usaba un `AdminService` vacío que **no enviaba WhatsApp**. La confirmación en Sheets sí podía funcionar, pero el cliente no recibía el mensaje.
+
+## Cambios (solo local)
+
+| Archivo | Cambio |
+|---------|--------|
+| `dashboard/apps/operations/services/readers.py` | Arreglo de `_load_json`; lectura estable desde `data/orders_cache.json`; fusión con Sheets (todos los estados); deduplicación priorizando estado más avanzado (`confirmed` > `pending`). |
+| `dashboard/services/bot_bridge.py` | Notificación Twilio si no hay `AdminService` real; sincroniza `orders_cache.json` tras confirmar. |
+
+## Cómo probar en local
+
+1. En `.env.dashboard`:
+   ```env
+   DASHBOARD_ENABLE_WRITES=1
+   ```
+   Y en `.env` las variables Twilio (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`).
+
+2. Desde la raíz del proyecto:
+   ```bash
+   python runall.py
+   ```
+   (bot `:5000`, dashboard `:8000`).
+
+3. **Parpadeo**: simula un pedido por WhatsApp → abre `/pedidos/?status=pending` y déjalo ~15 s. El pedido debe **permanecer visible** sin desaparecer.
+
+4. **Confirmación**: pulsa “Confirmar pedido”. Debe:
+   - salir de *Pendientes* (normal),
+   - verse en la pestaña *Confirmados*,
+   - llegar al cliente: *“Tu pedido ORD-… fue confirmado por el restaurante…”*
+
+## Deploy manual (cuando quieras)
+
+```bash
+git add dashboard/apps/operations/services/readers.py dashboard/services/bot_bridge.py
+git commit -m "Fix dashboard order flicker and missing confirm WhatsApp notify"
+git push
+```
+
+**No he hecho deploy ni push** — solo cambios locales, como pediste.
+
+
+
+
+
+
+
+
+
+
+################################################################
