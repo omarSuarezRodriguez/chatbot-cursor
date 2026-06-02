@@ -259,7 +259,10 @@ class OrderDetailView(LoginRequiredMixin, View):
             entity_id=order_id,
             metadata={"ok": result.ok, "message": result.message},
         )
-        _flash_write_result(request, result)
+        if action == "confirm" and getattr(result, "already_confirmed", False):
+            messages.success(request, f"Pedido {order_id} ya estaba confirmado.")
+        else:
+            _flash_write_result(request, result)
         if request.POST.get("return_to_list") == "1":
             return redirect(f"{reverse('operations:orders')}?status=pending")
         return redirect("operations:order_detail", order_id=order_id)

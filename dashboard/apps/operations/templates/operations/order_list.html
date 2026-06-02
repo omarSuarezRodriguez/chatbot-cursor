@@ -174,7 +174,11 @@
 
       {% for order in orders %}
 
-      <tr data-row-href="{% url 'operations:order_detail' order.order_id %}">
+      <tr
+        data-row-href="{% url 'operations:order_detail' order.order_id %}"
+        data-order-id="{{ order.order_id }}"
+        data-order-status="{{ order.status|lower }}"
+      >
 
         <td><span class="order-id-link">{{ order.order_id }}</span></td>
 
@@ -199,6 +203,7 @@
             action="{% url 'operations:order_detail' order.order_id %}"
 
             data-confirm="¿Confirmar el pedido {{ order.order_id }}?"
+            data-async-confirm="1"
 
           >
 
@@ -208,7 +213,7 @@
 
             <input type="hidden" name="return_to_list" value="1">
 
-            <button type="submit" class="btn btn-primary btn-sm">Confirmar pedido</button>
+            <button type="submit" class="btn btn-primary btn-sm" data-submit-label="Confirmando...">Confirmar pedido</button>
 
           </form>
 

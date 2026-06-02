@@ -1,11 +1,30 @@
 ## Prompt maestro para implementar mejoras usando AI_RULES.md (vienen implicitas en bot_rules y dashboard_rules)
 
 
+## Prompt base ##
+Haz este cambio SOLO en local (no despliegues). 
+Al final dame: (1) qué cambiaste, (2) cómo probarlo local, (3) comando exacto para desplegar cuando yo diga “despliega”.
+
+## Publicar ##
+
+Despliega a producción lo último que ya dejamos listo en local, verifica en vivo y confirma resultado.
+
+
 ## Prompt para implementar mejoras incrementales al chatbot
 
 @BOT_RULES.md
 
 TAREA: []
+
+100% OBLIGATORIO: [Haz este cambio SOLO en local (no despliegues). 
+Reglas:
+- Solo cambios en local
+- No asumir deploy (no hacer)
+- no asumir producción (no hacer)
+- explicar cambios
+- dar pasos de prueba local (runall.py para ejecutar flask y django)
+- Dar comando manual de deploy (git push)
+IMPORTANTISIMO: NO DESPLIEGUES, EL CAMBIO SOLO DEBE SER LOCAL.]
 
 
 

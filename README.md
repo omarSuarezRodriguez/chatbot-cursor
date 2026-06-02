@@ -1,4 +1,4 @@
-## v0.33
+## v0.33.
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -6,6 +6,23 @@ en run.py está el bot, con runall.py se arranca todo para el bot (local solo ha
 
 
 Sistema conversacional productivo para restaurantes sobre **Flask + Twilio WhatsApp + Google Sheets**, con flujo editable en JSON.
+
+
+## Prompt base ##
+Haz este cambio SOLO en local (no despliegues). 
+Al final dame: (1) qué cambiaste, (2) cómo probarlo local, (3) comando exacto para desplegar cuando yo diga “despliega”.
+
+## Publicar ##
+
+Despliega a producción lo último que ya dejamos listo en local, verifica en vivo y confirma resultado.
+
+
+
+**Protocolo de trabajo (local/producción):**
+- Si quieres solo preparar cambios: **"haz cambios solo local, no despliegues"**.
+- Cuando ya esté validado en local: **"despliega a producción"**.
+- Si quieres despliegue inmediato: **"haz el cambio y despliega a producción"**.
+- Regla rápida: cambios de código van en ambos entornos al desplegar; variables (`.env`/Railway) pueden diferir entre local y producción.
 
 ## Arquitectura
 
@@ -166,6 +183,12 @@ python manage.py test apps.operations.tests.test_views -v 2 --settings=config.te
 > Sin credenciales, el bot funciona en modo demo con menú local y persistencia en memoria.
 
 ## Despliegue (Render / Railway)
+
+**Protocolo de trabajo (local/producción):**
+- Si quieres solo preparar cambios: **"haz cambios solo local, no despliegues"**.
+- Cuando ya esté validado en local: **"despliega a producción"**.
+- Si quieres despliegue inmediato: **"haz el cambio y despliega a producción"**.
+- Regla rápida: cambios de código van en ambos entornos al desplegar; variables (`.env`/Railway) pueden diferir entre local y producción.
 
 - Despliega desde GitHub con `python run.py` (Waitress en el puerto `PORT`).
 - En la nube, pega el JSON de la service account en `GOOGLE_SERVICE_ACCOUNT_JSON` (no subas el archivo al repo).
@@ -6694,4 +6717,286 @@ Rediseño completo del módulo `MENÚ` aplicado y validado, sin tocar contratos 
 
 
 ########################################################
+## v0.34
+@DASHBOARD_RULES.md
+
+TAREA: [1. Quiero que el menú de la izquierda quede así: Administración (como titulo), luego abajo Inicio, Pedidos, clientes, menú, ventas, reportes, configuración.
+(Y dentro de Ventas:
+
+Resumen
+Ingresos
+Productos más vendidos
+Clientes recurrentes
+Métricas)
+2. Que en la sección llamada Menú, se ve un titulo arriba en la barra menú, ese dejar, debajo hay otro menú y debajo dice Gestiona catálogo, precios y disponibilidad de sde una sola vista, eso quitar, y nuevo producto y nueva categoria van a estar dentro del recuadro de catalogo de productos, a la derecha hay dos recuadros, total y mostrados, solo habrá total.
+3. Donde dice Catálogo de productos, eso dejar, pero debajo encuentra, edita y cambia disponibilidad en segundos, eso lo quitas, En el bucador que no diga busca rpor nombre, id o categoría sino que solo diga Buscar
+4. "Catalogo de productos" está enuna card independiente, quiero que hagas lo mismo con el listado de productos, los pones todos dentro de otra card, así como la de arriba ese mismo diseño, y lo ordenas como cuadrícula, y puede tener un selector de categoría, hazlo como un diseño sencillo y facil de usar, minimalista lo maximo pero intuitivo y facil, tienes libertad de editar ese diseño
+
+]
+
+
+## Respuesta cursor ##
+
+Implementé los cambios del bloque de `README.md` en el dashboard, dejando la UI más minimalista y ordenada.
+
+### Qué cambié
+
+- **Menú lateral** en `dashboard/apps/operations/templates/operations/partials/sidebar.html`:
+  - Se mantiene **Administración**.
+  - Orden principal actualizado a: `Inicio`, `Pedidos`, `Clientes`, `Menú`, `Ventas`, `Reportes`, `Configuración`.
+  - `Ventas` ahora muestra subopciones:
+    - `Resumen`
+    - `Ingresos`
+    - `Productos más vendidos`
+    - `Clientes recurrentes`
+    - `Métricas`
+- **Estilos del submenú lateral** en `dashboard/static/css/layout.css`:
+  - Nuevas clases para sublinks (`app-nav-submenu`, `app-nav-sublink`) con estilo discreto y limpio.
+
+- **Pantalla de Menú** en `dashboard/apps/operations/templates/operations/menu.html`:
+  - Quité el bloque duplicado superior y el texto:
+    - “Gestiona catálogo, precios y disponibilidad…”
+    - “Encuentra, edita y cambia disponibilidad en segundos.”
+  - En “Catálogo de productos”:
+    - Dejé solo métrica **Total**.
+    - Quité **Mostrados**.
+    - Placeholder del buscador cambiado a **“Buscar”**.
+    - `Nuevo producto` y `Nueva categoría` ahora están dentro del recuadro de catálogo.
+  - Reorganicé el listado:
+    - Ahora está en una **card separada** llamada “Listado de productos”.
+    - Productos en **cuadrícula** (grid), diseño más simple/minimalista.
+    - Se mantiene selector de categoría.
+
+- **Lógica JS de filtros** en `dashboard/static/js/shell.js`:
+  - Simplificada para el nuevo layout (búsqueda + categoría).
+  - Eliminado manejo de “Mostrados”, chips de salto y filtro por estado.
+  - Añadido estado vacío cuando no hay resultados.
+
+- **Estilos del nuevo layout de Menú** en `dashboard/static/css/app.css`:
+  - Nuevas reglas para card de listado y grid de productos.
+  - Ajustes responsive para mantenerlo limpio en móvil.
+
+### Verificación
+
+- Ejecuté `python dashboard/manage.py check` y pasó sin errores.
+- También revisé linter de los archivos editados: **sin errores**.
+
+Si quieres, en el siguiente paso te dejo los sublinks de `Ventas` y `Reportes` conectados a vistas reales (ahora apuntan a anclas del home para mantener la navegación lista mientras se crean esas pantallas).
+
+
+## Segundo prompt ##
+
+@DASHBOARD_RULES.md
+
+TAREAS: [
+1.Arregla el sidebar, ya que debajo de ventas hay resumen, ingresos, productos, mas vendidos, clientes recurrentes, metricas, y eso no va ahí, arreglalo
+2. El listado de productos está bien, solamente quiero que ahí en esa misma card, me muestre un listado de productos pero en lista, sencilla, y que se pueda seleccionar la categoría al final de donde dice listado de productos.
+3. Cada producto se podrá seleccionar, un botón para disponible/no disponible, y tendrá aspecto minimalista pero funcional
+
+
+]
+
+
+## Respuesta cursor ##
+
+Implementé las tareas del bloque que marcaste en `README.md` sobre el dashboard:
+
+- Corregí el sidebar en `dashboard/apps/operations/templates/operations/partials/sidebar.html`: debajo de `Ventas` ya no aparecen `Resumen`, `Ingresos`, `Productos más vendidos`, `Clientes recurrentes` ni `Métricas`.
+- Ajusté la card de productos en `dashboard/apps/operations/templates/operations/menu.html`:
+  - Se mantiene “Listado de productos”.
+  - Moví el selector de categoría al final del encabezado de esa misma card.
+  - Dejé el listado en formato simple de lista (una fila por producto).
+- Añadí selección por producto y toggle de disponibilidad:
+  - Botón `Seleccionar` por cada producto (con estado visual seleccionado).
+  - Botón de estado `Disponible` / `No disponible` por producto según corresponda.
+- Actualicé estilos en `dashboard/static/css/app.css` para el look minimalista/funcional del listado.
+- Actualicé comportamiento en `dashboard/static/js/shell.js` para:
+  - filtrado por búsqueda + categoría sobre la lista simple,
+  - estado vacío cuando no hay coincidencias,
+  - selección de productos en frontend.
+
+También pasé validación de linter sobre los archivos editados y no se detectaron errores.
+
+Si quieres, como siguiente paso te lo dejo aún más “minimal” (por ejemplo ocultando `Editar/Eliminar` tras menú contextual o compactando más botones en móvil).
+
+
+
+## tercer prompt ##
+
+analiza solo parser.py y arregla lo siguiente
+
+le escribí dos pizzas hawaianas, dos cocacolas dos hamburguesas de carne y un agua
+
+y me agarró * 2 x Pizza Hawaiana — $250.00
+* 3 x Coca Cola — $24.00
+* 2 x Hamburguesa Doble Carne — $50.00
+
+Arreglalo e implementa mejoras para que cosas así no vuelvan a pasar, solo mejoras incrementales en parser.py y solo puedes tocar ese
+
+
+
+
+## resp cursor ##
+
+Listo. Analicé **solo** `parser.py` y lo dejé corregido para tu caso con mejoras incrementales.
+
+Cambios aplicados en `app/core/parser.py`:
+
+- Añadí ruido conversacional a `NOISE_WORDS`:
+  - `le`, `escribi`, `escribio`, `escribe`, `escribir`, `escrito`
+- Implementé un **guardrail de familias de producto** dentro de `FuzzyMatcher.score_pair()` para evitar confusiones tipo:
+  - `agua` -> `coca cola`
+  - `pizza` -> `hamburguesa`
+  - etc.
+- Ese guardrail se aplica **después** del scoring por aliases, para que un alias no vuelva a “levantar” un match cruzado incorrecto.
+- Agregué una prueba de regresión nueva en la suite interna (`case18`) con tu frase real.
+
+Resultado del caso reportado (menú sin agua disponible):
+- Entrada: `le escribi dos pizzas hawaianas, dos cocacolas dos hamburguesas de carne y un agua`
+- Salida ahora:
+  - `2 x Pizza Hawaiana`
+  - `2 x Coca Cola`
+  - `2 x Hamburguesa Doble Carne`
+  - `unknown: ['un agua']` (correcto: ya no lo transforma en Coca Cola)
+
+Verificación:
+- Ejecuté `python app/core/parser.py`
+- Suite interna: `PARSER VALIDATION: OK (22/22)`
+
+Si quieres, siguiente paso (también solo en `parser.py`) puede ser que cuando detecte `unknown` con cantidad explícita (`un agua`) lo devuelva normalizado como `agua` para que la aclaración al usuario sea más limpia.
+
+
+
+## Cuarto prompt ##
+
+@DASHBOARD_RULES.md
+
+TAREA: [
+
+Implementa actualización automática de pedidos en dashboard con enfoque mínimo e incremental, priorizando estabilidad e integridad.
+
+Objetivo:
+- Que nuevos pedidos aparezcan sin recargar (<=10s).
+- Cambios mínimos: ideal 1 archivo; máximo 2 archivos.
+- Sin dependencias nuevas.
+- Si algo falla, debe seguir funcionando como hoy (F5 manual).
+
+Regla de alcance estricto:
+1) Primero intenta resolver TODO en 1 archivo (preferentemente `dashboard/static/js/shell.js`).
+2) Si no alcanza, permite solo 2 archivos:
+   - `dashboard/static/js/shell.js`
+   - y un único archivo backend ya existente del módulo de operaciones (view o endpoint actual) para devolver JSON mínimo.
+3) No crear refactors ni mover estructuras.
+
+Implementación mínima requerida:
+- Frontend:
+  - Agrega polling con `fetch` cada 8-10s.
+  - Usa una marca de versión simple (`max_id` o `last_update`) para evitar rerender innecesario.
+  - Solo actualiza la sección de pedidos (no recargar página completa).
+  - Render idempotente: sin duplicados.
+  - Manejo fail-soft: si falla red/API, no romper UI, reintentar en siguiente ciclo.
+- Backend (solo si necesario):
+  - Exponer/ajustar endpoint GET JSON mínimo con:
+    - `version` (`max_id` o timestamp)
+    - `orders` (campos básicos visibles en dashboard)
+  - Con auth/permisos existentes (no abrir endpoint público).
+
+Restricciones:
+- No tocar flujo de creación de pedido.
+- No agregar librerías.
+- No cambiar estilos/CSS salvo que sea imprescindible para identificar contenedor.
+- Comentarios cortos solo en lógica crítica.
+
+Entrega obligatoria:
+1) Mostrar exactamente qué archivo(s) se editaron (1 o 2, no más).
+2) Explicar brevemente por qué cada cambio era necesario.
+3) Incluir pasos de prueba manual ultra cortos:
+   - crear pedido nuevo
+   - esperar polling
+   - validar aparición sin F5
+   - simular fallo de red y validar que UI no se rompe
+4) Si no se puede en 1 archivo, justificar en 1 frase por qué se usó 2.
+
+Criterio de aceptación:
+- Con los cambios aplicados, la dashboard refleja pedidos nuevos automáticamente en <=10s, sin duplicados y sin romper el comportamiento actual.
+
+
+]
+
+
+## Resp cursor ##
+
+Implementé la actualización automática de pedidos en **1 archivo** y con enfoque mínimo/incremental, sin tocar backend.
+
+### Archivo editado
+- `dashboard/static/js/shell.js`
+
+### Por qué era necesario este cambio
+- Se añadió polling cada 10s a la URL actual (`fetch(window.location.href)`), porque así reutiliza auth/permisos y evita crear endpoints nuevos.
+- Se incorporó una marca de versión simple basada en `max_id` + cantidad de filas (`maxId|rows.length`) para evitar rerender cuando no hay cambios.
+- La actualización afecta solo la sección de pedidos (tabla, paginación, estados vacíos), sin recargar toda la página.
+- Se reforzó el binding idempotente de interacciones (`row click`, `action menu`, `data-confirm`) para que, tras refrescar la sección, no haya duplicados ni listeners repetidos.
+- Manejo fail-soft: si falla red/API, el `.catch()` no rompe UI; simplemente reintenta en el siguiente ciclo.
+
+### Justificación de alcance
+- Se resolvió en 1 archivo; **no fue necesario usar 2 archivos** porque el polling consume la misma vista ya existente y parsea el HTML para refrescar solo el bloque de pedidos.
+
+### Prueba manual (ultra corta)
+1. Crear pedido nuevo (desde bot o “Nuevo pedido”).
+2. Esperar polling (<=10s).
+3. Validar que aparece en la lista sin `F5`.
+4. Simular fallo de red (DevTools offline) y validar que la UI sigue estable; reactivar red y confirmar que vuelve a actualizarse.
+
+
+
+
+## Quinto prompt ##
+
+@BOT_RULES.md
+
+TAREA: [
+1. Arregla en el bot, que hay veces que si tiene un pedido anterior ahí guardado y dice "Responde sí para repetir tu pedido anterior o no para elegir otra opción." y le doy no, me lleva al inicio pero cuando vuelvo a pedido me marca de nuevo lo mismo, arregla ese error de flujo
+
+]
+
+
+## Resp cursor ##
+
+Ajusté el flujo para que el prompt de “repetir pedido anterior” no se repita en bucle tras responder `no`.
+
+Cambios en `app/core/flow_engine.py`:
+
+- En `_action_welcome_customer`, ahora también valida la bandera `repeat_order_prompted`; si ya se mostró esa pregunta en la sesión, no la vuelve a mostrar.
+- Cuando sí se muestra la pregunta por primera vez, se guardan:
+  - `awaiting_repeat_order=True`
+  - `repeat_order_prompted=True`
+- En `_action_save_order`, al cerrar un pedido, se reinicia `repeat_order_prompted=False` (junto con los demás flags), para que en una futura sesión/proceso pueda volver a ofrecer repetir si aplica.
+
+Con esto, cuando el usuario responde `no` y luego vuelve a `pedido`, ya no debería reaparecer esa misma pregunta inmediatamente.
+
+
+
+## Sexto prompt ##
+
+Solo te pregunto no hagas nada: hay forma de que cuando se crea un nuevo pedido, en la dashboard no tarde más de 5 segundos? porque está tardando menos de 10 pero como 9, solo pregunto dime y si es así dime donde puedo modificar
+
+modifica solamente eso, deja el tiempo mínimo posible seguro
+
+
+
+## Resp cursor ##
+
+Listo, quedó modificado **solo eso**.
+
+- Archivo: `dashboard/static/js/shell.js`
+- Cambio: intervalo de actualización de pedidos de `10000` ms a `5000` ms.
+- También ajusté el comentario para que refleje 5s.
+
+Ese valor (`5s`) es el mínimo seguro típico para polling sin castigar demasiado al servidor. Si luego quieres bajar más (por ejemplo 3s), te recomiendo hacerlo solo si confirmas que backend y red aguantan bien.
+
+
+
+
+
+## Septimo prompt ##
 

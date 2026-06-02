@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -18,11 +19,24 @@ RESERVATIONS_PATH = DATA_DIR / "reservations_cache.json"
 
 ORDER_STATUSES = ("pending", "confirmed", "delivered", "cancelled")
 ORDER_SORT_FIELDS = ("timestamp", "total", "customer_name", "order_id", "status")
+_STATUS_PRIORITY = {
+    "pending": 0,
+    "confirmed": 1,
+    "delivered": 2,
+    "cancelled": 3,
+}
 
 
 def _load_json(path: Path) -> Any:
     if not path.exists():
         return None
+
+
+def _prefer_remote() -> bool:
+    return bool(
+        os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
+        and os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+    )
     try:
         with path.open("r", encoding="utf-8") as handle:
             return json.load(handle)
@@ -38,16 +52,141 @@ def _ensure_app_importable() -> None:
 
 def _sheets_client():
     _ensure_app_importable()
-    from app.config import GOOGLE_SHEETS_CREDENTIALS_PATH, GOOGLE_SPREADSHEET_ID
-    from app.integrations.google_sheets import get_google_sheets_client
+    try:
+        from app.config import GOOGLE_SHEETS_CREDENTIALS_PATH, GOOGLE_SPREADSHEET_ID
+        from app.integrations.google_sheets import get_google_sheets_client
 
-    return get_google_sheets_client(
-        GOOGLE_SHEETS_CREDENTIALS_PATH,
-        GOOGLE_SPREADSHEET_ID,
-    )
+        return get_google_sheets_client(
+            GOOGLE_SHEETS_CREDENTIALS_PATH,
+            GOOGLE_SPREADSHEET_ID,
+        )
+    except Exception:
+        # Dashboard can run as standalone service (without /app bot package).
+        class _FallbackSheetsClient:
+            def _records(self, tab_name: str) -> List[Dict[str, Any]]:
+                spreadsheet_id = os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
+                json_blob = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+                if not spreadsheet_id or not json_blob:
+                    return []
+                try:
+                    import gspread
+                    from google.oauth2.service_account import Credentials
+
+                    scopes = [
+                        "https://www.googleapis.com/auth/spreadsheets.readonly",
+                        "https://www.googleapis.com/auth/drive.readonly",
+                    ]
+                    creds = Credentials.from_service_account_info(
+                        json.loads(json_blob),
+                        scopes=scopes,
+                    )
+                    client = gspread.authorize(creds)
+                    ws = client.open_by_key(spreadsheet_id).worksheet(tab_name)
+                    return ws.get_all_records()
+                except Exception:
+                    return []
+
+            def warm_up_cache(self) -> None:
+                return
+
+            def get_menu(self) -> List[Dict[str, Any]]:
+                rows = self._records("MENU")
+                menu: List[Dict[str, Any]] = []
+                for row in rows:
+                    if not row.get("nombre"):
+                        continue
+                    try:
+                        price = float(row.get("precio", 0) or 0)
+                    except (TypeError, ValueError):
+                        price = 0.0
+                    disponible_raw = str(row.get("disponible", "true")).strip().lower()
+                    disponible = disponible_raw in {
+                        "1",
+                        "true",
+                        "si",
+                        "sí",
+                        "yes",
+                        "y",
+                    }
+                    menu.append(
+                        {
+                            "id": str(row.get("id", "")).strip(),
+                            "nombre": str(row.get("nombre", "")).strip(),
+                            "precio": price,
+                            "categoria": str(row.get("categoria", "")).strip(),
+                            "disponible": disponible,
+                        }
+                    )
+                return menu
+
+            def get_pending_orders(self) -> List[Dict[str, Any]]:
+                rows = self._records("ORDERS")
+                orders: List[Dict[str, Any]] = []
+                for row in rows:
+                    order_id = str(row.get("order_id", "")).strip().upper()
+                    if not order_id:
+                        continue
+                    try:
+                        items = json.loads(row.get("items") or "[]")
+                    except Exception:
+                        items = []
+                    try:
+                        total = float(row.get("total", 0) or 0)
+                    except (TypeError, ValueError):
+                        total = 0.0
+                    orders.append(
+                        {
+                            "order_id": order_id,
+                            "wa_id": str(row.get("wa_id", "")),
+                            "items": items,
+                            "total": total,
+                            "status": str(row.get("status", "pending")).lower(),
+                            "timestamp": str(row.get("timestamp", "")),
+                            "customer_name": str(row.get("customer_name", "")),
+                            "address": str(row.get("address", "")),
+                            "delivery_type": str(row.get("delivery_type", "")),
+                        }
+                    )
+                return orders
+
+            def get_order(self, _order_id: str) -> Optional[Dict[str, Any]]:
+                needle = str(_order_id).strip().upper()
+                for order in self.get_pending_orders():
+                    if str(order.get("order_id", "")).upper() == needle:
+                        return order
+                return None
+
+            def get_user(self, _wa_id: str) -> Dict[str, Any]:
+                wa_id = str(_wa_id).strip()
+                rows = self._records("USERS")
+                for row in rows:
+                    if str(row.get("wa_id", "")).strip() == wa_id:
+                        return {
+                            "wa_id": wa_id,
+                            "name": str(row.get("name", "")).strip(),
+                            "address": str(row.get("address", "")).strip(),
+                            "last_order_date": str(row.get("last_order_date", "")).strip(),
+                            "last_order_items": [],
+                            "last_seen": str(row.get("last_seen", "")).strip(),
+                        }
+                return {}
+
+            def cache_status(self) -> Dict[str, Any]:
+                return {
+                    "ready": True,
+                    "sheets_connected": True,
+                    "menu_items": len(self.get_menu()),
+                    "orders": len(self.get_pending_orders()),
+                }
+
+        return _FallbackSheetsClient()
 
 
 def read_menu() -> List[Dict[str, Any]]:
+    if _prefer_remote():
+        menu = _sheets_client().get_menu()
+        if menu:
+            return menu
     raw = _load_json(MENU_PATH)
     if isinstance(raw, list) and raw:
         return raw
@@ -55,6 +194,10 @@ def read_menu() -> List[Dict[str, Any]]:
 
 
 def read_orders() -> List[Dict[str, Any]]:
+    if _prefer_remote():
+        remote_orders = _sheets_client().get_pending_orders()
+        if remote_orders:
+            return _sort_orders(remote_orders)
     raw = _load_json(ORDERS_PATH)
     orders: List[Dict[str, Any]] = []
     if isinstance(raw, dict):
@@ -75,6 +218,10 @@ def read_orders() -> List[Dict[str, Any]]:
 
 def read_order(order_id: str) -> Optional[Dict[str, Any]]:
     order_id = order_id.upper()
+    if _prefer_remote():
+        remote = _sheets_client().get_order(order_id)
+        if remote:
+            return remote
     raw = _load_json(ORDERS_PATH)
     if isinstance(raw, dict):
         bucket = raw.get("orders", {})
@@ -111,6 +258,27 @@ def menu_categories() -> List[str]:
 
 
 def read_users() -> List[Dict[str, Any]]:
+    if _prefer_remote():
+        client = _sheets_client()
+        rows = client._records("USERS") if hasattr(client, "_records") else []
+        if rows:
+            parsed = []
+            for row in rows:
+                wa_id = str(row.get("wa_id", "")).strip()
+                if not wa_id:
+                    continue
+                parsed.append(
+                    {
+                        "wa_id": wa_id,
+                        "name": str(row.get("name", "")).strip(),
+                        "address": str(row.get("address", "")).strip(),
+                        "last_order_date": str(row.get("last_order_date", "")).strip(),
+                        "last_order_items": [],
+                        "last_seen": str(row.get("last_seen", "")).strip(),
+                    }
+                )
+            if parsed:
+                return _sort_users(parsed)
     raw = _load_json(USERS_PATH)
     users: List[Dict[str, Any]] = []
     if isinstance(raw, dict):
@@ -130,6 +298,27 @@ def read_users() -> List[Dict[str, Any]]:
 
 
 def read_reservations() -> List[Dict[str, Any]]:
+    if _prefer_remote():
+        client = _sheets_client()
+        rows = client._records("RESERVATIONS") if hasattr(client, "_records") else []
+        if rows:
+            parsed = []
+            for row in rows:
+                rid = str(row.get("reservation_id", "")).strip()
+                if not rid:
+                    continue
+                parsed.append(
+                    {
+                        "reservation_id": rid,
+                        "wa_id": str(row.get("wa_id", "")).strip(),
+                        "personas": int(row.get("personas", 0) or 0),
+                        "fecha": str(row.get("fecha", "")).strip(),
+                        "hora": str(row.get("hora", "")).strip(),
+                        "status": str(row.get("status", "confirmed")).strip(),
+                    }
+                )
+            if parsed:
+                return _sort_reservations(parsed)
     raw = _load_json(RESERVATIONS_PATH)
     reservations: List[Dict[str, Any]] = []
     if isinstance(raw, dict):
@@ -166,8 +355,29 @@ def menu_by_category() -> Dict[str, List[Dict[str, Any]]]:
 
 
 def _sort_orders(orders: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    deduped: Dict[str, Dict[str, Any]] = {}
+    for order in orders:
+        oid = str(order.get("order_id", "")).strip().upper()
+        if not oid:
+            continue
+        candidate = dict(order)
+        candidate["order_id"] = oid
+        prev = deduped.get(oid)
+        if prev is None:
+            deduped[oid] = candidate
+            continue
+        prev_ts = str(prev.get("timestamp", ""))
+        cand_ts = str(candidate.get("timestamp", ""))
+        prev_status = str(prev.get("status", "")).lower()
+        cand_status = str(candidate.get("status", "")).lower()
+        prev_rank = _STATUS_PRIORITY.get(prev_status, -1)
+        cand_rank = _STATUS_PRIORITY.get(cand_status, -1)
+        # Keep the latest timestamp; if ties/unknown, prefer more advanced status.
+        if cand_ts > prev_ts or (cand_ts == prev_ts and cand_rank >= prev_rank):
+            deduped[oid] = candidate
+
     return sorted(
-        orders,
+        deduped.values(),
         key=lambda o: str(o.get("timestamp", "")),
         reverse=True,
     )

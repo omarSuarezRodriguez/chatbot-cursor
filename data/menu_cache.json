@@ -39,7 +39,7 @@
     "nombre": "Coca Cola",
     "precio": 8.0,
     "categoria": "Bebidas",
-    "disponible": false
+    "disponible": true
   },
   {
     "id": "",

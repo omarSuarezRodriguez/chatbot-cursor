@@ -49,6 +49,7 @@ _QTY_WORD_ALTS = "|".join(
 
 NOISE_WORDS = frozenset(
     {
+        "le",
         "quiero",
         "quero",
         "dame",
@@ -102,6 +103,11 @@ NOISE_WORDS = frozenset(
         "listo",
         "ya",
         "ahora",
+        "escribi",
+        "escribio",
+        "escribe",
+        "escribir",
+        "escrito",
         "por",
         "para",
         "mi",
@@ -534,6 +540,22 @@ class FuzzyMatcher:
                 base = max(base, 0.97)
             elif hits == 0:
                 base = min(base, 0.62)
+
+        # Guardrail: avoid cross-family beverage/food swaps when there is no lexical anchor.
+        # Applied after alias scoring so aliases cannot undo this constraint.
+        query_norm = {_singularize_token(_strip_accents(token)) for token in query_tokens}
+        item_norm = {_singularize_token(_strip_accents(token)) for token in item_tokens}
+        anchor_families = (
+            {"agua"},
+            {"coca", "cola"},
+            {"hamburguesa"},
+            {"pizza"},
+            {"ensalada"},
+        )
+        for family in anchor_families:
+            if query_norm & family and not (item_norm & family):
+                base = min(base, 0.45)
+                break
 
         return min(base, 1.0)
 
@@ -1470,6 +1492,30 @@ def run_validation_suite(verbose: bool = True) -> bool:
         and _qty_for(case17["items"], "hawaiana") == 777
         and _qty_for(case17["items"], "jamon") == 8,
         str(case17),
+    )
+
+    case18 = OrderIntelligenceEngine(
+        [
+            {"id": "1", "nombre": "Pizza Hawaiana", "precio": 125.0, "categoria": "Pizzas", "disponible": True},
+            {"id": "2", "nombre": "Coca Cola", "precio": 8.0, "categoria": "Bebidas", "disponible": True},
+            {
+                "id": "3",
+                "nombre": "Hamburguesa Doble Carne",
+                "precio": 25.0,
+                "categoria": "Hamburguesas",
+                "disponible": True,
+            },
+        ]
+    ).parse(
+        "le escribi dos pizzas hawaianas, dos cocacolas dos hamburguesas de carne y un agua"
+    )
+    check(
+        "regresion agua no debe mutar a coca",
+        _qty_for(case18["items"], "hawaiana") == 2
+        and _qty_for(case18["items"], "coca") == 2
+        and _qty_for(case18["items"], "doble carne") == 2
+        and any("agua" in _strip_accents(u.lower()) for u in case18.get("unknown", [])),
+        str(case18),
     )
 
     if verbose:

@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+import uuid
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
 from django.conf import settings
@@ -36,22 +39,255 @@ def _disabled() -> WriteResult:
 
 
 def _bot_services():
-    from app.config import GOOGLE_SHEETS_CREDENTIALS_PATH, GOOGLE_SPREADSHEET_ID
-    from app.integrations.google_sheets import get_google_sheets_client
-    from app.services.admin_service import AdminService
-    from app.services.menu_service import MenuService
-    from app.services.order_service import OrderService
-    from app.services.user_service import UserService
+    try:
+        from app.config import GOOGLE_SHEETS_CREDENTIALS_PATH, GOOGLE_SPREADSHEET_ID
+        from app.integrations.google_sheets import get_google_sheets_client
+        from app.services.admin_service import AdminService
+        from app.services.menu_service import MenuService
+        from app.services.order_service import OrderService
+        from app.services.user_service import UserService
 
-    sheets = get_google_sheets_client(
-        GOOGLE_SHEETS_CREDENTIALS_PATH,
-        GOOGLE_SPREADSHEET_ID,
-    )
-    menu_service = MenuService(sheets)
-    order_service = OrderService(sheets, menu_service)
-    admin_service = AdminService(sheets, order_service)
-    user_service = UserService(sheets)
-    return sheets, menu_service, order_service, admin_service, user_service
+        sheets = get_google_sheets_client(
+            GOOGLE_SHEETS_CREDENTIALS_PATH,
+            GOOGLE_SPREADSHEET_ID,
+        )
+        menu_service = MenuService(sheets)
+        order_service = OrderService(sheets, menu_service)
+        admin_service = AdminService(sheets, order_service)
+        user_service = UserService(sheets)
+        return sheets, menu_service, order_service, admin_service, user_service
+    except Exception:
+        import gspread
+        from google.oauth2.service_account import Credentials
+
+        class _StandaloneSheets:
+            def __init__(self) -> None:
+                spreadsheet_id = os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
+                json_blob = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+                if not spreadsheet_id or not json_blob:
+                    raise RuntimeError("Missing Google Sheets credentials in dashboard service")
+                scopes = [
+                    "https://www.googleapis.com/auth/spreadsheets",
+                    "https://www.googleapis.com/auth/drive",
+                ]
+                creds = Credentials.from_service_account_info(
+                    json.loads(json_blob),
+                    scopes=scopes,
+                )
+                client = gspread.authorize(creds)
+                self.spreadsheet = client.open_by_key(spreadsheet_id)
+
+            def ws(self, name: str):
+                return self.spreadsheet.worksheet(name)
+
+            def get_menu(self) -> List[Dict[str, Any]]:
+                menu = []
+                for row in self.ws("MENU").get_all_records():
+                    if not row.get("nombre"):
+                        continue
+                    try:
+                        precio = float(row.get("precio", 0) or 0)
+                    except (TypeError, ValueError):
+                        precio = 0.0
+                    disp = str(row.get("disponible", "true")).strip().lower()
+                    menu.append(
+                        {
+                            "id": str(row.get("id", "")).strip(),
+                            "nombre": str(row.get("nombre", "")).strip(),
+                            "precio": precio,
+                            "categoria": str(row.get("categoria", "")).strip(),
+                            "disponible": disp in {"1", "true", "si", "sí", "yes", "y"},
+                        }
+                    )
+                return menu
+
+        class _StandaloneMenuService:
+            def __init__(self, sheets: _StandaloneSheets) -> None:
+                self.sheets = sheets
+
+            def set_availability(self, item_id: str, disponible: bool) -> bool:
+                ws = self.sheets.ws("MENU")
+                cell = ws.find(item_id, in_column=1)
+                if not cell:
+                    return False
+                ws.update_cell(cell.row, 5, "TRUE" if disponible else "FALSE")
+                return True
+
+            def save_item(
+                self, item_id: str, nombre: str, precio: float, categoria: str, disponible: bool
+            ) -> bool:
+                ws = self.sheets.ws("MENU")
+                try:
+                    cell = ws.find(item_id, in_column=1)
+                except Exception:
+                    cell = None
+                row = [item_id, nombre, precio, categoria, "TRUE" if disponible else "FALSE"]
+                if cell:
+                    ws.update(f"A{cell.row}:E{cell.row}", [row])
+                else:
+                    ws.append_row(row)
+                return True
+
+            def remove_item(self, item_id: str, hard: bool = False) -> bool:
+                ws = self.sheets.ws("MENU")
+                cell = ws.find(item_id, in_column=1)
+                if not cell:
+                    return False
+                if hard:
+                    ws.delete_rows(cell.row)
+                else:
+                    ws.update_cell(cell.row, 5, "FALSE")
+                return True
+
+        class _StandaloneOrderService:
+            def __init__(self, sheets: _StandaloneSheets, menu_service: _StandaloneMenuService) -> None:
+                self.sheets = sheets
+                self.menu_service = menu_service
+
+            def _orders_ws(self):
+                return self.sheets.ws("ORDERS")
+
+            def get_order(self, order_id: str) -> Optional[Dict[str, Any]]:
+                ws = self._orders_ws()
+                for row in ws.get_all_records():
+                    if str(row.get("order_id", "")).strip().upper() == order_id.upper():
+                        try:
+                            items = json.loads(row.get("items") or "[]")
+                        except Exception:
+                            items = []
+                        return {
+                            "order_id": str(row.get("order_id", "")).strip().upper(),
+                            "wa_id": str(row.get("wa_id", "")),
+                            "items": items,
+                            "total": float(row.get("total", 0) or 0),
+                            "status": str(row.get("status", "pending")).lower(),
+                            "timestamp": str(row.get("timestamp", "")),
+                            "customer_name": str(row.get("customer_name", "")),
+                            "address": str(row.get("address", "")),
+                            "delivery_type": str(row.get("delivery_type", "")),
+                        }
+                return None
+
+            def _find_order_rows(self, order_id: str) -> List[int]:
+                ws = self._orders_ws()
+                needle = order_id.upper().strip()
+                rows = ws.col_values(1)
+                hits: List[int] = []
+                for idx, value in enumerate(rows, start=1):
+                    if idx == 1:
+                        continue
+                    if str(value).strip().upper() == needle:
+                        hits.append(idx)
+                return hits
+
+            def confirm_order(self, order_id: str) -> bool:
+                return self.update_order_status(order_id, "confirmed")
+
+            def update_order_status(self, order_id: str, status: str) -> bool:
+                rows = self._find_order_rows(order_id)
+                if not rows:
+                    return False
+                ws = self._orders_ws()
+                for row in rows:
+                    ws.update_cell(row, 5, status)
+                return True
+
+            def update_order(self, order_id: str, items: Optional[List[Dict[str, Any]]] = None) -> bool:
+                rows = self._find_order_rows(order_id)
+                if not rows:
+                    return False
+                if items is not None:
+                    total = self.cart_total(items)
+                    ws = self._orders_ws()
+                    payload = [json.dumps(items, ensure_ascii=False), total]
+                    for row in rows:
+                        ws.update(f"C{row}:D{row}", [payload])
+                return True
+
+            def cart_total(self, items: List[Dict[str, Any]]) -> float:
+                total = 0.0
+                for item in items:
+                    try:
+                        total += float(item.get("subtotal") or 0)
+                    except (TypeError, ValueError):
+                        pass
+                return round(total, 2)
+
+            def save_order(
+                self,
+                wa_id: str,
+                items: List[Dict[str, Any]],
+                customer_name: str = "",
+                address: str = "",
+                delivery_type: str = "",
+            ) -> Tuple[str, float]:
+                order_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
+                total = self.cart_total(items)
+                self._orders_ws().append_row(
+                    [
+                        order_id,
+                        wa_id,
+                        json.dumps(items, ensure_ascii=False),
+                        total,
+                        "pending",
+                        datetime.utcnow().isoformat(),
+                        customer_name,
+                        address,
+                        delivery_type,
+                    ]
+                )
+                return order_id, total
+
+        class _StandaloneAdminService:
+            def notify_customer_order_confirmed(self, _order_id: str, _wa_id: str) -> None:
+                return
+
+        class _StandaloneUserService:
+            def __init__(self, sheets: _StandaloneSheets) -> None:
+                self.sheets = sheets
+
+            def _users_ws(self):
+                return self.sheets.ws("USERS")
+
+            def get_profile(self, wa_id: str) -> Dict[str, Any]:
+                ws = self._users_ws()
+                for row in ws.get_all_records():
+                    if str(row.get("wa_id", "")).strip() == wa_id:
+                        return {
+                            "wa_id": wa_id,
+                            "name": str(row.get("name", "")),
+                            "notes": str(row.get("notes", "")),
+                        }
+                return {}
+
+            def save_customer(self, wa_id: str, name: str = "", notes: str = "") -> None:
+                ws = self._users_ws()
+                try:
+                    cell = ws.find(wa_id, in_column=1)
+                except Exception:
+                    cell = None
+                if cell:
+                    ws.update(f"B{cell.row}:C{cell.row}", [[name, notes]])
+                else:
+                    ws.append_row([wa_id, name, "", "", "", datetime.utcnow().isoformat()])
+
+            def delete_customer(self, wa_id: str) -> bool:
+                ws = self._users_ws()
+                try:
+                    cell = ws.find(wa_id, in_column=1)
+                except Exception:
+                    cell = None
+                if not cell:
+                    return False
+                ws.delete_rows(cell.row)
+                return True
+
+        sheets = _StandaloneSheets()
+        menu_service = _StandaloneMenuService(sheets)
+        order_service = _StandaloneOrderService(sheets, menu_service)
+        admin_service = _StandaloneAdminService()
+        user_service = _StandaloneUserService(sheets)
+        return sheets, menu_service, order_service, admin_service, user_service
 
 
 def _validate_wa_id(wa_id: str) -> Optional[str]:

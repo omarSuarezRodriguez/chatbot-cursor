@@ -36,7 +36,7 @@
       <form method="post" action="" data-confirm="¿Confirmar el pedido {{ order.order_id }}?">
         {% csrf_token %}
         <input type="hidden" name="action" value="confirm">
-        <button type="submit" class="btn btn-primary" style="width:100%;">
+        <button type="submit" class="btn btn-primary" style="width:100%;" data-submit-label="Confirmando...">
           {% include "operations/partials/icon.html" with name="check-circle" class="icon--sm" %}
           Confirmar pedido
         </button>

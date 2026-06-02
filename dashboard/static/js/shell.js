@@ -53,18 +53,24 @@
     });
   }
 
-  document.querySelectorAll("tr[data-row-href]").forEach(function (row) {
-    row.classList.add("is-clickable");
-    row.addEventListener("click", function (e) {
-      if (e.target.closest("a, button, form, .action-menu, input, select, textarea, label")) {
+  function bindClickableRows(root) {
+    (root || document).querySelectorAll("tr[data-row-href]").forEach(function (row) {
+      if (row.dataset.rowNavBound === "1") {
         return;
       }
-      var href = row.getAttribute("data-row-href");
-      if (href) {
-        window.location.href = href;
-      }
+      row.dataset.rowNavBound = "1";
+      row.classList.add("is-clickable");
+      row.addEventListener("click", function (e) {
+        if (e.target.closest("a, button, form, .action-menu, input, select, textarea, label")) {
+          return;
+        }
+        var href = row.getAttribute("data-row-href");
+        if (href) {
+          window.location.href = href;
+        }
+      });
     });
-  });
+  }
 
   function closeAllActionMenus() {
     document.querySelectorAll(".action-menu.is-open").forEach(function (menu) {
@@ -76,27 +82,33 @@
     });
   }
 
-  document.querySelectorAll("[data-action-menu]").forEach(function (menu) {
-    var trigger = menu.querySelector(".action-menu__trigger");
-    var panel = menu.querySelector(".action-menu__panel");
-    if (!trigger || !panel) {
-      return;
-    }
-
-    trigger.addEventListener("click", function (e) {
-      e.stopPropagation();
-      var isOpen = menu.classList.contains("is-open");
-      closeAllActionMenus();
-      if (!isOpen) {
-        menu.classList.add("is-open");
-        trigger.setAttribute("aria-expanded", "true");
+  function bindActionMenus(root) {
+    (root || document).querySelectorAll("[data-action-menu]").forEach(function (menu) {
+      if (menu.dataset.actionMenuBound === "1") {
+        return;
       }
-    });
+      menu.dataset.actionMenuBound = "1";
+      var trigger = menu.querySelector(".action-menu__trigger");
+      var panel = menu.querySelector(".action-menu__panel");
+      if (!trigger || !panel) {
+        return;
+      }
 
-    panel.addEventListener("click", function (e) {
-      e.stopPropagation();
+      trigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var isOpen = menu.classList.contains("is-open");
+        closeAllActionMenus();
+        if (!isOpen) {
+          menu.classList.add("is-open");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+      });
+
+      panel.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
     });
-  });
+  }
 
   document.addEventListener("click", closeAllActionMenus);
 
@@ -162,36 +174,216 @@
   });
 
   function bindConfirm(form, message) {
+    if (form.dataset.confirmBound === "1") {
+      return;
+    }
+    form.dataset.confirmBound = "1";
     form.addEventListener("submit", function (e) {
+      if (form.dataset.submitting === "1") {
+        e.preventDefault();
+        return;
+      }
       if (form.dataset.confirmed === "1") {
         form.dataset.confirmed = "";
+        form.dataset.submitting = "1";
         return;
       }
       e.preventDefault();
       openConfirmDialog(message, function () {
+        if (form.dataset.submitting === "1") {
+          return;
+        }
         form.dataset.confirmed = "1";
+        form.dataset.submitting = "1";
+        var submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+        if (submitBtn) {
+          if (!submitBtn.dataset.originalLabel) {
+            submitBtn.dataset.originalLabel = submitBtn.textContent;
+          }
+          submitBtn.disabled = true;
+          submitBtn.textContent = submitBtn.getAttribute("data-submit-label") || "Procesando...";
+        }
+        if (form.dataset.asyncConfirm === "1") {
+          submitAsyncConfirm(form);
+          return;
+        }
         form.submit();
       });
     });
   }
 
-  document.querySelectorAll("form[data-confirm]").forEach(function (form) {
-    bindConfirm(form, form.getAttribute("data-confirm") || "¿Continuar?");
-  });
+  function removeRowAndMaybeEmpty(form) {
+    var row = form.closest("tr[data-row-href]");
+    if (row) {
+      row.remove();
+    }
+    var remaining = document.querySelectorAll("tr[data-row-href]").length;
+    if (remaining === 0) {
+      window.location.reload();
+    }
+  }
+
+  function submitAsyncConfirm(form) {
+    fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      credentials: "same-origin",
+      cache: "no-store",
+    })
+      .then(function (res) {
+        if (!res.ok) {
+          throw new Error("confirm_failed");
+        }
+        removeRowAndMaybeEmpty(form);
+      })
+      .catch(function () {
+        // Fallback to normal navigation if async request fails.
+        form.dataset.asyncConfirm = "";
+        form.submit();
+      });
+  }
+
+  function bindConfirmForms(root) {
+    (root || document).querySelectorAll("form[data-confirm]").forEach(function (form) {
+      bindConfirm(form, form.getAttribute("data-confirm") || "¿Continuar?");
+    });
+  }
+
+  function bindInteractiveUI(root) {
+    bindClickableRows(root);
+    bindActionMenus(root);
+    bindConfirmForms(root);
+  }
+
+  bindInteractiveUI(document);
+
+  // Orders list auto-refresh (fail-soft): poll current URL every 5s and only patch orders section.
+  (function initOrdersPolling() {
+    var tabs = document.querySelector(".status-tabs");
+    if (!tabs) {
+      return;
+    }
+
+    function orderKeyFromRow(row) {
+      var id = row.getAttribute("data-order-id");
+      var status = (row.getAttribute("data-order-status") || "").toLowerCase();
+      if (!id) {
+        var href = row.getAttribute("data-row-href") || "";
+        var parts = href.split("/").filter(Boolean);
+        id = parts.length ? parts[parts.length - 1] : "";
+      }
+      return id + ":" + status;
+    }
+
+    function getVersionFromDocument(doc) {
+      var keys = [];
+      var rows = doc.querySelectorAll("tr[data-row-href]");
+      rows.forEach(function (row) {
+        var key = orderKeyFromRow(row);
+        if (key) keys.push(key);
+      });
+      keys.sort();
+      return keys.join("|") + "|" + rows.length;
+    }
+
+    function replaceOrRemove(currentEl, nextEl) {
+      if (currentEl && nextEl) {
+        currentEl.replaceWith(nextEl);
+        return;
+      }
+      if (currentEl && !nextEl) {
+        currentEl.remove();
+      }
+    }
+
+    function updateOrdersSection(nextDoc) {
+      var nextTableWrap = nextDoc.querySelector(".table-wrap.card");
+      var nextPagination = nextDoc.querySelector("nav.pagination");
+      var nextWaiting = nextDoc.querySelector(".empty-state--orders-waiting");
+      var nextEmpty = nextDoc.querySelector(
+        ".empty-state.card:not(.empty-state--orders-waiting)"
+      );
+      var currentTableWrap = document.querySelector(".table-wrap.card");
+      var currentPagination = document.querySelector("nav.pagination");
+      var currentWaiting = document.querySelector(".empty-state--orders-waiting");
+      var currentEmpty = document.querySelector(
+        ".empty-state.card:not(.empty-state--orders-waiting)"
+      );
+      var anchor = document.querySelector(".status-tabs.card");
+      var toolbar = document.querySelector(".data-toolbar.card");
+      var insertAfter = toolbar || anchor;
+
+      replaceOrRemove(currentTableWrap, nextTableWrap);
+      replaceOrRemove(currentPagination, nextPagination);
+      replaceOrRemove(currentWaiting, nextWaiting);
+      replaceOrRemove(currentEmpty, nextEmpty);
+
+      if (insertAfter) {
+        if (!document.querySelector(".table-wrap.card") && nextTableWrap) {
+          insertAfter.insertAdjacentElement("afterend", nextTableWrap);
+        }
+        if (!document.querySelector("nav.pagination") && nextPagination) {
+          var tableWrap = document.querySelector(".table-wrap.card");
+          (tableWrap || insertAfter).insertAdjacentElement("afterend", nextPagination);
+        }
+        if (!document.querySelector(".empty-state--orders-waiting") && nextWaiting) {
+          insertAfter.insertAdjacentElement("afterend", nextWaiting);
+        }
+        if (
+          !document.querySelector(".empty-state.card:not(.empty-state--orders-waiting)") &&
+          nextEmpty
+        ) {
+          insertAfter.insertAdjacentElement("afterend", nextEmpty);
+        }
+      }
+
+      bindInteractiveUI(document);
+    }
+
+    var currentVersion = getVersionFromDocument(document);
+    setInterval(function () {
+      if (document.hidden) {
+        return;
+      }
+      var pollUrl = new URL(window.location.href);
+      pollUrl.searchParams.set("_poll", String(Date.now()));
+      fetch(pollUrl.toString(), {
+        method: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        credentials: "same-origin",
+        cache: "no-store",
+      })
+        .then(function (res) {
+          if (!res.ok) {
+            throw new Error("poll_failed");
+          }
+          return res.text();
+        })
+        .then(function (html) {
+          var nextDoc = new DOMParser().parseFromString(html, "text/html");
+          var nextVersion = getVersionFromDocument(nextDoc);
+          if (nextVersion === currentVersion) {
+            return;
+          }
+          updateOrdersSection(nextDoc);
+          currentVersion = nextVersion;
+        })
+        .catch(function () {
+          // fail-soft: keep current UI and retry in next cycle
+        });
+    }, 5000);
+  })();
 
   // Menu workspace: quick filters for large catalogs
   var menuSearchInput = document.getElementById("menu-search");
   if (menuSearchInput) {
     var categoryFilter = document.querySelector("[data-menu-category-filter]");
-    var statusFilter = document.querySelector("[data-menu-status-filter]");
-    var visibleProductsEl = document.querySelector("[data-menu-visible-products]");
     var totalProductsEl = document.querySelector("[data-menu-total-products]");
-    var menuCategories = Array.prototype.slice.call(
-      document.querySelectorAll("[data-menu-category]")
-    );
     var allMenuRows = Array.prototype.slice.call(
       document.querySelectorAll("[data-menu-item]")
     );
+    var emptyStateEl = document.querySelector("[data-menu-empty]");
 
     if (totalProductsEl) {
       totalProductsEl.textContent = String(allMenuRows.length);
@@ -215,78 +407,49 @@
       );
     }
 
-    function applyMenuSearch(query) {
+    function applyMenuFilters(query) {
       var trimmed = query.trim().toLowerCase();
       var selectedCategory = categoryFilter ? normalize(categoryFilter.value) : "";
-      var selectedStatus = statusFilter ? normalize(statusFilter.value) : "";
       var visibleProducts = 0;
 
-      menuCategories.forEach(function (categoryEl) {
-        var categoryName = normalize(
-          categoryEl.getAttribute("data-menu-category-name")
-        );
-        var categoryCountEl = categoryEl.querySelector("[data-menu-category-count]");
-        var rows = Array.prototype.slice.call(
-          categoryEl.querySelectorAll("[data-menu-item]")
-        );
-        var visibleInCategory = 0;
-        rows.forEach(function (row) {
-          var rowAvailable = row.getAttribute("data-menu-item-available") === "1";
-          var passesText = matchesItem(row, trimmed);
-          var passesCategory = !selectedCategory || categoryName === selectedCategory;
-          var passesStatus =
-            !selectedStatus ||
-            (selectedStatus === "available" && rowAvailable) ||
-            (selectedStatus === "unavailable" && !rowAvailable);
-          var show = passesText && passesCategory && passesStatus;
+      allMenuRows.forEach(function (row) {
+        var rowCategory = normalize(row.getAttribute("data-menu-item-category"));
+        var passesText = matchesItem(row, trimmed);
+        var passesCategory = !selectedCategory || rowCategory === selectedCategory;
+        var show = passesText && passesCategory;
 
-          row.style.display = show ? "" : "none";
-          if (show) {
-            visibleInCategory += 1;
-            visibleProducts += 1;
-          }
-        });
-        if (categoryCountEl) {
-          categoryCountEl.textContent = String(visibleInCategory);
+        row.style.display = show ? "" : "none";
+        if (show) {
+          visibleProducts += 1;
         }
-        categoryEl.style.display = visibleInCategory > 0 ? "" : "none";
       });
 
-      if (visibleProductsEl) {
-        visibleProductsEl.textContent = String(visibleProducts);
+      if (emptyStateEl) {
+        emptyStateEl.style.display = visibleProducts > 0 ? "none" : "";
       }
     }
 
     menuSearchInput.addEventListener("input", function (e) {
-      applyMenuSearch(e.target.value || "");
+      applyMenuFilters(e.target.value || "");
     });
     if (categoryFilter) {
       categoryFilter.addEventListener("change", function () {
-        applyMenuSearch(menuSearchInput.value || "");
-      });
-    }
-    if (statusFilter) {
-      statusFilter.addEventListener("change", function () {
-        applyMenuSearch(menuSearchInput.value || "");
+        applyMenuFilters(menuSearchInput.value || "");
       });
     }
 
-    document.querySelectorAll("[data-menu-jump]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var categoryName = normalize(btn.getAttribute("data-menu-jump"));
-        if (categoryFilter) {
-          categoryFilter.value = categoryName;
+    document.querySelectorAll("[data-menu-select]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var card = button.closest("[data-menu-item]");
+        if (!card) {
+          return;
         }
-        applyMenuSearch(menuSearchInput.value || "");
-        var target = document.querySelector(
-          '[data-menu-category-anchor="' + categoryName + '"]'
-        );
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        var isSelected = card.classList.toggle("is-selected");
+        button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        button.textContent = isSelected ? "Seleccionado" : "Seleccionar";
       });
     });
 
-    applyMenuSearch("");
+    applyMenuFilters("");
   }
 })();

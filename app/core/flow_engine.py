@@ -146,6 +146,14 @@ class FlowEngine:
         state = self.state_manager.get(wa_id)
         if not state.get("data", {}).get("awaiting_repeat_order"):
             return None
+        normalized = normalize_text(text)
+        if normalized in self.global_commands:
+            self.state_manager.patch_data(
+                wa_id,
+                awaiting_repeat_order=False,
+                repeat_order_declined=True,
+            )
+            return None
         if is_confirmation(text):
             items = self.user_service.get_last_order_items(wa_id)
             if not items:
@@ -159,7 +167,11 @@ class FlowEngine:
             self.state_manager.set_step(wa_id, "order_review", "order")
             return self._process_node(wa_id, "order_review", include_navigation=False)
         if is_rejection(text):
-            self.state_manager.patch_data(wa_id, awaiting_repeat_order=False)
+            self.state_manager.patch_data(
+                wa_id,
+                awaiting_repeat_order=False,
+                repeat_order_declined=True,
+            )
             return self._process_node(wa_id, "start", include_navigation=True)
         return "Responde *sí* para repetir tu pedido anterior o *no* para elegir otra opción."
 
@@ -374,10 +386,19 @@ class FlowEngine:
         return {"welcome_line": welcome, "address_prompt": address_prompt}
 
     def _action_welcome_customer(self, wa_id: str, text: str = "") -> Tuple[str, Optional[str]]:
+        state = self.state_manager.get(wa_id)
+        if state.get("data", {}).get("repeat_order_declined"):
+            return "", None
+        if state.get("data", {}).get("repeat_order_prompted"):
+            return "", None
         profile = self.user_service.get_profile(wa_id)
         last_items = profile.get("last_order_items") or []
         if last_items:
-            self.state_manager.patch_data(wa_id, awaiting_repeat_order=True)
+            self.state_manager.patch_data(
+                wa_id,
+                awaiting_repeat_order=True,
+                repeat_order_prompted=True,
+            )
             return (
                 "¿Deseas repetir tu pedido anterior?\nResponde *sí* o *no*.",
                 None,
@@ -533,6 +554,8 @@ class FlowEngine:
             last_order_id=order_id,
             awaiting_repeat_order=False,
             awaiting_abandon_confirm=False,
+            repeat_order_declined=False,
+            repeat_order_prompted=False,
         )
         self.state_manager.set_step(wa_id, "start", "idle")
         return (

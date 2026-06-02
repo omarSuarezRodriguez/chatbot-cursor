@@ -11,7 +11,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Union
 
-from flask import Flask, request
+from flask import Flask, redirect, request
 from twilio.twiml.messaging_response import MessagingResponse
 
 
@@ -157,6 +157,13 @@ def create_app() -> Flask:
             "admin_configured": bool(ADMIN_WHATSAPP_NUMBER),
             "caches": sheets_client.cache_status(),
         }
+
+    @flask_app.get("/")
+    def root():
+        dashboard_url = os.getenv("DASHBOARD_URL", "").strip()
+        if dashboard_url:
+            return redirect(dashboard_url, code=302)
+        return {"status": "ok", "message": "Use /health or POST /bot"}, 200
 
     @flask_app.post("/bot")
     def bot_webhook():
