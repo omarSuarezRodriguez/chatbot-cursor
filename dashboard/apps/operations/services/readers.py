@@ -30,6 +30,11 @@ _STATUS_PRIORITY = {
 def _load_json(path: Path) -> Any:
     if not path.exists():
         return None
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except (json.JSONDecodeError, OSError):
+        return None
 
 
 def _prefer_remote() -> bool:
@@ -37,11 +42,67 @@ def _prefer_remote() -> bool:
         os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
         and os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
     )
-    try:
-        with path.open("r", encoding="utf-8") as handle:
-            return json.load(handle)
-    except (json.JSONDecodeError, OSError):
-        return None
+
+
+def _orders_from_cache_payload(raw: Any) -> List[Dict[str, Any]]:
+    if not isinstance(raw, dict):
+        return []
+    bucket = raw.get("orders", {})
+    if not isinstance(bucket, dict) or not bucket:
+        return []
+    return [dict(v) for v in bucket.values()]
+
+
+def _orders_from_local_cache() -> List[Dict[str, Any]]:
+    return _orders_from_cache_payload(_load_json(ORDERS_PATH))
+
+
+def _parse_orders_sheet_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    orders: List[Dict[str, Any]] = []
+    for row in rows:
+        order_id = str(row.get("order_id", "")).strip().upper()
+        if not order_id:
+            continue
+        try:
+            items = json.loads(row.get("items") or "[]")
+        except (json.JSONDecodeError, TypeError):
+            items = []
+        try:
+            total = float(row.get("total", 0) or 0)
+        except (TypeError, ValueError):
+            total = 0.0
+        orders.append(
+            {
+                "order_id": order_id,
+                "wa_id": str(row.get("wa_id", "")),
+                "items": items,
+                "total": total,
+                "status": str(row.get("status", "pending")).lower(),
+                "timestamp": str(row.get("timestamp", "")),
+                "customer_name": str(row.get("customer_name", "")),
+                "address": str(row.get("address", "")),
+                "delivery_type": str(row.get("delivery_type", "")),
+            }
+        )
+    return orders
+
+
+def _remote_orders_from_sheets() -> List[Dict[str, Any]]:
+    client = _sheets_client()
+    if hasattr(client, "_records"):
+        return _parse_orders_sheet_rows(client._records("ORDERS"))
+    if hasattr(client, "warm_up_cache"):
+        client.warm_up_cache()
+    return _orders_from_local_cache()
+
+
+def _merge_order_lists(*lists: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    combined: List[Dict[str, Any]] = []
+    for orders in lists:
+        combined.extend(orders)
+    if not combined:
+        return []
+    return _sort_orders(combined)
 
 
 def _ensure_app_importable() -> None:
@@ -194,41 +255,25 @@ def read_menu() -> List[Dict[str, Any]]:
 
 
 def read_orders() -> List[Dict[str, Any]]:
+    """All orders (any status). Prefer local bot cache; merge with Sheets when configured."""
+    local = _orders_from_local_cache()
     if _prefer_remote():
-        remote_orders = _sheets_client().get_pending_orders()
-        if remote_orders:
-            return _sort_orders(remote_orders)
-    raw = _load_json(ORDERS_PATH)
-    orders: List[Dict[str, Any]] = []
-    if isinstance(raw, dict):
-        bucket = raw.get("orders", {})
-        if isinstance(bucket, dict) and bucket:
-            orders = [dict(v) for v in bucket.values()]
-    if orders:
-        return _sort_orders(orders)
-    client = _sheets_client()
-    client.warm_up_cache()
-    raw = _load_json(ORDERS_PATH)
-    if isinstance(raw, dict):
-        bucket = raw.get("orders", {})
-        if isinstance(bucket, dict) and bucket:
-            return _sort_orders([dict(v) for v in bucket.values()])
-    return _sort_orders(client.get_pending_orders())
+        remote = _remote_orders_from_sheets()
+        if local or remote:
+            return _merge_order_lists(local, remote)
+    if local:
+        return _sort_orders(local)
+    remote = _remote_orders_from_sheets()
+    if remote:
+        return _sort_orders(remote)
+    return []
 
 
 def read_order(order_id: str) -> Optional[Dict[str, Any]]:
     order_id = order_id.upper()
-    if _prefer_remote():
-        remote = _sheets_client().get_order(order_id)
-        if remote:
-            return remote
-    raw = _load_json(ORDERS_PATH)
-    if isinstance(raw, dict):
-        bucket = raw.get("orders", {})
-        if isinstance(bucket, dict):
-            for key, value in bucket.items():
-                if str(key).upper() == order_id:
-                    return dict(value)
+    for order in read_orders():
+        if str(order.get("order_id", "")).upper() == order_id:
+            return order
     return _sheets_client().get_order(order_id)
 
 
@@ -372,8 +417,8 @@ def _sort_orders(orders: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         cand_status = str(candidate.get("status", "")).lower()
         prev_rank = _STATUS_PRIORITY.get(prev_status, -1)
         cand_rank = _STATUS_PRIORITY.get(cand_status, -1)
-        # Keep the latest timestamp; if ties/unknown, prefer more advanced status.
-        if cand_ts > prev_ts or (cand_ts == prev_ts and cand_rank >= prev_rank):
+        # Prefer more advanced lifecycle status; tie-break by newer timestamp.
+        if cand_rank > prev_rank or (cand_rank == prev_rank and cand_ts > prev_ts):
             deduped[oid] = candidate
 
     return sorted(

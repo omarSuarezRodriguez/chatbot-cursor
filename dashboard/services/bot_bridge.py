@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import re
+import threading
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
@@ -290,6 +294,98 @@ def _bot_services():
         return sheets, menu_service, order_service, admin_service, user_service
 
 
+def _format_whatsapp_address(number: str) -> str:
+    stripped = number.replace("whatsapp:", "").strip()
+    digits = "".join(ch for ch in stripped if ch.isdigit())
+    if digits and not stripped.startswith("+"):
+        stripped = f"+{digits}"
+    if not number.startswith("whatsapp:"):
+        return f"whatsapp:{stripped}"
+    return stripped
+
+
+def _send_whatsapp(to_number: str, body: str) -> bool:
+    account_sid = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
+    auth_token = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
+    from_number = os.environ.get("TWILIO_WHATSAPP_FROM", "").strip()
+    if not (account_sid and auth_token and from_number):
+        logger.info("Twilio not configured; skipping customer notify.")
+        return False
+    try:
+        from twilio.rest import Client
+
+        client = Client(account_sid, auth_token)
+        to = _format_whatsapp_address(to_number)
+        from_ = _format_whatsapp_address(from_number)
+        client.messages.create(body=body, from_=from_, to=to)
+        return True
+    except Exception:
+        logger.exception("Failed to send WhatsApp to %s", to_number)
+        return False
+
+
+def _send_whatsapp_async(to_number: str, body: str) -> None:
+    thread = threading.Thread(
+        target=_send_whatsapp,
+        args=(to_number, body),
+        daemon=True,
+        name="dashboard-twilio-outbound",
+    )
+    thread.start()
+
+
+def _notify_customer_order_confirmed(order_id: str, wa_id: str) -> None:
+    if not wa_id:
+        return
+    body = (
+        f"Tu pedido *{order_id}* fue confirmado por el restaurante. "
+        "¡Gracias por tu compra!"
+    )
+    try:
+        from app.services.admin_service import AdminService
+
+        _, _, _, admin_service, _ = _bot_services()
+        if isinstance(admin_service, AdminService):
+            admin_service.notify_customer_order_confirmed(order_id, wa_id)
+            return
+    except Exception:
+        logger.debug("AdminService notify unavailable; using Twilio fallback.", exc_info=True)
+    _send_whatsapp_async(wa_id, body)
+
+
+def _sync_local_order_status(order_id: str, status: str) -> None:
+    """Keep data/orders_cache.json aligned after dashboard writes (standalone Sheets path)."""
+    order_id = order_id.strip().upper()
+    status = str(status).strip().lower()
+    cache_path = settings.PROJECT_ROOT / "data" / "orders_cache.json"
+    if not cache_path.exists():
+        return
+    try:
+        with cache_path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except (json.JSONDecodeError, OSError):
+        return
+    if not isinstance(payload, dict):
+        return
+    orders = payload.get("orders")
+    if not isinstance(orders, dict):
+        return
+    entry = orders.get(order_id)
+    if not isinstance(entry, dict):
+        return
+    entry["status"] = status
+    orders[order_id] = entry
+    payload["orders"] = orders
+    dirty_status = payload.get("dirty_status")
+    if isinstance(dirty_status, dict):
+        dirty_status.pop(order_id, None)
+    try:
+        with cache_path.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle, ensure_ascii=False, indent=2)
+    except OSError:
+        logger.warning("Could not update local orders cache for %s", order_id)
+
+
 def _validate_wa_id(wa_id: str) -> Optional[str]:
     wa_id = str(wa_id).strip()
     if not wa_id:
@@ -328,7 +424,8 @@ def confirm_order(order_id: str) -> ConfirmOrderResult:
             entity_id=order_id,
         )
 
-    admin_service.notify_customer_order_confirmed(order_id, order.get("wa_id", ""))
+    _sync_local_order_status(order_id, "confirmed")
+    _notify_customer_order_confirmed(order_id, order.get("wa_id", ""))
     return WriteResult(
         ok=True,
         message=f"Pedido {order_id} confirmado correctamente.",
