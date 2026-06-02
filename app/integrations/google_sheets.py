@@ -448,6 +448,7 @@ class GoogleSheetsClient:
     def _refresh_orders_from_sheets(self) -> None:
         if not self._connected:
             return
+        self._load_local_orders()
         try:
             fetched, fetched_rows = self._fetch_orders_from_sheets()
             if not fetched and not fetched_rows:
@@ -1147,6 +1148,19 @@ class GoogleSheetsClient:
             if order_id not in self._dirty_new_orders:
                 self._dirty_order_status[order_id] = status
         self._save_local_orders()
+        if self._connected:
+            try:
+                if self._update_order_status_on_sheets(order_id, status):
+                    with self._cache_lock:
+                        self._dirty_order_status.pop(order_id, None)
+                    self._save_local_orders()
+            except Exception as exc:
+                logger.warning(
+                    "Immediate order status sync failed for %s (%s). "
+                    "Will retry on background sync.",
+                    order_id,
+                    exc,
+                )
         return True
 
     def update_order(

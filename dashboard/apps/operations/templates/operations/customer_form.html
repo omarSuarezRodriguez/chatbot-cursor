@@ -1,28 +1,31 @@
 {% extends "operations/base.html" %}
 {% block title %}{% if is_new %}Nuevo cliente{% else %}Editar cliente{% endif %} — Dashboard{% endblock %}
+{% block page_heading %}{% if is_new %}Nuevo cliente{% else %}Editar cliente{% endif %}{% endblock %}
 {% block content %}
-<nav class="order-detail__back">
-  <a href="{% url 'operations:users' %}" class="btn btn-ghost">
+<div class="form-page">
+  <a href="{% url 'operations:users' %}" class="form-page__back">
     {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
     Volver a clientes
   </a>
-</nav>
-<div class="card" style="max-width:32rem;">
-  <h1>{% if is_new %}Nuevo cliente{% else %}Editar cliente{% endif %}</h1>
-  <p class="muted">Las notas se guardan solo en caché del panel (no en Google Sheets USERS).</p>
-  <form method="post" class="form-stack">
-    {% csrf_token %}
-    {% for field in form %}
-    <div class="form-field{% if field.errors %} form-field--error{% endif %}">
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
-    </div>
-    {% endfor %}
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Guardar</button>
-      <a href="{% url 'operations:users' %}" class="btn btn-ghost">Cancelar</a>
-    </div>
-  </form>
+  <div class="card form-panel">
+    <header class="form-panel__header">
+      <h1>{% if is_new %}Nuevo cliente{% else %}Editar cliente{% endif %}</h1>
+      <p class="muted">Las notas se guardan solo en caché del panel (no en Google Sheets).</p>
+    </header>
+    <form method="post" class="form-stack form-panel__body">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-field{% if field.errors %} form-field--error{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
+      </div>
+      {% endfor %}
+      <div class="form-panel__footer">
+        <button type="submit" class="btn btn-primary">Guardar cliente</button>
+        <a href="{% url 'operations:users' %}" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

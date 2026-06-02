@@ -2,57 +2,99 @@
 {% block title %}Menú — Dashboard{% endblock %}
 {% block page_heading %}Menú{% endblock %}
 {% block content %}
-<div class="app-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;">
-  <div>
-    <h1>Menú</h1>
-    <p class="muted">Ítems del bot (<code>data/menu_cache.json</code>), agrupados por categoría.</p>
+{% if can_create %}
+{% url 'operations:menu_create' as menu_create_url %}
+{% include "operations/partials/page_header.html" with title="Menú" subtitle="Platos del bot, agrupados por categoría. Edita precios, disponibilidad y altas desde aquí." action_url=menu_create_url action_label="Nuevo plato" %}
+{% else %}
+{% include "operations/partials/page_header.html" with title="Menú" subtitle="Platos del bot, agrupados por categoría." %}
+{% endif %}
+
+{% for category, items in menu_by_category.items %}
+<section class="menu-category card animate-fade-in">
+  <header class="menu-category__head">
+    <h2>{{ category }}</h2>
+    <span class="menu-category__count">{{ items|length }} plato{{ items|length|pluralize:"s" }}</span>
+  </header>
+  <div class="table-wrap">
+    <table class="data-table data-table--comfortable">
+      <thead>
+        <tr>
+          <th>Plato</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          {% if can_operate or can_create %}<th class="col-actions"><span class="sr-only">Acciones</span></th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>
+            <span class="menu-item-name">{{ item.nombre }}</span>
+            {% if item.id %}<br><span class="menu-item-id">{{ item.id }}</span>{% endif %}
+          </td>
+          <td><span class="menu-item-price">{{ item.precio }} €</span></td>
+          <td>
+            {% if item.disponible %}
+            <span class="avail-badge avail-badge--yes">Disponible</span>
+            {% else %}
+            <span class="avail-badge avail-badge--no">No disponible</span>
+            {% endif %}
+          </td>
+          {% if can_operate or can_create %}
+          <td class="col-actions">
+            {% if item.id %}
+            <div class="action-menu" data-action-menu>
+              <button type="button" class="btn btn-icon btn-ghost action-menu__trigger" aria-expanded="false" aria-haspopup="true" aria-label="Acciones para {{ item.nombre }}">
+                {% include "operations/partials/icon.html" with name="more-vertical" class="icon--sm" %}
+              </button>
+              <div class="action-menu__panel" role="menu">
+                {% if can_create %}
+                <a href="{% url 'operations:menu_edit' item.id %}" class="action-menu__item" role="menuitem">
+                  {% include "operations/partials/icon.html" with name="edit" class="icon--sm" %}
+                  Editar
+                </a>
+                {% endif %}
+                {% if can_operate and item.disponible %}
+                <form method="post" action="{% url 'operations:menu' %}" data-confirm="¿Marcar «{{ item.nombre }}» como no disponible?">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="unavailable">
+                  <input type="hidden" name="item_id" value="{{ item.id }}">
+                  <button type="submit" class="action-menu__item" role="menuitem">Marcar no disponible</button>
+                </form>
+                {% endif %}
+                {% if can_create %}
+                <hr class="action-menu__divider">
+                <form method="post" action="{% url 'operations:menu_delete' item.id %}" data-confirm="¿Dar de baja «{{ item.nombre }}»?">
+                  {% csrf_token %}
+                  <button type="submit" class="action-menu__item action-menu__item--danger" role="menuitem">
+                    {% include "operations/partials/icon.html" with name="trash" class="icon--sm" %}
+                    Dar de baja
+                  </button>
+                </form>
+                <form method="post" action="{% url 'operations:menu_delete' item.id %}" data-confirm="¿Eliminar permanentemente «{{ item.nombre }}»? Esta acción no se puede deshacer.">
+                  {% csrf_token %}
+                  <input type="hidden" name="hard" value="1">
+                  <button type="submit" class="action-menu__item action-menu__item--danger" role="menuitem">Eliminar permanente</button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
+</section>
+{% empty %}
+<div class="empty-state card animate-fade-in">
+  <p class="empty-state__title">Menú vacío</p>
+  <p class="empty-state__desc">No hay platos en caché. El bot los carga desde Google Sheets o puedes crear el primero.</p>
   {% if can_create %}
-  <a href="{% url 'operations:menu_create' %}" class="btn btn-primary">Nuevo plato</a>
+  <a href="{% url 'operations:menu_create' %}" class="btn btn-primary" style="margin-top:var(--space-4);">Nuevo plato</a>
   {% endif %}
 </div>
-{% for category, items in menu_by_category.items %}
-<h2>{{ category }}</h2>
-<table class="data-table">
-  <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Disponible</th>{% if can_operate or can_create %}<th>Acciones</th>{% endif %}</tr></thead>
-  <tbody>
-    {% for item in items %}
-    <tr>
-      <td>{{ item.id|default:"—" }}</td>
-      <td>{{ item.nombre }}</td>
-      <td>{{ item.precio }} €</td>
-      <td>{% if item.disponible %}Sí{% else %}No{% endif %}</td>
-      {% if can_operate or can_create %}
-      <td class="table-actions">
-        {% if can_create and item.id %}
-        <a href="{% url 'operations:menu_edit' item.id %}" class="btn btn-ghost btn-sm">Editar</a>
-        {% endif %}
-        {% if can_operate and item.disponible and item.id %}
-        <form method="post" action="{% url 'operations:menu' %}" style="display:inline;margin:0;">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="unavailable">
-          <input type="hidden" name="item_id" value="{{ item.id }}">
-          <button type="submit" class="btn btn-ghost btn-sm" onclick="return confirm('¿Marcar {{ item.nombre }} como no disponible?');">No disp.</button>
-        </form>
-        {% endif %}
-        {% if can_create and item.id %}
-        <form method="post" action="{% url 'operations:menu_delete' item.id %}" style="display:inline;margin:0;">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Dar de baja {{ item.nombre }}?');">Baja</button>
-        </form>
-        <form method="post" action="{% url 'operations:menu_delete' item.id %}" style="display:inline;margin:0;">
-          {% csrf_token %}
-          <input type="hidden" name="hard" value="1">
-          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar permanentemente {{ item.nombre }}?');">Eliminar</button>
-        </form>
-        {% endif %}
-      </td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% empty %}
-<p>No hay ítems de menú.</p>
 {% endfor %}
 {% endblock %}

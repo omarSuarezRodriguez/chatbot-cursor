@@ -1,4 +1,4 @@
-## v0.31
+## v0.32
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -5717,4 +5717,299 @@ python manage.py test apps.operations.tests.test_views -v 2 --settings=config.te
 
 
 ######################################################################
+## v0.32
+
+
+## Prompt ##
+
+Quiero que solamente y unicamente y estrictamente hagas lo siguiente en la dashboard web: arriba a la izquierda donde dice Restaurante, que apareca el nombre del restaurante definido en .env
+
+
+## Resp cursor ##
+
+Hecho. En la esquina superior izquierda del panel ya no aparece el texto fijo «Restaurante»; se muestra el valor de `RESTAURANT_NAME` del `.env` del proyecto (el mismo que usa el bot).
+
+**Cambios:**
+1. El dashboard carga `.env` del raíz del repo (además de `.env.dashboard`).
+2. Se expone `restaurant_name` en todas las plantillas vía el context processor.
+3. El sidebar usa `{{ restaurant_name }}` en lugar de «Restaurante».
+
+Asegúrate de tener en tu `.env`:
+
+```env
+RESTAURANT_NAME=Tu Nombre de Restaurante
+```
+
+Si no está definida, se usa el mismo valor por defecto que el bot: `La Casa del Sabor`. Reinicia el servidor Django para que tome el cambio del `.env`.
+
+
+
+
+
+
+## Segundo prompt ##
+
+Quiero que solamente y unicamente y estrictamente hagas lo siguiente en la dashboard web: 
+
+El menu de la izquierda, quiero que solamente quede de título Administración, y las opciones Inicio, pedidos, clientes, menu, reservas, en ese orden y abajo donde dice admin quitarlo y dejar el salir, solo eso
+
+
+## Resp cursor ##
+
+Hecho. Cambios en `dashboard/apps/operations/templates/operations/partials/sidebar.html`:
+
+**Menú lateral**
+- Un solo bloque con título **Administración**
+- Enlaces en este orden: **Inicio**, **Pedidos**, **Clientes**, **Menú**, **Reservas**
+- Quitadas las secciones Operaciones, Administración (centro admin, auditoría, accesos, configuración) y Sistema (estado, guía escrituras, Django admin)
+
+**Pie del menú**
+- Eliminado el nombre de usuario (`admin` u otro)
+- Solo queda el botón **Salir**
+
+El nombre del restaurante arriba del menú se mantiene igual que antes. Recarga la dashboard para verlo.
+
+
+
+
+
+
+## Tercer prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Quiero que mejores los menús y las formas de interactuar de la dashboard, no toques la estructura del menú izquierda pero si la forma por ejemplo de agregar editar y eso, hazlo como una plataforma bien pro, un diseño bien pro editable pro facil y sencillo super intuitivo y bonito]
+
+
+## Resp cursor ##
+
+
+### Análisis previo
+
+La dashboard ya tenía base sólida (tokens, tablas, toasts), pero las interacciones de CRUD eran rudimentarias: muchos botones inline en el menú, `confirm()` del navegador, formularios planos y listas poco orientadas a la acción. La petición excluía el menú lateral; el foco era listas, formularios y acciones (agregar, editar, eliminar).
+
+### Cambios implementados
+
+- **Menú de platos**: tarjetas por categoría, badges de disponibilidad, menú ⋮ con acciones agrupadas (editar, no disponible, baja, eliminar).
+- **Formularios** (plato, pedido, cliente): panel con cabecera, pie fijo y checkbox de disponibilidad más claro.
+- **Listas** (pedidos, clientes, reservas): cabecera unificada, tablas en card, filas clicables al detalle.
+- **Detalle** pedido/cliente: secciones separadas, diálogo de confirmación propio en lugar de `alert()`.
+- **JS** (`shell.js`): menús desplegables, confirmaciones, filas clicables.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `dashboard/static/css/components.css` | Estilos page-header, form-panel, action-menu, confirm-dialog, badges |
+| `dashboard/static/css/app.css` | Bloques de categoría del menú, filas clicables |
+| `dashboard/static/js/shell.js` | Menús, confirmaciones, filas clicables |
+| `dashboard/apps/operations/templates/operations/partials/icons_sprite.html` | Iconos plus, more-vertical, edit, trash, eye |
+| `dashboard/apps/operations/templates/operations/partials/page_header.html` | **Nuevo** partial de cabecera |
+| `menu.html`, `menu_form.html`, `order_form.html`, `customer_form.html` | UX mejorada |
+| `order_list.html`, `user_list.html`, `reservation_list.html` | Listas pro |
+| `order_detail.html`, `customer_detail.html` | Detalle y acciones pulidos |
+
+**No se tocó** `sidebar.html` ni backend (views, URLs, APIs).
+
+### Riesgos mitigados
+
+- Misma lógica POST y permisos (`can_create`, `can_operate`, etc.).
+- Sin cambios en endpoints ni contratos JSON.
+- Confirmaciones solo sustituyen `onclick="return confirm(...)"` por `data-confirm`.
+
+### Compatibilidad verificada
+
+- Bot, parser, Flask y servicios intactos.
+- Solo templates + CSS + JS del panel Django.
+
+### Funcionalidades agregadas
+
+- Menú contextual por plato, diálogo de confirmación, filas clicables en listas, formularios con panel visual.
+
+### Funcionalidades preservadas
+
+- CRUD, filtros, paginación, permisos por rol y estructura del menú izquierdo (Administración → Inicio, Pedidos, Clientes, Menú, Reservas, Salir).
+
+Recarga la dashboard con **Ctrl+F5** para ver CSS/JS nuevos. Si quieres el mismo tratamiento en pantallas de administración (auditoría, configuración), dímelo y lo aplicamos sin tocar el sidebar.
+
+
+
+
+
+## Cuarto prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Que en la dashboard, en pedidos, haya un botón que diga confirmar pedido, y haya dos pestañas uno con pedido pendiente, otro con pedido confirmado, y otra con pedido entregado]
+
+
+
+## Resp cursor ##
+
+### Análisis previo
+
+En pedidos ya existía filtro por estado (desplegable) y el botón **Confirmar pedido** solo en el detalle. La tarea pide tres vistas por estado (pendiente, confirmado, entregado) y confirmar desde la lista.
+
+### Cambios implementados
+
+1. **Pestañas** en la lista de pedidos: **Pendiente**, **Confirmado**, **Entregado** (sustituyen el selector de estado).
+2. **Botón «Confirmar pedido»** en cada fila de la pestaña Pendiente (operador + `DASHBOARD_ENABLE_WRITES=1`).
+3. Tras confirmar desde la lista, vuelves a **Pedidos → Pendiente** (no al detalle).
+4. Por defecto, al entrar en Pedidos sin `?status=`, se abre la pestaña **Pendiente**.
+
+El detalle del pedido conserva su botón **Confirmar pedido** sin cambios.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `dashboard/apps/operations/views.py` | Pestañas, permisos de confirmación, redirección tras confirmar |
+| `dashboard/apps/operations/templates/operations/order_list.html` | UI de pestañas y botón en tabla |
+| `dashboard/static/css/components.css` | Estilos `.status-tabs` y columna de acciones |
+
+### Riesgos mitigados
+
+- Sin cambios en APIs del bot, `order_service`, Twilio ni JSON de caché.
+- Confirmación reutiliza `bot_bridge.confirm_order` y el POST del detalle.
+- `return_to_list` solo redirige a la URL fija de pedidos con `status=pending`.
+
+### Compatibilidad verificada
+
+- Filtros de búsqueda, fechas, ordenación y paginación siguen funcionando.
+- Panel de ajustes y auditoría sin cambios de contrato.
+- Operadores y escritura condicionados como antes.
+
+### Funcionalidades agregadas
+
+- Tres pestañas por estado en la lista.
+- Confirmar pedido desde la lista (pestaña Pendiente).
+
+### Funcionalidades preservadas
+
+- Detalle de pedido, crear pedido, cancelar, editar estado/ítems.
+- Badges de estado, gráficos del inicio y resto del dashboard.
+
+**Nota:** hace falta `DASHBOARD_ENABLE_WRITES=1` en `.env.dashboard` y usuario operador para ver el botón. Si no aparece, revisa esos dos puntos.
+
+
+## Quinto prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[El botón de nuevo pedido se ve azul y cuando paso el cursor se ven las letras y desaparecen, lo mismo pasa con el de clientes y menú, arregla eso]
+
+
+## Resp cursor ##
+
+### Análisis previo
+
+Los botones «Nuevo pedido», «Nuevo cliente» y «Nuevo plato» usan `btn btn-primary` dentro de `.app-content`. En `app.css` había reglas genéricas para todos los enlaces:
+
+```47:56:c:\Users\Usuario\Desktop\chatbot-cursor\dashboard\static\css\app.css
+.app-content a:not(.btn) {
+  color: var(--color-accent);
+  ...
+}
+```
+
+Esas reglas tenían más especificidad que `.btn-primary` y forzaban texto azul sobre fondo azul. Al pasar el cursor, el color cambiaba a `--color-accent-hover` (otro tono azul) y el texto parecía desaparecer.
+
+### Cambios implementados
+
+Se excluyeron los enlaces con clase `.btn` de los estilos genéricos de enlaces en `.app-content`, usando `a:not(.btn)`. Así los botones primarios conservan el texto blanco (`--color-accent-text`) definido en `components.css`.
+
+### Archivos modificados
+
+- `dashboard/static/css/app.css`
+
+### Riesgos mitigados
+
+- Sin cambios en HTML, vistas ni lógica.
+- Los enlaces normales del contenido siguen con el mismo estilo azul y subrayado al hover.
+- Todos los botones-enlace (`btn-primary`, `btn-ghost`, etc.) quedan protegidos del mismo conflicto.
+
+### Compatibilidad verificada
+
+- Sin cambios en APIs, endpoints, parser, Flask, Twilio ni servicios del chatbot.
+- Solo CSS del dashboard.
+
+### Funcionalidades agregadas
+
+- Ninguna (corrección visual).
+
+### Funcionalidades preservadas
+
+- Navegación y acciones de «Nuevo pedido», «Nuevo cliente» y «Nuevo plato» sin cambios funcionales.
+
+Recarga la página (Ctrl+F5 si hace falta limpiar caché) para ver los botones con texto blanco legible y hover correcto.
+
+
+
+
+## Sexto prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[haz solo esto: que en pedidos, en el dashboard, el buscador solo aparezca en entregado]
+
+
+## Resp cursor ##
+
+### Análisis previo
+
+El buscador (campo de texto, fechas y botón «Buscar») estaba siempre visible en `order_list.html`, sin depender de la pestaña activa. La pestaña «Entregado» usa la clave `delivered`.
+
+### Cambios implementados
+
+El formulario `data-toolbar` queda envuelto en `{% if status_filter == "delivered" %}`, así que solo se muestra en la pestaña Entregado.
+
+### Archivos modificados
+
+- `dashboard/apps/operations/templates/operations/order_list.html`
+
+### Riesgos mitigados
+
+- Un solo archivo modificado.
+- Sin cambios en vistas, endpoints ni lógica de filtrado en backend.
+- Pendiente y Confirmado siguen igual; solo cambia la visibilidad del buscador.
+
+### Compatibilidad verificada
+
+- Sin impacto en parser, Flask, Twilio ni servicios del chatbot.
+- Tests existentes no comprueban la visibilidad del buscador.
+
+### Funcionalidades agregadas
+
+- Buscador visible únicamente en la pestaña Entregado.
+
+### Funcionalidades preservadas
+
+- Filtrado por estado, tabla, paginación, confirmación de pedidos y resto del dashboard sin cambios.
+
+
+
+
+
+######################################################################
+
 

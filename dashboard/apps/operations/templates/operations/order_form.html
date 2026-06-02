@@ -2,28 +2,31 @@
 {% block title %}Nuevo pedido — Dashboard{% endblock %}
 {% block page_heading %}Nuevo pedido{% endblock %}
 {% block content %}
-<nav class="order-detail__back">
-  <a href="{% url 'operations:orders' %}" class="btn btn-ghost">
+<div class="form-page form-page--wide">
+  <a href="{% url 'operations:orders' %}" class="form-page__back">
     {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
     Volver a pedidos
   </a>
-</nav>
-<div class="card" style="max-width:40rem;">
-  <h1>Crear pedido manual</h1>
-  <p class="muted">Los ítems deben ser JSON con <code>product</code>, <code>qty</code> y <code>unit_price</code>.</p>
-  <form method="post" class="form-stack">
-    {% csrf_token %}
-    {% for field in form %}
-    <div class="form-field{% if field.errors %} form-field--error{% endif %}">
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
-    </div>
-    {% endfor %}
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Crear pedido</button>
-      <a href="{% url 'operations:orders' %}" class="btn btn-ghost">Cancelar</a>
-    </div>
-  </form>
+  <div class="card form-panel">
+    <header class="form-panel__header">
+      <h1>Crear pedido manual</h1>
+      <p class="muted">Registra un pedido desde el panel. Los ítems van en JSON: <code>product</code>, <code>qty</code> y <code>unit_price</code>.</p>
+    </header>
+    <form method="post" class="form-stack form-panel__body">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-field{% if field.errors %} form-field--error{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
+        {% if field.name == "items_json" %}<p class="form-hint">Ejemplo: [{"product":"Pizza Margarita","qty":2,"unit_price":11.0}]</p>{% endif %}
+      </div>
+      {% endfor %}
+      <div class="form-panel__footer">
+        <button type="submit" class="btn btn-primary">Crear pedido</button>
+        <a href="{% url 'operations:orders' %}" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

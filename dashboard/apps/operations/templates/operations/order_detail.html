@@ -2,12 +2,10 @@
 {% block title %}{{ order.order_id }} — Pedido{% endblock %}
 {% block page_heading %}Pedido {{ order.order_id }}{% endblock %}
 {% block content %}
-<nav class="order-detail__back">
-  <a href="{% url 'operations:orders' %}" class="btn btn-ghost">
-    {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
-    Volver a pedidos
-  </a>
-</nav>
+<a href="{% url 'operations:orders' %}" class="form-page__back">
+  {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
+  Volver a pedidos
+</a>
 
 <header class="order-detail__header card">
   <div class="order-detail__header-main">
@@ -21,100 +19,113 @@
 </header>
 
 <div class="order-detail__grid">
-  <section class="card order-detail__summary">
-    <h2>Resumen</h2>
-    <dl class="detail-dl">
-      <dt>Cliente</dt>
-      <dd>{{ order.customer_name|default:"—" }}</dd>
-      <dt>WhatsApp</dt>
-      <dd><code>{{ order.wa_id }}</code></dd>
-      <dt>Dirección</dt>
-      <dd>{{ order.address|default:"—" }}</dd>
-      <dt>Entrega</dt>
-      <dd>{{ order.delivery_type|default:"—" }}</dd>
-    </dl>
-    {% if can_confirm %}
-    <form method="post" action="" class="order-detail__actions">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="confirm">
-      <button type="submit" class="btn btn-primary" onclick="return confirm('¿Confirmar pedido {{ order.order_id }}?');">
-        {% include "operations/partials/icon.html" with name="check-circle" class="icon--sm" %}
-        Confirmar pedido
-      </button>
-    </form>
-    {% elif order.status == "pending" and not dashboard_writes_enabled %}
-    <p class="banner banner-readonly" style="margin-top:var(--space-4);margin-bottom:0;">
-      Pedido pendiente — activa <code>DASHBOARD_ENABLE_WRITES=1</code> en <code>.env.dashboard</code> para confirmarlo.
-    </p>
-    {% endif %}
+  <section class="card order-detail__summary" style="padding:0;overflow:hidden;">
+    <div style="padding:var(--space-6);">
+      <h2>Resumen</h2>
+      <dl class="detail-dl">
+        <dt>Cliente</dt>
+        <dd>{{ order.customer_name|default:"—" }}</dd>
+        <dt>WhatsApp</dt>
+        <dd><code>{{ order.wa_id }}</code></dd>
+        <dt>Dirección</dt>
+        <dd>{{ order.address|default:"—" }}</dd>
+        <dt>Entrega</dt>
+        <dd>{{ order.delivery_type|default:"—" }}</dd>
+      </dl>
+      {% if can_confirm %}
+      <form method="post" action="" data-confirm="¿Confirmar el pedido {{ order.order_id }}?">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="confirm">
+        <button type="submit" class="btn btn-primary" style="width:100%;">
+          {% include "operations/partials/icon.html" with name="check-circle" class="icon--sm" %}
+          Confirmar pedido
+        </button>
+      </form>
+      {% elif order.status == "pending" and not dashboard_writes_enabled %}
+      <p class="banner banner-readonly" style="margin-top:var(--space-4);margin-bottom:0;">
+        Pedido pendiente — activa <code>DASHBOARD_ENABLE_WRITES=1</code> en <code>.env.dashboard</code> para confirmarlo.
+      </p>
+      {% endif %}
 
-    {% if can_edit %}
-    <hr style="margin:var(--space-6) 0;border:none;border-top:1px solid var(--color-border);">
-    <h3>Cambiar estado</h3>
-    <form method="post" class="form-stack">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="update_status">
-      <div class="form-field">
-        {{ status_form.status.label_tag }}
-        {{ status_form.status }}
+      {% if can_edit %}
+      <div class="panel-section">
+        <h3>Cambiar estado</h3>
+        <form method="post" class="form-stack">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="update_status">
+          <div class="form-field">
+            {{ status_form.status.label_tag }}
+            {{ status_form.status }}
+          </div>
+          <button type="submit" class="btn btn-primary">Actualizar estado</button>
+        </form>
       </div>
-      <button type="submit" class="btn btn-ghost">Actualizar estado</button>
-    </form>
-    <form method="post" class="order-detail__actions" style="margin-top:var(--space-3);">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="cancel">
-      <button type="submit" class="btn btn-danger" onclick="return confirm('¿Cancelar pedido {{ order.order_id }}?');">Cancelar pedido</button>
-    </form>
-    {% endif %}
+      <div class="panel-section">
+        <h3>Zona de riesgo</h3>
+        <form method="post" data-confirm="¿Cancelar el pedido {{ order.order_id }}?">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="cancel">
+          <button type="submit" class="btn btn-danger" style="width:100%;">
+            {% include "operations/partials/icon.html" with name="x-circle" class="icon--sm" %}
+            Cancelar pedido
+          </button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
   </section>
 
-  <section class="card order-detail__items">
-    <h2>Ítems del pedido</h2>
-    {% if items %}
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Cant.</th>
-            <th>P. unit.</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in items %}
-          <tr>
-            <td>{% firstof item.product item.nombre "—" %}</td>
-            <td>{{ item.qty|default:1 }}</td>
-            <td>{{ item.unit_price }} €</td>
-            <td><strong>{{ item.subtotal }} €</strong></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3" class="muted" style="text-align:right;">Total pedido</td>
-            <td><strong>{{ order.total }} €</strong></td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-    {% else %}
-    <p class="muted">Sin líneas de pedido en caché.</p>
-    {% endif %}
-
-    {% if can_edit %}
-    <h3 style="margin-top:var(--space-6);">Editar ítems (JSON)</h3>
-    <form method="post" class="form-stack">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="update_items">
-      <div class="form-field">
-        {{ items_form.items_json.label_tag }}
-        {{ items_form.items_json }}
+  <section class="card order-detail__items" style="padding:0;overflow:hidden;">
+    <div style="padding:var(--space-6);">
+      <h2>Ítems del pedido</h2>
+      {% if items %}
+      <div class="table-wrap">
+        <table class="data-table data-table--comfortable">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>P. unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{% firstof item.product item.nombre "—" %}</td>
+              <td>{{ item.qty|default:1 }}</td>
+              <td>{{ item.unit_price }} €</td>
+              <td><strong>{{ item.subtotal }} €</strong></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="muted" style="text-align:right;">Total pedido</td>
+              <td><strong>{{ order.total }} €</strong></td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
-      <button type="submit" class="btn btn-primary" onclick="return confirm('¿Actualizar ítems y recalcular total?');">Guardar ítems</button>
-    </form>
-    {% endif %}
+      {% else %}
+      <p class="muted">Sin líneas de pedido en caché.</p>
+      {% endif %}
+
+      {% if can_edit %}
+      <div class="panel-section">
+        <h3>Editar ítems (JSON)</h3>
+        <form method="post" class="form-stack" data-confirm="¿Actualizar ítems y recalcular el total del pedido?">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="update_items">
+          <div class="form-field">
+            {{ items_form.items_json.label_tag }}
+            {{ items_form.items_json }}
+          </div>
+          <button type="submit" class="btn btn-primary">Guardar ítems</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
   </section>
 </div>
 {% endblock %}

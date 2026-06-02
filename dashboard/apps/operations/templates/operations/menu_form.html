@@ -2,27 +2,31 @@
 {% block title %}{% if is_new %}Nuevo plato{% else %}Editar plato{% endif %} — Dashboard{% endblock %}
 {% block page_heading %}{% if is_new %}Nuevo plato{% else %}Editar plato{% endif %}{% endblock %}
 {% block content %}
-<nav class="order-detail__back">
-  <a href="{% url 'operations:menu' %}" class="btn btn-ghost">
+<div class="form-page">
+  <a href="{% url 'operations:menu' %}" class="form-page__back">
     {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
     Volver al menú
   </a>
-</nav>
-<div class="card" style="max-width:32rem;">
-  <h1>{% if is_new %}Nuevo plato{% else %}Editar plato{% endif %}</h1>
-  <form method="post" class="form-stack">
-    {% csrf_token %}
-    {% for field in form %}
-    <div class="form-field{% if field.errors %} form-field--error{% endif %}">
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
-    </div>
-    {% endfor %}
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Guardar</button>
-      <a href="{% url 'operations:menu' %}" class="btn btn-ghost">Cancelar</a>
-    </div>
-  </form>
+  <div class="card form-panel">
+    <header class="form-panel__header">
+      <h1>{% if is_new %}Nuevo plato{% else %}Editar plato{% endif %}</h1>
+      <p class="muted">{% if is_new %}Completa los datos del plato. El ID debe ser único.{% else %}Actualiza nombre, precio, categoría o disponibilidad.{% endif %}</p>
+    </header>
+    <form method="post" class="form-stack form-panel__body">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-field{% if field.errors %} form-field--error{% endif %}{% if field.field.widget.input_type == 'checkbox' %} form-field--checkbox{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
+        {% if field.help_text %}<p class="form-hint">{{ field.help_text }}</p>{% endif %}
+      </div>
+      {% endfor %}
+      <div class="form-panel__footer">
+        <button type="submit" class="btn btn-primary">Guardar plato</button>
+        <a href="{% url 'operations:menu' %}" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

@@ -2,17 +2,14 @@
 {% block title %}Reservas — Dashboard{% endblock %}
 {% block page_heading %}Reservas{% endblock %}
 {% block content %}
-<div class="app-page-header">
-  <h1>Reservas</h1>
-  <p class="muted">Solo lectura desde <code>data/reservations_cache.json</code> — las altas las gestiona el bot por WhatsApp.</p>
-</div>
+{% include "operations/partials/page_header.html" with title="Reservas" subtitle="Consulta reservas confirmadas por el bot. Las altas se gestionan por WhatsApp." %}
 
 <form class="data-toolbar card" method="get" action="{% url 'operations:reservations' %}">
   <div class="data-toolbar__row">
     <label class="sr-only" for="reservation-q">Buscar</label>
     <div class="input-with-icon">
       {% include "operations/partials/icon.html" with name="search" class="icon--sm input-with-icon__icon" %}
-      <input type="search" id="reservation-q" name="q" value="{{ q }}" placeholder="ID, wa_id o estado…" class="input">
+      <input type="search" id="reservation-q" name="q" value="{{ q }}" placeholder="ID, cliente o estado…" class="input">
     </div>
     <button type="submit" class="btn btn-primary">Buscar</button>
     {% if q %}<a href="{% url 'operations:reservations' %}" class="btn btn-ghost">Limpiar</a>{% endif %}
@@ -20,8 +17,8 @@
 </form>
 
 {% if reservations %}
-<div class="table-wrap">
-  <table class="data-table">
+<div class="table-wrap card" style="padding:0;overflow:hidden;">
+  <table class="data-table data-table--comfortable" style="border:none;box-shadow:none;border-radius:0;">
     <thead>
       <tr>
         <th>ID</th>
@@ -30,19 +27,17 @@
         <th>Fecha</th>
         <th>Hora</th>
         <th>Estado</th>
-        <th></th>
       </tr>
     </thead>
     <tbody>
       {% for r in reservations %}
-      <tr>
-        <td><a href="{% url 'operations:reservation_detail' r.reservation_id %}" class="order-id-link">{{ r.reservation_id }}</a></td>
-        <td><code>{{ r.wa_id }}</code></td>
+      <tr data-row-href="{% url 'operations:reservation_detail' r.reservation_id %}">
+        <td><span class="order-id-link">{{ r.reservation_id }}</span></td>
+        <td><code class="menu-item-id">{{ r.wa_id }}</code></td>
         <td>{{ r.personas }}</td>
         <td>{{ r.fecha }}</td>
         <td>{{ r.hora }}</td>
-        <td><span class="badge badge-confirmed">{{ r.status|default:"—" }}</span></td>
-        <td><a href="{% url 'operations:reservation_detail' r.reservation_id %}" class="btn btn-ghost btn-sm">Ver</a></td>
+        <td><span class="avail-badge avail-badge--yes">{{ r.status|default:"Confirmada" }}</span></td>
       </tr>
       {% endfor %}
     </tbody>

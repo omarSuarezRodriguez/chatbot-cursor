@@ -2,34 +2,42 @@
 {% block title %}{{ customer.wa_id }} — Cliente{% endblock %}
 {% block page_heading %}Cliente{% endblock %}
 {% block content %}
-<nav class="order-detail__back">
-  <a href="{% url 'operations:users' %}" class="btn btn-ghost">
-    {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
-    Volver a clientes
-  </a>
-</nav>
-<div class="card order-detail__summary" style="max-width:36rem;">
-  <h1>{{ customer.name|default:"Sin nombre" }}</h1>
-  <dl class="detail-dl">
-    <dt>WA ID</dt>
-    <dd><code>{{ customer.wa_id }}</code></dd>
-    <dt>Dirección</dt>
-    <dd>{{ customer.address|default:"—" }}</dd>
-    <dt>Notas (panel)</dt>
-    <dd>{{ customer.notes|default:"—" }}</dd>
-    <dt>Última visita</dt>
-    <dd class="muted">{{ customer.last_seen|default:"—" }}</dd>
-  </dl>
-  {% if can_edit %}
-  <div class="form-actions" style="margin-top:var(--space-4);">
-    <a href="{% url 'operations:customer_edit' customer.wa_id %}" class="btn btn-primary">Editar</a>
-    {% if can_delete %}
-    <form method="post" action="{% url 'operations:customer_delete' customer.wa_id %}" style="display:inline;margin:0;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar cliente {{ customer.wa_id }} del panel?');">Eliminar</button>
-    </form>
+<a href="{% url 'operations:users' %}" class="form-page__back">
+  {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
+  Volver a clientes
+</a>
+
+<div class="card" style="max-width:40rem;padding:0;overflow:hidden;">
+  <header class="form-panel__header">
+    <h1 style="margin:0;">{{ customer.name|default:"Sin nombre" }}</h1>
+    <p class="muted" style="margin:var(--space-2) 0 0;"><code>{{ customer.wa_id }}</code></p>
+  </header>
+  <div style="padding:var(--space-6);">
+    <dl class="detail-dl">
+      <dt>Dirección</dt>
+      <dd>{{ customer.address|default:"—" }}</dd>
+      <dt>Notas (panel)</dt>
+      <dd>{{ customer.notes|default:"—" }}</dd>
+      <dt>Última visita</dt>
+      <dd class="muted">{{ customer.last_seen|default:"—" }}</dd>
+    </dl>
+    {% if can_edit %}
+    <div class="detail-actions">
+      <a href="{% url 'operations:customer_edit' customer.wa_id %}" class="btn btn-primary">
+        {% include "operations/partials/icon.html" with name="edit" class="icon--sm" %}
+        Editar
+      </a>
+      {% if can_delete %}
+      <form method="post" action="{% url 'operations:customer_delete' customer.wa_id %}" data-confirm="¿Eliminar al cliente {{ customer.name|default:customer.wa_id }} del panel?">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          {% include "operations/partials/icon.html" with name="trash" class="icon--sm" %}
+          Eliminar
+        </button>
+      </form>
+      {% endif %}
+    </div>
     {% endif %}
   </div>
-  {% endif %}
 </div>
 {% endblock %}

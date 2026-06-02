@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group, User
 from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
 
 from apps.accounts.audit import log_audit
@@ -37,6 +38,11 @@ from .services import readers
 from .services.settings_store import load_panel_settings, save_panel_settings
 
 ORDERS_PER_PAGE = 20
+ORDER_LIST_TAB_STATUSES = (
+    ("pending", "Pendiente"),
+    ("confirmed", "Confirmado"),
+    ("delivered", "Entregado"),
+)
 
 
 def _flash_write_result(request, result, *, success_level="success"):
@@ -66,9 +72,13 @@ class OrderListView(LoginRequiredMixin, View):
     def get(self, request):
         panel = load_panel_settings()
         q = request.GET.get("q", "").strip()
-        status_filter = request.GET.get(
-            "status", panel.get("default_order_status_filter", "")
-        ).strip().lower()
+        status_from_request = request.GET.get("status")
+        if status_from_request is None:
+            status_filter = (
+                panel.get("default_order_status_filter", "") or "pending"
+            ).strip().lower()
+        else:
+            status_filter = status_from_request.strip().lower()
         date_from = request.GET.get("date_from", "").strip()
         date_to = request.GET.get("date_to", "").strip()
         sort = request.GET.get("sort", "timestamp").strip()
@@ -111,6 +121,13 @@ class OrderListView(LoginRequiredMixin, View):
         query_params = request.GET.copy()
         query_params.pop("page", None)
         base_query = query_params.urlencode()
+        tab_query_params = query_params.copy()
+        tab_query_params.pop("status", None)
+        base_query_for_tabs = tab_query_params.urlencode()
+
+        can_confirm_orders = bot_bridge.writes_enabled() and user_is_dashboard_operator(
+            request.user
+        )
 
         return render(
             request,
@@ -125,10 +142,12 @@ class OrderListView(LoginRequiredMixin, View):
                 "sort": sort,
                 "direction": direction,
                 "order_statuses": readers.ORDER_STATUSES,
+                "order_status_tabs": ORDER_LIST_TAB_STATUSES,
                 "sort_fields": readers.ORDER_SORT_FIELDS,
                 "base_query": base_query,
-                "can_create_order": bot_bridge.writes_enabled()
-                and user_is_dashboard_operator(request.user),
+                "base_query_for_tabs": base_query_for_tabs,
+                "can_confirm_orders": can_confirm_orders,
+                "can_create_order": can_confirm_orders,
             },
         )
 
@@ -241,6 +260,8 @@ class OrderDetailView(LoginRequiredMixin, View):
             metadata={"ok": result.ok, "message": result.message},
         )
         _flash_write_result(request, result)
+        if request.POST.get("return_to_list") == "1":
+            return redirect(f"{reverse('operations:orders')}?status=pending")
         return redirect("operations:order_detail", order_id=order_id)
 
 

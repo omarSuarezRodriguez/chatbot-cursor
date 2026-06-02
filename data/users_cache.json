@@ -319,6 +319,21 @@
       "last_order_date": "",
       "last_order_items": [],
       "last_seen": "2026-06-02T02:45:04.785675"
+    },
+    "2323": {
+      "wa_id": "2323",
+      "name": "adasd",
+      "address": "qwdqw",
+      "last_order_date": "2026-06-02T04:21:22.078678",
+      "last_order_items": [
+        {
+          "product": "Pizza Margarita",
+          "qty": 2,
+          "unit_price": 11.0,
+          "subtotal": 22.0
+        }
+      ],
+      "last_seen": "2026-06-02T04:21:22.078678"
     }
   },
   "row_index": {
@@ -360,7 +375,8 @@
     "regression_191b5ce1": 37,
     "regression_38173feb": 38,
     "regression_059915ac": 39,
-    "regression_2ab28297": 40
+    "regression_2ab28297": 40,
+    "2323": 41
   },
   "dirty": []
 }

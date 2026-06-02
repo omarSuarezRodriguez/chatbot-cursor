@@ -1,5 +1,7 @@
 ## Prompt maestro para implementar mejoras usando AI_RULES.md
 
+
+
 OBLIGATORIO:
 
 Lee y aplica completamente AI_RULES.md.
@@ -10,14 +12,13 @@ TAREA:
 [mejora a implementar]
 
 
-##
-## 
+---
 
+## Prompt dashboard incremental
 
+**Usa solo `DASHBOARD_RULES.md`** en la raíz del repo. Incluye AI_RULES (prioridad máxima), mapa, arquitectura y prompt mínimo.
 
-
-
-
+En el chat: `@DASHBOARD_RULES.md` + el bloque **PROMPT PARA USAR CADA VEZ** (solo rellenas la TAREA).
 
 
 

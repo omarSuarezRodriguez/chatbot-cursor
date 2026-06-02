@@ -13,15 +13,34 @@
         }
       ],
       "total": 25.0,
-      "status": "pending",
+      "status": "confirmed",
       "timestamp": "2026-06-01T05:57:03.944488",
       "customer_name": "Pedro",
       "address": "",
       "delivery_type": "recoger"
+    },
+    "ORD-EDA0A954": {
+      "order_id": "ORD-EDA0A954",
+      "wa_id": "2323",
+      "items": [
+        {
+          "product": "Pizza Margarita",
+          "qty": 2,
+          "unit_price": 11.0,
+          "subtotal": 22.0
+        }
+      ],
+      "total": 22.0,
+      "status": "confirmed",
+      "timestamp": "2026-06-02T04:21:22.077939",
+      "customer_name": "adasd",
+      "address": "qwdqw",
+      "delivery_type": "recoger"
     }
   },
   "row_index": {
-    "ORD-BD074F0A": 3
+    "ORD-BD074F0A": 3,
+    "ORD-EDA0A954": 4
   },
   "dirty_new": [],
   "dirty_status": {},
