@@ -1,0 +1,24 @@
+{% extends "operations/base.html" %}
+{% block title %}Menú — Dashboard{% endblock %}
+{% block content %}
+<h1>Menú</h1>
+<p class="muted">Mismos ítems que el bot (<code>data/menu_cache.json</code>), agrupados por categoría.</p>
+{% for category, items in menu_by_category.items %}
+<h2>{{ category }}</h2>
+<table>
+  <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Disponible</th></tr></thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.id|default:"—" }}</td>
+      <td>{{ item.nombre }}</td>
+      <td>{{ item.precio }} €</td>
+      <td>{% if item.disponible %}Sí{% else %}No{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% empty %}
+<p>No hay ítems de menú.</p>
+{% endfor %}
+{% endblock %}

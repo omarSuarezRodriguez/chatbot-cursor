@@ -1,0 +1,27 @@
+{% extends "operations/base.html" %}
+{% block title %}Reservas — Dashboard{% endblock %}
+{% block content %}
+<h1>Reservas</h1>
+<p class="muted">Solo lectura desde <code>data/reservations_cache.json</code></p>
+{% if reservations %}
+<table>
+  <thead>
+    <tr><th>ID</th><th>wa_id</th><th>Personas</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr>
+  </thead>
+  <tbody>
+    {% for r in reservations %}
+    <tr>
+      <td>{{ r.reservation_id }}</td>
+      <td><code>{{ r.wa_id }}</code></td>
+      <td>{{ r.personas }}</td>
+      <td>{{ r.fecha }}</td>
+      <td>{{ r.hora }}</td>
+      <td>{{ r.status }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay reservas en caché.</p>
+{% endif %}
+{% endblock %}

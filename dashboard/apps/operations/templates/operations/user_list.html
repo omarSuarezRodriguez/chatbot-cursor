@@ -1,0 +1,25 @@
+{% extends "operations/base.html" %}
+{% block title %}Usuarios — Dashboard{% endblock %}
+{% block content %}
+<h1>Usuarios recientes</h1>
+<p class="muted">Ordenados por <code>last_seen</code> (<code>data/users_cache.json</code>)</p>
+{% if users %}
+<table>
+  <thead>
+    <tr><th>wa_id</th><th>Nombre</th><th>Dirección</th><th>Última visita</th></tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td><code>{{ user.wa_id }}</code></td>
+      <td>{{ user.name|default:"—" }}</td>
+      <td>{{ user.address|default:"—" }}</td>
+      <td class="muted">{{ user.last_seen }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay usuarios en caché.</p>
+{% endif %}
+{% endblock %}

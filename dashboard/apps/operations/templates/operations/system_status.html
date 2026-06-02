@@ -1,0 +1,18 @@
+{% extends "operations/base.html" %}
+{% block title %}Estado del sistema{% endblock %}
+{% block content %}
+<h1>Estado del sistema</h1>
+
+<h2>Bot Flask</h2>
+<p class="muted">GET <code>{{ bot_health_url }}</code></p>
+{% if bot_health_text %}
+<pre>{{ bot_health_text }}</pre>
+{% else %}
+<p><strong>No disponible:</strong> {{ bot_health_error }}</p>
+<p class="muted">Arranca el bot con <code>python run.py</code> en el puerto 5000.</p>
+{% endif %}
+
+<h2>Caché Google Sheets (proceso dashboard)</h2>
+<pre>{{ sheets_cache_text }}</pre>
+<p class="muted">Lectura vía <code>GoogleSheetsClient.cache_status()</code> — sin escrituras desde el panel.</p>
+{% endblock %}

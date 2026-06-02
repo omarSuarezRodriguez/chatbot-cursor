@@ -1,0 +1,35 @@
+{% extends "operations/base.html" %}
+{% block title %}{{ order.order_id }} — Pedido{% endblock %}
+{% block content %}
+<p><a href="{% url 'operations:orders' %}">← Volver a pedidos</a></p>
+<h1>Pedido {{ order.order_id }}</h1>
+<dl>
+  <dt>Estado</dt><dd><span class="badge badge-{{ order.status }}">{{ order.status }}</span></dd>
+  <dt>WhatsApp ID</dt><dd><code>{{ order.wa_id }}</code></dd>
+  <dt>Cliente</dt><dd>{{ order.customer_name|default:"—" }}</dd>
+  <dt>Dirección</dt><dd>{{ order.address|default:"—" }}</dd>
+  <dt>Tipo entrega</dt><dd>{{ order.delivery_type|default:"—" }}</dd>
+  <dt>Total</dt><dd><strong>{{ order.total }} €</strong></dd>
+  <dt>Fecha</dt><dd class="muted">{{ order.timestamp }}</dd>
+</dl>
+<h2>Ítems</h2>
+{% if items %}
+<table>
+  <thead>
+    <tr><th>Producto</th><th>Cant.</th><th>P. unit.</th><th>Subtotal</th></tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{% firstof item.product item.nombre "—" %}</td>
+      <td>{{ item.qty|default:1 }}</td>
+      <td>{{ item.unit_price }} €</td>
+      <td>{{ item.subtotal }} €</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="muted">Sin líneas de pedido.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "operations/base.html" %}
+{% block title %}Pedidos — Dashboard{% endblock %}
+{% block content %}
+<h1>Pedidos</h1>
+<p class="muted">
+  Solo lectura desde <code>data/orders_cache.json</code>.
+  {% if status_filter %}Filtro: <strong>{{ status_filter }}</strong>{% endif %}
+</p>
+<p>
+  <a href="{% url 'operations:orders' %}">Todos</a> ·
+  <a href="{% url 'operations:orders' %}?status=pending">Pendientes</a> ·
+  <a href="{% url 'operations:orders' %}?status=confirmed">Confirmados</a>
+</p>
+{% if orders %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Total</th>
+      <th>Estado</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+    <tr>
+      <td><a href="{% url 'operations:order_detail' order.order_id %}">{{ order.order_id }}</a></td>
+      <td>{{ order.customer_name|default:"—" }}</td>
+      <td>{{ order.total }} €</td>
+      <td>
+        <span class="badge badge-{{ order.status }}">{{ order.status }}</span>
+      </td>
+      <td class="muted">{{ order.timestamp }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay pedidos en caché.</p>
+{% endif %}
+{% endblock %}

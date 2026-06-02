@@ -1,4 +1,4 @@
-## v0.23
+## v0.24
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4310,3 +4310,148 @@ Cumplimiento **Fase 1**: fundación Django + PostgreSQL local documentada, proce
 ## v0.24
 
 ## Prompt:
+
+
+Existe una auditoría y arquitectura aprobadas para este proyecto.
+
+Antes de realizar cualquier análisis o modificación debes leer completamente el archivo:
+
+AUDITORIA.md
+
+ubicado en la raíz del proyecto.
+
+La auditoría es la fuente de verdad para arquitectura, fases, restricciones, riesgos, validaciones y alcance.
+
+Debes respetarla estrictamente.
+
+REGLAS INMUTABLES
+
+* Modifica lo mínimo posible.
+* Implementa únicamente mejoras incrementales.
+* No rompas funcionalidad existente.
+* No refactorices código no relacionado.
+* No cambies APIs, contratos ni integraciones.
+* No alteres la arquitectura definida en AUDITORIA.md.
+* No implementes trabajo de fases futuras.
+* Mantén compatibilidad total con el sistema actual.
+* Prioriza estabilidad, simplicidad y bajo mantenimiento.
+* Evita dependencias innecesarias.
+* Reutiliza componentes, servicios y lógica existente siempre que sea posible.
+* Si detectas una contradicción entre esta tarea y AUDITORIA.md, prevalece AUDITORIA.md.
+* Si detectas riesgo alto, detente y explícalo antes de continuar.
+
+TAREA
+
+[Contexto: Fase 1 completada (Django + PG local). Bot Flask intacto en app/.
+
+Tarea Fase 2 — Dashboard lectura operativa:
+1. App Django operations con vistas login-free temporal o con auth si ya existe Fase 3 parcial.
+2. Leer pedidos, reservas, menú y usuarios desde data/*.json; fallback a GoogleSheetsClient (import app.integrations.google_sheets) si caché vacío.
+3. Vista detalle pedido (items, total, status, wa_id, dirección).
+4. Vista estado sistema: HTTP GET a localhost:5000/health + cache_status del cliente Sheets.
+5. Solo lectura: no escribir JSON ni Sheets.
+6. NO crear endpoints Flask nuevos. NO tocar parser.py ni flow_engine.py.
+
+Verificar: regression_checklist.py; datos del panel coinciden con WhatsApp menu y pedido de prueba.
+Entregar: URLs, capturas o descripción de vistas, archivos tocados.]
+
+ANTES DE MODIFICAR
+
+1. Leer AUDITORIA.md completo.
+2. Analizar el proyecto actual.
+3. Verificar que la tarea corresponde a la fase indicada en AUDITORIA.md.
+4. Explicar el plan de implementación.
+5. Listar archivos a crear.
+6. Listar archivos a modificar.
+7. Explicar riesgos potenciales.
+8. Confirmar que el alcance está limitado únicamente a esta fase.
+
+IMPLEMENTACIÓN
+
+* Realiza únicamente lo necesario para completar la tarea.
+* Mantén los cambios lo más pequeños posible.
+* No añadas funcionalidades fuera del alcance.
+* No modifiques componentes no relacionados.
+* Reutiliza la arquitectura existente siempre que sea posible.
+
+VALIDACIÓN
+
+* Verifica que el proyecto siga funcionando.
+* Verifica que no existan regresiones.
+* Ejecuta las validaciones definidas en AUDITORIA.md para esta fase.
+* Confirma compatibilidad con el sistema actual.
+* Confirma que no se han afectado fases futuras.
+
+ENTREGA
+
+* Resumen de cambios.
+* Archivos creados.
+* Archivos modificados.
+* Validaciones realizadas.
+* Riesgos restantes.
+* Rollback específico de esta fase.
+* Confirmación explícita de cumplimiento de AUDITORIA.md.
+
+
+## Respuesta cursor ##
+
+## Fase 2 completada — Dashboard lectura operativa
+
+### Plan (cumplimiento AUDITORIA.md)
+- App `operations` con vistas **sin login** (Fase 3 añadirá auth).
+- Lectura desde `data/*.json`; si vacío, fallback con `get_google_sheets_client` + `warm_up_cache()` (sin escrituras desde las vistas).
+- Estado del sistema: `GET` a `BOT_HEALTH_URL` + `cache_status()`.
+- Sin cambios en Flask, `parser.py` ni `flow_engine.py`.
+
+### URLs (puerto 8000)
+
+| Ruta | Vista |
+|------|--------|
+| http://localhost:8000/ | Lista de pedidos |
+| http://localhost:8000/pedidos/?status=pending | Pedidos pendientes |
+| http://localhost:8000/pedidos/ORD-BD074F0A/ | Detalle (ítems, total, status, wa_id, dirección) |
+| http://localhost:8000/reservas/ | Reservas |
+| http://localhost:8000/menu/ | Menú por categoría (18 ítems = mismo caché que WhatsApp) |
+| http://localhost:8000/usuarios/ | Usuarios por `last_seen` |
+| http://localhost:8000/estado/ | Health del bot + caché Sheets |
+
+### Archivos creados
+- `dashboard/apps/operations/` (`apps.py`, `models.py`, `views.py`, `urls.py`)
+- `dashboard/apps/operations/services/readers.py`
+- `dashboard/apps/operations/templates/operations/*.html` (7 plantillas)
+
+### Archivos modificados
+- `dashboard/config/settings.py` — `apps.operations`, `PROJECT_ROOT`, `BOT_HEALTH_URL`, `testserver`
+- `dashboard/config/urls.py` — include operations
+- `.env.dashboard.example` — `BOT_HEALTH_URL`
+
+### Validaciones
+- `python scripts/regression_checklist.py` → **5/5 OK**
+- `python dashboard/manage.py check` → sin issues
+- Smoke test: pedido `ORD-BD074F0A`, menú 18 ítems, vistas 200
+
+### Arranque
+```powershell
+# Terminal 1 — bot
+python run.py
+
+# Terminal 2 — dashboard
+docker compose up -d db
+cd dashboard
+python manage.py migrate
+python manage.py runserver 8000
+```
+
+### Rollback Fase 2
+Quitar `"apps.operations"` de `INSTALLED_APPS` y la línea `include("apps.operations.urls")` en `urls.py`; borrar `dashboard/apps/operations/`.
+
+### Riesgos restantes
+- Vistas **públicas** hasta Fase 3.
+- Fallback `GoogleSheetsClient` puede arrancar hilo de sync (escritura en `data/` del **proceso dashboard**); con bot y dashboard locales, evitar escrituras simultáneas (AUDITORIA §2.3).
+- `/estado/` instancia el cliente Sheets al cargar la página.
+
+### Cumplimiento AUDITORIA.md
+Sí: solo lectura operativa, proceso dual, sin endpoints Flask nuevos, sin tocar parser/flow, alcance limitado a Fase 2.
+
+
+
