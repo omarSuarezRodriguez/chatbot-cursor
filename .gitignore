@@ -1,5 +1,7 @@
 # Environment
 .env
+.env.dashboard
+dashboard/.env
 venv/
 .venv/
 __pycache__/

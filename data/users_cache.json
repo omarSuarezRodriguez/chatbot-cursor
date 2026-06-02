@@ -287,6 +287,14 @@
       "last_order_date": "",
       "last_order_items": [],
       "last_seen": "2026-06-01T06:04:09.166318"
+    },
+    "regression_38173feb": {
+      "wa_id": "regression_38173feb",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-02T02:28:38.654328"
     }
   },
   "row_index": {
@@ -326,5 +334,7 @@
     "deploy_0a1212e0": 35,
     "deploy_5a74c798": 36
   },
-  "dirty": []
+  "dirty": [
+    "regression_38173feb"
+  ]
 }
