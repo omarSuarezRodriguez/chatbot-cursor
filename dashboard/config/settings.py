@@ -173,6 +173,6 @@ BOT_HEALTH_URL = os.environ.get("BOT_HEALTH_URL", "http://127.0.0.1:5000/health"
 DASHBOARD_ENABLE_WRITES = os.environ.get("DASHBOARD_ENABLE_WRITES", "0") == "1"
 RESTAURANT_NAME = os.environ.get("RESTAURANT_NAME", "La Casa del Sabor")
 
-LOGIN_URL = "accounts:login"
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "accounts:login"
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/mipanel/"
+LOGOUT_REDIRECT_URL = "/login/"

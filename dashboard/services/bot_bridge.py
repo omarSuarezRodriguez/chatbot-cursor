@@ -469,7 +469,7 @@ def confirm_order(order_id: str) -> ConfirmOrderResult:
     if not order_id:
         return WriteResult(ok=False, message="ID de pedido vacío.")
 
-    _, _, order_service, _, _ = _bot_services()
+    _, _, order_service, admin_service, _ = _bot_services()
     order = order_service.get_order(order_id)
     if not order:
         return WriteResult(ok=False, message=f"No encontré el pedido {order_id}.")
