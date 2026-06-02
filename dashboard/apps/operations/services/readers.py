@@ -85,6 +85,31 @@ def read_order(order_id: str) -> Optional[Dict[str, Any]]:
     return _sheets_client().get_order(order_id)
 
 
+def read_user(wa_id: str) -> Optional[Dict[str, Any]]:
+    wa_id = str(wa_id).strip()
+    for user in read_users():
+        if str(user.get("wa_id", "")).strip() == wa_id:
+            return dict(user)
+    profile = _sheets_client().get_user(wa_id)
+    return profile if profile.get("wa_id") else None
+
+
+def read_menu_item(item_id: str) -> Optional[Dict[str, Any]]:
+    item_id = str(item_id).strip()
+    for item in read_menu():
+        if str(item.get("id", "")).strip() == item_id:
+            return dict(item)
+    return None
+
+
+def menu_categories() -> List[str]:
+    categories = sorted(
+        {str(i.get("categoria") or "General") for i in read_menu()},
+        key=str.lower,
+    )
+    return categories
+
+
 def read_users() -> List[Dict[str, Any]]:
     raw = _load_json(USERS_PATH)
     users: List[Dict[str, Any]] = []

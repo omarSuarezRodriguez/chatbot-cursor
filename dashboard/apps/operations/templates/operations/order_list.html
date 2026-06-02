@@ -2,9 +2,14 @@
 {% block title %}Pedidos — Dashboard{% endblock %}
 {% block page_heading %}Pedidos{% endblock %}
 {% block content %}
-<div class="app-page-header">
-  <h1>Pedidos</h1>
-  <p class="muted">Lectura desde <code>data/orders_cache.json</code> — búsqueda, filtros y paginación en servidor.</p>
+<div class="app-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;">
+  <div>
+    <h1>Pedidos</h1>
+    <p class="muted">Lectura desde <code>data/orders_cache.json</code> — búsqueda, filtros y paginación.</p>
+  </div>
+  {% if can_create_order %}
+  <a href="{% url 'operations:order_create' %}" class="btn btn-primary">Nuevo pedido</a>
+  {% endif %}
 </div>
 
 <form class="data-toolbar card" method="get" action="{% url 'operations:orders' %}">

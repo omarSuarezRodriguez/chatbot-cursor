@@ -42,3 +42,20 @@ class UserService:
     def display_name(self, wa_id: str, fallback: str = "") -> str:
         profile = self.get_profile(wa_id)
         return profile.get("name") or fallback
+
+    def save_customer(
+        self,
+        wa_id: str,
+        name: str = "",
+        notes: str = "",
+        address: str = "",
+    ) -> None:
+        self.sheets.upsert_user(
+            wa_id=wa_id,
+            name=name,
+            notes=notes,
+            address=address,
+        )
+
+    def delete_customer(self, wa_id: str) -> bool:
+        return self.sheets.delete_user(wa_id)

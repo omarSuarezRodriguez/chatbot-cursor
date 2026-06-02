@@ -47,6 +47,25 @@
       Pedido pendiente — activa <code>DASHBOARD_ENABLE_WRITES=1</code> en <code>.env.dashboard</code> para confirmarlo.
     </p>
     {% endif %}
+
+    {% if can_edit %}
+    <hr style="margin:var(--space-6) 0;border:none;border-top:1px solid var(--color-border);">
+    <h3>Cambiar estado</h3>
+    <form method="post" class="form-stack">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_status">
+      <div class="form-field">
+        {{ status_form.status.label_tag }}
+        {{ status_form.status }}
+      </div>
+      <button type="submit" class="btn btn-ghost">Actualizar estado</button>
+    </form>
+    <form method="post" class="order-detail__actions" style="margin-top:var(--space-3);">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="cancel">
+      <button type="submit" class="btn btn-danger" onclick="return confirm('¿Cancelar pedido {{ order.order_id }}?');">Cancelar pedido</button>
+    </form>
+    {% endif %}
   </section>
 
   <section class="card order-detail__items">
@@ -82,6 +101,19 @@
     </div>
     {% else %}
     <p class="muted">Sin líneas de pedido en caché.</p>
+    {% endif %}
+
+    {% if can_edit %}
+    <h3 style="margin-top:var(--space-6);">Editar ítems (JSON)</h3>
+    <form method="post" class="form-stack">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_items">
+      <div class="form-field">
+        {{ items_form.items_json.label_tag }}
+        {{ items_form.items_json }}
+      </div>
+      <button type="submit" class="btn btn-primary" onclick="return confirm('¿Actualizar ítems y recalcular total?');">Guardar ítems</button>
+    </form>
     {% endif %}
   </section>
 </div>

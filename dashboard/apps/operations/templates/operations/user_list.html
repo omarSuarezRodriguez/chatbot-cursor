@@ -1,25 +1,36 @@
 {% extends "operations/base.html" %}
-{% block title %}Usuarios — Dashboard{% endblock %}
-{% block page_heading %}Usuarios{% endblock %}
+{% block title %}Clientes — Dashboard{% endblock %}
+{% block page_heading %}Clientes{% endblock %}
 {% block content %}
-<h1>Usuarios recientes</h1>
-<p class="muted">Ordenados por <code>last_seen</code> (<code>data/users_cache.json</code>)</p>
+<div class="app-page-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;">
+  <div>
+    <h1>Clientes</h1>
+    <p class="muted">Ordenados por <code>last_seen</code> (<code>data/users_cache.json</code>)</p>
+  </div>
+  {% if can_create %}
+  <a href="{% url 'operations:customer_create' %}" class="btn btn-primary">Nuevo cliente</a>
+  {% endif %}
+</div>
 {% if users %}
-<table>
+<div class="table-wrap">
+<table class="data-table">
   <thead>
-    <tr><th>wa_id</th><th>Nombre</th><th>Dirección</th><th>Última visita</th></tr>
+    <tr><th>wa_id</th><th>Nombre</th><th>Notas</th><th>Dirección</th><th>Última visita</th><th></th></tr>
   </thead>
   <tbody>
     {% for user in users %}
     <tr>
       <td><code>{{ user.wa_id }}</code></td>
       <td>{{ user.name|default:"—" }}</td>
+      <td class="muted">{{ user.notes|default:"—"|truncatechars:40 }}</td>
       <td>{{ user.address|default:"—" }}</td>
       <td class="muted">{{ user.last_seen }}</td>
+      <td><a href="{% url 'operations:customer_detail' user.wa_id %}" class="btn btn-ghost btn-sm">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% else %}
 <p>No hay usuarios en caché.</p>
 {% endif %}

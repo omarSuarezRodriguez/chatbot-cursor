@@ -1,0 +1,29 @@
+{% extends "operations/base.html" %}
+{% block title %}Nuevo pedido — Dashboard{% endblock %}
+{% block page_heading %}Nuevo pedido{% endblock %}
+{% block content %}
+<nav class="order-detail__back">
+  <a href="{% url 'operations:orders' %}" class="btn btn-ghost">
+    {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
+    Volver a pedidos
+  </a>
+</nav>
+<div class="card" style="max-width:40rem;">
+  <h1>Crear pedido manual</h1>
+  <p class="muted">Los ítems deben ser JSON con <code>product</code>, <code>qty</code> y <code>unit_price</code>.</p>
+  <form method="post" class="form-stack">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-field{% if field.errors %} form-field--error{% endif %}">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Crear pedido</button>
+      <a href="{% url 'operations:orders' %}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

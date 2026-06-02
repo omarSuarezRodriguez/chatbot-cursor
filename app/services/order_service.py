@@ -73,3 +73,32 @@ class OrderService:
 
     def confirm_order(self, order_id: str) -> bool:
         return self.sheets.update_order_status(order_id, "confirmed")
+
+    def cancel_order(self, order_id: str) -> bool:
+        return self.sheets.update_order_status(order_id, "cancelled")
+
+    def update_order_status(self, order_id: str, status: str) -> bool:
+        return self.sheets.update_order_status(order_id, status)
+
+    def update_order(
+        self,
+        order_id: str,
+        *,
+        status: Optional[str] = None,
+        items: Optional[List[Dict[str, Any]]] = None,
+        customer_name: Optional[str] = None,
+        address: Optional[str] = None,
+        delivery_type: Optional[str] = None,
+    ) -> bool:
+        total = None
+        if items is not None:
+            total = self.cart_total(items)
+        return self.sheets.update_order(
+            order_id,
+            status=status,
+            items=items,
+            total=total,
+            customer_name=customer_name,
+            address=address,
+            delivery_type=delivery_type,
+        )

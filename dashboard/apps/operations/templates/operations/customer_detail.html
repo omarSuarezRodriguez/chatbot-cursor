@@ -1,0 +1,35 @@
+{% extends "operations/base.html" %}
+{% block title %}{{ customer.wa_id }} — Cliente{% endblock %}
+{% block page_heading %}Cliente{% endblock %}
+{% block content %}
+<nav class="order-detail__back">
+  <a href="{% url 'operations:users' %}" class="btn btn-ghost">
+    {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
+    Volver a clientes
+  </a>
+</nav>
+<div class="card order-detail__summary" style="max-width:36rem;">
+  <h1>{{ customer.name|default:"Sin nombre" }}</h1>
+  <dl class="detail-dl">
+    <dt>WA ID</dt>
+    <dd><code>{{ customer.wa_id }}</code></dd>
+    <dt>Dirección</dt>
+    <dd>{{ customer.address|default:"—" }}</dd>
+    <dt>Notas (panel)</dt>
+    <dd>{{ customer.notes|default:"—" }}</dd>
+    <dt>Última visita</dt>
+    <dd class="muted">{{ customer.last_seen|default:"—" }}</dd>
+  </dl>
+  {% if can_edit %}
+  <div class="form-actions" style="margin-top:var(--space-4);">
+    <a href="{% url 'operations:customer_edit' customer.wa_id %}" class="btn btn-primary">Editar</a>
+    {% if can_delete %}
+    <form method="post" action="{% url 'operations:customer_delete' customer.wa_id %}" style="display:inline;margin:0;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger" onclick="return confirm('¿Eliminar cliente {{ customer.wa_id }} del panel?');">Eliminar</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

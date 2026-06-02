@@ -124,6 +124,7 @@ class GoogleSheetsClient:
         self._order_row_index: Dict[str, int] = {}
         self._dirty_new_orders: set[str] = set()
         self._dirty_order_status: Dict[str, str] = {}
+        self._dirty_order_updates: set[str] = set()
         self._reservations_local: Dict[str, Dict[str, Any]] = {}
         self._dirty_reservations: set[str] = set()
         self._worksheets: Dict[str, Any] = {}
@@ -365,6 +366,7 @@ class GoogleSheetsClient:
             row_index = payload.get("row_index", {})
             dirty_new = payload.get("dirty_new", [])
             dirty_status = payload.get("dirty_status", {})
+            dirty_updates = payload.get("dirty_updates", [])
             if isinstance(orders, dict):
                 with self._cache_lock:
                     self._orders_local = {
@@ -378,6 +380,7 @@ class GoogleSheetsClient:
                         str(k).upper(): str(v)
                         for k, v in dirty_status.items()
                     }
+                    self._dirty_order_updates = {str(o).upper() for o in dirty_updates}
         except (json.JSONDecodeError, OSError, ValueError, TypeError) as exc:
             logger.warning("Local orders cache unreadable (%s).", exc)
 
@@ -388,6 +391,7 @@ class GoogleSheetsClient:
                 "row_index": self._order_row_index,
                 "dirty_new": sorted(self._dirty_new_orders),
                 "dirty_status": self._dirty_order_status,
+                "dirty_updates": sorted(self._dirty_order_updates),
             }
         _ORDERS_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
         with _ORDERS_LOCAL_PATH.open("w", encoding="utf-8") as handle:
@@ -449,7 +453,11 @@ class GoogleSheetsClient:
             if not fetched and not fetched_rows:
                 return
             with self._cache_lock:
-                pending = set(self._dirty_new_orders) | set(self._dirty_order_status)
+                pending = (
+                    set(self._dirty_new_orders)
+                    | set(self._dirty_order_status)
+                    | set(self._dirty_order_updates)
+                )
                 for order_id, order in fetched.items():
                     if order_id not in pending:
                         self._orders_local[order_id] = order
@@ -508,12 +516,51 @@ class GoogleSheetsClient:
         sheet.update(f"E{row_idx}", [[status]])
         return True
 
+    def _update_order_on_sheets(self, order_id: str) -> bool:
+        sheet = self._get_sheet("ORDERS")
+        if not sheet:
+            return False
+        with self._cache_lock:
+            order = dict(self._orders_local.get(order_id, {}))
+            row_idx = self._order_row_index.get(order_id)
+        if not order:
+            return False
+        if not row_idx:
+            try:
+                cell = sheet.find(order_id, in_column=1)
+            except Exception:
+                return False
+            if not cell:
+                return False
+            row_idx = cell.row
+            with self._cache_lock:
+                self._order_row_index[order_id] = row_idx
+
+        items = order.get("items", [])
+        sheet.update(
+            f"B{row_idx}:I{row_idx}",
+            [
+                [
+                    order.get("wa_id", ""),
+                    json.dumps(items, ensure_ascii=False),
+                    order.get("total", 0),
+                    order.get("status", "pending"),
+                    order.get("timestamp", ""),
+                    order.get("customer_name", ""),
+                    order.get("address", ""),
+                    order.get("delivery_type", ""),
+                ]
+            ],
+        )
+        return True
+
     def _push_dirty_orders_to_sheets(self) -> None:
         if not self._connected:
             return
         with self._cache_lock:
             new_orders = list(self._dirty_new_orders)
             status_updates = dict(self._dirty_order_status)
+            full_updates = list(self._dirty_order_updates)
 
         synced_new: List[str] = []
         for order_id in new_orders:
@@ -533,17 +580,32 @@ class GoogleSheetsClient:
                     "Background order status sync failed for %s (%s).", order_id, exc
                 )
 
-        if synced_new or synced_status:
+        synced_full: List[str] = []
+        for order_id in full_updates:
+            if order_id in synced_new:
+                continue
+            try:
+                if self._update_order_on_sheets(order_id):
+                    synced_full.append(order_id)
+            except Exception as exc:
+                logger.warning(
+                    "Background order update failed for %s (%s).", order_id, exc
+                )
+
+        if synced_new or synced_status or synced_full:
             with self._cache_lock:
                 for order_id in synced_new:
                     self._dirty_new_orders.discard(order_id)
                 for order_id in synced_status:
                     self._dirty_order_status.pop(order_id, None)
+                for order_id in synced_full:
+                    self._dirty_order_updates.discard(order_id)
             self._save_local_orders()
             logger.info(
-                "Orders synced to Sheets: %d new, %d status",
+                "Orders synced to Sheets: %d new, %d status, %d full",
                 len(synced_new),
                 len(synced_status),
+                len(synced_full),
             )
 
     def _fetch_reservations_from_sheets(self) -> Dict[str, Dict[str, Any]]:
@@ -877,6 +939,112 @@ class GoogleSheetsClient:
         sheet.update_cell(cell.row, 5, value)
         return True
 
+    def upsert_menu_item(
+        self,
+        item_id: str,
+        nombre: str,
+        precio: float,
+        categoria: str,
+        disponible: bool = True,
+    ) -> bool:
+        """Create or update a menu item in local cache and Sheet MENU."""
+        item_id = str(item_id).strip()
+        nombre = str(nombre).strip()
+        categoria = str(categoria).strip() or "General"
+        if not item_id or not nombre or precio <= 0:
+            return False
+
+        payload = {
+            "id": item_id,
+            "nombre": nombre,
+            "precio": float(precio),
+            "categoria": categoria,
+            "disponible": bool(disponible),
+        }
+        with self._cache_lock:
+            menu = list(self._menu_cache or DEMO_MENU)
+            found = False
+            for idx, item in enumerate(menu):
+                if str(item.get("id", "")).strip() == item_id:
+                    menu[idx] = payload
+                    found = True
+                    break
+            if not found:
+                menu.append(payload)
+            self._menu_cache = menu
+            menu_copy = list(menu)
+
+        self._save_local_menu(menu_copy)
+        if self._connected:
+            try:
+                self._upsert_menu_item_on_sheets(payload)
+            except Exception:
+                logger.exception("Failed to push menu item %s to Sheets", item_id)
+        return True
+
+    def _upsert_menu_item_on_sheets(self, item: Dict[str, Any]) -> bool:
+        sheet = self._get_sheet("MENU")
+        if not sheet:
+            return False
+        item_id = str(item.get("id", "")).strip()
+        row_values = [
+            item_id,
+            item.get("nombre", ""),
+            item.get("precio", 0),
+            item.get("categoria", ""),
+            "TRUE" if item.get("disponible", True) else "FALSE",
+        ]
+        try:
+            cell = sheet.find(item_id, in_column=1)
+        except Exception:
+            cell = None
+        if cell:
+            sheet.update(f"A{cell.row}:E{cell.row}", [row_values])
+            return True
+        sheet.append_row(row_values)
+        return True
+
+    def remove_menu_item(self, item_id: str, *, hard: bool = False) -> bool:
+        """Soft-delete (disponible=false) or hard-remove from cache and Sheet."""
+        item_id = str(item_id).strip()
+        if not item_id:
+            return False
+        if not hard:
+            return self.set_menu_item_availability(item_id, False)
+
+        with self._cache_lock:
+            menu = self._menu_cache
+            if not menu:
+                return False
+            new_menu = [
+                item for item in menu if str(item.get("id", "")).strip() != item_id
+            ]
+            if len(new_menu) == len(menu):
+                return False
+            self._menu_cache = new_menu
+            menu_copy = list(new_menu)
+
+        self._save_local_menu(menu_copy)
+        if self._connected:
+            try:
+                self._delete_menu_item_on_sheets(item_id)
+            except Exception:
+                logger.exception("Failed to delete menu item %s from Sheets", item_id)
+        return True
+
+    def _delete_menu_item_on_sheets(self, item_id: str) -> bool:
+        sheet = self._get_sheet("MENU")
+        if not sheet:
+            return False
+        try:
+            cell = sheet.find(item_id, in_column=1)
+        except Exception:
+            return False
+        if not cell:
+            return False
+        sheet.delete_rows(cell.row)
+        return True
+
     def get_user(self, wa_id: str) -> Dict[str, Any]:
         with self._cache_lock:
             if wa_id in self._users_cache:
@@ -891,6 +1059,7 @@ class GoogleSheetsClient:
         name: str = "",
         address: str = "",
         last_order_items: Optional[List[Dict[str, Any]]] = None,
+        notes: Optional[str] = None,
     ) -> None:
         now = datetime.utcnow().isoformat()
         with self._cache_lock:
@@ -900,6 +1069,7 @@ class GoogleSheetsClient:
         merged_items = last_order_items if last_order_items is not None else existing.get(
             "last_order_items", []
         )
+        merged_notes = notes if notes is not None else existing.get("notes", "")
         last_order_date = existing.get("last_order_date", "")
         if last_order_items is not None:
             last_order_date = now
@@ -908,6 +1078,7 @@ class GoogleSheetsClient:
             "wa_id": wa_id,
             "name": merged_name,
             "address": merged_address,
+            "notes": merged_notes,
             "last_order_date": last_order_date,
             "last_order_items": merged_items,
             "last_seen": now,
@@ -921,6 +1092,23 @@ class GoogleSheetsClient:
             self._users_cache[wa_id] = user_payload
             self._dirty_users.add(wa_id)
         self._save_local_users()
+
+    def delete_user(self, wa_id: str) -> bool:
+        """Remove user from local cache (notes included). Does not delete Sheet row."""
+        wa_id = str(wa_id).strip()
+        if not wa_id:
+            return False
+        if not self._connected:
+            return self._demo_users.pop(wa_id, None) is not None
+
+        with self._cache_lock:
+            if wa_id not in self._users_cache:
+                return False
+            del self._users_cache[wa_id]
+            self._user_row_index.pop(wa_id, None)
+            self._dirty_users.discard(wa_id)
+        self._save_local_users()
+        return True
 
     def get_last_order(self, wa_id: str) -> Optional[Dict[str, Any]]:
         user = self.get_user(wa_id)
@@ -958,6 +1146,60 @@ class GoogleSheetsClient:
             self._orders_local[order_id]["status"] = status
             if order_id not in self._dirty_new_orders:
                 self._dirty_order_status[order_id] = status
+        self._save_local_orders()
+        return True
+
+    def update_order(
+        self,
+        order_id: str,
+        *,
+        status: Optional[str] = None,
+        items: Optional[List[Dict[str, Any]]] = None,
+        total: Optional[float] = None,
+        customer_name: Optional[str] = None,
+        address: Optional[str] = None,
+        delivery_type: Optional[str] = None,
+    ) -> bool:
+        """Update order fields in local cache; syncs to Sheets via dirty queue."""
+        order_id = order_id.upper()
+        for order in self._demo_orders:
+            if str(order.get("order_id", "")).upper() == order_id:
+                if status is not None:
+                    order["status"] = status
+                if items is not None:
+                    order["items"] = items
+                if total is not None:
+                    order["total"] = total
+                if customer_name is not None:
+                    order["customer_name"] = customer_name
+                if address is not None:
+                    order["address"] = address
+                if delivery_type is not None:
+                    order["delivery_type"] = delivery_type
+                return True
+
+        with self._cache_lock:
+            if order_id not in self._orders_local:
+                return False
+            order = self._orders_local[order_id]
+            if status is not None:
+                order["status"] = status
+            if items is not None:
+                order["items"] = items
+            if total is not None:
+                order["total"] = total
+            if customer_name is not None:
+                order["customer_name"] = customer_name
+            if address is not None:
+                order["address"] = address
+            if delivery_type is not None:
+                order["delivery_type"] = delivery_type
+            if order_id not in self._dirty_new_orders:
+                if status is not None and items is None:
+                    self._dirty_order_status[order_id] = status
+                else:
+                    self._dirty_order_updates.add(order_id)
+                    self._dirty_order_status.pop(order_id, None)
         self._save_local_orders()
         return True
 

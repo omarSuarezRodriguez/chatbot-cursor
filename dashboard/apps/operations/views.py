@@ -15,9 +15,33 @@ from django.views import View
 from apps.accounts.audit import log_audit
 from services import bot_bridge
 
+from .forms import (
+    CustomerForm,
+    MenuItemForm,
+    OrderCreateForm,
+    OrderItemsForm,
+    OrderStatusForm,
+    PanelSettingsForm,
+)
+from .permissions import (
+    AdminRequiredMixin,
+    OperatorRequiredMixin,
+    user_is_dashboard_admin,
+    user_is_dashboard_operator,
+)
 from .services import readers
+from .services.settings_store import load_panel_settings, save_panel_settings
 
 ORDERS_PER_PAGE = 20
+
+
+def _flash_write_result(request, result, *, success_level="success"):
+    if result.ok:
+        messages.success(request, result.message)
+    elif getattr(result, "already_confirmed", False):
+        messages.warning(request, result.message)
+    else:
+        messages.error(request, result.message)
 
 
 class DashboardHomeView(LoginRequiredMixin, View):
@@ -36,12 +60,16 @@ class DashboardHomeView(LoginRequiredMixin, View):
 
 class OrderListView(LoginRequiredMixin, View):
     def get(self, request):
+        panel = load_panel_settings()
         q = request.GET.get("q", "").strip()
-        status_filter = request.GET.get("status", "").strip().lower()
+        status_filter = request.GET.get(
+            "status", panel.get("default_order_status_filter", "")
+        ).strip().lower()
         date_from = request.GET.get("date_from", "").strip()
         date_to = request.GET.get("date_to", "").strip()
         sort = request.GET.get("sort", "timestamp").strip()
         direction = request.GET.get("dir", "desc").strip()
+        per_page = panel.get("orders_per_page", ORDERS_PER_PAGE)
         try:
             page_num = max(1, int(request.GET.get("page", "1")))
         except ValueError:
@@ -69,7 +97,11 @@ class OrderListView(LoginRequiredMixin, View):
             sort=sort,
             direction=direction,
         )
-        paginator = Paginator(orders, ORDERS_PER_PAGE)
+        if not panel.get("show_cancelled_orders", True) and not status_filter:
+            orders = [
+                o for o in orders if str(o.get("status", "")).lower() != "cancelled"
+            ]
+        paginator = Paginator(orders, per_page)
         page_obj = paginator.get_page(page_num)
 
         query_params = request.GET.copy()
@@ -91,8 +123,44 @@ class OrderListView(LoginRequiredMixin, View):
                 "order_statuses": readers.ORDER_STATUSES,
                 "sort_fields": readers.ORDER_SORT_FIELDS,
                 "base_query": base_query,
+                "can_create_order": bot_bridge.writes_enabled()
+                and user_is_dashboard_operator(request.user),
             },
         )
+
+
+class OrderCreateView(OperatorRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        return render(
+            request,
+            "operations/order_form.html",
+            {"form": OrderCreateForm()},
+        )
+
+    def post(self, request):
+        form = OrderCreateForm(request.POST)
+        if not form.is_valid():
+            return render(request, "operations/order_form.html", {"form": form})
+
+        result = bot_bridge.create_manual_order(
+            wa_id=form.cleaned_data["wa_id"],
+            items=form.cleaned_items,
+            customer_name=form.cleaned_data.get("customer_name", ""),
+            address=form.cleaned_data.get("address", ""),
+            delivery_type=form.cleaned_data.get("delivery_type", ""),
+        )
+        log_audit(
+            request,
+            action="create_order",
+            entity="order",
+            entity_id=result.entity_id,
+            metadata={"ok": result.ok, "message": result.message},
+        )
+        if result.ok:
+            messages.success(request, result.message)
+            return redirect("operations:order_detail", order_id=result.entity_id)
+        messages.error(request, result.message)
+        return render(request, "operations/order_form.html", {"form": form})
 
 
 class OrderDetailView(LoginRequiredMixin, View):
@@ -106,45 +174,70 @@ class OrderDetailView(LoginRequiredMixin, View):
                 items = json.loads(items)
             except json.JSONDecodeError:
                 items = []
+        can_write = bot_bridge.writes_enabled() and user_is_dashboard_operator(
+            request.user
+        )
+        status = str(order.get("status", "")).lower()
         return render(
             request,
             "operations/order_detail.html",
             {
                 "order": order,
                 "items": items,
-                "can_confirm": (
-                    bot_bridge.writes_enabled()
-                    and str(order.get("status", "")).lower() == "pending"
-                ),
+                "can_confirm": can_write and status == "pending",
+                "can_edit": can_write and status != "cancelled",
+                "status_form": OrderStatusForm(initial={"status": status or "pending"}),
+                "items_form": OrderItemsForm(initial_items=items),
             },
         )
 
     def post(self, request, order_id: str):
-        if request.POST.get("action") != "confirm":
+        if not bot_bridge.writes_enabled():
+            messages.error(request, bot_bridge._disabled().message)
+            return redirect("operations:order_detail", order_id=order_id.upper())
+        if not user_is_dashboard_operator(request.user):
             raise Http404()
+
+        action = request.POST.get("action", "")
         order = readers.read_order(order_id)
         if not order:
             raise Http404("Pedido no encontrado")
+        order_id = order_id.upper()
 
-        result = bot_bridge.confirm_order(order_id)
+        if action == "confirm":
+            result = bot_bridge.confirm_order(order_id)
+            audit_action = "confirm_order"
+        elif action == "cancel":
+            result = bot_bridge.cancel_order(order_id)
+            audit_action = "cancel_order"
+        elif action == "update_status":
+            form = OrderStatusForm(request.POST)
+            if not form.is_valid():
+                messages.error(request, "Estado inválido.")
+                return redirect("operations:order_detail", order_id=order_id)
+            result = bot_bridge.update_order_status(
+                order_id, form.cleaned_data["status"]
+            )
+            audit_action = "update_order_status"
+        elif action == "update_items":
+            form = OrderItemsForm(request.POST)
+            if not form.is_valid():
+                messages.error(request, "; ".join(form.errors.get("items_json", [])))
+                return redirect("operations:order_detail", order_id=order_id)
+            result = bot_bridge.update_order_items(order_id, form.cleaned_items)
+            audit_action = "update_order_items"
+        else:
+            raise Http404()
+
         log_audit(
             request,
-            action="confirm_order",
+            action=audit_action,
             entity="order",
-            entity_id=order_id.upper(),
-            metadata={
-                "ok": result.ok,
-                "already_confirmed": result.already_confirmed,
-                "message": result.message,
-            },
+            entity_id=order_id,
+            metadata={"ok": result.ok, "message": result.message},
         )
-        if result.ok:
-            messages.success(request, result.message)
-        elif result.already_confirmed:
-            messages.warning(request, result.message)
-        else:
-            messages.error(request, result.message)
-        return redirect("operations:order_detail", order_id=order_id.upper())
+        _flash_write_result(request, result)
+        return redirect("operations:order_detail", order_id=order_id)
 
 
 class ReservationListView(LoginRequiredMixin, View):
@@ -158,38 +251,325 @@ class ReservationListView(LoginRequiredMixin, View):
 
 class MenuView(LoginRequiredMixin, View):
     def get(self, request):
+        can_admin = user_is_dashboard_admin(request.user)
+        can_operate = bot_bridge.writes_enabled() and (
+            can_admin or user_is_dashboard_operator(request.user)
+        )
         return render(
             request,
             "operations/menu.html",
-            {"menu_by_category": readers.menu_by_category()},
+            {
+                "menu_by_category": readers.menu_by_category(),
+                "can_create": can_admin and bot_bridge.writes_enabled(),
+                "can_operate": can_operate,
+            },
         )
 
     def post(self, request):
-        if request.POST.get("action") != "unavailable":
-            raise Http404()
-        item_id = request.POST.get("item_id", "").strip()
-        ok, message = bot_bridge.set_menu_item_unavailable(item_id)
+        action = request.POST.get("action", "")
+        if action == "unavailable":
+            if not user_is_dashboard_operator(request.user):
+                raise Http404()
+            item_id = request.POST.get("item_id", "").strip()
+            ok, message = bot_bridge.set_menu_item_unavailable(item_id)
+            log_audit(
+                request,
+                action="menu_unavailable",
+                entity="menu_item",
+                entity_id=item_id,
+                metadata={"ok": ok, "message": message},
+            )
+            if ok:
+                messages.success(request, message)
+            else:
+                messages.error(request, message)
+            return redirect("operations:menu")
+        raise Http404()
+
+
+class MenuItemCreateView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        return render(
+            request,
+            "operations/menu_form.html",
+            {"form": MenuItemForm(is_new=True), "is_new": True},
+        )
+
+    def post(self, request):
+        form = MenuItemForm(request.POST, is_new=True)
+        if not form.is_valid():
+            return render(
+                request,
+                "operations/menu_form.html",
+                {"form": form, "is_new": True},
+            )
+        data = form.cleaned_data
+        result = bot_bridge.save_menu_item(
+            data["item_id"],
+            data["nombre"],
+            float(data["precio"]),
+            data["categoria"],
+            data.get("disponible", False),
+            is_new=True,
+        )
         log_audit(
             request,
-            action="menu_unavailable",
+            action="create_menu_item",
             entity="menu_item",
-            entity_id=item_id,
-            metadata={"ok": ok, "message": message},
+            entity_id=result.entity_id,
+            metadata={"ok": result.ok, "message": result.message},
         )
-        if ok:
-            messages.success(request, message)
-        else:
-            messages.error(request, message)
+        if result.ok:
+            messages.success(request, result.message)
+            return redirect("operations:menu")
+        messages.error(request, result.message)
+        return render(
+            request,
+            "operations/menu_form.html",
+            {"form": form, "is_new": True},
+        )
+
+
+class MenuItemEditView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request, item_id: str):
+        item = readers.read_menu_item(item_id)
+        if not item:
+            raise Http404("Plato no encontrado")
+        form = MenuItemForm(
+            initial={
+                "item_id": item.get("id", ""),
+                "nombre": item.get("nombre", ""),
+                "precio": item.get("precio", 0),
+                "categoria": item.get("categoria", ""),
+                "disponible": item.get("disponible", True),
+            },
+            is_new=False,
+        )
+        return render(
+            request,
+            "operations/menu_form.html",
+            {"form": form, "is_new": False, "item": item},
+        )
+
+    def post(self, request, item_id: str):
+        form = MenuItemForm(request.POST, is_new=False)
+        if not form.is_valid():
+            return render(
+                request,
+                "operations/menu_form.html",
+                {"form": form, "is_new": False},
+            )
+        data = form.cleaned_data
+        result = bot_bridge.save_menu_item(
+            data["item_id"],
+            data["nombre"],
+            float(data["precio"]),
+            data["categoria"],
+            data.get("disponible", False),
+            is_new=False,
+        )
+        log_audit(
+            request,
+            action="update_menu_item",
+            entity="menu_item",
+            entity_id=result.entity_id,
+            metadata={"ok": result.ok, "message": result.message},
+        )
+        if result.ok:
+            messages.success(request, result.message)
+            return redirect("operations:menu")
+        messages.error(request, result.message)
+        return render(
+            request,
+            "operations/menu_form.html",
+            {"form": form, "is_new": False},
+        )
+
+
+class MenuItemDeleteView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def post(self, request, item_id: str):
+        hard = request.POST.get("hard") == "1"
+        result = bot_bridge.delete_menu_item(item_id, hard=hard)
+        log_audit(
+            request,
+            action="delete_menu_item",
+            entity="menu_item",
+            entity_id=result.entity_id or item_id,
+            metadata={"ok": result.ok, "hard": hard, "message": result.message},
+        )
+        _flash_write_result(request, result)
         return redirect("operations:menu")
 
 
 class UserListView(LoginRequiredMixin, View):
     def get(self, request):
+        can_write = bot_bridge.writes_enabled() and user_is_dashboard_operator(
+            request.user
+        )
         return render(
             request,
             "operations/user_list.html",
-            {"users": readers.read_users()},
+            {
+                "users": readers.read_users(),
+                "can_create": can_write,
+                "is_admin": user_is_dashboard_admin(request.user),
+            },
         )
+
+
+class CustomerCreateView(OperatorRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        return render(
+            request,
+            "operations/customer_form.html",
+            {"form": CustomerForm(is_new=True), "is_new": True},
+        )
+
+    def post(self, request):
+        form = CustomerForm(request.POST, is_new=True)
+        if not form.is_valid():
+            return render(
+                request,
+                "operations/customer_form.html",
+                {"form": form, "is_new": True},
+            )
+        data = form.cleaned_data
+        result = bot_bridge.save_customer(
+            data["wa_id"],
+            name=data["name"],
+            notes=data.get("notes", ""),
+            is_new=True,
+        )
+        log_audit(
+            request,
+            action="create_customer",
+            entity="customer",
+            entity_id=result.entity_id,
+            metadata={"ok": result.ok, "message": result.message},
+        )
+        if result.ok:
+            messages.success(request, result.message)
+            return redirect("operations:customer_detail", wa_id=result.entity_id)
+        messages.error(request, result.message)
+        return render(
+            request,
+            "operations/customer_form.html",
+            {"form": form, "is_new": True},
+        )
+
+
+class CustomerDetailView(LoginRequiredMixin, View):
+    def get(self, request, wa_id: str):
+        user = readers.read_user(wa_id)
+        if not user:
+            raise Http404("Cliente no encontrado")
+        can_write = bot_bridge.writes_enabled() and user_is_dashboard_operator(
+            request.user
+        )
+        return render(
+            request,
+            "operations/customer_detail.html",
+            {
+                "customer": user,
+                "can_edit": can_write,
+                "can_delete": can_write and user_is_dashboard_admin(request.user),
+            },
+        )
+
+
+class CustomerEditView(OperatorRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request, wa_id: str):
+        user = readers.read_user(wa_id)
+        if not user:
+            raise Http404("Cliente no encontrado")
+        form = CustomerForm(
+            initial={
+                "wa_id": user.get("wa_id", ""),
+                "name": user.get("name", ""),
+                "notes": user.get("notes", ""),
+            },
+            is_new=False,
+        )
+        return render(
+            request,
+            "operations/customer_form.html",
+            {"form": form, "is_new": False, "customer": user},
+        )
+
+    def post(self, request, wa_id: str):
+        form = CustomerForm(request.POST, is_new=False)
+        if not form.is_valid():
+            return render(
+                request,
+                "operations/customer_form.html",
+                {"form": form, "is_new": False},
+            )
+        data = form.cleaned_data
+        result = bot_bridge.save_customer(
+            data["wa_id"],
+            name=data["name"],
+            notes=data.get("notes", ""),
+            is_new=False,
+        )
+        log_audit(
+            request,
+            action="update_customer",
+            entity="customer",
+            entity_id=result.entity_id,
+            metadata={"ok": result.ok, "message": result.message},
+        )
+        if result.ok:
+            messages.success(request, result.message)
+            return redirect("operations:customer_detail", wa_id=result.entity_id)
+        messages.error(request, result.message)
+        return render(
+            request,
+            "operations/customer_form.html",
+            {"form": form, "is_new": False},
+        )
+
+
+class CustomerDeleteView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def post(self, request, wa_id: str):
+        result = bot_bridge.delete_customer(wa_id)
+        log_audit(
+            request,
+            action="delete_customer",
+            entity="customer",
+            entity_id=result.entity_id or wa_id,
+            metadata={"ok": result.ok, "message": result.message},
+        )
+        _flash_write_result(request, result)
+        return redirect("operations:users")
+
+
+class PanelSettingsView(AdminRequiredMixin, LoginRequiredMixin, View):
+    def get(self, request):
+        panel = load_panel_settings()
+        form = PanelSettingsForm(initial=panel)
+        return render(
+            request,
+            "operations/panel_settings.html",
+            {"form": form, "storage": "PostgreSQL (accounts.DashboardSettings)"},
+        )
+
+    def post(self, request):
+        form = PanelSettingsForm(request.POST)
+        if not form.is_valid():
+            return render(
+                request,
+                "operations/panel_settings.html",
+                {"form": form, "storage": "PostgreSQL (accounts.DashboardSettings)"},
+            )
+        save_panel_settings(form.cleaned_data)
+        log_audit(
+            request,
+            action="update_panel_settings",
+            entity="panel_settings",
+            metadata={"keys": list(form.cleaned_data.keys())},
+        )
+        messages.success(request, "Preferencias del panel guardadas.")
+        return redirect("operations:panel_settings")
 
 
 class SystemStatusView(LoginRequiredMixin, View):

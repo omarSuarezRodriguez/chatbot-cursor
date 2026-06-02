@@ -1,0 +1,28 @@
+{% extends "operations/base.html" %}
+{% block title %}{% if is_new %}Nuevo plato{% else %}Editar plato{% endif %} — Dashboard{% endblock %}
+{% block page_heading %}{% if is_new %}Nuevo plato{% else %}Editar plato{% endif %}{% endblock %}
+{% block content %}
+<nav class="order-detail__back">
+  <a href="{% url 'operations:menu' %}" class="btn btn-ghost">
+    {% include "operations/partials/icon.html" with name="arrow-left" class="icon--sm" %}
+    Volver al menú
+  </a>
+</nav>
+<div class="card" style="max-width:32rem;">
+  <h1>{% if is_new %}Nuevo plato{% else %}Editar plato{% endif %}</h1>
+  <form method="post" class="form-stack">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-field{% if field.errors %} form-field--error{% endif %}">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<p class="form-error">{{ field.errors|join:", " }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a href="{% url 'operations:menu' %}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

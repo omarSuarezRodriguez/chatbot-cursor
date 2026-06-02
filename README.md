@@ -1,4 +1,4 @@
-## v0.29
+## v0.30
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -5405,6 +5405,151 @@ Fase 2 del dashboard operativo quedó implementada siguiendo **AI_RULES.md** (ca
 
 Si quieres, en Fase 3 podemos añadir CRUD y más acciones sobre el mismo layout.
 
+
+
+
+
+######################################################################
+## v0.30
+
+## Prompt ##
+
+OBLIGATORIO:
+Lee y aplica completamente AI_RULES.md.
+
+CONTEXTO:
+Fases 1–2 completas (UI premium + home + tabla pedidos).
+Escrituras del panel deben ir por dashboard/services/bot_bridge.py reutilizando MenuService, OrderService, UserService del bot — NO crear endpoints Flask nuevos.
+DASHBOARD_ENABLE_WRITES controla escrituras.
+
+TAREA — FASE 3:
+CRUD completo editable desde la UI (crear, editar, eliminar):
+
+A) Productos / menú: alta, edición, baja lógica o eliminación, precio, categoría, disponibilidad.
+B) Pedidos: crear manual, editar estado/ítems donde el servicio lo permita, cancelar.
+C) Clientes: WA ID, nombre, notas; listado + formularios.
+D) Configuración del panel: preferencias operativas (modelo Django ligero en PG o JSON en data/, elige la opción de menor impacto y documéntala).
+
+Para cada módulo:
+- Formularios Django con validación servidor (campos requeridos, precios > 0, IDs únicos).
+- Mensajes éxito/error con django.contrib.messages.
+- Confirmación antes de eliminar.
+- Permisos: operador vs admin (grupos Django).
+- log_audit en cada POST de escritura.
+
+Extender bot_bridge con funciones nuevas; reutilizar app/utils/validators.py cuando aplique.
+Tras writes, asegurar coherencia con caché/Sheets como hace el bot hoy.
+
+RESTRICCIONES:
+- No modificar parser.py, flow_engine, Twilio salvo bug bloqueante documentado.
+- No cambiar POST /bot ni contratos JSON existentes.
+- Cambios incrementales; un módulo CRUD a la vez si reduce riesgo.
+
+ENTREGABLE:
+CRUD funcional con DASHBOARD_ENABLE_WRITES=1 + resumen AI_RULES y lista de flujos probados.
+
+## Respuesta cursor ##
+
+### Análisis previo
+
+Fase 3 requería CRUD completo en el panel Django sin tocar Flask/`POST /bot`, reutilizando `MenuService`, `OrderService` y `UserService` vía `bot_bridge.py`, con `DASHBOARD_ENABLE_WRITES`, validación servidor, `messages`, confirmaciones, permisos operador/admin y `log_audit` en cada POST.
+
+**Decisión configuración (D):** modelo existente `accounts.DashboardSettings` en PostgreSQL (menor impacto que JSON en `data/` — ya migrado, aislado del bot).
+
+---
+
+### Cambios implementados
+
+**A) Menú**
+- Listado con acciones: editar, baja lógica, eliminar permanente, marcar no disponible
+- `/menu/nuevo/`, `/menu/<id>/editar/`, POST `/menu/<id>/eliminar/`
+- Validación: ID único, precio > 0, campos requeridos
+
+**B) Pedidos**
+- `/pedidos/nuevo/` — creación manual con JSON de ítems
+- Detalle: confirmar, cambiar estado, cancelar, editar ítems (JSON)
+- Sincronización caché local + cola dirty hacia Sheets
+
+**C) Clientes**
+- Listado con enlace a detalle; `/usuarios/nuevo/`, editar, eliminar (admin)
+- WA ID, nombre, notas (notas solo en caché local — no columna USERS en Sheets)
+
+**D) Configuración**
+- `/configuracion/` (solo admin): filtro por defecto, paginación, mostrar cancelados, notas operativas → `DashboardSettings` en PG
+
+**Permisos**
+- `dashboard_operator`: pedidos, clientes, disponibilidad menú
+- `dashboard_admin`: CRUD menú completo, eliminar clientes, configuración
+- Comando: `python manage.py setup_dashboard_groups --assign <user>`
+
+---
+
+### Archivos modificados
+
+| Área | Archivos |
+|------|----------|
+| Bot / Sheets | `app/integrations/google_sheets.py`, `app/services/menu_service.py`, `app/services/order_service.py`, `app/services/user_service.py` |
+| Bridge | `dashboard/services/bot_bridge.py` |
+| Dashboard | `views.py`, `urls.py`, `forms.py`, `permissions.py`, `readers.py`, `settings_store.py`, templates, `components.css`, `context_processors.py`, `settings.py` |
+| Management | `setup_dashboard_groups.py` |
+
+**No modificados:** `parser.py`, `flow_engine`, Twilio, `POST /bot`, contratos JSON.
+
+---
+
+### Riesgos mitigados
+
+- Escrituras bloqueadas si `DASHBOARD_ENABLE_WRITES=0`
+- IDs únicos validados en formularios + `bot_bridge`
+- Confirmación JS antes de eliminar/cancelar
+- Notas de cliente no alteran esquema Sheets USERS
+- Pedidos cancelados no permiten editar ítems
+- `log_audit` en todos los POST de escritura
+
+---
+
+### Compatibilidad verificada
+
+- `python manage.py check` — OK
+- Smoke test con `DASHBOARD_ENABLE_WRITES=1`: menú, cliente, pedido manual, cancelación, vistas CRUD (200)
+- Demo mode sin credenciales Sheets — coherente con caché local
+
+---
+
+### Funcionalidades agregadas
+
+CRUD menú, pedidos, clientes y configuración del panel con permisos por grupo Django.
+
+---
+
+### Funcionalidades preservadas
+
+Home KPIs, listado/filtros pedidos, confirmar pedido, reservas, estado sistema, login, banner solo lectura, bot Flask/Twilio/parser sin cambios.
+
+---
+
+### Flujos probados
+
+1. Parseo JSON ítems (`product`, `qty`, `unit_price` > 0)
+2. Alta plato → baja/eliminación
+3. Alta cliente con notas → edición
+4. Pedido manual → cancelación
+5. GET `/menu/`, `/pedidos/`, `/usuarios/`, `/configuracion/`, formularios nuevo
+6. `setup_dashboard_groups`
+
+---
+
+### Puesta en marcha
+
+```powershell
+cd dashboard
+python manage.py migrate
+python manage.py setup_dashboard_groups --assign tu_usuario
+# .env.dashboard → DASHBOARD_ENABLE_WRITES=1
+python manage.py runserver
+```
+
+**Matriz de permisos:** superusuario = acceso total; operador = escrituras operativas; admin = CRUD menú + eliminar clientes + `/configuracion/`.
 
 
 

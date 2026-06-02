@@ -24,8 +24,14 @@
       </a>
       <a href="{% url 'operations:users' %}" class="app-nav-link{% if '/usuarios' in request.path %} active{% endif %}">
         {% include "operations/partials/icon.html" with name="users" %}
-        Usuarios
+        Clientes
       </a>
+      {% if is_dashboard_admin %}
+      <a href="{% url 'operations:panel_settings' %}" class="app-nav-link{% if '/configuracion' in request.path %} active{% endif %}">
+        {% include "operations/partials/icon.html" with name="settings" %}
+        Configuración
+      </a>
+      {% endif %}
       <a href="{% url 'operations:system_status' %}" class="app-nav-link{% if '/estado' in request.path %} active{% endif %}">
         {% include "operations/partials/icon.html" with name="activity" %}
         Estado

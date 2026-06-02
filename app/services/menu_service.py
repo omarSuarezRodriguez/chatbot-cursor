@@ -49,3 +49,21 @@ class MenuService:
             lines.append("")
 
         return "\n".join(lines).strip()
+
+    def save_item(
+        self,
+        item_id: str,
+        nombre: str,
+        precio: float,
+        categoria: str,
+        disponible: bool = True,
+    ) -> bool:
+        return self.sheets.upsert_menu_item(
+            item_id, nombre, precio, categoria, disponible
+        )
+
+    def remove_item(self, item_id: str, *, hard: bool = False) -> bool:
+        return self.sheets.remove_menu_item(item_id, hard=hard)
+
+    def set_availability(self, item_id: str, disponible: bool) -> bool:
+        return self.sheets.set_menu_item_availability(item_id, disponible)
