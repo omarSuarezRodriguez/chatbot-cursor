@@ -20,14 +20,14 @@
       "wa_id": "35699155990",
       "name": "Omar Suarez",
       "address": "",
-      "last_order_date": "2026-06-02T11:17:29.391048",
+      "last_order_date": "2026-06-02T11:30:51.904248",
       "last_order_items": [
         {
           "product_id": "1",
           "product": "Pizza Hawaiana",
-          "qty": 1,
+          "qty": 2,
           "unit_price": 125.0,
-          "subtotal": 125.0
+          "subtotal": 250.0
         },
         {
           "product_id": "6",
@@ -37,7 +37,7 @@
           "subtotal": 8.0
         }
       ],
-      "last_seen": "2026-06-02T11:17:29.391048"
+      "last_seen": "2026-06-02T11:30:51.904248"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",

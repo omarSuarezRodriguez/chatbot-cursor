@@ -336,6 +336,32 @@
       "customer_name": "Omar Suarez",
       "address": "",
       "delivery_type": "recoger"
+    },
+    "ORD-067B0D55": {
+      "order_id": "ORD-067B0D55",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        },
+        {
+          "product_id": "6",
+          "product": "Coca Cola",
+          "qty": 1,
+          "unit_price": 8.0,
+          "subtotal": 8.0
+        }
+      ],
+      "total": 258.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T11:30:51.903860",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
     }
   },
   "row_index": {
@@ -351,7 +377,8 @@
     "ORD-301DE262": 14,
     "ORD-24C26786": 15,
     "ORD-B789AF58": 16,
-    "ORD-8FB38F7E": 17
+    "ORD-8FB38F7E": 17,
+    "ORD-067B0D55": 18
   },
   "dirty_new": [],
   "dirty_status": {},

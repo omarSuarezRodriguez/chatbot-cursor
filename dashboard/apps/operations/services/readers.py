@@ -38,10 +38,16 @@ def _load_json(path: Path) -> Any:
 
 
 def _prefer_remote() -> bool:
-    return bool(
-        os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip()
-        and os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
-    )
+    """Use Google Sheets when spreadsheet id and credentials are available."""
+    if not os.environ.get("GOOGLE_SPREADSHEET_ID", "").strip():
+        return False
+    if os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip():
+        return True
+    creds_path = os.environ.get("GOOGLE_SHEETS_CREDENTIALS_PATH", "").strip()
+    if creds_path and Path(creds_path).is_file():
+        return True
+    default_creds = settings.PROJECT_ROOT / "credentials" / "google-service-account.json"
+    return default_creds.is_file()
 
 
 def _orders_from_cache_payload(raw: Any) -> List[Dict[str, Any]]:
@@ -57,42 +63,73 @@ def _orders_from_local_cache() -> List[Dict[str, Any]]:
     return _orders_from_cache_payload(_load_json(ORDERS_PATH))
 
 
+def _sheet_cell(row: Dict[str, Any], *keys: str) -> str:
+    for key in keys:
+        value = row.get(key)
+        if value not in (None, ""):
+            return str(value).strip()
+    by_name = {
+        str(name).strip().lower().replace(" ", "_"): value
+        for name, value in row.items()
+    }
+    for key in keys:
+        normalized = key.strip().lower().replace(" ", "_")
+        value = by_name.get(normalized)
+        if value not in (None, ""):
+            return str(value).strip()
+    return ""
+
+
 def _parse_orders_sheet_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     orders: List[Dict[str, Any]] = []
     for row in rows:
-        order_id = str(row.get("order_id", "")).strip().upper()
+        order_id = _sheet_cell(row, "order_id", "order id", "id_pedido").upper()
         if not order_id:
             continue
+        items_raw = _sheet_cell(row, "items", "productos", "items_json")
         try:
-            items = json.loads(row.get("items") or "[]")
+            items = json.loads(items_raw or "[]")
         except (json.JSONDecodeError, TypeError):
             items = []
         try:
-            total = float(row.get("total", 0) or 0)
+            total = float(_sheet_cell(row, "total", "importe") or 0)
         except (TypeError, ValueError):
             total = 0.0
         orders.append(
             {
                 "order_id": order_id,
-                "wa_id": str(row.get("wa_id", "")),
+                "wa_id": _sheet_cell(row, "wa_id", "whatsapp", "telefono"),
                 "items": items,
                 "total": total,
-                "status": str(row.get("status", "pending")).lower(),
-                "timestamp": str(row.get("timestamp", "")),
-                "customer_name": str(row.get("customer_name", "")),
-                "address": str(row.get("address", "")),
-                "delivery_type": str(row.get("delivery_type", "")),
+                "status": (_sheet_cell(row, "status", "estado") or "pending").lower(),
+                "timestamp": _sheet_cell(row, "timestamp", "fecha", "created_at"),
+                "customer_name": _sheet_cell(row, "customer_name", "nombre", "cliente"),
+                "address": _sheet_cell(row, "address", "direccion"),
+                "delivery_type": _sheet_cell(
+                    row, "delivery_type", "tipo_entrega", "entrega"
+                ),
             }
         )
     return orders
 
 
 def _remote_orders_from_sheets() -> List[Dict[str, Any]]:
+    """Live read from Google Sheets ORDERS (not a stale dashboard-local cache file)."""
     client = _sheets_client()
     if hasattr(client, "_records"):
         return _parse_orders_sheet_rows(client._records("ORDERS"))
+    if getattr(client, "_connected", False) and hasattr(client, "_fetch_orders_from_sheets"):
+        try:
+            fetched, _ = client._fetch_orders_from_sheets()
+            if fetched:
+                return [dict(v) for v in fetched.values()]
+        except Exception:
+            pass
     if hasattr(client, "warm_up_cache"):
-        client.warm_up_cache()
+        try:
+            client.warm_up_cache()
+        except Exception:
+            pass
     return _orders_from_local_cache()
 
 
@@ -255,12 +292,13 @@ def read_menu() -> List[Dict[str, Any]]:
 
 
 def read_orders() -> List[Dict[str, Any]]:
-    """All orders (any status). Prefer local bot cache; merge with Sheets when configured."""
+    """All orders (any status). Merge live Sheets with local bot cache (dirty / not yet synced)."""
     local = _orders_from_local_cache()
     if _prefer_remote():
         remote = _remote_orders_from_sheets()
-        if local or remote:
-            return _merge_order_lists(local, remote)
+        if remote or local:
+            # Remote first: production dashboard has no shared data/ with the bot.
+            return _merge_order_lists(remote, local)
     if local:
         return _sort_orders(local)
     remote = _remote_orders_from_sheets()
