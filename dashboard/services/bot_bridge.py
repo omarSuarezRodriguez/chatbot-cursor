@@ -309,15 +309,33 @@ def _format_whatsapp_address(number: str) -> str:
     digits = "".join(ch for ch in stripped if ch.isdigit())
     if digits and not stripped.startswith("+"):
         stripped = f"+{digits}"
-    if not number.startswith("whatsapp:"):
-        return f"whatsapp:{stripped}"
-    return stripped
+    return f"whatsapp:{stripped}"
+
+
+def _twilio_credentials() -> Tuple[str, str, str]:
+    """Load Twilio credentials with app.config precedence."""
+    try:
+        from app.config import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM
+
+        account_sid = (TWILIO_ACCOUNT_SID or "").strip()
+        auth_token = (TWILIO_AUTH_TOKEN or "").strip()
+        from_number = (TWILIO_WHATSAPP_FROM or "").strip()
+    except Exception:
+        account_sid = ""
+        auth_token = ""
+        from_number = ""
+
+    if not account_sid:
+        account_sid = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
+    if not auth_token:
+        auth_token = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
+    if not from_number:
+        from_number = os.environ.get("TWILIO_WHATSAPP_FROM", "").strip()
+    return account_sid, auth_token, from_number
 
 
 def _send_whatsapp(to_number: str, body: str) -> bool:
-    account_sid = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
-    auth_token = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
-    from_number = os.environ.get("TWILIO_WHATSAPP_FROM", "").strip()
+    account_sid, auth_token, from_number = _twilio_credentials()
     if not (account_sid and auth_token and from_number):
         logger.info("Twilio not configured; skipping customer notify.")
         return False
@@ -327,6 +345,10 @@ def _send_whatsapp(to_number: str, body: str) -> bool:
         client = Client(account_sid, auth_token)
         to = _format_whatsapp_address(to_number)
         from_ = _format_whatsapp_address(from_number)
+        if not to.startswith("whatsapp:"):
+            to = f"whatsapp:{to}"
+        if not from_.startswith("whatsapp:"):
+            from_ = f"whatsapp:{from_}"
         client.messages.create(body=body, from_=from_, to=to)
         return True
     except Exception:

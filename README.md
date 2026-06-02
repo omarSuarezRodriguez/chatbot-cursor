@@ -1,4 +1,4 @@
-## v0.36.
+## v0.37
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -7085,6 +7085,8 @@ git push
 
 @BOT_RULES.md and @DASHBOARD_RULES.md
 
+PRIORIDAD: TODOS LOS CAMBIOS DEBEN SER PENSADOS PARA SER HECHOS EN PRODUCCIÓN, PERO SE HARÁ LOCAL PARA LUEGO CON PUSH SUBIR LOS CAMBIOS A PRODUCCIÓN, ES DECIR, LO QUE HAY EN PRODUCCIÓN ES LA PRIORIDAD, EL PROYECTO SE MANEJA EN LOCAL PERO PENSADO EN PRODUCCIÓN
+
 TAREA: [Por qué cuando le doy a confirmar pedido en la dashboard, en el chat no me muestra que han confirmado pedido? si esa función la tiene el bot cuando el numero del admin confirma, bueno quiero que haga lo mismo que envie notificacion al cliente de que fue confirmado desde la dashboard]
 
 100% OBLIGATORIO: [Haz este cambio SOLO en local (no despliegues). 
@@ -7137,3 +7139,60 @@ No ejecuté ese comando.
 
 ##############################################################
 ## v0.37
+
+## Prompt ##
+
+@BOT_RULES.md and @DASHBOARD_RULES.md
+
+PRIORIDAD: TODOS LOS CAMBIOS DEBEN SER PENSADOS PARA SER HECHOS EN PRODUCCIÓN, PERO SE HARÁ LOCAL PARA LUEGO CON PUSH SUBIR LOS CAMBIOS A PRODUCCIÓN, ES DECIR, LO QUE HAY EN PRODUCCIÓN ES LA PRIORIDAD, EL PROYECTO SE MANEJA EN LOCAL PERO PENSADO EN PRODUCCIÓN
+
+TAREA: [Cuando confirmo en la dashboard el pedido, sigue sin recibir el cliente la notificación en el whatsapp, revisa porque el whatsapp admin cuando recibe y le confirma al bot, el bot le confirma al cliente, pero la dashboard no quiere enviarle confirmación al cliente, que revise como lo hace el bot y lo haga la dashboard tambien]
+
+100% OBLIGATORIO: [Haz este cambio SOLO en local (no despliegues). 
+Reglas:
+- Solo cambios en local
+- No asumir deploy (no hacer)
+- no asumir producción (no hacer)
+- explicar cambios
+- dar pasos de prueba local (runall.py para ejecutar flask y django)
+- Dar comando manual de deploy (git push)
+IMPORTANTISIMO: NO DESPLIEGUES, QUIERO QUE LOS CAMBIOS LOS HAGAS EN LOCAL PERO CON TODOS LOS VALORES NECESARIOS PARA SER DESPLEGADO EN PRODUCCION]
+
+
+## Respuesta cursor ##
+
+He aplicado el cambio en local para que la confirmación desde dashboard notifique al cliente por WhatsApp con el mismo criterio robusto del bot.
+
+Cambios realizados en `dashboard/services/bot_bridge.py`:
+
+- Corregí `_format_whatsapp_address()` para que **siempre** devuelva número con prefijo `whatsapp:` (antes podía perderse el prefijo si el número ya venía como `whatsapp:+...`).
+- Añadí `_twilio_credentials()` para cargar credenciales Twilio con prioridad de `app.config` (que toma `.env/.env.unified`) y fallback a `os.environ`.
+- Endurecí `_send_whatsapp()` para asegurar explícitamente que `to` y `from_` tengan `whatsapp:` antes de llamar a Twilio.
+
+Por qué esto resuelve el problema:
+- El bot (`AdminService`) ya protege el formato de números WhatsApp antes de enviar.
+- En dashboard había un caso donde `from_` podía salir sin `whatsapp:` y Twilio rechazaba el envío, por eso confirmaba pedido pero no llegaba mensaje al cliente.
+
+Verificación técnica hecha:
+- `python -m py_compile "C:/Users/Usuario/Desktop/chatbot-cursor/dashboard/services/bot_bridge.py"` OK.
+- Sin errores de linter en el archivo editado.
+
+No hice despliegue (solo local), como pediste.
+
+Prueba local recomendada:
+
+1. Ejecutar servicios con `runall.py` (Flask + Django).
+2. Crear/usar un pedido pendiente con `wa_id` real válido.
+3. Confirmar desde dashboard (`OrderDetail -> Confirmar`).
+4. Verificar:
+   - estado pasa a `confirmed`,
+   - cliente recibe: `Tu pedido *<ID>* fue confirmado por el restaurante. ¡Gracias por tu compra!`
+5. Si no llega, revisar logs de Django/Flask para `Failed to send WhatsApp` y validar `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`.
+
+Comando manual de deploy (cuando tú decidas):
+- `git push`
+
+
+
+##############################################################
+## v0.38
