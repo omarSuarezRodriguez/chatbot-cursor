@@ -1,4 +1,4 @@
-## v0.32
+## v0.32.
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -6011,5 +6011,13 @@ El formulario `data-toolbar` queda envuelto en `{% if status_filter == "delivere
 
 
 ######################################################################
+## v0.33
 
+## Prompt ##
 
+@DASHBOARD_RULES.md
+
+TAREA: [
+1. 
+
+]

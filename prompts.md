@@ -1,6 +1,51 @@
-## Prompt maestro para implementar mejoras usando AI_RULES.md
+## Prompt maestro para implementar mejoras usando AI_RULES.md (vienen implicitas en bot_rules y dashboard_rules)
 
 
+## Prompt para implementar mejoras incrementales al chatbot
+
+@BOT_RULES.md
+
+TAREA: []
+
+
+
+## Prompt dashboard (copiar y pegar)
+
+@DASHBOARD_RULES.md
+
+TAREA: []
+
+
+
+
+
+## Prompt para actualizar dashboard_rules (actualizar su estructura)
+
+@DASHBOARD_RULES.md
+
+TAREA: Sincronizar mapa (solo documentación).
+Comparar dashboard/ real con §3–4 de este archivo.
+Actualizar solo lo desfasado: pantallas, URLs, templates, partials, backend y datos útiles para futuros prompts.
+Reglas: no tocar código del bot ni app/*; no refactorizar; mantener formato compacto del archivo; no reescribir secciones que ya estén bien.
+Entrega §6 completa; Mapa §5: sí + listado de deltas.
+
+
+## Prompt para actualizar bot_rules (actualizar su estructura)
+
+@BOT_RULES.md
+
+TAREA: Sincronizar mapa (solo documentación).
+Comparar app/, flows/ y servicios reales con §3–4 de este archivo.
+Actualizar solo lo desfasado: módulos, endpoints, nodos, flujos, acciones y datos útiles para futuros prompts.
+Reglas: no tocar dashboard/*; no refactorizar; mantener formato compacto; no reescribir secciones que ya estén bien.
+Entrega §6 completa; Mapa §5: sí + listado de deltas.
+
+
+
+
+
+
+## Prompt especifico ##
 
 OBLIGATORIO:
 
@@ -9,27 +54,7 @@ Lee y aplica completamente AI_RULES.md.
 Cumple todas sus restricciones antes de realizar cambios.
 
 TAREA:
-[mejora a implementar]
-
-
----
-
-## Prompt dashboard incremental
-
-**Usa solo `DASHBOARD_RULES.md`** en la raíz del repo. Incluye AI_RULES (prioridad máxima), mapa, arquitectura y prompt mínimo.
-
-En el chat: `@DASHBOARD_RULES.md` + el bloque **PROMPT PARA USAR CADA VEZ** (solo rellenas la TAREA).
-
-
-
-
-
-
-
-
-
-
-
+[]
 
 
 
