@@ -72,6 +72,22 @@ _allowed_hosts_raw = os.environ.get(
     "localhost,127.0.0.1,testserver",
 )
 ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts_raw.split(",") if h.strip()]
+_auto_hosts = {
+    "kiresoft.com",
+    "www.kiresoft.com",
+}
+for _env_name in ("RAILWAY_PUBLIC_DOMAIN", "RAILWAY_STATIC_URL"):
+    _env_value = os.environ.get(_env_name, "").strip()
+    if not _env_value:
+        continue
+    parsed = urlparse(_env_value if "://" in _env_value else f"https://{_env_value}")
+    if parsed.hostname:
+        _auto_hosts.add(parsed.hostname)
+if os.environ.get("RAILWAY_ENVIRONMENT", "").strip():
+    _auto_hosts.add(".up.railway.app")
+for _host in sorted(_auto_hosts):
+    if _host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_host)
 _csrf_trusted_origins_raw = os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").strip()
 if _csrf_trusted_origins_raw:
     CSRF_TRUSTED_ORIGINS = [
@@ -83,11 +99,11 @@ else:
     CSRF_TRUSTED_ORIGINS = [
         f"https://{host}"
         for host in ALLOWED_HOSTS
-        if host not in {"localhost", "127.0.0.1", "testserver"}
+        if host not in {"localhost", "127.0.0.1", "testserver"} and not host.startswith(".")
     ] + [
         f"http://{host}"
         for host in ALLOWED_HOSTS
-        if host not in {"localhost", "127.0.0.1", "testserver"}
+        if host not in {"localhost", "127.0.0.1", "testserver"} and not host.startswith(".")
     ]
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
