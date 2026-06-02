@@ -22,7 +22,7 @@
       "address": "",
       "last_order_date": "",
       "last_order_items": [],
-      "last_seen": "2026-06-01T11:27:44.307213"
+      "last_seen": "2026-06-02T03:31:56.542677"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
@@ -356,12 +356,11 @@
     "cold_7dd59447": 33,
     "deploy_15c81f39": 34,
     "deploy_0a1212e0": 35,
-    "deploy_5a74c798": 36
+    "deploy_5a74c798": 36,
+    "regression_191b5ce1": 37,
+    "regression_38173feb": 38,
+    "regression_059915ac": 39,
+    "regression_2ab28297": 40
   },
-  "dirty": [
-    "regression_059915ac",
-    "regression_191b5ce1",
-    "regression_2ab28297",
-    "regression_38173feb"
-  ]
+  "dirty": []
 }

@@ -1,4 +1,4 @@
-## v0.26
+## v0.27
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -59,7 +59,45 @@ pip install -r requirements-dashboard.txt
 copy .env.dashboard.example .env.dashboard
 ```
 
-### Arranque (dos terminales)
+### Arranque rápido (un comando)
+
+Desde la raíz del proyecto (Windows), con venv activado y dependencias instaladas:
+
+```bat
+.\dev.cmd all
+```
+
+Eso inicia PostgreSQL, aplica migraciones, y abre el **bot** y el **dashboard** en ventanas nuevas. También puedes usar cada servicio por separado:
+
+| Comando | Acción |
+|---------|--------|
+| `.\dev.cmd db` | Solo PostgreSQL (Docker) |
+| `.\dev.cmd bot` | Solo bot Flask (`python run.py`) |
+| `.\dev.cmd dashboard` | PostgreSQL (si hace falta) + migrate + Django en :8000 |
+| `.\dev.cmd all` | Todo el entorno local |
+| `.\dev.cmd stop` | Detiene PostgreSQL y libera puertos 5000/8000 |
+
+Equivalente en PowerShell: `.\scripts\dev\dev.ps1 all` (mismos subcomandos: `db`, `bot`, `dashboard`, `all`, `stop`).
+
+Los scripts comprueban Python, Docker, venv y paquetes básicos; si falta `.env` o `.env.dashboard`, indican cómo copiarlos desde los `.example`.
+
+**URLs tras el arranque:**
+
+| Servicio | URL |
+|----------|-----|
+| Bot (webhook) | http://localhost:5000/bot |
+| Health | http://localhost:5000/health |
+| Dashboard | http://localhost:8000/ |
+| Login staff | http://localhost:8000/accounts/login/ |
+| Django admin | http://localhost:8000/admin/ |
+
+**Primera vez:** crea usuario staff con `python dashboard/manage.py createsuperuser` (login en panel y `/admin/`).
+
+**Detener:** `.\dev.cmd stop` (o cierra las ventanas del bot/dashboard y `docker compose down` para PostgreSQL). Para borrar datos de PG: `docker compose down -v`.
+
+### Arranque manual (dos terminales)
+
+Si prefieres no usar los scripts:
 
 **Terminal 1 — bot (sin cambios):**
 
@@ -77,14 +115,6 @@ python dashboard/manage.py runserver 8000
 ```
 
 `createsuperuser` crea el usuario staff para login en el panel (`/accounts/login/`) y en `/admin/`. Sin usuario, las rutas operativas redirigen al login.
-
-Verifica:
-
-- Bot: `http://localhost:5000/health`
-- Dashboard operativo: `http://localhost:8000/` (requiere login; pedidos, menú, etc.)
-- Django admin: `http://localhost:8000/admin/` (mismo usuario staff; ver `AuditLog` y `DashboardSettings`)
-
-Para detener PostgreSQL: `docker compose down` (añade `-v` solo si quieres borrar el volumen de datos).
 
 > **LOCAL ONLY:** no desplegar el dashboard en Render/Railway junto al bot sin decisión explícita (ver `AUDITORIA.md`).
 
@@ -4800,6 +4830,83 @@ El bot sigue operando sin dashboard.
 - Escrituras detrás de flag; auditoría en PG; bridge reutiliza servicios del bot.
 - No edición de `user_states.json` ni flujo desde UI.
 
+
+
+
+######################################################################
+## v0.27
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Analiza el proyecto actual y crea una forma simple de iniciar todo el entorno local con la menor cantidad posible de pasos manuales.
+
+Objetivo:
+Que pueda levantar Bot + Dashboard + PostgreSQL ejecutando un único comando o el mínimo número posible de acciones.
+
+Requisitos:
+
+- Mantener compatibilidad con la arquitectura actual.
+- No modificar la lógica de negocio.
+- No cambiar APIs ni contratos.
+- No romper ninguna funcionalidad existente.
+- Mantener el comportamiento actual del bot.
+
+Implementa únicamente automatización operativa.
+
+Deseo:
+
+1. Un único comando para iniciar PostgreSQL.
+2. Un único comando para iniciar el bot.
+3. Un único comando para iniciar la dashboard.
+4. Si es posible, un único script que inicie todo junto.
+5. Verificación automática de dependencias necesarias.
+6. Mensajes claros indicando:
+   - URL del bot
+   - URL de health
+   - URL de dashboard
+   - URL de admin Django
+7. Detectar errores comunes y mostrar instrucciones de solución.
+8. Documentar el proceso en README.
+
+Prioridades:
+
+- Simplicidad.
+- Bajo mantenimiento.
+- Compatibilidad total.
+- Cambios mínimos.
+- Solución estable para desarrollo local.
+
+Antes de modificar:
+
+1. Explica el plan.
+2. Lista archivos a crear.
+3. Lista archivos a modificar.
+4. Explica riesgos.
+
+Después de implementar:
+
+1. Explica exactamente qué comando debo ejecutar.
+2. Explica cómo detener todos los servicios.
+3. Muestra las URLs finales disponibles.
+4. Confirma que el bot y la dashboard siguen funcionando como antes.]
+
+
+
+## Respuesta cursor ##
+
+
+**PostgreSQL 17** se instaló bien con winget (salida: `Successfully installed`, ~9,5 min).
+
+El servicio **`postgresql-x64-17`** está en ejecución y **5432** acepta conexiones. El bot sigue en el puerto **5000**.
+
+Para el dashboard falta la base/usuario que usa el proyecto (`dashboard` / `dashboard` en `DATABASE_URL`). Eso lo crea **Docker** con `.\dev.cmd db`, o tú en pgAdmin/psql con la contraseña de `postgres` que pusiste en el instalador. Después: `.\dev.cmd dashboard` o `.\dev.cmd all`.
 
 
 
