@@ -579,8 +579,10 @@ def update_order_status(order_id: str, status: str) -> WriteResult:
         return WriteResult(ok=False, message=f"Estado inválido: {status}.")
 
     _, _, order_service, _, _ = _bot_services()
-    if not order_service.get_order(order_id):
+    order = order_service.get_order(order_id)
+    if not order:
         return WriteResult(ok=False, message=f"No encontré el pedido {order_id}.")
+    previous_status = str(order.get("status", "")).strip().lower()
 
     if not order_service.update_order_status(order_id, status):
         return WriteResult(
@@ -588,6 +590,9 @@ def update_order_status(order_id: str, status: str) -> WriteResult:
             message=f"No pude actualizar el pedido {order_id}.",
             entity_id=order_id,
         )
+    _sync_local_order_status(order_id, status)
+    if status == "confirmed" and previous_status != "confirmed":
+        _notify_customer_order_confirmed(order_id, order.get("wa_id", ""))
     return WriteResult(
         ok=True,
         message=f"Pedido {order_id} → {status}.",

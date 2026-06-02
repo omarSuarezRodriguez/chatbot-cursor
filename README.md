@@ -1,4 +1,4 @@
-## v0.35.
+## v0.36
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -7079,3 +7079,60 @@ git push
 
 ################################################################
 ## v0.36
+
+
+## Prompt ##
+
+@BOT_RULES.md and @DASHBOARD_RULES.md
+
+TAREA: [Por qué cuando le doy a confirmar pedido en la dashboard, en el chat no me muestra que han confirmado pedido? si esa función la tiene el bot cuando el numero del admin confirma, bueno quiero que haga lo mismo que envie notificacion al cliente de que fue confirmado desde la dashboard]
+
+100% OBLIGATORIO: [Haz este cambio SOLO en local (no despliegues). 
+Reglas:
+- Solo cambios en local
+- No asumir deploy (no hacer)
+- no asumir producción (no hacer)
+- explicar cambios
+- dar pasos de prueba local (runall.py para ejecutar flask y django)
+- Dar comando manual de deploy (git push)
+IMPORTANTISIMO: NO DESPLIEGUES, EL CAMBIO SOLO DEBE SER LOCAL.]
+
+
+## respuesta cursor ##
+
+Listo: ya quedó aplicado **solo en local** y **no hice ningún deploy**.
+
+Hice el cambio en `dashboard/services/bot_bridge.py` para que cuando el estado del pedido se actualiza desde dashboard a `confirmed` (no solo con el botón de confirmar), se ejecute la misma lógica que en el bot/admin:
+
+- sincroniza `data/orders_cache.json` con el nuevo estado
+- envía notificación al cliente por WhatsApp (vía `AdminService` o fallback Twilio)
+
+### Qué cambié
+En `update_order_status()` ahora:
+
+- obtiene el pedido y guarda el estado anterior
+- después de actualizar en Sheets, sincroniza cache local con `_sync_local_order_status(order_id, status)`
+- si el nuevo estado es `confirmed` y antes no lo estaba, llama `_notify_customer_order_confirmed(order_id, wa_id)`
+
+Con esto, si confirman desde la dashboard cambiando estado a confirmado, el chat del cliente también recibe la confirmación.
+
+### Prueba local (sin deploy)
+1. Levanta todo local con tu flujo de siempre usando `runall.py` (Flask + Django).
+2. Crea o usa un pedido en estado `pending`.
+3. Desde dashboard:
+   - opción A: botón **Confirmar pedido**
+   - opción B: **Cambiar estado** a `confirmed`
+4. Verifica:
+   - el pedido queda `confirmed` en dashboard
+   - en chat/WhatsApp se envía el mensaje de pedido confirmado
+   - `data/orders_cache.json` refleja `status: confirmed`
+
+### Comando manual de deploy (solo referencia)
+Si luego tú quieres desplegar manualmente:
+- `git push`
+
+No ejecuté ese comando.
+
+
+
+##############################################################
