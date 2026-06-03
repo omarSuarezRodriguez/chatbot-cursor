@@ -4,7 +4,7 @@ Run after every optimization step:
     python scripts/regression_checklist.py
 
 Automated:
-    - parser validation (21/21)
+    - parser validation (25/25)
     - GET /health
     - POST /bot hola  -> 2 Twilio messages
     - POST /bot menu  -> menu loaded (Google Sheets when connected)
@@ -43,8 +43,8 @@ def check_parser() -> bool:
         text=True,
     )
     output = (result.stdout or "") + (result.stderr or "")
-    ok = result.returncode == 0 and "PARSER VALIDATION: OK (21/21)" in output
-    print(f"[{'OK' if ok else 'FAIL'}] python -m app.core.parser -> 21/21")
+    ok = result.returncode == 0 and "PARSER VALIDATION: OK (25/25)" in output
+    print(f"[{'OK' if ok else 'FAIL'}] python -m app.core.parser -> 25/25")
     if not ok:
         print(output.strip())
     return ok

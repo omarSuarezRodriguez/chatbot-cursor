@@ -45,6 +45,13 @@ ADMIN_REMINDER_MAX_SECONDS = int(os.getenv("ADMIN_REMINDER_MAX_SECONDS", "3600")
 MENU_CACHE_TTL_SECONDS = int(os.getenv("MENU_CACHE_TTL_SECONDS", "60"))
 ORDERS_CACHE_TTL_SECONDS = int(os.getenv("ORDERS_CACHE_TTL_SECONDS", "30"))
 
+# Incremental Sheets refresh (activates when row count >= threshold)
+SHEETS_INCREMENTAL_THRESHOLD = int(os.getenv("SHEETS_INCREMENTAL_THRESHOLD", "500"))
+SHEETS_FULL_REFRESH_INTERVAL_SECONDS = int(
+    os.getenv("SHEETS_FULL_REFRESH_INTERVAL_SECONDS", "3600")
+)
+SHEETS_INCREMENTAL_BATCH_SIZE = int(os.getenv("SHEETS_INCREMENTAL_BATCH_SIZE", "100"))
+
 NAV_HINT = (
     "\n\n---\n"
     "Escribe *inicio* para volver al inicio\n"

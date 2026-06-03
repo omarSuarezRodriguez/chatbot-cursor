@@ -117,9 +117,15 @@ class StateManager:
         return self.update(wa_id, data=data)
 
     def patch_data(self, wa_id: str, **fields: Any) -> Dict[str, Any]:
-        state = self.get(wa_id)
-        merged = {**state.get("data", {}), **fields}
-        return self.update(wa_id, data=merged)
+        with self._lock:
+            if wa_id not in self._states:
+                self._states[wa_id] = deepcopy(DEFAULT_STATE)
+            previous = deepcopy(self._states[wa_id])
+            merged = {**self._states[wa_id].get("data", {}), **fields}
+            self._states[wa_id]["data"] = merged
+            current = self._states[wa_id]
+            self._persist_if_changed(wa_id, previous, current)
+            return deepcopy(current)
 
     def reset(self, wa_id: str) -> Dict[str, Any]:
         with self._lock:

@@ -793,6 +793,7 @@ class OrderIntelligenceEngine:
         self._catalog = self._build_catalog()
         self._matcher = FuzzyMatcher(self._catalog)
         self._catalog_by_name = {entry["nombre"].lower(): entry for entry in self._catalog}
+        self._category_defaults = self._build_category_defaults()
 
     def _build_catalog(self) -> List[Dict[str, Any]]:
         catalog: List[Dict[str, Any]] = []
@@ -816,6 +817,43 @@ class OrderIntelligenceEngine:
             )
         return sorted(catalog, key=lambda entry: len(entry["normalized"]), reverse=True)
 
+    def _build_category_defaults(self) -> Dict[str, Dict[str, Any]]:
+        """First product per category in menu order (for category-name orders)."""
+        defaults: Dict[str, Dict[str, Any]] = {}
+        seen_categories: set[str] = set()
+        catalog_by_name = {
+            str(entry["nombre"]).strip().lower(): entry for entry in self._catalog
+        }
+        for item in self.menu_items:
+            category = str(item.get("categoria", "")).strip()
+            if not category:
+                continue
+            category_key = self._category_match_key(category)
+            if category_key in seen_categories:
+                continue
+            product_name = str(item.get("nombre", "")).strip().lower()
+            catalog_entry = catalog_by_name.get(product_name)
+            if catalog_entry:
+                defaults[category_key] = catalog_entry
+                seen_categories.add(category_key)
+        return defaults
+
+    @staticmethod
+    def _category_match_key(text: str) -> str:
+        basic = TextNormalizer.basic(text)
+        parts = [
+            _singularize_token(_strip_accents(token))
+            for token in basic.split()
+            if token
+        ]
+        return " ".join(parts).strip()
+
+    def _match_category_product(self, product_text: str) -> Optional[Dict[str, Any]]:
+        query_key = self._category_match_key(product_text)
+        if not query_key:
+            return None
+        return self._category_defaults.get(query_key)
+
     def parse(self, text: str) -> Dict[str, Any]:
         """Canonical output contract."""
         raw = (text or "").strip()
@@ -838,8 +876,13 @@ class OrderIntelligenceEngine:
         if not segments:
             segments = [normalized_full] if normalized_full else []
 
-        if not self._has_menu_token_overlap(normalized_full) and (
-            self._is_gibberish(normalized_full) or len(_token_keys(normalized_full)) <= 1
+        if (
+            not self._has_menu_token_overlap(normalized_full)
+            and not self._has_category_token_overlap(normalized_full)
+            and (
+                self._is_gibberish(normalized_full)
+                or len(_token_keys(normalized_full)) <= 1
+            )
         ):
             if len(segments) < 2:
                 return self._fail_safe(["texto no interpretable"])
@@ -856,15 +899,29 @@ class OrderIntelligenceEngine:
             if not product_text:
                 continue
 
-            best, score, second, second_score = self._matcher.best_match(product_text)
+            category_entry = self._match_category_product(product_text)
+            used_category_fallback = False
+            if category_entry:
+                best = category_entry
+                score = ACCEPT_AUTO_SCORE
+                second = None
+                second_score = 0.0
+                used_category_fallback = True
+            else:
+                best, score, second, second_score = self._matcher.best_match(product_text)
+
+            reject_match = bool(
+                not used_category_fallback
+                and best
+                and score < ACCEPT_AUTO_SCORE
+                and not self._match_aligns_with_intent(product_text, best)
+            )
+
             if not best:
                 unknown.append(segment)
                 continue
 
-            if (
-                score < ACCEPT_AUTO_SCORE
-                and not self._match_aligns_with_intent(product_text, best)
-            ):
+            if reject_match:
                 unknown.append(segment)
                 continue
 
@@ -998,6 +1055,23 @@ class OrderIntelligenceEngine:
             return True
         corrected = self._matcher._correct_typos(basic)
         return corrected != basic and self._has_exact_menu_token_overlap(corrected)
+
+    def _has_category_token_overlap(self, text: str) -> bool:
+        """Category names count as valid menu overlap (e.g. una hamburguesa)."""
+        basic = TextNormalizer.basic(text)
+        if not basic:
+            return False
+        if self._category_match_key(basic) in self._category_defaults:
+            return True
+        for token in basic.split():
+            if re.fullmatch(r"\d+", token):
+                continue
+            key = _singularize_token(_strip_accents(token))
+            if key in NUMBER_WORDS:
+                continue
+            if key in self._category_defaults:
+                return True
+        return False
 
     def _has_exact_menu_token_overlap(self, text: str) -> bool:
         query_tokens = set(text.split())
@@ -1562,6 +1636,54 @@ def run_validation_suite(verbose: bool = True) -> bool:
         and _qty_for(case19["items"], "agua") == 2
         and any("hamburguesa" in str(u).lower() for u in case19.get("unknown", [])),
         str(case19),
+    )
+
+    user_menu_with_burger: List[Dict[str, Any]] = [
+        *user_bug_menu,
+        {
+            "id": "h1",
+            "nombre": "Carne",
+            "precio": 5.0,
+            "categoria": "Hamburguesas",
+            "disponible": True,
+        },
+    ]
+    case20 = OrderIntelligenceEngine(user_menu_with_burger).parse(
+        "* 2 pizza hawaiana, 1 coca cola\n* una hamburguesa y dos aguas"
+    )
+    check(
+        "nombre de categoria usa primer producto de la categoria",
+        case20["status"] == "ok"
+        and _qty_for(case20["items"], "hawaiana") == 2
+        and _qty_for(case20["items"], "coca") == 1
+        and _qty_for(case20["items"], "carne") == 1
+        and _qty_for(case20["items"], "agua") == 2
+        and not case20.get("unknown"),
+        str(case20),
+    )
+
+    production_like_menu: List[Dict[str, Any]] = [
+        {"id": "", "nombre": "Hawaiana", "precio": 125.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "", "nombre": "Margarita", "precio": 11.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "", "nombre": "Pollo con Champiñones", "precio": 11.0, "categoria": "Pizzeta", "disponible": True},
+        {"id": "", "nombre": "Coca Cola", "precio": 25.0, "categoria": "Bebidas", "disponible": True},
+        {"id": "", "nombre": "Agua", "precio": 11.0, "categoria": "Bebidas", "disponible": True},
+        {"id": "", "nombre": "Café", "precio": 2.0, "categoria": "Bebidas", "disponible": True},
+        {"id": "", "nombre": "Carne", "precio": 5.0, "categoria": "Hamburguesas", "disponible": True},
+    ]
+    case21 = OrderIntelligenceEngine(production_like_menu).parse(
+        "* 2 pizza hawaiana, 1 coca cola\n* una hamburguesa y dos aguas"
+    )
+    check(
+        "ids vacios no desvian categoria hamburguesa a cafe",
+        case21["status"] == "ok"
+        and _qty_for(case21["items"], "hawaiana") == 2
+        and _qty_for(case21["items"], "coca") == 1
+        and _qty_for(case21["items"], "carne") == 1
+        and _qty_for(case21["items"], "agua") == 2
+        and _qty_for(case21["items"], "cafe") == 0
+        and not case21.get("unknown"),
+        str(case21),
     )
 
     if verbose:

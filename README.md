@@ -1,4 +1,4 @@
-## v0.32
+## v0.33
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4575,9 +4575,9 @@ Reinicia el bot si está en ejecución para cargar el parser actualizado. Si qui
 
 
 ##########################################################
+## v0.33
 
-
-
+## Prompt ##
 
 OBLIGATORIO:
 
@@ -4586,4 +4586,177 @@ Lee y aplica completamente AI_RULES.md.
 Cumple todas sus restricciones antes de realizar cambios.
 
 TAREA:
-[mejora a implementar]
+[En el menú tengo 
+
+Nuestro menú
+
+Pizzas
+* Hawaiana — $125.00
+* Margarita — $11.00
+* Jamón — $95.00
+* Mexicana — $25.00
+* Ranchera — $15.00
+
+Pizzeta
+* Pollo con Champiñones — $11.00
+* Especial — $25.00
+* Granjera — $95.00
+
+Bebidas
+* Coca Cola — $25.00
+* Jugo Hit — $22.00
+* Agua — $11.00
+* Café — $2.00
+
+Hamburguesas
+* Carne — $5.00
+
+
+Lo que sucede es que hice un pedido y escribí: * 2 pizza hawaiana, 1 coca cola
+* una hamburguesa y dos aguas
+
+el chatbot me dijo: No pude identificar: una hamburguesa. Si quieres, corrígelo en tu siguiente mensaje.
+
+
+Entonces quiero que por favor como mejora incrmental, hagas que por ejemplo si yo escribo hamburguesa pero no está como producto sino como categoría, entonces quiero que uses la primera como producto de categoría, y quiero que implementes la forma que, si por ejemplo esa palabra que no entiende es igual a una categoría, y si es así, que haga eso, que agregue la cantidad que el cliente dice con el primer producto de esa categoría, hazlo como mejora incremental
+
+]
+
+
+## Resp cursor ##
+
+
+### Análisis previo
+
+El fallback por categoría **sí estaba en el código**, pero fallaba en producción por dos motivos:
+
+1. **`id` vacío en todo el menú** (`menu_cache.json`): `catalog_by_id` colapsaba y todas las categorías apuntaban al mismo producto (**Café**, el último con `id: ""`).
+2. **Orden de resolución**: primero el fuzzy match asociaba `hamburguesa` con **Coca Cola** (score ~0.67) y solo después el fallback por categoría, que por el bug anterior devolvía Café.
+
+### Cambios implementados
+
+En `app/core/parser.py`:
+
+1. **`_build_category_defaults`** — lookup por **nombre del producto**, no por `id`.
+2. **Prioridad de categoría** — si el texto coincide con una categoría (ej. `hamburguesa` → `Hamburguesas`), se usa el **primer producto** de esa categoría **antes** del fuzzy match.
+3. **Test `case21`** — menú con `id: ""` como en producción; verifica que no se asigne Café.
+
+### Archivos modificados
+
+- `app/core/parser.py`
+
+### Verificación
+
+Con tu `menu_cache.json` y el mensaje exacto:
+
+```
+* 2 pizza hawaiana, 1 coca cola
+* una hamburguesa y dos aguas
+```
+
+Resultado:
+
+- 2 × Hawaiana  
+- 1 × Coca Cola  
+- **1 × Carne** (no Café)  
+- 2 × Agua  
+
+Defaults correctos: `hamburguesa` → **Carne**, `bebida` → **Coca Cola** (primer ítem de Bebidas).
+
+Suite: **25/25 OK**.
+
+### Qué debes hacer
+
+Reinicia el bot (Flask/worker) para cargar el `parser.py` actualizado. Si sigue mostrando Café, el proceso en ejecución aún tiene el código anterior en memoria.
+
+
+
+
+## Segundo prompt ##
+
+Ahora quiero que me hagas un test de antes y de después para ver la mejora quiero que me digas que tanto mejoró después de todo esto
+
+
+## Resp cursor ##
+
+## Test antes / después — resultados
+
+Ejecuté `scripts/benchmark_before_after.py` (25 iteraciones por flujo, caché caliente). El informe completo está en `data/benchmark_before_after.json`.
+
+---
+
+### 1. Comparativa total (baseline original → ahora)
+
+Punto de partida documentado (Paso 1): cada mensaje pegaba a Google Sheets en el request.
+
+| Paso | **Antes (original)** | **Ahora (p50)** | Mejora | Factor |
+|------|----------------------|-----------------|--------|--------|
+| `hola` | 2 362 ms | **2,2 ms** | **−99,9 %** | **~1 099× más rápido** |
+| `menu` | 1 179 ms | **5,1 ms** | **−99,6 %** | **~233× más rápido** |
+| `pedido` | 1 202 ms | **8,9 ms** | **−99,3 %** | **~135× más rápido** |
+
+Meta de **< 2 s**: cumplida con margen amplio (todo bajo **11 ms** en servidor).
+
+---
+
+### 2. Comparativa de esta sesión (micro-optimizaciones)
+
+Simulé el comportamiento previo a esta sesión (escritura a disco en cada `touch`, etc.) vs el código actual.
+
+| Paso | Antes sesión (p50) | Después sesión (p50) | Mejora sesión |
+|------|-------------------|---------------------|---------------|
+| `hola` | 4,0 ms | **2,2 ms** | **−46 %** |
+| `menu` | 7,7 ms | **5,1 ms** | **−34 %** |
+| `pedido` | 12,0 ms | **8,9 ms** | **−26 %** |
+
+La mejora de esta sesión es real pero modesta en latencia porque el sistema **ya respondía en ~4–12 ms** gracias a las fases anteriores (caché local, warm-up, sync en background).
+
+---
+
+### 3. Métricas concretas de las optimizaciones de esta sesión
+
+| Optimización | Antes | Después | Impacto |
+|--------------|-------|---------|---------|
+| **Escrituras disco en 20 mensajes** (mismo usuario) | 20 escrituras | **1 escritura** | **−95 %** I/O |
+| **Lookup fila al crear pedido/usuario** | `get_all_values()` 289 ms | `col_values(1)` 222 ms | **−23 %** por append |
+| **`patch_data` x500** | 80 ms | 86 ms | Sin cambio relevante (ruido) |
+| **Refresh incremental Sheets** | — | — | Sin efecto aún (< 500 filas) |
+
+El mayor impacto de esta sesión es **eliminar I/O síncrono en cada mensaje** (`touch`): en una conversación de 20 mensajes pasas de 20 escrituras JSON a 1.
+
+---
+
+### 4. Lectura honesta
+
+```
+Baseline original (Sheets en cada request)
+    2 362 ms ──────────────────────────────────────────────┐
+                                                           │
+Plan 12 pasos + cachés locales (fases previas)             │
+    ~900 ms → ~3–5 ms  ◄── AQUÍ ocurrió el salto grande   │
+                                                           │
+Micro-opts esta sesión (touch, TTL, incremental, col_values)│
+    ~4 ms → ~2 ms  ◄── pulido adicional                   │
+                                                           ▼
+    2,2 ms  (estado actual)
+```
+
+- **~99,9 %** de la mejora total viene del cambio arquitectural: responder desde memoria/disco local y dejar Sheets en background.
+- **~25–46 %** extra en esta sesión, sobre un sistema que ya era rápido.
+- Lo que **no** se mide aquí: latencia Twilio → teléfono (1–3 s extra en WhatsApp) y cold start en hosting free.
+
+---
+
+### Cómo repetir el test
+
+```bash
+python scripts/benchmark_before_after.py
+python scripts/measure_latency.py
+```
+
+¿Quieres que deje el benchmark integrado en el checklist de regresión para ejecutarlo tras cada cambio?
+
+
+
+
+##########################################################

@@ -12,9 +12,17 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from app.config import (
+    MENU_CACHE_TTL_SECONDS,
+    ORDERS_CACHE_TTL_SECONDS,
+    SHEETS_FULL_REFRESH_INTERVAL_SECONDS,
+    SHEETS_INCREMENTAL_BATCH_SIZE,
+    SHEETS_INCREMENTAL_THRESHOLD,
+)
+
 logger = logging.getLogger(__name__)
 
-MENU_LOCAL_REFRESH_SECONDS = 30
+_SYNC_POLL_SECONDS = max(5, min(MENU_CACHE_TTL_SECONDS, ORDERS_CACHE_TTL_SECONDS))
 _MENU_LOCAL_PATH = (
     Path(__file__).resolve().parent.parent.parent / "data" / "menu_cache.json"
 )
@@ -125,9 +133,15 @@ class GoogleSheetsClient:
         self._dirty_new_orders: set[str] = set()
         self._dirty_order_status: Dict[str, str] = {}
         self._reservations_local: Dict[str, Dict[str, Any]] = {}
+        self._reservation_row_index: Dict[str, int] = {}
         self._dirty_reservations: set[str] = set()
         self._worksheets: Dict[str, Any] = {}
         self._cache_warmed = False
+        self._last_menu_refresh = 0.0
+        self._last_orders_refresh = 0.0
+        self._last_full_users_refresh = 0.0
+        self._last_full_orders_refresh = 0.0
+        self._last_full_reservations_refresh = 0.0
         self._load_local_menu()
         self._load_local_users()
         self._load_local_orders()
@@ -236,7 +250,7 @@ class GoogleSheetsClient:
             }
         _USERS_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
         with _USERS_LOCAL_PATH.open("w", encoding="utf-8") as handle:
-            json.dump(payload, handle, ensure_ascii=False, indent=2)
+            json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
 
     def _load_local_menu(self) -> None:
         if not _MENU_LOCAL_PATH.exists():
@@ -258,7 +272,7 @@ class GoogleSheetsClient:
     def _save_local_menu(self, menu: List[Dict[str, Any]]) -> None:
         _MENU_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
         with _MENU_LOCAL_PATH.open("w", encoding="utf-8") as handle:
-            json.dump(menu, handle, ensure_ascii=False, indent=2)
+            json.dump(menu, handle, ensure_ascii=False, separators=(",", ":"))
 
     def _refresh_menu_from_sheets(self) -> None:
         if not self._connected:
@@ -284,11 +298,16 @@ class GoogleSheetsClient:
                 self._push_dirty_users_to_sheets()
                 self._push_dirty_orders_to_sheets()
                 self._push_dirty_reservations_to_sheets()
-                self._refresh_menu_from_sheets()
-                self._refresh_users_from_sheets()
-                self._refresh_orders_from_sheets()
-                self._refresh_reservations_from_sheets()
-                time.sleep(MENU_LOCAL_REFRESH_SECONDS)
+                now = time.monotonic()
+                if now - self._last_menu_refresh >= MENU_CACHE_TTL_SECONDS:
+                    self._refresh_menu_from_sheets()
+                    self._refresh_users_from_sheets()
+                    self._last_menu_refresh = now
+                if now - self._last_orders_refresh >= ORDERS_CACHE_TTL_SECONDS:
+                    self._refresh_orders_from_sheets()
+                    self._refresh_reservations_from_sheets()
+                    self._last_orders_refresh = now
+                time.sleep(_SYNC_POLL_SECONDS)
 
         thread = threading.Thread(
             target=_loop,
@@ -297,9 +316,118 @@ class GoogleSheetsClient:
         )
         thread.start()
         logger.info(
-            "Background sync every %ds (menu, users, orders, reservations in data/)",
-            MENU_LOCAL_REFRESH_SECONDS,
+            "Background sync poll every %ds (menu/users TTL=%ds, orders TTL=%ds)",
+            _SYNC_POLL_SECONDS,
+            MENU_CACHE_TTL_SECONDS,
+            ORDERS_CACHE_TTL_SECONDS,
         )
+
+    @staticmethod
+    def _col_end(num_cols: int) -> str:
+        return chr(ord("A") + num_cols - 1)
+
+    @staticmethod
+    def _row_tail(row_index: Dict[str, int]) -> int:
+        return max(row_index.values(), default=1)
+
+    @staticmethod
+    def _should_use_full_refresh(
+        row_count: int,
+        last_full_refresh: float,
+    ) -> bool:
+        if row_count < SHEETS_INCREMENTAL_THRESHOLD:
+            return True
+        if last_full_refresh == 0.0:
+            return True
+        if time.monotonic() - last_full_refresh >= SHEETS_FULL_REFRESH_INTERVAL_SECONDS:
+            return True
+        return False
+
+    def _sheet_last_row(self, sheet) -> int:
+        try:
+            values = sheet.col_values(1)
+            return len(values) if values else 1
+        except Exception:
+            return 1
+
+    def _fetch_rows_range(
+        self,
+        sheet,
+        headers: List[str],
+        start_row: int,
+        max_rows: int = SHEETS_INCREMENTAL_BATCH_SIZE,
+    ) -> List[tuple[int, List[Any]]]:
+        end_row = start_row + max_rows - 1
+        col_end = self._col_end(len(headers))
+        try:
+            values = sheet.get(f"A{start_row}:{col_end}{end_row}") or []
+        except Exception:
+            return []
+        rows: List[tuple[int, List[Any]]] = []
+        for idx, raw in enumerate(values, start=start_row):
+            if not raw or not str(raw[0]).strip():
+                continue
+            rows.append((idx, raw))
+        return rows
+
+    def _has_rows_beyond(self, sheet, tail_row: int) -> bool:
+        try:
+            value = sheet.acell(f"A{tail_row + 1}").value
+            return value is not None and str(value).strip() != ""
+        except Exception:
+            return True
+
+    def _merge_fetched_users(
+        self,
+        fetched_users: Dict[str, Dict[str, Any]],
+        fetched_rows: Dict[str, int],
+    ) -> None:
+        if not fetched_users and not fetched_rows:
+            return
+        with self._cache_lock:
+            dirty = set(self._dirty_users)
+            for wa_id, user in fetched_users.items():
+                if wa_id not in dirty:
+                    self._users_cache[wa_id] = user
+            for wa_id, idx in fetched_rows.items():
+                if wa_id not in dirty:
+                    self._user_row_index[wa_id] = idx
+        self._save_local_users()
+
+    def _merge_fetched_orders(
+        self,
+        fetched: Dict[str, Dict[str, Any]],
+        fetched_rows: Dict[str, int],
+    ) -> None:
+        if not fetched and not fetched_rows:
+            return
+        with self._cache_lock:
+            pending = set(self._dirty_new_orders) | set(self._dirty_order_status)
+            for order_id, order in fetched.items():
+                if order_id not in pending:
+                    self._orders_local[order_id] = order
+            for order_id, idx in fetched_rows.items():
+                if order_id not in pending:
+                    self._order_row_index[order_id] = idx
+        self._save_local_orders()
+
+    def _merge_fetched_reservations(
+        self,
+        fetched: Dict[str, Dict[str, Any]],
+        fetched_rows: Optional[Dict[str, int]] = None,
+    ) -> None:
+        if not fetched and not fetched_rows:
+            return
+        with self._cache_lock:
+            dirty = set(self._dirty_reservations)
+            for res_id, reservation in fetched.items():
+                if res_id not in dirty:
+                    self._reservations_local[res_id] = reservation
+            if fetched_rows:
+                for res_id, idx in fetched_rows.items():
+                    if res_id not in dirty:
+                        self._reservation_row_index[res_id] = idx
+        self._save_local_reservations()
 
     def _ensure_worksheets(self) -> None:
         if not self._spreadsheet:
@@ -391,7 +519,7 @@ class GoogleSheetsClient:
             }
         _ORDERS_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
         with _ORDERS_LOCAL_PATH.open("w", encoding="utf-8") as handle:
-            json.dump(payload, handle, ensure_ascii=False, indent=2)
+            json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
 
     def _load_local_reservations(self) -> None:
         if not _RESERVATIONS_LOCAL_PATH.exists():
@@ -418,7 +546,7 @@ class GoogleSheetsClient:
             }
         _RESERVATIONS_LOCAL_PATH.parent.mkdir(parents=True, exist_ok=True)
         with _RESERVATIONS_LOCAL_PATH.open("w", encoding="utf-8") as handle:
-            json.dump(payload, handle, ensure_ascii=False, indent=2)
+            json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
 
     def _fetch_orders_from_sheets(
         self,
@@ -441,23 +569,53 @@ class GoogleSheetsClient:
                 row_index[order_id] = idx
         return orders, row_index
 
+    def _fetch_orders_incremental(
+        self,
+        tail_row: int,
+    ) -> tuple[Dict[str, Dict[str, Any]], Dict[str, int]]:
+        sheet = self._get_sheet("ORDERS")
+        orders: Dict[str, Dict[str, Any]] = {}
+        row_index: Dict[str, int] = {}
+        if not sheet or not self._has_rows_beyond(sheet, tail_row):
+            return orders, row_index
+
+        headers = SHEET_HEADERS["ORDERS"]
+        for idx, raw in self._fetch_rows_range(sheet, headers, tail_row + 1):
+            padded = raw + [""] * (len(headers) - len(raw))
+            row = dict(zip(headers, padded[: len(headers)]))
+            order_id = str(row.get("order_id", "")).strip().upper()
+            if order_id:
+                orders[order_id] = self._order_from_row(row)
+                row_index[order_id] = idx
+        return orders, row_index
+
     def _refresh_orders_from_sheets(self) -> None:
         if not self._connected:
             return
         try:
-            fetched, fetched_rows = self._fetch_orders_from_sheets()
-            if not fetched and not fetched_rows:
-                return
             with self._cache_lock:
-                pending = set(self._dirty_new_orders) | set(self._dirty_order_status)
-                for order_id, order in fetched.items():
-                    if order_id not in pending:
-                        self._orders_local[order_id] = order
-                for order_id, idx in fetched_rows.items():
-                    if order_id not in pending:
-                        self._order_row_index[order_id] = idx
-            self._save_local_orders()
-            logger.info("Orders local cache refreshed: %d orders", len(fetched))
+                row_count = len(self._orders_local)
+            use_full = self._should_use_full_refresh(
+                row_count,
+                self._last_full_orders_refresh,
+            )
+            if use_full:
+                fetched, fetched_rows = self._fetch_orders_from_sheets()
+                mode = "full"
+                self._last_full_orders_refresh = time.monotonic()
+            else:
+                with self._cache_lock:
+                    tail = self._row_tail(self._order_row_index)
+                fetched, fetched_rows = self._fetch_orders_incremental(tail)
+                mode = "incremental"
+                if not fetched and not fetched_rows:
+                    return
+            self._merge_fetched_orders(fetched, fetched_rows)
+            logger.info(
+                "Orders local cache refreshed (%s): %d orders",
+                mode,
+                len(fetched),
+            )
         except Exception as exc:
             logger.warning("Background orders refresh failed (%s).", exc)
 
@@ -484,7 +642,7 @@ class GoogleSheetsClient:
                 order.get("delivery_type", ""),
             ]
         )
-        new_row = len(sheet.get_all_values())
+        new_row = self._sheet_last_row(sheet)
         with self._cache_lock:
             self._order_row_index[order_id] = new_row
         return True
@@ -546,39 +704,88 @@ class GoogleSheetsClient:
                 len(synced_status),
             )
 
-    def _fetch_reservations_from_sheets(self) -> Dict[str, Dict[str, Any]]:
+    def _fetch_reservations_from_sheets(
+        self,
+    ) -> tuple[Dict[str, Dict[str, Any]], Dict[str, int]]:
         sheet = self._get_sheet("RESERVATIONS")
         reservations: Dict[str, Dict[str, Any]] = {}
+        row_index: Dict[str, int] = {}
         if not sheet:
-            return reservations
-        for row in sheet.get_all_records():
-            reservation_id = str(row.get("reservation_id", "")).strip()
-            if not reservation_id:
+            return reservations, row_index
+
+        headers = SHEET_HEADERS["RESERVATIONS"]
+        for idx, raw in enumerate(sheet.get_all_values()[1:], start=2):
+            if not raw or not str(raw[0]).strip():
                 continue
-            reservations[reservation_id] = {
-                "reservation_id": reservation_id,
-                "wa_id": str(row.get("wa_id", "")),
-                "personas": int(row.get("personas", 0) or 0),
-                "fecha": str(row.get("fecha", "")),
-                "hora": str(row.get("hora", "")),
-                "status": str(row.get("status", "confirmed")),
-            }
-        return reservations
+            padded = raw + [""] * (len(headers) - len(raw))
+            row = dict(zip(headers, padded[: len(headers)]))
+            reservation_id = str(row.get("reservation_id", "")).strip()
+            if reservation_id:
+                reservations[reservation_id] = {
+                    "reservation_id": reservation_id,
+                    "wa_id": str(row.get("wa_id", "")),
+                    "personas": int(row.get("personas", 0) or 0),
+                    "fecha": str(row.get("fecha", "")),
+                    "hora": str(row.get("hora", "")),
+                    "status": str(row.get("status", "confirmed")),
+                }
+                row_index[reservation_id] = idx
+        return reservations, row_index
+
+    def _fetch_reservations_incremental(
+        self,
+        tail_row: int,
+    ) -> tuple[Dict[str, Dict[str, Any]], Dict[str, int]]:
+        sheet = self._get_sheet("RESERVATIONS")
+        reservations: Dict[str, Dict[str, Any]] = {}
+        row_index: Dict[str, int] = {}
+        if not sheet or not self._has_rows_beyond(sheet, tail_row):
+            return reservations, row_index
+
+        headers = SHEET_HEADERS["RESERVATIONS"]
+        for idx, raw in self._fetch_rows_range(sheet, headers, tail_row + 1):
+            padded = raw + [""] * (len(headers) - len(raw))
+            row = dict(zip(headers, padded[: len(headers)]))
+            reservation_id = str(row.get("reservation_id", "")).strip()
+            if reservation_id:
+                reservations[reservation_id] = {
+                    "reservation_id": reservation_id,
+                    "wa_id": str(row.get("wa_id", "")),
+                    "personas": int(row.get("personas", 0) or 0),
+                    "fecha": str(row.get("fecha", "")),
+                    "hora": str(row.get("hora", "")),
+                    "status": str(row.get("status", "confirmed")),
+                }
+                row_index[reservation_id] = idx
+        return reservations, row_index
 
     def _refresh_reservations_from_sheets(self) -> None:
         if not self._connected:
             return
         try:
-            fetched = self._fetch_reservations_from_sheets()
-            if not fetched:
-                return
             with self._cache_lock:
-                dirty = set(self._dirty_reservations)
-                for res_id, reservation in fetched.items():
-                    if res_id not in dirty:
-                        self._reservations_local[res_id] = reservation
-            self._save_local_reservations()
-            logger.info("Reservations local cache refreshed: %d", len(fetched))
+                row_count = len(self._reservations_local)
+            use_full = self._should_use_full_refresh(
+                row_count,
+                self._last_full_reservations_refresh,
+            )
+            if use_full:
+                fetched, fetched_rows = self._fetch_reservations_from_sheets()
+                mode = "full"
+                self._last_full_reservations_refresh = time.monotonic()
+            else:
+                with self._cache_lock:
+                    tail = self._row_tail(self._reservation_row_index)
+                fetched, fetched_rows = self._fetch_reservations_incremental(tail)
+                mode = "incremental"
+                if not fetched and not fetched_rows:
+                    return
+            self._merge_fetched_reservations(fetched, fetched_rows)
+            logger.info(
+                "Reservations local cache refreshed (%s): %d",
+                mode,
+                len(fetched),
+            )
         except Exception as exc:
             logger.warning("Background reservations refresh failed (%s).", exc)
 
@@ -683,23 +890,53 @@ class GoogleSheetsClient:
                 row_index[wa_id] = idx
         return users, row_index
 
+    def _fetch_users_incremental(
+        self,
+        tail_row: int,
+    ) -> tuple[Dict[str, Dict[str, Any]], Dict[str, int]]:
+        sheet = self._get_sheet("USERS")
+        users: Dict[str, Dict[str, Any]] = {}
+        row_index: Dict[str, int] = {}
+        if not sheet or not self._has_rows_beyond(sheet, tail_row):
+            return users, row_index
+
+        headers = SHEET_HEADERS["USERS"]
+        for idx, raw in self._fetch_rows_range(sheet, headers, tail_row + 1):
+            padded = raw + [""] * (len(headers) - len(raw))
+            row = dict(zip(headers, padded[: len(headers)]))
+            wa_id = str(row.get("wa_id", "")).strip()
+            if wa_id:
+                users[wa_id] = self._user_from_row(wa_id, row)
+                row_index[wa_id] = idx
+        return users, row_index
+
     def _refresh_users_from_sheets(self) -> None:
         if not self._connected:
             return
         try:
-            fetched_users, fetched_rows = self._fetch_users_from_sheets()
-            if not fetched_users and not fetched_rows:
-                return
             with self._cache_lock:
-                dirty = set(self._dirty_users)
-                for wa_id, user in fetched_users.items():
-                    if wa_id not in dirty:
-                        self._users_cache[wa_id] = user
-                for wa_id, idx in fetched_rows.items():
-                    if wa_id not in dirty:
-                        self._user_row_index[wa_id] = idx
-            self._save_local_users()
-            logger.info("Users local cache refreshed: %d users", len(fetched_users))
+                row_count = len(self._users_cache)
+            use_full = self._should_use_full_refresh(
+                row_count,
+                self._last_full_users_refresh,
+            )
+            if use_full:
+                fetched_users, fetched_rows = self._fetch_users_from_sheets()
+                mode = "full"
+                self._last_full_users_refresh = time.monotonic()
+            else:
+                with self._cache_lock:
+                    tail = self._row_tail(self._user_row_index)
+                fetched_users, fetched_rows = self._fetch_users_incremental(tail)
+                mode = "incremental"
+                if not fetched_users and not fetched_rows:
+                    return
+            self._merge_fetched_users(fetched_users, fetched_rows)
+            logger.info(
+                "Users local cache refreshed (%s): %d users",
+                mode,
+                len(fetched_users),
+            )
         except Exception as exc:
             logger.warning("Background users refresh failed (%s).", exc)
 
@@ -756,7 +993,7 @@ class GoogleSheetsClient:
         sheet.append_row(
             [wa_id, merged_name, merged_address, last_order_date, payload_items, now]
         )
-        new_row = len(sheet.get_all_values())
+        new_row = self._sheet_last_row(sheet)
         with self._cache_lock:
             self._user_row_index[wa_id] = new_row
         return True
@@ -875,10 +1112,18 @@ class GoogleSheetsClient:
             self._demo_users[wa_id] = user_payload
             return
 
+        touch_only = bool(existing) and (
+            str(existing.get("name", "")) == merged_name
+            and str(existing.get("address", "")) == merged_address
+            and existing.get("last_order_items", []) == merged_items
+            and str(existing.get("last_order_date", "")) == last_order_date
+        )
+
         with self._cache_lock:
             self._users_cache[wa_id] = user_payload
             self._dirty_users.add(wa_id)
-        self._save_local_users()
+        if not touch_only:
+            self._save_local_users()
 
     def get_last_order(self, wa_id: str) -> Optional[Dict[str, Any]]:
         user = self.get_user(wa_id)

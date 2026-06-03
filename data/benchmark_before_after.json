@@ -1,0 +1,90 @@
+{
+  "iterations": 25,
+  "touch_messages": 20,
+  "latency": {
+    "before_session": {
+      "hola": {
+        "p50": 3.97,
+        "p95": 5.43,
+        "mean": 4.32
+      },
+      "menu": {
+        "p50": 7.69,
+        "p95": 10.32,
+        "mean": 8.15
+      },
+      "pedido_flow": {
+        "p50": 11.98,
+        "p95": 16.36,
+        "mean": 13.15
+      }
+    },
+    "after_session": {
+      "hola": {
+        "p50": 2.15,
+        "p95": 3.6,
+        "mean": 2.43
+      },
+      "menu": {
+        "p50": 5.07,
+        "p95": 7.49,
+        "mean": 5.47
+      },
+      "pedido_flow": {
+        "p50": 8.93,
+        "p95": 10.53,
+        "mean": 9.12
+      }
+    },
+    "comparison": [
+      {
+        "step": "hola",
+        "documented_baseline_ms": 2362,
+        "before_session_p50_ms": 3.97,
+        "after_session_p50_ms": 2.15,
+        "session_improvement_pct": 45.8,
+        "total_vs_baseline_pct": 99.9,
+        "total_factor_vs_baseline": "1099x"
+      },
+      {
+        "step": "menu",
+        "documented_baseline_ms": 1179,
+        "before_session_p50_ms": 7.69,
+        "after_session_p50_ms": 5.07,
+        "session_improvement_pct": 34.1,
+        "total_vs_baseline_pct": 99.6,
+        "total_factor_vs_baseline": "233x"
+      },
+      {
+        "step": "pedido_flow",
+        "documented_baseline_ms": 1202,
+        "before_session_p50_ms": 11.98,
+        "after_session_p50_ms": 8.93,
+        "session_improvement_pct": 25.5,
+        "total_vs_baseline_pct": 99.3,
+        "total_factor_vs_baseline": "135x"
+      }
+    ]
+  },
+  "touch_disk_writes": {
+    "before": 20,
+    "after": 1,
+    "saved_per_conversation": 19,
+    "reduction_pct": 95.0
+  },
+  "patch_data_500_iters_ms": {
+    "before": 80.42,
+    "after": 86.35,
+    "improvement_pct": -7.4
+  },
+  "append_row_lookup": {
+    "get_all_values_ms": 288.99,
+    "col_values_ms": 222.31,
+    "skipped": false
+  },
+  "documented_baseline_ms": {
+    "hola": 2362,
+    "menu": 1179,
+    "pedido_flow": 1202
+  }
+}
