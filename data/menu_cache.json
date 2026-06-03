@@ -75,5 +75,19 @@
     "precio": 11.0,
     "categoria": "Bebidas",
     "disponible": true
+  },
+  {
+    "id": "",
+    "nombre": "Café",
+    "precio": 2.0,
+    "categoria": "Bebidas",
+    "disponible": true
+  },
+  {
+    "id": "",
+    "nombre": "Carne",
+    "precio": 5.0,
+    "categoria": "Hamburguesas",
+    "disponible": true
   }
 ]

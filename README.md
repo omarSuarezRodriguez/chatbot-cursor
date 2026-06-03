@@ -1,4 +1,4 @@
-## v0.31
+## v0.32
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4489,4 +4489,101 @@ python scripts/verify_phone_send.py --send
 
 
 ##########################################################
+## v0.32
 
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Estaba haciendo un pedido y este mensaje me dio mal el pedido, arreglalo e implementa mejoras para que no ocurran esas cosas de nuevo
+yo escribi: * 2 pizza hawaiana, 1 coca cola
+* una hamburguesa y dos aguas
+
+el bot dijo: * 2 x Hawaiana — $250.00
+* 2 x Coca Cola — $50.00
+* 2 x Agua — $22.00
+
+Arreglalo, mejora incremental
+
+]
+
+
+## Resp cursor ##
+
+### Análisis previo
+
+Tu mensaje se segmentaba bien (`2 pizza hawaiana`, `1 coca cola`, `una hamburguesa`, `dos aguas`), pero había tres fallos en el parser:
+
+1. **Fusión errónea:** `una hamburguesa` se emparejaba con **Coca Cola** (score ~0.67) porque no hay hamburguesa en tu menú actual (`data/menu_cache.json`). Al deduplicar, se sumaba con el `1 coca cola` real → **2 Coca Cola**.
+2. **Sinónimos duplicados:** `coca cola` se expandía a `coca cola coca cola` (mapeo de `coca` y `cola` por separado).
+3. **Plurales pegados:** `aguas` se partía como `agua` + `s` en algunos flujos de normalización.
+
+### Cambios implementados
+
+Solo en `app/core/parser.py`:
+
+- **Alineación de intención:** si el segmento pide algo que no encaja con el producto elegido y la confianza es baja, va a `unknown` en lugar de inventar un ítem.
+- **Sinónimos:** al expandir frases como `coca cola`, no se repiten tokens ya consumidos.
+- **Plurales del catálogo:** `aguas` → `agua` sin dejar un `s` suelto.
+- **Prueba de regresión** con tu mensaje exacto (asteriscos de WhatsApp incluidos).
+
+### Archivos modificados
+
+- `app/core/parser.py`
+
+### Riesgos mitigados
+
+- Evita sumar cantidades por emparejamientos falsos (como hamburguesa → Coca Cola).
+- No rompe los 23 casos de validación existentes (`python -m app.core.parser` → 23/23).
+
+### Compatibilidad verificada
+
+- Contrato del parser, `OrderParser`, `OrderService`, flujo y persistencia sin cambios.
+- APIs y estructuras JSON intactas.
+
+### Funcionalidades agregadas
+
+- Detección de segmentos con producto no disponible en menú (p. ej. hamburguesa si no está en la carta).
+- Mejor manejo de plurales y sinónimos en pedidos con `*` y comas.
+
+### Funcionalidades preservadas
+
+- Segmentación, cantidades, fuzzy matching, deduplicación y suite de validación completa.
+
+---
+
+**Resultado con tu menú actual** (sin hamburguesa en carta):
+
+| Producto   | Antes (mal) | Ahora (correcto) |
+|-----------|-------------|------------------|
+| Hawaiana  | 2           | 2                |
+| Coca Cola | 2           | **1**            |
+| Agua      | 2           | 2                |
+| Hamburguesa | (oculta, mezclada en Coca) | **pedido de aclaración** (`unknown`) |
+
+Si agregas hamburguesas al menú en Sheets/`menu_cache.json`, `una hamburguesa` debería resolverse a la variante que mejor coincida (p. ej. Clásica), no a una bebida.
+
+Reinicia el bot si está en ejecución para cargar el parser actualizado. Si quieres, el siguiente paso sería afinar el mensaje al usuario cuando `unknown` incluye algo como `una hamburguesa` (sugerir productos del menú).
+
+
+
+
+##########################################################
+
+
+
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[mejora a implementar]

@@ -383,6 +383,13 @@ class TextNormalizer:
             ):
                 compact_to_spaced[compact_name] = spaced_name
 
+        for compact_name, spaced_name in compact_to_spaced.items():
+            if compact == compact_name:
+                return spaced_name
+            for suffix in ("s", "es"):
+                if compact == f"{compact_name}{suffix}":
+                    return spaced_name
+
         spans: List[Tuple[int, int, str]] = []
         for compact_name, spaced_name in compact_to_spaced.items():
             start = 0
@@ -595,10 +602,22 @@ class FuzzyMatcher:
     def _apply_synonyms(text: str) -> str:
         tokens = text.split()
         expanded: List[str] = []
-        for token in tokens:
+        i = 0
+        while i < len(tokens):
+            token = tokens[i]
             token_key = _strip_accents(token.lower())
             mapped = SYNONYM_TOKEN_MAP.get(token_key, SYNONYM_TOKEN_MAP.get(token, token))
-            expanded.extend(mapped.split())
+            mapped_parts = mapped.split()
+            expanded.extend(mapped_parts)
+            skip = 0
+            for j, part in enumerate(mapped_parts[1:], start=1):
+                if (
+                    i + j < len(tokens)
+                    and _strip_accents(tokens[i + j].lower())
+                    == _strip_accents(part.lower())
+                ):
+                    skip = j
+            i += 1 + skip
         deduped: List[str] = []
         for token in expanded:
             if token and (not deduped or deduped[-1] != token):
@@ -842,6 +861,13 @@ class OrderIntelligenceEngine:
                 unknown.append(segment)
                 continue
 
+            if (
+                score < ACCEPT_AUTO_SCORE
+                and not self._match_aligns_with_intent(product_text, best)
+            ):
+                unknown.append(segment)
+                continue
+
             if score < ACCEPT_AUTO_SCORE:
                 needs_review = True
             ambiguous = (
@@ -980,6 +1006,37 @@ class OrderIntelligenceEngine:
         for entry in self._catalog:
             menu_tokens = set(entry["normalized"].split())
             if query_tokens & menu_tokens:
+                return True
+        return False
+
+    @staticmethod
+    def _intent_tokens(product_text: str) -> set[str]:
+        intents: set[str] = set()
+        for token in TextNormalizer.basic(product_text).split():
+            key = _strip_accents(token.lower())
+            if key in NUMBER_WORDS:
+                continue
+            singular = _singularize_token(key)
+            mapped = SYNONYM_TOKEN_MAP.get(key) or SYNONYM_TOKEN_MAP.get(singular)
+            if mapped:
+                intents.add(TextNormalizer.basic(mapped))
+            if key not in CATEGORY_STOPWORDS:
+                intents.add(TextNormalizer.basic(singular))
+        return {intent for intent in intents if intent}
+
+    @staticmethod
+    def _match_aligns_with_intent(product_text: str, best: Dict[str, Any]) -> bool:
+        intents = OrderIntelligenceEngine._intent_tokens(product_text)
+        if not intents:
+            return True
+        target = best["normalized"]
+        target_parts = set(target.split())
+        for intent in intents:
+            if intent in target:
+                return True
+            if any(part in target_parts for part in intent.split() if len(part) >= 4):
+                return True
+            if _token_keys(intent) & _token_keys(target):
                 return True
         return False
 
@@ -1488,6 +1545,23 @@ def run_validation_suite(verbose: bool = True) -> bool:
         and _qty_for(case18["items"], "hamburguesa") == 2
         and _qty_for(case18["items"], "agua") == 1,
         str(case18),
+    )
+
+    user_bug_menu: List[Dict[str, Any]] = [
+        {"id": "1", "nombre": "Hawaiana", "precio": 125.0, "categoria": "Pizzas", "disponible": True},
+        {"id": "b1", "nombre": "Coca Cola", "precio": 25.0, "categoria": "Bebidas", "disponible": True},
+        {"id": "b2", "nombre": "Agua", "precio": 11.0, "categoria": "Bebidas", "disponible": True},
+    ]
+    case19 = OrderIntelligenceEngine(user_bug_menu).parse(
+        "* 2 pizza hawaiana, 1 coca cola\n* una hamburguesa y dos aguas"
+    )
+    check(
+        "asteriscos whatsapp sin fusionar coca con hamburguesa",
+        _qty_for(case19["items"], "hawaiana") == 2
+        and _qty_for(case19["items"], "coca") == 1
+        and _qty_for(case19["items"], "agua") == 2
+        and any("hamburguesa" in str(u).lower() for u in case19.get("unknown", [])),
+        str(case19),
     )
 
     if verbose:
