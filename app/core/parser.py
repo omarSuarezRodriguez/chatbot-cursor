@@ -1076,13 +1076,19 @@ def _menu_literal_tokens(menu_items: List[Dict[str, Any]]) -> frozenset[str]:
 def infer_user_intent(
     text: str,
     menu_items: Optional[List[Dict[str, Any]]] = None,
+    *,
+    menu_tokens: Optional[frozenset[str]] = None,
 ) -> Dict[str, Any]:
     """Public helper: extract menu/pedido/reservar/inicio/cancelar intent from NL text."""
     prepared = NaturalLanguagePreprocessor.canonicalize(text or "")
     has_product = UserIntentClassifier.looks_like_product_order(prepared)
-    if menu_items and not has_product:
-        prepared_tokens = set(prepared.split())
-        has_product = bool(prepared_tokens & _menu_literal_tokens(menu_items))
+    if not has_product:
+        if menu_tokens:
+            prepared_tokens = set(prepared.split())
+            has_product = bool(prepared_tokens & menu_tokens)
+        elif menu_items:
+            prepared_tokens = set(prepared.split())
+            has_product = bool(prepared_tokens & _menu_literal_tokens(menu_items))
     return UserIntentClassifier.infer(prepared, has_product_signal=has_product)
 
 

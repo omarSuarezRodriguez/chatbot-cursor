@@ -1,7 +1,7 @@
 # Fase 1 — Benchmark corpus 95%
 
 - **Líneas evaluadas:** 3300
-- **Tiempo:** 9758 ms
+- **Tiempo:** 9099 ms
 - **Acierto global (todas las filas):** 98.7%
 - **Intención global (menu/pedido/reservar/inicio/cancelar):** 94.8%
 - **Pedido con productos (`pedido_con_productos`):** 98.5%
@@ -38,6 +38,6 @@
 - **ambiguo:** 100.0% (104/104)
 
 ## Logs reales (`client_messages_log/`)
-- Mensajes cliente extraídos: 15
-- Con comando inferido: 2
+- Mensajes cliente extraídos: 17
+- Con comando inferido: 3
 - Parse OK en mensajes con producto del menú: 100.0%

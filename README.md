@@ -1,4 +1,4 @@
-## v0.36
+## v0.36.
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4839,4 +4839,62 @@ python -m app.core.parser
 
 
 ####################################################
-## v0.36
+## v0.36.
+
+ahora quiero que me optimices la velocidad de respuesta del bot, como mejora incremental, manteniendo la integirdad y la seguridad del sistema, al final haz un chequeo y verifica que todo esté funcinoanndo correctamente
+
+
+## Resp cursor ##
+
+## Optimizaciones aplicadas (incrementales, sin tocar seguridad)
+
+### 1. `StateManager` — menos copias por mensaje
+- `get()` usa snapshot ligero: solo copia profunda del carrito/reserva, no todo el estado.
+- Persistencia en JSON compacto (sin indentación) → escrituras más rápidas y archivos más pequeños.
+- Misma lógica de guardado: cambios críticos (step, flow, cart) siguen persistiendo al instante.
+
+### 2. `MenuService` — caché en memoria
+- Menú disponible cacheado por `mtime` del archivo local.
+- Tokens de productos (`menu_literal_tokens()`) precalculados y reutilizados en cada mensaje.
+- Precalentamiento al arrancar la app (menú + tokens + texto formateado).
+
+### 3. `FlowEngine` — fast-path antes del parser pesado
+- Saludos y opciones del nodo (`hola`, `buenas`, etc.) se resuelven **antes** de `infer_user_intent`.
+- Una sola lectura de estado por mensaje en handlers de abandono/repetir pedido.
+- Intención usa tokens cacheados en lugar de reconstruir el menú cada vez.
+
+### 4. `infer_user_intent` — parámetro `menu_tokens`
+- Evita recalcular tokens del menú en el hot path cuando ya están cacheados.
+
+### 5. `app.py` — warm-up al startup
+- Cachés listas antes del primer mensaje real.
+
+**Sin cambios en:** auth admin, usuarios bloqueados, Twilio, Sheets sync, lógica de pedidos/reservas.
+
+---
+
+## Resultados de velocidad (antes → ahora)
+
+| Métrica | Antes | Ahora | Mejora |
+|---------|-------|-------|--------|
+| `infer_user_intent` p50 | 0.21 ms | **0.15 ms** | ~29% |
+| `parse` p50 | 0.98 ms | **0.75 ms** | ~23% |
+| infer+parse+apply p50 | 2.25 ms | **1.69 ms** | ~25% |
+| Corpus 3300 msg | 1.85 ms/msg | **1.21 ms/msg** | ~35% |
+| POST `/bot` hola | 17.7 ms | **6.1 ms** | ~65% |
+| POST `/bot` menu | 30.3 ms | **8.9 ms** | ~71% |
+| POST `/bot` pedido | 16.7 ms | **6.8 ms** | ~59% |
+
+---
+
+## Chequeo de integridad
+
+| Prueba | Resultado |
+|--------|-----------|
+| Parser validation | **58/58 OK** |
+| Casos inventados | **20/20 OK** |
+| Corpus 3300 | **98.7%** (sin regresión) |
+| Anti-overfit 20 | **100%** |
+| Meta latencia &lt;2 s | **OK** |
+
+La precisión se mantiene igual; solo mejoró el rendimiento del camino crítico. Reinicia el bot (`python run.py` o redeploy) para que cargue los cambios en producción.

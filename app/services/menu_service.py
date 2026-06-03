@@ -15,6 +15,10 @@ class MenuService:
         self.sheets = sheets
         self._formatted_menu_cache: Optional[str] = None
         self._formatted_menu_mtime: float = -1.0
+        self._available_menu_cache: Optional[List[Dict[str, Any]]] = None
+        self._available_menu_mtime: float = -1.0
+        self._literal_tokens_cache: Optional[frozenset[str]] = None
+        self._literal_tokens_mtime: float = -1.0
 
     @staticmethod
     def _menu_cache_mtime() -> float:
@@ -27,22 +31,57 @@ class MenuService:
             item for item in self.sheets.get_menu() if item.get("disponible", True)
         ]
 
+    def _refresh_available_menu_if_stale(self) -> List[Dict[str, Any]]:
+        mtime = self._menu_cache_mtime()
+        if (
+            self._available_menu_cache is not None
+            and self._available_menu_mtime == mtime
+        ):
+            return self._available_menu_cache
+
+        menu = self._fetch_available_menu()
+        self._available_menu_cache = menu
+        self._available_menu_mtime = mtime
+        self._literal_tokens_cache = None
+        self._literal_tokens_mtime = -1.0
+        return menu
+
     def get_available_menu(self) -> List[Dict[str, Any]]:
         try:
             from flask import g, has_request_context
         except ImportError:
-            return self._fetch_available_menu()
+            return self._refresh_available_menu_if_stale()
 
         if not has_request_context():
-            return self._fetch_available_menu()
+            return self._refresh_available_menu_if_stale()
 
         cached = getattr(g, "_available_menu_cache", None)
         if cached is not None:
             return cached
 
-        menu = self._fetch_available_menu()
+        menu = self._refresh_available_menu_if_stale()
         g._available_menu_cache = menu
         return menu
+
+    def menu_literal_tokens(self) -> frozenset[str]:
+        """Cached product-name tokens for intent detection (hot path)."""
+        mtime = self._menu_cache_mtime()
+        if (
+            self._literal_tokens_cache is not None
+            and self._literal_tokens_mtime == mtime
+        ):
+            return self._literal_tokens_cache
+
+        from app.core.parser import TextNormalizer
+
+        tokens: set[str] = set()
+        for item in self.get_available_menu():
+            name = str(item.get("nombre", "")).strip()
+            if name:
+                tokens.update(TextNormalizer.basic(name).split())
+        self._literal_tokens_cache = frozenset(tokens)
+        self._literal_tokens_mtime = mtime
+        return self._literal_tokens_cache
 
     def format_menu(self) -> str:
         mtime = self._menu_cache_mtime()

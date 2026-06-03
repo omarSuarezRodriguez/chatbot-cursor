@@ -2,17 +2,17 @@
 
 ## Resumen ejecutivo
 
-- **Corpus original:** 3274/3300 (99.2%)
+- **Corpus original:** 3256/3300 (98.7%)
 - **Anti-overfit (20 frases nuevas):** 20/20 (100.0%)
-- **Intención global:** 100.0%
+- **Intención global:** 94.8%
 - **Pedido con productos:** 98.5%
-- **Categorías A–F:** 100.0%
+- **Categorías A–F:** 99.3%
 
 ## Tabla antes / después (% por categoría)
 
 | Categoría | Fase 1 (baseline) | Fase 3 (actual) | Δ |
 |-----------|-------------------|-----------------|---|
-| A | 94.7% | 100.0% | +5.3pp |
+| A | 94.7% | 95.0% | +0.3pp |
 | B | 85.9% | 99.9% | +14.0pp |
 | C | 89.3% | 100.0% | +10.7pp |
 | D | 72.4% | 100.0% | +27.6pp |
@@ -25,20 +25,20 @@
 
 | Métrica | Fase 1 | Fase 3 | Δ |
 |---------|--------|--------|---|
-| Global | 88.8% | 99.2% | +10.4pp |
-| Intención global | 98.0% | 100.0% | +2.0pp |
+| Global | 88.8% | 98.7% | +9.9pp |
+| Intención global | 98.0% | 94.8% | +-3.2pp |
 | Pedido+productos | 86.5% | 98.5% | +12.0pp |
-| A–F combinado | 87.4% | 100.0% | +12.6pp |
+| A–F combinado | 87.4% | 99.3% | +11.9pp |
 
 ## Por intención (corpus 3300)
 
+- **pedido:** 86.3% (63/73)
+- **menu:** 92.2% (95/103)
 - **pedido_con_productos:** 98.5% (1677/1702)
 - **ruido:** 99.3% (139/140)
 - **cancelar:** 100.0% (32/32)
 - **reservar:** 100.0% (89/89)
-- **menu:** 100.0% (103/103)
 - **saludo:** 100.0% (55/55)
-- **pedido:** 100.0% (73/73)
 - **inicio:** 100.0% (49/49)
 - **rechazar:** 100.0% (3/3)
 - **confirmar:** 100.0% (23/23)
@@ -53,8 +53,8 @@
 
 ## Logs reales
 
-- Mensajes extraídos: 8
-- Con comando inferido: 1
+- Mensajes extraídos: 17
+- Con comando inferido: 3
 - Parse OK (producto en menú): 100.0%
 
 ## Prueba manual WhatsApp

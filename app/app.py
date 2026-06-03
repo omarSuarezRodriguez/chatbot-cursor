@@ -156,6 +156,13 @@ def create_app() -> Flask:
         admin_service=admin_service,
     )
 
+    try:
+        menu_service.get_available_menu()
+        menu_service.menu_literal_tokens()
+        menu_service.format_menu()
+    except Exception:
+        logger.debug("Menu intent cache warm-up skipped", exc_info=True)
+
     admin_service.start_reminder_scheduler()
 
     flask_app.config["flow_engine"] = flow_engine

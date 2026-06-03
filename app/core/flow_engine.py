@@ -126,13 +126,11 @@ class FlowEngine:
             return message
         return f"{message}{hint}"
 
-    def _has_active_order(self, wa_id: str) -> bool:
-        state = self.state_manager.get(wa_id)
+    def _has_active_order(self, state: Dict[str, Any]) -> bool:
         cart = state.get("data", {}).get("cart", [])
         return bool(cart) and state.get("flow") == "order"
 
-    def _handle_abandon_confirm(self, wa_id: str, text: str) -> Optional[Reply]:
-        state = self.state_manager.get(wa_id)
+    def _handle_abandon_confirm(self, wa_id: str, text: str, state: Dict[str, Any]) -> Optional[Reply]:
         if not state.get("data", {}).get("awaiting_abandon_confirm"):
             return None
         if is_confirmation(text):
@@ -143,8 +141,7 @@ class FlowEngine:
             return "Perfecto, continuamos con tu pedido actual."
         return "Responde *sí* para volver al inicio o *no* para continuar tu pedido."
 
-    def _handle_repeat_order(self, wa_id: str, text: str) -> Optional[Reply]:
-        state = self.state_manager.get(wa_id)
+    def _handle_repeat_order(self, wa_id: str, text: str, state: Dict[str, Any]) -> Optional[Reply]:
         if not state.get("data", {}).get("awaiting_repeat_order"):
             return None
         if is_confirmation(text):
@@ -173,16 +170,20 @@ class FlowEngine:
         wa_id: str,
         command: str,
         current_step: str,
+        state: Optional[Dict[str, Any]] = None,
     ) -> Optional[Reply]:
         target = self.global_commands.get(command)
         if not target:
             return None
 
-        if command == "pedido" and self._has_active_order(wa_id):
+        if state is None:
+            state = self.state_manager.get(wa_id)
+
+        if command == "pedido" and self._has_active_order(state):
             self.state_manager.set_step(wa_id, "order_review", "order")
             return self._process_node(wa_id, "order_review", include_navigation=True)
 
-        if command == "inicio" and self._has_active_order(wa_id):
+        if command == "inicio" and self._has_active_order(state):
             self.state_manager.patch_data(wa_id, awaiting_abandon_confirm=True)
             return (
                 "Tienes un pedido en curso.\n\n"
@@ -211,7 +212,7 @@ class FlowEngine:
         if (
             command in {"menu", "pedido", "reservar"}
             and target != current_step
-            and not (command == "pedido" and self._has_active_order(wa_id))
+            and not (command == "pedido" and self._has_active_order(state))
         ):
             self.state_manager.patch_data(
                 wa_id,
@@ -295,11 +296,11 @@ class FlowEngine:
         *,
         _inner: bool,
     ) -> Reply:
-        abandon = self._handle_abandon_confirm(wa_id, text)
+        abandon = self._handle_abandon_confirm(wa_id, text, state)
         if abandon is not None:
             return abandon
 
-        repeat = self._handle_repeat_order(wa_id, text)
+        repeat = self._handle_repeat_order(wa_id, text, state)
         if repeat is not None:
             return repeat
 
@@ -329,37 +330,11 @@ class FlowEngine:
 
         if normalized in self.global_commands:
             log_meta["routed"] = normalized
-            response = self._resolve_global_command(wa_id, normalized, current_step)
+            response = self._resolve_global_command(
+                wa_id, normalized, current_step, state
+            )
             if response:
                 return response
-
-        menu_items = self.menu_service.get_available_menu()
-        intent = infer_user_intent(text, menu_items=menu_items)
-        log_meta["intent"] = intent
-        intent_command = intent.get("command")
-        if intent_command in {"pedido", "menu", "reservar"} and is_confirmation(text):
-            intent_command = None
-        if (
-            intent_command
-            and intent_command in self.global_commands
-            and not intent.get("has_products")
-        ):
-            log_meta["routed"] = str(intent_command)
-            response = self._resolve_global_command(wa_id, intent_command, current_step)
-            if response:
-                return response
-
-        node_for_intent = self.nodes.get(current_step, {})
-        if (
-            not intent_command
-            and intent.get("has_products")
-            and current_step in {"start", "menu_node"}
-            and node_for_intent.get("flow") == "idle"
-        ):
-            log_meta["routed"] = "pedido_implicito"
-            response = self._resolve_global_command(wa_id, "pedido", current_step)
-            if response:
-                return self.process_message(wa_id, text, _inner=True)
 
         options = node.get("options", {})
         if normalized in options:
@@ -374,6 +349,38 @@ class FlowEngine:
 
         if is_greeting(text) and node.get("flow") == "idle":
             return self._process_node(wa_id, "start", include_navigation=True)
+
+        menu_tokens = self.menu_service.menu_literal_tokens()
+        intent = infer_user_intent(text, menu_tokens=menu_tokens)
+        log_meta["intent"] = intent
+        intent_command = intent.get("command")
+        if intent_command in {"pedido", "menu", "reservar"} and is_confirmation(text):
+            intent_command = None
+        if (
+            intent_command
+            and intent_command in self.global_commands
+            and not intent.get("has_products")
+        ):
+            log_meta["routed"] = str(intent_command)
+            response = self._resolve_global_command(
+                wa_id, intent_command, current_step, state
+            )
+            if response:
+                return response
+
+        node_for_intent = self.nodes.get(current_step, {})
+        if (
+            not intent_command
+            and intent.get("has_products")
+            and current_step in {"start", "menu_node"}
+            and node_for_intent.get("flow") == "idle"
+        ):
+            log_meta["routed"] = "pedido_implicito"
+            response = self._resolve_global_command(
+                wa_id, "pedido", current_step, state
+            )
+            if response:
+                return self.process_message(wa_id, text, _inner=True)
 
         if node.get("input_mode") == "free_text":
             step_response = self._execute_input_action(

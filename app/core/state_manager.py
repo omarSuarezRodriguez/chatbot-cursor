@@ -43,7 +43,7 @@ class StateManager:
             snapshot = deepcopy(self._states)
         self._persist_path.parent.mkdir(parents=True, exist_ok=True)
         with self._persist_path.open("w", encoding="utf-8") as handle:
-            json.dump(snapshot, handle, ensure_ascii=False, indent=2)
+            json.dump(snapshot, handle, ensure_ascii=False, separators=(",", ":"))
 
     def _cancel_save_timer(self) -> None:
         if self._save_timer is not None:
@@ -91,21 +91,41 @@ class StateManager:
         else:
             self._schedule_save()
 
+    @staticmethod
+    def _snapshot_state(state: Dict[str, Any]) -> Dict[str, Any]:
+        """Lightweight read copy: deep-copy cart/reservation only when present."""
+        data = state.get("data") or {}
+        data_copy = dict(data)
+        cart = data.get("cart")
+        if cart is not None:
+            data_copy["cart"] = [dict(item) for item in cart]
+        reservation = data.get("reservation")
+        if reservation:
+            data_copy["reservation"] = dict(reservation)
+        last_items = data.get("last_order_items")
+        if last_items is not None:
+            data_copy["last_order_items"] = [dict(item) for item in last_items]
+        return {
+            "flow": state.get("flow", "idle"),
+            "step": state.get("step", "start"),
+            "data": data_copy,
+        }
+
     def get(self, wa_id: str) -> Dict[str, Any]:
         with self._lock:
             if wa_id not in self._states:
                 self._states[wa_id] = deepcopy(DEFAULT_STATE)
-            return deepcopy(self._states[wa_id])
+            return self._snapshot_state(self._states[wa_id])
 
     def update(self, wa_id: str, **kwargs: Any) -> Dict[str, Any]:
         with self._lock:
             if wa_id not in self._states:
                 self._states[wa_id] = deepcopy(DEFAULT_STATE)
-            previous = deepcopy(self._states[wa_id])
+            previous = self._snapshot_state(self._states[wa_id])
             self._states[wa_id].update(kwargs)
             current = self._states[wa_id]
             self._persist_if_changed(wa_id, previous, current)
-            return deepcopy(current)
+            return self._snapshot_state(current)
 
     def set_step(self, wa_id: str, step: str, flow: Optional[str] = None) -> Dict[str, Any]:
         payload: Dict[str, Any] = {"step": step}
@@ -120,20 +140,23 @@ class StateManager:
         with self._lock:
             if wa_id not in self._states:
                 self._states[wa_id] = deepcopy(DEFAULT_STATE)
-            previous = deepcopy(self._states[wa_id])
+            previous = self._snapshot_state(self._states[wa_id])
             merged = {**self._states[wa_id].get("data", {}), **fields}
             self._states[wa_id]["data"] = merged
             current = self._states[wa_id]
             self._persist_if_changed(wa_id, previous, current)
-            return deepcopy(current)
+            return self._snapshot_state(current)
 
     def reset(self, wa_id: str) -> Dict[str, Any]:
         with self._lock:
-            previous = self._states.get(wa_id)
+            raw_previous = self._states.get(wa_id)
+            previous = (
+                self._snapshot_state(raw_previous) if raw_previous is not None else None
+            )
             new_state = deepcopy(DEFAULT_STATE)
             self._states[wa_id] = new_state
             self._persist_if_changed(wa_id, previous, new_state)
-            return deepcopy(new_state)
+            return self._snapshot_state(new_state)
 
     def cancel(self, wa_id: str) -> Dict[str, Any]:
         return self.reset(wa_id)
