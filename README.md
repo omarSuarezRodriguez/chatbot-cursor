@@ -1,4 +1,4 @@
-## v0.28
+## v0.29
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4198,4 +4198,24 @@ Webhook reply sent via Twilio REST to whatsapp:+573569915590 (N part(s))
 ```
 
 #########################################################
+## v0.29 
 
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Entonces arregla que el numero 
+#  Whatsapp del bot
+TWILIO_WHATSAPP_FROM=whatsapp:+573242497352 
+
+ sea el que funcione como bot porque no está respondiendo nada y verifica Mensajes viejos del bot o de logs
+Cuando probamos antes, Twilio devolvió el error 63038 (“50 mensajes/día”). Ese mensaje lo guarda el bot con texto genérico que dice “cuenta Trial”, aunque la cuenta ya sea Full. No significa que sigas en Trial hoy. eso lo arreglas]
+
+
+
+##########################################################

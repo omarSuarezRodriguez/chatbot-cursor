@@ -34,6 +34,11 @@ class AdminService:
         self._reminder_state: Dict[str, Dict[str, Any]] = {}
         self._scheduler_started = False
         self._lock = threading.Lock()
+        self._last_twilio_error_code: Optional[int] = None
+
+    @property
+    def last_twilio_error_code(self) -> Optional[int]:
+        return self._last_twilio_error_code
 
     @staticmethod
     def _normalize_phone(value: str) -> str:
@@ -117,8 +122,9 @@ class AdminService:
                 f"al {TWILIO_WHATSAPP_SANDBOX_NUMBER}."
             ),
             63038: (
-                "Límite diario de mensajes agotado (50/día en cuenta Trial). "
-                "Upgrade en Twilio Console → Billing, o espere 24 h."
+                "Límite diario de la cuenta agotado (ventana 24 h; Twilio puede "
+                "mostrar 50 aunque la cuenta sea Full). Espere el reinicio, revise "
+                "Messaging Insights o contacte soporte Twilio para subir el cupo."
             ),
             63016: "Fuera de ventana 24 h: hace falta plantilla WhatsApp aprobada.",
             63112: "Meta bloqueó el mensaje. Verifique el número WhatsApp Business.",
@@ -126,6 +132,7 @@ class AdminService:
         return hints.get(code, "Ver Twilio Console → Monitor → Logs.")
 
     def _send_whatsapp(self, to_number: str, body: str) -> bool:
+        self._last_twilio_error_code = None
         if not (TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_WHATSAPP_FROM):
             logger.info("Twilio outbound not configured. Admin message: %s", body[:120])
             return False
@@ -148,9 +155,9 @@ class AdminService:
             status = getattr(message, "status", "") or ""
             error_code = getattr(message, "error_code", None)
             if status in {"failed", "undelivered"} or error_code:
-                hint = self._twilio_error_hint(
-                    int(error_code) if error_code else None
-                )
+                code_int = int(error_code) if error_code else None
+                self._last_twilio_error_code = code_int
+                hint = self._twilio_error_hint(code_int)
                 logger.error(
                     "WhatsApp NO entregado a %s (status=%s, code=%s). %s",
                     to,
@@ -168,6 +175,8 @@ class AdminService:
             return True
         except Exception as exc:
             code = getattr(exc, "code", None)
+            if code:
+                self._last_twilio_error_code = int(code)
             hint = self._twilio_error_hint(int(code) if code else None)
             logger.error(
                 "Failed to send WhatsApp to %s (code=%s): %s. %s",
@@ -250,7 +259,7 @@ class AdminService:
         else:
             logger.error(
                 "Admin WhatsApp NOT sent for order %s — revisa el error Twilio arriba "
-                "(común: 63038 = límite 50 msgs/día sandbox)",
+                "(común: 63038 = límite diario Twilio, ver hint arriba)",
                 order_id,
             )
         self._track_pending_reminder(order_id)

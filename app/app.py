@@ -286,6 +286,15 @@ def _deliver_bot_reply(
         )
         return
 
+    if admin_service.last_twilio_error_code == 63038:
+        logger.error(
+            "REST WhatsApp bloqueado (63038 límite diario) para %s; "
+            "no se reintenta TwiML (también fallaría). Espere ventana 24 h o "
+            "solicite más cupo en Twilio Console.",
+            recipient,
+        )
+        return
+
     logger.warning(
         "REST WhatsApp delivery failed for %s; falling back to TwiML",
         recipient,

@@ -44,7 +44,7 @@
           "subtotal": 25.0
         }
       ],
-      "last_seen": "2026-06-03T01:07:32.457861"
+      "last_seen": "2026-06-03T06:21:30.656154"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
@@ -385,7 +385,7 @@
       "wa_id": "573009998877",
       "name": "Test",
       "address": "",
-      "last_order_date": "2026-06-03T00:48:05.675049",
+      "last_order_date": "2026-06-03T01:10:41.702420",
       "last_order_items": [
         {
           "product_id": "",
@@ -395,7 +395,7 @@
           "subtotal": 50.0
         }
       ],
-      "last_seen": "2026-06-03T00:48:05.675049"
+      "last_seen": "2026-06-03T01:10:41.702420"
     },
     "regression_d7041906": {
       "wa_id": "regression_d7041906",
