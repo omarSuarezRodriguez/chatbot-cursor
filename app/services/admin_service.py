@@ -16,6 +16,8 @@ from app.config import (
     TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN,
     TWILIO_WHATSAPP_FROM,
+    TWILIO_WHATSAPP_SANDBOX_NUMBER,
+    is_twilio_whatsapp_sandbox,
 )
 from app.core.parser import OrderParser
 from app.integrations.google_sheets import GoogleSheetsClient
@@ -39,36 +41,127 @@ class AdminService:
             ch for ch in value.replace("whatsapp:", "").strip() if ch.isdigit()
         )
 
+    @classmethod
+    def _default_country_prefix(cls) -> str:
+        admin_digits = cls._normalize_phone(ADMIN_WHATSAPP_NUMBER)
+        if len(admin_digits) > 10:
+            return admin_digits[: len(admin_digits) - 10]
+        return "57"
+
+    @classmethod
+    def _resolve_e164_digits(cls, number: str) -> str:
+        digits = cls._normalize_phone(number)
+        if not digits:
+            return ""
+        prefix = cls._default_country_prefix()
+        if len(digits) >= 12 and digits.startswith(prefix):
+            return digits
+        if len(digits) == 10 and digits.startswith("3"):
+            return f"{prefix}{digits}"
+        # WaId sin 57 (11 dígitos): suele ser 10 nacionales + dígito extra al final
+        if len(digits) == 11 and digits.startswith("3") and prefix == "57":
+            national = digits[:9] + digits[-1]
+            if len(national) == 10 and national.startswith("3"):
+                return f"{prefix}{national}"
+            for i in range(len(digits)):
+                candidate = digits[:i] + digits[i + 1 :]
+                if len(candidate) == 10 and candidate.startswith("3"):
+                    return f"{prefix}{candidate}"
+            return f"{prefix}{digits[-10:]}"
+        return digits
+
+    def _customer_wa_id(self, order: Dict[str, Any]) -> str:
+        raw = str(order.get("wa_id", "")).strip()
+        return self._resolve_e164_digits(raw) or raw
+
     @staticmethod
     def is_admin(wa_id: str) -> bool:
         if not ADMIN_WHATSAPP_NUMBER:
             return False
         normalized_admin = AdminService._normalize_phone(ADMIN_WHATSAPP_NUMBER)
         normalized_wa = AdminService._normalize_phone(wa_id)
-        return bool(normalized_admin) and normalized_wa == normalized_admin
+        if not normalized_admin or not normalized_wa:
+            return False
+        if normalized_admin == normalized_wa:
+            return True
+        # Twilio WaId may omit country code (e.g. 3001111032 vs 573001111032).
+        if len(normalized_admin) >= 10 and len(normalized_wa) >= 10:
+            return normalized_admin[-10:] == normalized_wa[-10:]
+        return False
 
     def _format_whatsapp_address(self, number: str) -> str:
-        stripped = number.replace("whatsapp:", "").strip()
-        digits = "".join(ch for ch in stripped if ch.isdigit())
+        digits = self._resolve_e164_digits(number)
         if not digits:
             return number.strip()
-        e164 = stripped if stripped.startswith("+") else f"+{digits}"
-        return f"whatsapp:{e164}"
+        return f"whatsapp:+{digits}"
+
+    @staticmethod
+    def _twilio_error_hint(code: Optional[int]) -> str:
+        hints = {
+            63015: (
+                "El admin no ha unido el sandbox. Desde WhatsApp envíe join <código> "
+                f"al {TWILIO_WHATSAPP_SANDBOX_NUMBER}."
+            ),
+            63038: (
+                "Límite diario de mensajes agotado (50/día en cuenta Trial). "
+                "Upgrade en Twilio Console → Billing, o espere 24 h."
+            ),
+            63016: "Fuera de ventana 24 h: hace falta plantilla WhatsApp aprobada.",
+            63112: "Meta bloqueó el mensaje. Verifique el número WhatsApp Business.",
+        }
+        return hints.get(code, "Ver Twilio Console → Monitor → Logs.")
 
     def _send_whatsapp(self, to_number: str, body: str) -> bool:
         if not (TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_WHATSAPP_FROM):
             logger.info("Twilio outbound not configured. Admin message: %s", body[:120])
             return False
+        if is_twilio_whatsapp_sandbox():
+            logger.warning(
+                "TWILIO_WHATSAPP_FROM es el sandbox %s. Para producción use su número "
+                "WhatsApp Business registrado en Twilio.",
+                TWILIO_WHATSAPP_SANDBOX_NUMBER,
+            )
         try:
             from twilio.rest import Client
 
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
             to = self._format_whatsapp_address(to_number)
             from_ = self._format_whatsapp_address(TWILIO_WHATSAPP_FROM)
-            client.messages.create(body=body, from_=from_, to=to)
+            message = client.messages.create(body=body, from_=from_, to=to)
+            # Twilio may accept the API call but mark the message failed afterward.
+            if message.sid:
+                message = client.messages(message.sid).fetch()
+            status = getattr(message, "status", "") or ""
+            error_code = getattr(message, "error_code", None)
+            if status in {"failed", "undelivered"} or error_code:
+                hint = self._twilio_error_hint(
+                    int(error_code) if error_code else None
+                )
+                logger.error(
+                    "WhatsApp NO entregado a %s (status=%s, code=%s). %s",
+                    to,
+                    status,
+                    error_code,
+                    hint,
+                )
+                return False
+            logger.info(
+                "WhatsApp entregado a %s (sid=%s, status=%s)",
+                to,
+                message.sid,
+                status,
+            )
             return True
-        except Exception:
-            logger.exception("Failed to send WhatsApp to %s", to_number)
+        except Exception as exc:
+            code = getattr(exc, "code", None)
+            hint = self._twilio_error_hint(int(code) if code else None)
+            logger.error(
+                "Failed to send WhatsApp to %s (code=%s): %s. %s",
+                to_number,
+                code,
+                exc,
+                hint,
+            )
             return False
 
     def _send_whatsapp_async(self, to_number: str, body: str) -> None:
@@ -142,7 +235,8 @@ class AdminService:
             logger.info("Admin WhatsApp notified for order %s", order_id)
         else:
             logger.error(
-                "Admin WhatsApp NOT sent for order %s (check Twilio env and sandbox)",
+                "Admin WhatsApp NOT sent for order %s — revisa el error Twilio arriba "
+                "(común: 63038 = límite 50 msgs/día sandbox)",
                 order_id,
             )
         self._track_pending_reminder(order_id)
@@ -171,14 +265,37 @@ class AdminService:
 
         if self.order_service.confirm_order(order_id):
             self._clear_reminder(order_id)
-            customer = order.get("wa_id", "")
-            if customer:
-                self._send_whatsapp_async(
-                    customer,
-                    f"Tu pedido *{order_id}* fue confirmado por el restaurante. "
-                    "¡Gracias por tu compra!",
+            customer = self._customer_wa_id(order)
+            if not customer:
+                return (
+                    f"Pedido *{order_id}* confirmado en sistema, "
+                    "pero no hay teléfono del cliente para avisarle."
                 )
-            return f"Pedido *{order_id}* confirmado correctamente."
+            confirm_body = (
+                f"Tu pedido *{order_id}* fue confirmado por el restaurante. "
+                "¡Gracias por tu compra!"
+            )
+            target = self._format_whatsapp_address(customer)
+            if self._send_whatsapp(customer, confirm_body):
+                logger.info(
+                    "Customer notified at %s for confirmed order %s",
+                    target,
+                    order_id,
+                )
+                return (
+                    f"Pedido *{order_id}* confirmado correctamente.\n"
+                    f"Se avisó al cliente en {target}."
+                )
+            logger.error(
+                "Customer NOT notified at %s for order %s (Twilio delivery failed)",
+                target,
+                order_id,
+            )
+            return (
+                f"Pedido *{order_id}* confirmado en sistema, "
+                f"pero NO se pudo enviar WhatsApp al cliente ({target}). "
+                "Verifique que el cliente tenga join al sandbox o número válido."
+            )
 
         return f"No pude actualizar el pedido *{order_id}*."
 

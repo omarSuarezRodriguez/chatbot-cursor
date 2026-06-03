@@ -1,4 +1,4 @@
-## v0.26
+## v0.27
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -3925,3 +3925,87 @@ TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
 
 
 
+
+
+##########################################################
+## v0.27
+
+## Cambios
+
+Account sid y auth token actualizados en env (obtenido de twilio), arriba a la derecha clic en admin, account management, a la izquerda api keys y tokens
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Cuando el administrador del restaurante por whatsapp confirma el pedido, el bot le responde que el pedido ha sido confirmado pero el cliente no recibe confirmación, por favor, agregalo como mejora incremental que el cliente reciba la confirmación cuando el admin haya confirmado]
+
+
+### Análisis previo
+
+El admin recibía “Pedido confirmado”, pero el cliente no, por dos causas:
+
+1. **Teléfono mal formado** — muchos pedidos guardaban `wa_id` como `35699155990` (11 dígitos sin `57`), y Twilio enviaba a un número inválido (`+575699155990`).
+2. **Sin feedback al admin** — si fallaba el envío al cliente, el bot igual decía “confirmado correctamente”.
+
+### Cambios implementados
+
+**`app/services/admin_service.py`**
+- Corregida normalización E.164 para WaIds de 11 dígitos (ej. `35699155990` → `573569915590`).
+- Nuevo `_customer_wa_id()` para resolver el teléfono del cliente al confirmar.
+- Envío síncrono de confirmación al cliente con log del número destino.
+- El admin recibe respuesta distinta si **sí** o **no** se pudo avisar al cliente.
+
+**`app/core/flow_engine.py`**
+- Al guardar pedido, se normaliza y guarda el `wa_id` del cliente en formato E.164.
+
+### Archivos modificados
+
+- `app/services/admin_service.py`
+- `app/core/flow_engine.py`
+- `scripts/verify_admin_flow.py` (prueba regresión)
+
+### Riesgos mitigados
+
+- Pedidos nuevos guardan teléfono normalizado.
+- Pedidos viejos con 11 dígitos se corrigen al enviar la confirmación.
+- Si Twilio falla, el admin lo sabe en la misma respuesta.
+
+### Compatibilidad verificada
+
+```bash
+python scripts/verify_admin_flow.py
+# === verify_admin_flow: ALL PASSED ===
+```
+
+### Funcionalidades agregadas
+
+- Cliente recibe: `Tu pedido ORD-… fue confirmado por el restaurante…`
+- Admin ve: `Se avisó al cliente en whatsapp:+573…` o mensaje de error si Twilio no entregó.
+
+### Funcionalidades preservadas
+
+- Flujo `CONFIRMAR ORD-…` / `pedido ORD-… listo` sin cambios.
+- Parser, Flow Engine, persistencia intactos.
+
+---
+
+## Cómo probar tú
+
+1. Reinicia el bot: `python run.py`
+2. Cliente hace un pedido completo.
+3. Admin responde: `CONFIRMAR ORD-XXXXXXXX`
+4. Debes ver:
+   - Admin: `Pedido ORD-… confirmado correctamente. Se avisó al cliente en whatsapp:+57…`
+   - Cliente: mensaje de confirmación en WhatsApp
+
+**Importante:** el **cliente también debe estar unido al sandbox** de tu cuenta Twilio nueva (`join <código>` al número del bot), igual que el admin. Si no, Twilio rechaza el mensaje con error **63015**.
+
+
+
+##########################################################

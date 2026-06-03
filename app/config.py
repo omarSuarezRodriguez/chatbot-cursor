@@ -25,6 +25,15 @@ TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "").strip()
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "").strip()
 TWILIO_WHATSAPP_FROM = os.getenv("TWILIO_WHATSAPP_FROM", "").strip()
 
+# Twilio shared sandbox number (not valid for production alerts).
+TWILIO_WHATSAPP_SANDBOX_NUMBER = "+14155238886"
+
+
+def is_twilio_whatsapp_sandbox() -> bool:
+    from_digits = "".join(ch for ch in TWILIO_WHATSAPP_FROM if ch.isdigit())
+    sandbox_digits = TWILIO_WHATSAPP_SANDBOX_NUMBER.lstrip("+")
+    return sandbox_digits in from_digits or from_digits.endswith(sandbox_digits)
+
 PARSER_ERROR_LOG_PATH = os.getenv(
     "PARSER_ERROR_LOG_PATH",
     str(BASE_DIR / "data" / "parser_errors.jsonl"),

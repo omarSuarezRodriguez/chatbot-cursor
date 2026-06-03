@@ -572,6 +572,190 @@
       "customer_name": "Test",
       "address": "",
       "delivery_type": "recoger"
+    },
+    "ORD-A0DF63FD": {
+      "order_id": "ORD-A0DF63FD",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        },
+        {
+          "product_id": "6",
+          "product": "Coca Cola",
+          "qty": 3,
+          "unit_price": 8.0,
+          "subtotal": 24.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 299.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T22:56:15.317784",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-E22A901F": {
+      "order_id": "ORD-E22A901F",
+      "wa_id": "573009998877",
+      "items": [
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 2,
+          "unit_price": 25.0,
+          "subtotal": 50.0
+        }
+      ],
+      "total": 50.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T22:58:44.012222",
+      "customer_name": "C",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-C286D1C9": {
+      "order_id": "ORD-C286D1C9",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        },
+        {
+          "product_id": "6",
+          "product": "Coca Cola",
+          "qty": 3,
+          "unit_price": 8.0,
+          "subtotal": 24.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 299.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T23:18:15.894656",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-A2B22F92": {
+      "order_id": "ORD-A2B22F92",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        },
+        {
+          "product_id": "6",
+          "product": "Coca Cola",
+          "qty": 3,
+          "unit_price": 8.0,
+          "subtotal": 24.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 299.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T23:30:19.624747",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-E48AB77B": {
+      "order_id": "ORD-E48AB77B",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        },
+        {
+          "product_id": "6",
+          "product": "Coca Cola",
+          "qty": 3,
+          "unit_price": 8.0,
+          "subtotal": 24.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 299.0,
+      "status": "pending",
+      "timestamp": "2026-06-02T23:32:46.053782",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-45E612E5": {
+      "order_id": "ORD-45E612E5",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
+          "qty": 2,
+          "unit_price": 125.0,
+          "subtotal": 250.0
+        },
+        {
+          "product_id": "6",
+          "product": "Coca Cola",
+          "qty": 3,
+          "unit_price": 8.0,
+          "subtotal": 24.0
+        },
+        {
+          "product_id": "",
+          "product": "Hamburguesa Doble Carne",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 299.0,
+      "status": "confirmed",
+      "timestamp": "2026-06-02T23:43:43.955316",
+      "customer_name": "Omar Suarez",
+      "address": "",
+      "delivery_type": "recoger"
     }
   },
   "row_index": {
@@ -595,7 +779,13 @@
     "ORD-0B21DE71": 22,
     "ORD-B52BF328": 23,
     "ORD-F6AE334B": 24,
-    "ORD-90F8538B": 25
+    "ORD-90F8538B": 25,
+    "ORD-A0DF63FD": 26,
+    "ORD-E22A901F": 27,
+    "ORD-C286D1C9": 28,
+    "ORD-A2B22F92": 29,
+    "ORD-E48AB77B": 30,
+    "ORD-45E612E5": 31
   },
   "dirty_new": [],
   "dirty_status": {}

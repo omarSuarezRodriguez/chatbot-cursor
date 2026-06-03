@@ -521,8 +521,9 @@ class FlowEngine:
         address = data.get("delivery_address", profile.get("address", ""))
         delivery_type = data.get("delivery_type", "")
 
+        stored_wa = self.admin_service._resolve_e164_digits(wa_id) or wa_id
         order_id, total = self.order_service.save_order(
-            wa_id,
+            stored_wa,
             cart,
             customer_name=customer_name,
             address=address,
@@ -530,7 +531,7 @@ class FlowEngine:
         )
         order_payload = self.order_service.get_order(order_id) or {
             "order_id": order_id,
-            "wa_id": wa_id,
+            "wa_id": stored_wa,
             "items": cart,
             "total": total,
             "customer_name": customer_name,

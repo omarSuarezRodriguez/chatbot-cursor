@@ -25,6 +25,9 @@ from app.config import (  # noqa: E402
     GOOGLE_SPREADSHEET_ID,
     RESTAURANT_NAME,
     STATE_PERSIST_PATH,
+    TWILIO_ACCOUNT_SID,
+    TWILIO_AUTH_TOKEN,
+    is_twilio_whatsapp_sandbox,
 )
 from app.core.flow_engine import FlowEngine  # noqa: E402
 from app.core.state_manager import StateManager  # noqa: E402
@@ -150,11 +153,16 @@ def create_app() -> Flask:
 
     @flask_app.get("/health")
     def health():
+        twilio_ready = bool(
+            TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and ADMIN_WHATSAPP_NUMBER
+        )
         return {
             "status": "ok",
             "service": "restaurant-chatbot",
             "restaurant": RESTAURANT_NAME,
             "admin_configured": bool(ADMIN_WHATSAPP_NUMBER),
+            "twilio_configured": twilio_ready,
+            "whatsapp_sandbox_mode": is_twilio_whatsapp_sandbox(),
             "caches": sheets_client.cache_status(),
         }
 
@@ -163,11 +171,11 @@ def create_app() -> Flask:
         started = time.perf_counter()
         response = MessagingResponse()
         wa_id = request.form.get("WaId") or ""
+        from_number = request.form.get("From", "")
         profile_name = request.form.get("ProfileName", "")
         body = request.form.get("Body", "")
 
-        if not wa_id:
-            from_number = request.form.get("From", "")
+        if not wa_id and from_number:
             wa_id = from_number.replace("whatsapp:", "").strip()
 
         if not wa_id:
@@ -180,7 +188,7 @@ def create_app() -> Flask:
 
         is_admin = False
         try:
-            if admin_service.is_admin(wa_id):
+            if admin_service.is_admin(wa_id) or admin_service.is_admin(from_number):
                 is_admin = True
                 reply = admin_service.handle_admin_message(body)
             else:

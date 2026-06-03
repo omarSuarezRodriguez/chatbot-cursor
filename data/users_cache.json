@@ -18,23 +18,23 @@
     },
     "35699155990": {
       "wa_id": "35699155990",
-      "name": "Omar Suarez",
+      "name": "Cliente11",
       "address": "",
-      "last_order_date": "2026-06-02T22:50:15.445429",
+      "last_order_date": "2026-06-02T23:43:43.957439",
       "last_order_items": [
         {
-          "product_id": "123",
-          "product": "Marrano",
+          "product_id": "1",
+          "product": "Pizza Hawaiana",
           "qty": 2,
-          "unit_price": 2.0,
-          "subtotal": 4.0
+          "unit_price": 125.0,
+          "subtotal": 250.0
         },
         {
-          "product_id": "",
-          "product": "Hamburguesa Mega",
+          "product_id": "6",
+          "product": "Coca Cola",
           "qty": 3,
-          "unit_price": 11.0,
-          "subtotal": 33.0
+          "unit_price": 8.0,
+          "subtotal": 24.0
         },
         {
           "product_id": "",
@@ -44,7 +44,7 @@
           "subtotal": 25.0
         }
       ],
-      "last_seen": "2026-06-02T22:50:15.445429"
+      "last_seen": "2026-06-02T23:48:28.590754"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
@@ -385,17 +385,17 @@
       "wa_id": "573009998877",
       "name": "Test",
       "address": "",
-      "last_order_date": "2026-06-02T22:53:08.700316",
+      "last_order_date": "2026-06-02T23:35:11.865983",
       "last_order_items": [
         {
           "product_id": "",
           "product": "Hamburguesa Doble Carne",
-          "qty": 1,
+          "qty": 2,
           "unit_price": 25.0,
-          "subtotal": 25.0
+          "subtotal": 50.0
         }
       ],
-      "last_seen": "2026-06-02T22:53:08.703912"
+      "last_seen": "2026-06-02T23:35:11.865983"
     }
   },
   "row_index": {
