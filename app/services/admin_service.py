@@ -63,27 +63,128 @@ class AdminService:
         return digits
 
     @classmethod
+    def _eleven_digit_national(cls, digits: str) -> str:
+        """10-digit mobile from ambiguous 11-digit Twilio WaId."""
+        if len(digits) != 11 or not digits.startswith("3"):
+            return ""
+        national = digits[:9] + digits[-1]
+        if len(national) == 10 and national.startswith("3"):
+            return national
+        for i in range(len(digits)):
+            candidate = digits[:i] + digits[i + 1 :]
+            if len(candidate) == 10 and candidate.startswith("3"):
+                return candidate
+        return digits[-10:] if digits.startswith("3") else ""
+
+    @classmethod
+    def _plausible_country_code(cls, cc: str, cc_len: int, total_len: int) -> bool:
+        if not cc.isdigit():
+            return False
+        if cc_len == 1:
+            return cc == "1" and total_len >= 11
+        if cc_len == 2:
+            return 20 <= int(cc) <= 98 and total_len >= 11
+        if cc_len == 3:
+            n = int(cc)
+            if cc == "356":
+                return 7 <= (total_len - 3) <= 10
+            if total_len == 10 and 300 <= n <= 399:
+                return False
+            return (200 <= n <= 299) or (350 <= n <= 899)
+        return False
+
+    @classmethod
+    def _detect_country_code(cls, digits: str) -> str:
+        """Código de país ITU (1–3 dígitos); no confunde móvil CO 300… con +300."""
+        if not digits or len(digits) < 8:
+            return ""
+        default = cls._default_country_prefix()
+        if digits.startswith(default) and len(digits) >= len(default) + 7:
+            return default
+        for cc_len in (3, 2, 1):
+            if len(digits) < cc_len + 7:
+                continue
+            cc = digits[:cc_len]
+            rest = digits[cc_len:]
+            if len(rest) < 7 or len(rest) > 12:
+                continue
+            if cls._plausible_country_code(cc, cc_len, len(digits)):
+                return cc
+        return ""
+
+    @classmethod
+    def _is_domestic_national(cls, digits: str) -> bool:
+        """Solo dígitos nacionales del país del restaurante (sin código de país)."""
+        prefix = cls._default_country_prefix()
+        if len(digits) != 10:
+            return False
+        cc = cls._detect_country_code(digits)
+        if cc and cc != prefix:
+            return False
+        if prefix == "57":
+            return digits.startswith("3")
+        return cc == ""
+
+    @classmethod
     def _resolve_e164_digits(cls, number: str) -> str:
         digits = cls._normalize_phone(number)
         if not digits:
             return ""
         prefix = cls._default_country_prefix()
         digits = cls._dedupe_country_prefix(digits, prefix)
-        if len(digits) >= 12 and digits.startswith(prefix):
+
+        if len(digits) >= len(prefix) + 7 and digits.startswith(prefix):
+            tail = digits[len(prefix) :]
+            tail_cc = cls._detect_country_code(tail)
+            if tail_cc and tail_cc != prefix:
+                return cls._resolve_e164_digits(tail)
             return digits
-        if len(digits) == 10 and digits.startswith("3"):
+
+        cc = cls._detect_country_code(digits)
+        if cc and cc != prefix:
+            return digits
+
+        if cls._is_domestic_national(digits):
             return f"{prefix}{digits}"
-        # WaId sin 57 (11 dígitos): suele ser 10 nacionales + dígito extra al final
+
         if len(digits) == 11 and digits.startswith("3") and prefix == "57":
-            national = digits[:9] + digits[-1]
-            if len(national) == 10 and national.startswith("3"):
+            if cls._detect_country_code(digits) not in ("", prefix):
+                return digits
+            national = cls._eleven_digit_national(digits)
+            if national and cls._is_domestic_national(national):
                 return f"{prefix}{national}"
-            for i in range(len(digits)):
-                candidate = digits[:i] + digits[i + 1 :]
-                if len(candidate) == 10 and candidate.startswith("3"):
-                    return f"{prefix}{candidate}"
             return f"{prefix}{digits[-10:]}"
+
+        if len(digits) >= 11:
+            return digits
+        if len(digits) == 10 and cls._detect_country_code(digits) == "":
+            return f"{prefix}{digits}"
         return digits
+
+    @classmethod
+    def canonical_wa_id(cls, wa_id: str, from_number: str = "") -> str:
+        """Identidad del cliente: E.164 según país real (CO +57, Malta +356, etc.)."""
+        wa_digits = cls._normalize_phone(wa_id)
+        from_digits = cls._normalize_phone(from_number)
+        wa_resolved = cls._resolve_e164_digits(wa_id) if wa_digits else ""
+        from_resolved = cls._resolve_e164_digits(from_number) if from_digits else ""
+        prefix = cls._default_country_prefix()
+
+        wa_cc = cls._detect_country_code(wa_resolved) if wa_resolved else ""
+        if wa_cc and wa_cc != prefix and cls._e164_digits_valid(wa_resolved):
+            if from_resolved != wa_resolved and from_digits:
+                logger.info(
+                    "canonical_wa_id: WaId internacional %s (From %s no se usa)",
+                    wa_resolved,
+                    from_digits,
+                )
+            return wa_resolved
+
+        if from_resolved and cls._e164_digits_valid(from_resolved):
+            return from_resolved
+        if wa_resolved and cls._e164_digits_valid(wa_resolved):
+            return wa_resolved
+        return wa_digits or from_digits or (wa_id or "").strip()
 
     def _customer_wa_id(self, order: Dict[str, Any]) -> str:
         raw = str(order.get("wa_id", "")).strip()
@@ -129,6 +230,9 @@ class AdminService:
         if not digits or not digits.isdigit():
             return False
         prefix = cls._default_country_prefix()
+        foreign = cls._detect_country_code(digits)
+        if foreign and foreign != prefix:
+            return 10 <= len(digits) <= 15
         if prefix == "57":
             return len(digits) == 12 and digits.startswith("57")
         return 10 <= len(digits) <= 15

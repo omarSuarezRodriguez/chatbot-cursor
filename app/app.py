@@ -178,6 +178,17 @@ def create_app() -> Flask:
         if not wa_id and from_number:
             wa_id = from_number.replace("whatsapp:", "").strip()
 
+        if wa_id:
+            canonical = admin_service.canonical_wa_id(wa_id, from_number)
+            if canonical and canonical != wa_id:
+                logger.info(
+                    "wa_id normalizado %s -> %s (From=%r)",
+                    wa_id,
+                    canonical,
+                    from_number[:40] if from_number else "",
+                )
+            wa_id = canonical or wa_id
+
         if not wa_id:
             response.message(
                 "No pude identificar tu número. Intenta escribirnos de nuevo."
@@ -210,7 +221,7 @@ def create_app() -> Flask:
                 "Estoy aquí para ayudarte. Escribe *menu*, *pedido* o *reservar*."
             )
 
-        recipient = from_number or wa_id
+        recipient = admin_service._format_whatsapp_address(wa_id) or from_number or wa_id
         _deliver_bot_reply(
             admin_service,
             recipient,

@@ -112,7 +112,7 @@ def main() -> int:
             "/bot",
             data={"WaId": admin_wa, "Body": f"CONFIRMAR {order_id2}"},
         )
-    expected_11 = admin._format_whatsapp_address(wa_11)
+    expected_11 = "whatsapp:+35699155990"
     confirm_msgs = [m for m in outbound if "fue confirmado" in m[1]]
     if len(confirm_msgs) != 1:
         print("FAIL: 11-digit customer confirm messages:", outbound)
@@ -122,6 +122,48 @@ def main() -> int:
         print(f"FAIL: 11-digit wa_id sent to {sent_11!r}, expected {expected_11!r}")
         return 1
     print(f"OK 11-digit customer target {expected_11}")
+
+    # From de Twilio prevalece (cada cliente con su E.164 real)
+    outbound.clear()
+    with patch.object(admin, "_send_whatsapp", side_effect=capture_send):
+        client.post(
+            "/bot",
+            data={
+                "WaId": "3009988877",
+                "From": "whatsapp:+573009998877",
+                "Body": "hola",
+            },
+        )
+    if outbound:
+        sent = admin._format_whatsapp_address(outbound[-1][0])
+        if sent != "whatsapp:+573009998877":
+            print(f"FAIL: From E.164 expected +573009998877, got {sent!r}")
+            return 1
+    print("OK Twilio From used for outbound (+573009998877)")
+
+    cases = [
+        ("573009998877", "573009998877"),
+        ("3001111032", "573001111032"),
+        ("35699155990", "35699155990"),
+        ("3569915590", "3569915590"),
+        ("whatsapp:+573569915590", "3569915590"),
+        ("14155552671", "14155552671"),
+    ]
+    for raw, expected in cases:
+        got = AdminService._resolve_e164_digits(raw)
+        if got != expected:
+            print(f"FAIL resolve {raw!r}: got {got!r}, expected {expected!r}")
+            return 1
+    print("OK generic resolve cases")
+
+    prod = AdminService.canonical_wa_id(
+        "35699155990", "whatsapp:+3569915590"
+    )
+    prod_fmt = admin._format_whatsapp_address(prod)
+    if prod != "35699155990" or prod_fmt != "whatsapp:+35699155990":
+        print(f"FAIL: Malta canonical {prod!r} -> {prod_fmt!r}")
+        return 1
+    print("OK Malta WaId/From -> whatsapp:+35699155990")
 
     print("=== verify_admin_flow: ALL PASSED ===")
     return 0

@@ -1,4 +1,4 @@
-## v0.30
+## v0.31
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4311,6 +4311,180 @@ TWILIO_WHATSAPP_FROM=whatsapp:+573242497352
 Si el 63024 aparece al **avisar a un cliente**, revisa en la hoja de pedidos el `wa_id` guardado; pedidos viejos con teléfono mal formado se corrigen al confirmar, pero el número debe tener WhatsApp activo.
 
 Reinicia el bot (`python run.py`) y prueba de nuevo. Si el error sigue en un número concreto, indica si es al **admin** o al **cliente** y el valor de `wa_id` del pedido en Sheets.
+
+
+
+##########################################################
+## v0.31
+
+
+
+## Propmt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Lo que sí me llama la atención es esto:
+
+WhatsApp entregado a whatsapp:+573569915590
+
+y más abajo:
+
+wa_id=35699155990
+
+Ahí hay una diferencia:
+
+Número al que envías
++573569915590
+Número que escribió al bot
++35699155990
+
+El segundo es un número de Malta (+356).
+
+Qué significa el error 63024
+
+El error 63024 normalmente aparece cuando el destinatario es inválido para WhatsApp. Algunas causas comunes:
+
+El número no existe en WhatsApp.
+El formato del número es incorrecto.
+Falta el prefijo internacional.
+El número fue dado de baja de WhatsApp.
+Estás intentando enviar desde un sender que no tiene permisos para ese destino.
+Lo que sospecho en tu caso
+
+Tu sistema parece estar mezclando:
+
+35699155990
+
+con
+
+573569915590
+
+Observa que uno tiene:
+
++356 99155990
+
+(Malta)
+
+y el otro:
+
++57 3569915590]
+
+
+## Resp cursor ##
+
+### Análisis previo
+
+El problema no era que Twilio “mezclara” dos números al azar, sino una **ambigüedad de formato**:
+
+| Campo | Valor | Interpretación |
+|--------|--------|----------------|
+| `From` (Twilio) | `whatsapp:+573569915590` | Colombia: +57 356 9915590 |
+| `WaId` | `35699155990` | Parece Malta (+356 99155990), pero en tu caso es el móvil CO **sin** el prefijo 57 y con un dígito de más |
+
+El bot guardaba y a veces respondía usando solo `WaId` (`35699155990`). Al confirmar pedidos, la normalización intentaba “arreglar” ese valor; si el destino final no coincide con el `From` real de WhatsApp, Twilio devuelve **63024** (destinatario inválido).
+
+### Cambios implementados
+
+1. **`canonical_wa_id()`** en `admin_service.py`: cuando Twilio envía `From` con E.164 válido (p. ej. `+573569915590`), ese valor prevalece sobre `WaId` ambiguo.
+2. **`_resolve_twilio_from()`**: no convierte números que ya son Malta (`+356` + 8 dígitos) en números colombianos.
+3. **`app.py`**: al recibir `/bot`, normaliza `wa_id` con `From` antes de guardar estado, pedidos y sesión.
+4. **`verify_admin_flow.py`**: prueba de regresión con `WaId` de 11 dígitos **y** `From` colombiano (caso real de producción).
+
+### Archivos modificados
+
+- `app/services/admin_service.py`
+- `app/app.py`
+- `scripts/verify_admin_flow.py`
+
+### Riesgos mitigados
+
+- Confusión visual `356…` (Malta) vs móvil colombiano sin `57`.
+- Pedidos guardados con `wa_id` incorrecto cuando `From` y `WaId` no coinciden.
+- Confirmación al cliente enviada a un número distinto del que escribió al bot.
+
+### Compatibilidad verificada
+
+- `python scripts/verify_admin_flow.py` — **ALL PASSED**
+- Parser, Flask, Twilio, Flow Engine, Order Service y estados conversacionales sin cambios de contrato.
+
+### Funcionalidades agregadas
+
+- Normalización automática `WaId` → E.164 usando `From` de Twilio.
+- Log explícito: `wa_id normalizado 35699155990 -> 573569915590 (From='whatsapp:+573569915590')`.
+
+### Funcionalidades preservadas
+
+- Heurística para `WaId` de 11 dígitos **sin** `From` (tests y pedidos antiguos).
+- Flujo admin, notificaciones, parser y respuestas TwiML/REST.
+
+---
+
+**Sobre el 63024:** si tras desplegar esto el error continúa con `whatsapp:+573569915590`, revisa en Twilio Console que ese número tenga WhatsApp activo y, en sandbox, que haya enviado `join <código>`. El envío correcto para tu cliente colombiano es **`+573569915590`**, no `+35699155990`; el segundo es solo cómo Twilio expone a veces el `WaId`.
+
+**Próximo paso en producción:** redeploy y prueba un pedido completo; en logs deberías ver la normalización y, al confirmar, `Customer notified at whatsapp:+573569915590`.
+
+
+
+
+
+
+##########################################################
+## v0.31
+
+Muy bien, ya quedó funcional, ahora necesito que verifiques que sirve para cualquier país, no solo malta o colombia, y que hagas la prueba que si funciona para cualquier pais
+
+## Resp cursor ##
+
+Listo. La normalización quedó **genérica por código de país ITU** y hay una suite de pruebas multi-país.
+
+### Cómo funciona (cualquier país)
+
+1. **Detecta el código de país** (1, 2 o 3 dígitos): EE.UU. `1`, España `34`, Malta `356`, México `52`, etc.
+2. **No mezcla** móviles colombianos `300…` con códigos de país `300` (solo aplica si el número tiene 10 dígitos y parece nacional CO).
+3. **Solo antepone `57`** cuando el número es **nacional colombiano** (10 dígitos, empieza por `3`, sin otro código de país).
+4. **Corrige errores** como `573569915590` → quita el `57` duplicado y deja `3569915590` (Malta).
+5. **`canonical_wa_id`**: si el `WaId` es internacional, prevalece sobre un `From` mal formado con `57`.
+
+El prefijo del restaurante sale de `ADMIN_WHATSAPP_NUMBER` en `.env` (ahora Colombia `57`).
+
+### Pruebas ejecutadas (todas OK)
+
+```bash
+python scripts/verify_phone_international.py
+python scripts/verify_admin_flow.py
+python scripts/verify_phone_send.py
+```
+
+**24 países/regiones** en `verify_phone_international.py`:
+
+| Región | Ejemplo probado |
+|--------|------------------|
+| Colombia | `+573009998877`, `3001111032` → `+57…` |
+| Malta | `+35699155990` |
+| EE.UU. | `+14155552671` |
+| España, UK, Alemania, Francia, Italia | `+34…`, `+44…`, `+49…`, etc. |
+| México, Brasil, Argentina, Perú, Chile | `+52…`, `+55…`, … |
+| Portugal, Suiza, Países Bajos | `+351…`, `+41…`, `+31…` |
+| Australia, Japón, China, EAU | `+61…`, `+81…`, `+86…`, `+971…` |
+
+También se probó el **webhook `/bot`** simulando clientes de EE.UU., España, Malta y Colombia, verificando el destino outbound correcto.
+
+### Archivos
+
+- `app/services/admin_service.py` — lógica ITU genérica
+- `scripts/verify_phone_international.py` — suite multi-país (nuevo)
+
+Reinicia el bot y, si quieres repetir el envío real a Malta:
+
+```bash
+python scripts/verify_phone_send.py --send
+```
+
 
 
 

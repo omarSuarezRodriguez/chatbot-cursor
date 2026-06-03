@@ -775,6 +775,44 @@
       "customer_name": "Test",
       "address": "",
       "delivery_type": "recoger"
+    },
+    "ORD-550E1642": {
+      "order_id": "ORD-550E1642",
+      "wa_id": "573009998877",
+      "items": [
+        {
+          "product_id": "",
+          "product": "Coca Cola",
+          "qty": 2,
+          "unit_price": 25.0,
+          "subtotal": 50.0
+        }
+      ],
+      "total": 50.0,
+      "status": "confirmed",
+      "timestamp": "2026-06-03T06:44:54.372562",
+      "customer_name": "Test",
+      "address": "",
+      "delivery_type": "recoger"
+    },
+    "ORD-35062604": {
+      "order_id": "ORD-35062604",
+      "wa_id": "35699155990",
+      "items": [
+        {
+          "product_id": "",
+          "product": "Coca Cola",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "total": 25.0,
+      "status": "confirmed",
+      "timestamp": "2026-06-03T06:44:54.396255",
+      "customer_name": "Cliente11",
+      "address": "",
+      "delivery_type": "recoger"
     }
   },
   "row_index": {
@@ -805,7 +843,9 @@
     "ORD-A2B22F92": 29,
     "ORD-E48AB77B": 30,
     "ORD-45E612E5": 31,
-    "ORD-26CD7444": 32
+    "ORD-26CD7444": 32,
+    "ORD-550E1642": 33,
+    "ORD-35062604": 34
   },
   "dirty_new": [],
   "dirty_status": {}

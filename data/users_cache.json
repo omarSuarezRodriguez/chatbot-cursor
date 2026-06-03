@@ -20,31 +20,17 @@
       "wa_id": "35699155990",
       "name": "Omar Suarez",
       "address": "",
-      "last_order_date": "2026-06-02T23:43:43.957439",
+      "last_order_date": "2026-06-03T06:47:21.535819",
       "last_order_items": [
         {
-          "product_id": "1",
-          "product": "Pizza Hawaiana",
-          "qty": 2,
-          "unit_price": 125.0,
-          "subtotal": 250.0
-        },
-        {
-          "product_id": "6",
-          "product": "Coca Cola",
-          "qty": 3,
-          "unit_price": 8.0,
-          "subtotal": 24.0
-        },
-        {
           "product_id": "",
-          "product": "Hamburguesa Doble Carne",
+          "product": "Coca Cola",
           "qty": 1,
           "unit_price": 25.0,
           "subtotal": 25.0
         }
       ],
-      "last_seen": "2026-06-03T06:21:30.656154"
+      "last_seen": "2026-06-03T06:48:52.331692"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
@@ -385,7 +371,7 @@
       "wa_id": "573009998877",
       "name": "Test",
       "address": "",
-      "last_order_date": "2026-06-03T06:28:29.984138",
+      "last_order_date": "2026-06-03T06:44:54.373905",
       "last_order_items": [
         {
           "product_id": "",
@@ -395,7 +381,7 @@
           "subtotal": 50.0
         }
       ],
-      "last_seen": "2026-06-03T06:28:29.984138"
+      "last_seen": "2026-06-03T06:44:54.403471"
     },
     "regression_d7041906": {
       "wa_id": "regression_d7041906",
@@ -407,7 +393,7 @@
     },
     "573569915590": {
       "wa_id": "573569915590",
-      "name": "Cliente11",
+      "name": "Omar Suarez",
       "address": "",
       "last_order_date": "2026-06-03T06:28:30.014656",
       "last_order_items": [
@@ -419,7 +405,7 @@
           "subtotal": 25.0
         }
       ],
-      "last_seen": "2026-06-03T06:28:30.014656"
+      "last_seen": "2026-06-03T06:34:58.199009"
     }
   },
   "row_index": {
