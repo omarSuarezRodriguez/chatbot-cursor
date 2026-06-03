@@ -90,6 +90,8 @@ SHEET_HEADERS = {
         "last_order_date",
         "last_order_json",
         "last_seen",
+        "blocked",
+        "updated_at",
     ],
     "ORDERS": [
         "order_id",
@@ -212,11 +214,17 @@ class GoogleSheetsClient:
     def cache_status(self) -> Dict[str, Any]:
         with self._cache_lock:
             menu = self._menu_cache
+            blocked_count = sum(
+                1
+                for user in self._users_cache.values()
+                if self._parse_bool(user.get("blocked", False))
+            )
             return {
                 "ready": self._cache_warmed,
                 "sheets_connected": self._connected,
                 "menu_items": len(menu) if menu else 0,
                 "users": len(self._users_cache),
+                "blocked_users": blocked_count,
                 "orders": len(self._orders_local),
             }
 
@@ -446,6 +454,14 @@ class GoogleSheetsClient:
                 current = worksheet.row_values(1)
                 if not current:
                     worksheet.append_row(headers)
+                elif len(current) < len(headers):
+                    missing = headers[len(current) :]
+                    cols_needed = len(headers) - worksheet.col_count
+                    if cols_needed > 0:
+                        worksheet.add_cols(cols_needed)
+                    start_col = self._col_end(len(current) + 1)
+                    end_col = self._col_end(len(headers))
+                    worksheet.update(f"{start_col}1:{end_col}1", [missing])
             self._worksheets[sheet_name] = worksheet
 
     def _get_sheet(self, name: str):
@@ -869,6 +885,8 @@ class GoogleSheetsClient:
             "last_order_date": str(row.get("last_order_date", "")).strip(),
             "last_order_items": last_order_items,
             "last_seen": str(row.get("last_seen", "")).strip(),
+            "blocked": self._parse_bool(row.get("blocked", False)),
+            "updated_at": str(row.get("updated_at", "")).strip(),
         }
 
     def _fetch_users_from_sheets(self) -> tuple[Dict[str, Dict[str, Any]], Dict[str, int]]:
@@ -974,10 +992,15 @@ class GoogleSheetsClient:
             json.dumps(merged_items, ensure_ascii=False) if merged_items else ""
         )
 
+        blocked_val = (
+            "true" if self._parse_bool(user.get("blocked", False)) else "false"
+        )
+        updated_at = str(user.get("updated_at", ""))
+
         row_idx = self._resolve_user_row(sheet, wa_id)
         if row_idx:
             sheet.update(
-                f"B{row_idx}:F{row_idx}",
+                f"B{row_idx}:H{row_idx}",
                 [
                     [
                         merged_name,
@@ -985,13 +1008,24 @@ class GoogleSheetsClient:
                         last_order_date,
                         payload_items,
                         now,
+                        blocked_val,
+                        updated_at,
                     ]
                 ],
             )
             return True
 
         sheet.append_row(
-            [wa_id, merged_name, merged_address, last_order_date, payload_items, now]
+            [
+                wa_id,
+                merged_name,
+                merged_address,
+                last_order_date,
+                payload_items,
+                now,
+                blocked_val,
+                updated_at,
+            ]
         )
         new_row = self._sheet_last_row(sheet)
         with self._cache_lock:
@@ -1080,6 +1114,73 @@ class GoogleSheetsClient:
             return dict(self._demo_users.get(wa_id, {}))
         return {}
 
+    def refresh_users_cache(self) -> None:
+        self._refresh_users_from_sheets()
+
+    def get_blocked_wa_ids(self) -> set[str]:
+        blocked: set[str] = set()
+        with self._cache_lock:
+            for wa_id, user in self._users_cache.items():
+                if self._parse_bool(user.get("blocked", False)):
+                    blocked.add(wa_id)
+        return blocked
+
+    def set_user_blocked(self, wa_id: str, blocked: bool) -> bool:
+        now = datetime.utcnow().isoformat()
+        with self._cache_lock:
+            existing = dict(self._users_cache.get(wa_id, {}))
+            if not existing and wa_id in self._demo_users:
+                existing = dict(self._demo_users[wa_id])
+
+        user_payload = {
+            "wa_id": wa_id,
+            "name": str(existing.get("name", "")),
+            "address": str(existing.get("address", "")),
+            "last_order_date": str(existing.get("last_order_date", "")),
+            "last_order_items": existing.get("last_order_items") or [],
+            "last_seen": str(existing.get("last_seen", "")) or now,
+            "blocked": blocked,
+            "updated_at": now,
+        }
+
+        with self._cache_lock:
+            self._users_cache[wa_id] = user_payload
+
+        if not self._connected:
+            self._demo_users[wa_id] = user_payload
+            self._save_local_users()
+            return True
+
+        try:
+            sheet = self._get_sheet("USERS")
+            if not sheet:
+                return False
+            blocked_val = "true" if blocked else "false"
+            row_idx = self._resolve_user_row(sheet, wa_id)
+            if row_idx:
+                sheet.update(f"G{row_idx}:H{row_idx}", [[blocked_val, now]])
+            else:
+                sheet.append_row(
+                    [
+                        wa_id,
+                        user_payload["name"],
+                        user_payload["address"],
+                        user_payload["last_order_date"],
+                        "",
+                        user_payload["last_seen"],
+                        blocked_val,
+                        now,
+                    ]
+                )
+                new_row = self._sheet_last_row(sheet)
+                with self._cache_lock:
+                    self._user_row_index[wa_id] = new_row
+            self._save_local_users()
+            return True
+        except Exception as exc:
+            logger.error("Failed to set blocked=%s for %s: %s", blocked, wa_id, exc)
+            return False
+
     def upsert_user(
         self,
         wa_id: str,
@@ -1106,6 +1207,8 @@ class GoogleSheetsClient:
             "last_order_date": last_order_date,
             "last_order_items": merged_items,
             "last_seen": now,
+            "blocked": existing.get("blocked", False),
+            "updated_at": existing.get("updated_at", ""),
         }
 
         if not self._connected:

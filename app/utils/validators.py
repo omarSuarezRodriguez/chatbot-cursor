@@ -96,6 +96,18 @@ def extract_admin_order_id(text: str) -> Optional[str]:
     return None
 
 
+def parse_admin_block_command(text: str) -> Optional[Tuple[str, str]]:
+    """Parse blockoff:+57... or blockon:+57... admin commands."""
+    cleaned = (text or "").strip()
+    match = re.match(r"^(blockoff|blockon):(.+)$", cleaned, re.IGNORECASE)
+    if not match:
+        return None
+    cmd = match.group(1).lower()
+    phone = match.group(2).strip()
+    action = "unblock" if cmd == "blockoff" else "block"
+    return action, phone
+
+
 def parse_persons(text: str) -> Optional[int]:
     cleaned = normalize_text(text)
     match = re.search(r"(\d+)", cleaned)

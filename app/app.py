@@ -21,9 +21,15 @@ if str(ROOT_DIR) not in sys.path:
 
 from app.config import (  # noqa: E402
     ADMIN_WHATSAPP_NUMBER,
+    BLOCKED_USERS_CACHE_TTL_SECONDS,
     GOOGLE_SHEETS_CREDENTIALS_PATH,
     GOOGLE_SPREADSHEET_ID,
+    MENU_CACHE_TTL_SECONDS,
+    ORDERS_CACHE_TTL_SECONDS,
     RESTAURANT_NAME,
+    SHEETS_FULL_REFRESH_INTERVAL_SECONDS,
+    SHEETS_INCREMENTAL_BATCH_SIZE,
+    SHEETS_INCREMENTAL_THRESHOLD,
     STATE_PERSIST_PATH,
     TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN,
@@ -33,6 +39,7 @@ from app.core.flow_engine import FlowEngine  # noqa: E402
 from app.core.state_manager import StateManager  # noqa: E402
 from app.integrations.google_sheets import get_google_sheets_client  # noqa: E402
 from app.services.admin_service import AdminService  # noqa: E402
+from app.services.blocked_users_cache import BlockedUsersCache  # noqa: E402
 from app.services.menu_service import MenuService  # noqa: E402
 from app.services.order_service import OrderService  # noqa: E402
 from app.services.reservation_service import ReservationService  # noqa: E402
@@ -136,6 +143,9 @@ def create_app() -> Flask:
     reservation_service = ReservationService(sheets_client)
     user_service = UserService(sheets_client)
     admin_service = AdminService(sheets_client, order_service)
+    blocked_cache = BlockedUsersCache(sheets_client, admin_service)
+    admin_service.blocked_cache = blocked_cache
+    blocked_cache.start()
     flow_engine = FlowEngine(
         state_manager=state_manager,
         menu_service=menu_service,
@@ -150,6 +160,7 @@ def create_app() -> Flask:
     flask_app.config["flow_engine"] = flow_engine
     flask_app.config["user_service"] = user_service
     flask_app.config["admin_service"] = admin_service
+    flask_app.config["blocked_cache"] = blocked_cache
 
     @flask_app.get("/health")
     def health():
@@ -164,6 +175,14 @@ def create_app() -> Flask:
             "twilio_configured": twilio_ready,
             "whatsapp_sandbox_mode": is_twilio_whatsapp_sandbox(),
             "caches": sheets_client.cache_status(),
+            "cache_ttl_seconds": {
+                "menu_and_users": MENU_CACHE_TTL_SECONDS,
+                "orders_and_reservations": ORDERS_CACHE_TTL_SECONDS,
+                "blocked_users": BLOCKED_USERS_CACHE_TTL_SECONDS,
+                "sheets_full_refresh": SHEETS_FULL_REFRESH_INTERVAL_SECONDS,
+                "sheets_incremental_threshold": SHEETS_INCREMENTAL_THRESHOLD,
+                "sheets_incremental_batch_size": SHEETS_INCREMENTAL_BATCH_SIZE,
+            },
         }
 
     @flask_app.post("/bot")
@@ -205,6 +224,15 @@ def create_app() -> Flask:
             if any(admin_service.is_admin(sender) for sender in sender_ids):
                 is_admin = True
                 reply = admin_service.handle_admin_message(body)
+            elif blocked_cache.is_blocked(wa_id):
+                elapsed_ms = (time.perf_counter() - started) * 1000
+                logger.info(
+                    "Blocked user ignored wa_id=%s body=%r",
+                    wa_id,
+                    body[:80],
+                )
+                _log_bot_completion(elapsed_ms, wa_id, False, body)
+                return str(response), 200, {"Content-Type": "text/xml; charset=utf-8"}
             else:
                 user_service.touch(wa_id=wa_id, name=profile_name)
                 reply = flow_engine.process_message(wa_id=wa_id, body=body)

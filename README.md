@@ -1,4 +1,4 @@
-## v0.33
+## v0.34
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4760,3 +4760,5 @@ python scripts/measure_latency.py
 
 
 ##########################################################
+## v0.34
+

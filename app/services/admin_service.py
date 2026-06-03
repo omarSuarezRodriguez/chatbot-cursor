@@ -22,15 +22,25 @@ from app.config import (
 from app.core.parser import OrderParser
 from app.integrations.google_sheets import GoogleSheetsClient
 from app.services.order_service import OrderService
-from app.utils.validators import extract_admin_order_id, is_admin_confirm
+from app.utils.validators import (
+    extract_admin_order_id,
+    is_admin_confirm,
+    parse_admin_block_command,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class AdminService:
-    def __init__(self, sheets: GoogleSheetsClient, order_service: OrderService) -> None:
+    def __init__(
+        self,
+        sheets: GoogleSheetsClient,
+        order_service: OrderService,
+        blocked_cache: Optional[Any] = None,
+    ) -> None:
         self.sheets = sheets
         self.order_service = order_service
+        self.blocked_cache = blocked_cache
         self._reminder_state: Dict[str, Dict[str, Any]] = {}
         self._scheduler_started = False
         self._lock = threading.Lock()
@@ -402,10 +412,15 @@ class AdminService:
         self._track_pending_reminder(order_id)
 
     def handle_admin_message(self, body: str) -> str:
+        block_cmd = parse_admin_block_command(body)
+        if block_cmd:
+            return self._handle_block_command(block_cmd)
+
         if not is_admin_confirm(body):
             return (
                 "Comando admin no reconocido.\n"
-                "Responde: *CONFIRMAR ORD-XXXXXXXX* o *pedido ORD-XXXXXXXX listo*"
+                "Bloqueo: *blockon:+573001234567* | Desbloqueo: *blockoff:+573001234567*\n"
+                "Pedidos: *CONFIRMAR ORD-XXXXXXXX* o *pedido ORD-XXXXXXXX listo*"
             )
 
         order_id = extract_admin_order_id(body)
@@ -458,6 +473,25 @@ class AdminService:
             )
 
         return f"No pude actualizar el pedido *{order_id}*."
+
+    def _handle_block_command(self, block_cmd: tuple[str, str]) -> str:
+        action, phone_raw = block_cmd
+        target = self._resolve_e164_digits(phone_raw)
+        if not target or not self._e164_digits_valid(target):
+            return (
+                f"Número inválido: *{phone_raw}*.\n"
+                "Use formato internacional, ej: *blockon:+573001234567*"
+            )
+
+        blocked = action == "block"
+        if not self.sheets.set_user_blocked(target, blocked):
+            return f"No pude actualizar el estado de *{target}* en Google Sheets."
+
+        if self.blocked_cache is not None:
+            self.blocked_cache.apply_local(target, blocked)
+
+        verb = "bloqueado" if blocked else "desbloqueado"
+        return f"Usuario *{target}* {verb} correctamente."
 
     def _track_pending_reminder(self, order_id: str) -> None:
         if not order_id:
