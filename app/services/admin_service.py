@@ -54,11 +54,21 @@ class AdminService:
         return "57"
 
     @classmethod
+    def _dedupe_country_prefix(cls, digits: str, prefix: str) -> str:
+        if not prefix:
+            return digits
+        doubled = prefix + prefix
+        while digits.startswith(doubled):
+            digits = digits[len(prefix) :]
+        return digits
+
+    @classmethod
     def _resolve_e164_digits(cls, number: str) -> str:
         digits = cls._normalize_phone(number)
         if not digits:
             return ""
         prefix = cls._default_country_prefix()
+        digits = cls._dedupe_country_prefix(digits, prefix)
         if len(digits) >= 12 and digits.startswith(prefix):
             return digits
         if len(digits) == 10 and digits.startswith("3"):
@@ -114,6 +124,15 @@ class AdminService:
             return number.strip()
         return f"whatsapp:+{digits}"
 
+    @classmethod
+    def _e164_digits_valid(cls, digits: str) -> bool:
+        if not digits or not digits.isdigit():
+            return False
+        prefix = cls._default_country_prefix()
+        if prefix == "57":
+            return len(digits) == 12 and digits.startswith("57")
+        return 10 <= len(digits) <= 15
+
     @staticmethod
     def _twilio_error_hint(code: Optional[int]) -> str:
         hints = {
@@ -127,6 +146,11 @@ class AdminService:
                 "Messaging Insights o contacte soporte Twilio para subir el cupo."
             ),
             63016: "Fuera de ventana 24 h: hace falta plantilla WhatsApp aprobada.",
+            63024: (
+                "Destinatario inválido para WhatsApp. Use E.164 en .env "
+                "(ej. whatsapp:+573001234567), sin repetir el prefijo 57, "
+                "y confirme que el número tenga WhatsApp activo."
+            ),
             63112: "Meta bloqueó el mensaje. Verifique el número WhatsApp Business.",
         }
         return hints.get(code, "Ver Twilio Console → Monitor → Logs.")
@@ -142,11 +166,20 @@ class AdminService:
                 "WhatsApp Business registrado en Twilio.",
                 TWILIO_WHATSAPP_SANDBOX_NUMBER,
             )
+        to_digits = self._resolve_e164_digits(to_number)
+        if not self._e164_digits_valid(to_digits):
+            logger.error(
+                "WhatsApp destino inválido (E.164): raw=%r normalizado=%r. "
+                "Revise ADMIN_WHATSAPP_NUMBER o el wa_id del cliente en .env.",
+                to_number,
+                to_digits or "(vacío)",
+            )
+            return False
         try:
             from twilio.rest import Client
 
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-            to = self._format_whatsapp_address(to_number)
+            to = f"whatsapp:+{to_digits}"
             from_ = self._format_whatsapp_address(TWILIO_WHATSAPP_FROM)
             message = client.messages.create(body=body, from_=from_, to=to)
             # Twilio may accept the API call but mark the message failed afterward.
@@ -409,4 +442,12 @@ if ADMIN_WHATSAPP_NUMBER and TWILIO_WHATSAPP_FROM:
             "TWILIO_WHATSAPP_FROM debe ser el bot de clientes; "
             "ADMIN_WHATSAPP_NUMBER debe ser el celular del administrador.",
             TWILIO_WHATSAPP_FROM,
+        )
+    admin_e164 = AdminService._resolve_e164_digits(ADMIN_WHATSAPP_NUMBER)
+    if admin_e164 and not AdminService._e164_digits_valid(admin_e164):
+        logger.warning(
+            "ADMIN_WHATSAPP_NUMBER no es E.164 válido para Colombia: raw=%s normalizado=%s. "
+            "Use whatsapp:+57XXXXXXXXXX (12 dígitos con prefijo 57, sin duplicar 57).",
+            ADMIN_WHATSAPP_NUMBER,
+            admin_e164,
         )

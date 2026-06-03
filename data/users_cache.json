@@ -385,7 +385,7 @@
       "wa_id": "573009998877",
       "name": "Test",
       "address": "",
-      "last_order_date": "2026-06-03T01:10:41.702420",
+      "last_order_date": "2026-06-03T06:28:29.984138",
       "last_order_items": [
         {
           "product_id": "",
@@ -395,7 +395,7 @@
           "subtotal": 50.0
         }
       ],
-      "last_seen": "2026-06-03T01:10:41.702420"
+      "last_seen": "2026-06-03T06:28:29.984138"
     },
     "regression_d7041906": {
       "wa_id": "regression_d7041906",
@@ -404,6 +404,22 @@
       "last_order_date": "",
       "last_order_items": [],
       "last_seen": "2026-06-03T00:48:12.103110"
+    },
+    "573569915590": {
+      "wa_id": "573569915590",
+      "name": "Cliente11",
+      "address": "",
+      "last_order_date": "2026-06-03T06:28:30.014656",
+      "last_order_items": [
+        {
+          "product_id": "",
+          "product": "Coca Cola",
+          "qty": 1,
+          "unit_price": 25.0,
+          "subtotal": 25.0
+        }
+      ],
+      "last_seen": "2026-06-03T06:28:30.014656"
     }
   },
   "row_index": {
@@ -451,7 +467,8 @@
     "deploy_c711288b": 43,
     "deploy_a57ca447": 44,
     "573009998877": 45,
-    "regression_d7041906": 46
+    "regression_d7041906": 46,
+    "573569915590": 47
   },
   "dirty": []
 }

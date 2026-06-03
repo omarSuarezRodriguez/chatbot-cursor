@@ -1,4 +1,4 @@
-## v0.29
+## v0.30
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4219,3 +4219,100 @@ Cuando probamos antes, Twilio devolvió el error 63038 (“50 mensajes/día”).
 
 
 ##########################################################
+## v0.30
+
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[En Twilio me sale este error: 63024: Invalid message recipient 
+El error 63024: Invalid message recipient en Twilio significa que WhatsApp no reconoce al destinatario como un usuario válido de WhatsApp o existe alguna restricción de Meta sobre ese número.
+
+Las causas más comunes son:
+
+El número no tiene WhatsApp activo.
+El número está mal formateado (debe ir en formato E.164).]
+
+
+## Resp cursor ##
+
+
+### Análisis previo
+
+El error **63024 (Invalid message recipient)** en Twilio/WhatsApp suele deberse a:
+
+1. **Formato E.164 incorrecto** — p. ej. prefijo `57` duplicado (`+57573001111032` en lugar de `+573001111032`).
+2. **Número sin WhatsApp activo** — no se corrige en código; hay que validar el celular real.
+
+En el proyecto, `ADMIN_WHATSAPP_NUMBER` en tu `.env` está bien (`whatsapp:+573001111032`) y el diagnóstico Twilio **entregó OK** al admin. El fallo 63024 encaja sobre todo con destinatarios mal normalizados (cliente o admin con `57` repetido) o con un `wa_id` guardado sin prefijo de país.
+
+### Cambios implementados
+
+En `app/services/admin_service.py` (un solo archivo, según AI_RULES):
+
+1. **`_dedupe_country_prefix`** — quita prefijos de país duplicados antes de enviar.
+2. **Validación E.164** — no llama a Twilio si el destino no es válido (Colombia: 12 dígitos, empieza por `57`).
+3. **Hint 63024** — mensaje claro en logs cuando Twilio devuelve ese código.
+4. **Aviso al arrancar** — si `ADMIN_WHATSAPP_NUMBER` en `.env` no normaliza a E.164 válido.
+
+Ejemplo corregido:
+
+| Entrada errónea | Antes (63024) | Ahora |
+|-----------------|---------------|-------|
+| `whatsapp:+57573001111032` | `+57573001111032` | `+573001111032` |
+
+### Archivos modificados
+
+- `app/services/admin_service.py`
+
+### Riesgos mitigados
+
+- Envíos a números con `57` duplicado.
+- Fallos silenciosos: se registra error antes de llamar a la API si E.164 es inválido.
+- Pedidos con WaId de 11 dígitos siguen normalizándose como en v0.27.
+
+### Compatibilidad verificada
+
+```bash
+python scripts/verify_admin_flow.py   # ALL PASSED
+python scripts/diagnose_twilio_whatsapp.py   # OK (mensaje al admin entregado)
+```
+
+Parser, Flask, Flow Engine, endpoints y estados conversacionales sin cambios.
+
+### Funcionalidades agregadas
+
+- Normalización más robusta E.164 y rechazo temprano de destinatarios inválidos.
+- Hint específico para error **63024** en logs.
+
+### Funcionalidades preservadas
+
+- Notificaciones al admin, confirmación al cliente, recordatorios, `is_admin()`, Twilio async/sync existente.
+
+---
+
+### Qué revisar en tu `.env`
+
+```env
+ADMIN_WHATSAPP_NUMBER=whatsapp:+573001111032
+TWILIO_WHATSAPP_FROM=whatsapp:+573242497352
+```
+
+- **Sin repetir `57`**: `whatsapp:+57300...`, no `whatsapp:+5757300...`.
+- **Mismo número** desde el que el admin escribe al bot en WhatsApp.
+- En producción (ya no sandbox): el admin debe haber escrito al menos una vez al número del bot.
+
+Si el 63024 aparece al **avisar a un cliente**, revisa en la hoja de pedidos el `wa_id` guardado; pedidos viejos con teléfono mal formado se corrigen al confirmar, pero el número debe tener WhatsApp activo.
+
+Reinicia el bot (`python run.py`) y prueba de nuevo. Si el error sigue en un número concreto, indica si es al **admin** o al **cliente** y el valor de `wa_id` del pedido en Sheets.
+
+
+
+##########################################################
+
