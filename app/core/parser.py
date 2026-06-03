@@ -11,6 +11,9 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from app.config import GLOBAL_COMMANDS
+from app.utils.validators import is_confirmation
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -313,7 +316,7 @@ MENU_INTENT_PHRASES = (
     "precios del menu",
 )
 
-# Global flow commands (menu / pedido / reservar / inicio / cancelar) + NL synonyms.
+# Global flow commands — only the five documented commands (+ explicit NL phrases).
 GLOBAL_COMMAND_INTENTS: Dict[str, Dict[str, Any]] = {
     "menu": {
         "phrases": MENU_INTENT_PHRASES
@@ -327,22 +330,7 @@ GLOBAL_COMMAND_INTENTS: Dict[str, Dict[str, Any]] = {
             "opciones del menu",
             "opciones de comida",
         ),
-        "tokens": frozenset(
-            {
-                "menu",
-                "menú",
-                "carta",
-                "catalogo",
-                "catálogo",
-                "lista",
-                "precios",
-                "comida",
-                "platillos",
-                "platos",
-                "recomendacion",
-                "recomendación",
-            }
-        ),
+        "tokens": frozenset({"menu", "menú", "carta", "catalogo", "catálogo"}),
     },
     "pedido": {
         "phrases": ORDER_INTENT_PHRASES
@@ -354,11 +342,9 @@ GLOBAL_COMMAND_INTENTS: Dict[str, Dict[str, Any]] = {
             "enviar pedido",
             "ordenar comida",
             "ordenar algo",
-            "comprar comida",
             "quiero ordenar",
             "voy a ordenar",
             "deseo ordenar",
-            "antojo de",
             "me gustaria ordenar",
             "me gustaría ordenar",
             "puedo pedir",
@@ -366,25 +352,11 @@ GLOBAL_COMMAND_INTENTS: Dict[str, Dict[str, Any]] = {
             "pasar pedido",
             "tomar pedido",
             "poner pedido",
-            "quiero comprar",
             "necesito pedir",
             "me animo a pedir",
             "me animo a ordenar",
-            "que se me antoja",
-            "qué se me antoja",
         ),
-        "tokens": frozenset(
-            {
-                "pedido",
-                "pedidos",
-                "orden",
-                "ordenar",
-                "comprar",
-                "encargar",
-                "antojar",
-                "antojo",
-            }
-        ),
+        "tokens": frozenset({"pedido", "pedidos"}),
     },
     "reservar": {
         "phrases": (
@@ -440,9 +412,7 @@ GLOBAL_COMMAND_INTENTS: Dict[str, Dict[str, Any]] = {
             "reiniciar conversacion",
             "reiniciar conversación",
         ),
-        "tokens": frozenset(
-            {"inicio", "reiniciar", "restart", "principal", "regresar", "comenzar"}
-        ),
+        "tokens": frozenset({"inicio", "reiniciar", "restart"}),
     },
     "cancelar": {
         "phrases": (
@@ -917,7 +887,15 @@ class NaturalLanguagePreprocessor:
 
 
 class UserIntentClassifier:
-    """Detect global commands and NL synonyms (menu, pedido, reservar, inicio, cancelar)."""
+    """Detect the five global commands (menu, pedido, reservar, inicio, cancelar)."""
+
+    _CONFIRMATION_BLOCKED = frozenset({"menu", "pedido", "reservar"})
+
+    @staticmethod
+    def _sanitize_command(command: Optional[str]) -> Optional[str]:
+        if command in GLOBAL_COMMANDS:
+            return command
+        return None
 
     @staticmethod
     def looks_like_reservation_data(text: str) -> bool:
@@ -986,9 +964,16 @@ class UserIntentClassifier:
                 has_product_signal = True
 
         product_signal = has_product_signal or cls.looks_like_product_order(basic)
+        confirmation_like = is_confirmation(basic)
         best_command: Optional[str] = None
         best_score = 0.0
         best_match = ""
+
+        def _accept_command(command: Optional[str]) -> Optional[str]:
+            cmd = cls._sanitize_command(command)
+            if cmd and confirmation_like and cmd in cls._CONFIRMATION_BLOCKED:
+                return None
+            return cmd
 
         if cls.looks_like_reservation_data(basic):
             return {
@@ -1001,7 +986,7 @@ class UserIntentClassifier:
         words = basic.split()
         if len(words) == 1:
             single = _strip_accents(words[0])
-            cmd = _INTENT_TOKEN_TO_COMMAND.get(single)
+            cmd = _accept_command(_INTENT_TOKEN_TO_COMMAND.get(single))
             if cmd:
                 return {
                     "command": cmd,
@@ -1018,10 +1003,13 @@ class UserIntentClassifier:
         if run_phrases:
             for command, phrase_key in _INTENT_PHRASES_BY_LEN:
                 if phrase_key in basic:
+                    cmd = _accept_command(command)
+                    if not cmd:
+                        continue
                     score = 0.96 if len(phrase_key.split()) > 1 else 0.9
                     if score > best_score:
                         best_score = score
-                        best_command = command
+                        best_command = cmd
                         best_match = phrase_key
                         if score >= 0.96:
                             break
@@ -1030,7 +1018,9 @@ class UserIntentClassifier:
             for word in words:
                 key = _strip_accents(word)
                 if key in _INTENT_TOKEN_TO_COMMAND:
-                    cmd = _INTENT_TOKEN_TO_COMMAND[key]
+                    cmd = _accept_command(_INTENT_TOKEN_TO_COMMAND[key])
+                    if not cmd:
+                        continue
                     if cmd == "menu" and "principal" in words:
                         continue
                     if cmd == "pedido" and re.search(
@@ -1046,24 +1036,6 @@ class UserIntentClassifier:
                             "has_products": product_signal,
                         }
                     break
-
-        content_tokens = cls._content_tokens(basic)
-        if content_tokens:
-            token_set = {_strip_accents(token) for token in content_tokens}
-            for command, spec in GLOBAL_COMMAND_INTENTS.items():
-                overlap = token_set & spec["tokens"]
-                if not overlap:
-                    continue
-                if len(content_tokens) <= 3:
-                    score = 0.94
-                elif len(content_tokens) <= 5 and not product_signal:
-                    score = 0.86
-                else:
-                    score = 0.72
-                if score > best_score:
-                    best_score = score
-                    best_command = command
-                    best_match = next(iter(overlap))
 
         if product_signal and best_score < 0.95:
             return {
@@ -1082,7 +1054,7 @@ class UserIntentClassifier:
             }
 
         return {
-            "command": best_command,
+            "command": _accept_command(best_command),
             "confidence": round(best_score, 4),
             "matched": best_match,
             "has_products": product_signal,
@@ -2983,6 +2955,20 @@ def run_validation_suite(verbose: bool = True) -> bool:
         "infer_user_intent menu con productos no bloquea pedido",
         intent7.get("command") is None and intent7.get("has_products"),
         str(intent7),
+    )
+
+    intent8 = infer_user_intent("listo ya quiero comprar")
+    check(
+        "infer_user_intent confirmacion no es pedido",
+        intent8.get("command") is None,
+        str(intent8),
+    )
+
+    intent9 = infer_user_intent("comprar")
+    check(
+        "infer_user_intent comprar solo no es comando",
+        intent9.get("command") is None,
+        str(intent9),
     )
 
     parse_reservar = demo_engine.parse("me gustaria reservar para el viernes")

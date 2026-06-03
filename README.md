@@ -1,4 +1,4 @@
-## v0.35
+## v0.36
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4839,3 +4839,4 @@ python -m app.core.parser
 
 
 ####################################################
+## v0.36

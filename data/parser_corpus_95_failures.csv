@@ -1,4 +1,22 @@
 id,categoria,mensaje,intencion_esperada,obtenido,check_type,causa_probable
+4,A_onboarding,oye precios plis 618,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+26,A_onboarding,porfa precios ???,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+42,A_onboarding,oye ordenar,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+85,A_onboarding,please ordenar ???,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+107,A_onboarding,oye precios gracias,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+109,A_onboarding,oye ordenar plis,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+122,A_onboarding,ordenar plis,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+189,A_onboarding,precios ???,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+200,A_onboarding,porfa precios !!,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+227,A_onboarding,ordenar,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+247,A_onboarding,oye ordenar gracias,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+290,A_onboarding,👋 ordenar gracias,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+297,A_onboarding,porfa ordenar porfa,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+323,A_onboarding,👋 ordenar ???,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
+326,A_onboarding,👋 precios porfa 419,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+332,A_onboarding,??? precios porfa,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+343,A_onboarding,porfa precios ??? 341,menu,command=None conf=0.00,intent_global,"esperaba menu, obtuvo command=None"
+360,A_onboarding,please ordenar plis,pedido,command=None has_products=False,intent_global,"esperaba pedido sin productos, obtuvo command=None has_products=False"
 1466,B_pedido_nl,voy a querer refresco,pedido_con_productos,items=1 status=ok,parse_order,falso positivo en producto fuera de menú
 3044,H_adversarial,qwerty pizza,ruido,command=None items=1,ruido,ruido interpretado como pedido/comando
 3046,H_adversarial,5 10 pizzas pepperoni y 5 ensalada cesar,pedido_con_productos,"items=0 status=needs_clarification unknown=['5', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú

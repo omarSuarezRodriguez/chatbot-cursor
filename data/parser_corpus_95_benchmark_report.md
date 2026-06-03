@@ -1,17 +1,17 @@
 # Fase 1 — Benchmark corpus 95%
 
 - **Líneas evaluadas:** 3300
-- **Tiempo:** 10156 ms
-- **Acierto global (todas las filas):** 99.2%
-- **Intención global (menu/pedido/reservar/inicio/cancelar):** 100.0%
+- **Tiempo:** 9758 ms
+- **Acierto global (todas las filas):** 98.7%
+- **Intención global (menu/pedido/reservar/inicio/cancelar):** 94.8%
 - **Pedido con productos (`pedido_con_productos`):** 98.5%
-- **Categorías A–F:** 100.0% (2829/2830)
+- **Categorías A–F:** 99.3% (2811/2830)
 - **Categorías G–H:** 94.7% (445/470)
 
 ## Por categoría
 | Cat | OK | Total | % |
 |-----|-----|-------|---|
-| A | 360 | 360 | 100.0% |
+| A | 342 | 360 | 95.0% |
 | B | 1279 | 1280 | 99.9% |
 | C | 430 | 430 | 100.0% |
 | D | 290 | 290 | 100.0% |
@@ -22,13 +22,13 @@
 
 ## Por intención esperada (peores primero)
 
+- **pedido:** 86.3% (63/73)
+- **menu:** 92.2% (95/103)
 - **pedido_con_productos:** 98.5% (1677/1702)
 - **ruido:** 99.3% (139/140)
 - **cancelar:** 100.0% (32/32)
 - **reservar:** 100.0% (89/89)
-- **menu:** 100.0% (103/103)
 - **saludo:** 100.0% (55/55)
-- **pedido:** 100.0% (73/73)
 - **inicio:** 100.0% (49/49)
 - **rechazar:** 100.0% (3/3)
 - **confirmar:** 100.0% (23/23)
@@ -38,6 +38,6 @@
 - **ambiguo:** 100.0% (104/104)
 
 ## Logs reales (`client_messages_log/`)
-- Mensajes cliente extraídos: 8
-- Con comando inferido: 1
+- Mensajes cliente extraídos: 15
+- Con comando inferido: 2
 - Parse OK en mensajes con producto del menú: 100.0%

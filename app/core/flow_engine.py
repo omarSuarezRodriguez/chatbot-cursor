@@ -178,6 +178,10 @@ class FlowEngine:
         if not target:
             return None
 
+        if command == "pedido" and self._has_active_order(wa_id):
+            self.state_manager.set_step(wa_id, "order_review", "order")
+            return self._process_node(wa_id, "order_review", include_navigation=True)
+
         if command == "inicio" and self._has_active_order(wa_id):
             self.state_manager.patch_data(wa_id, awaiting_abandon_confirm=True)
             return (
@@ -204,7 +208,11 @@ class FlowEngine:
 
         node = self.nodes.get(target, {})
         self.state_manager.set_step(wa_id, target, node.get("flow", "idle"))
-        if command in {"menu", "pedido", "reservar"} and target != current_step:
+        if (
+            command in {"menu", "pedido", "reservar"}
+            and target != current_step
+            and not (command == "pedido" and self._has_active_order(wa_id))
+        ):
             self.state_manager.patch_data(
                 wa_id,
                 cart=[],
@@ -215,12 +223,53 @@ class FlowEngine:
 
         return self._process_node(wa_id, target, include_navigation=True)
 
+    _NAV_GLOBAL_COMMANDS = frozenset({"menu", "pedido", "reservar", "inicio", "cancelar"})
+
+    def _execute_input_action(
+        self,
+        wa_id: str,
+        text: str,
+        node: Dict[str, Any],
+        current_step: str,
+        state: Dict[str, Any],
+    ) -> Optional[Reply]:
+        action_name = node.get("action_on_input") or node.get("action")
+        if not action_name or action_name not in self._actions:
+            return None
+        if node.get("input_mode") != "free_text":
+            return None
+
+        message, next_step = self._actions[action_name](wa_id, text)
+        if next_step:
+            next_node = self.nodes.get(next_step, {})
+            self.state_manager.set_step(
+                wa_id,
+                next_step,
+                next_node.get("flow", state.get("flow", "idle")),
+            )
+            if next_step != current_step:
+                follow_up = self._process_node(
+                    wa_id,
+                    next_step,
+                    include_navigation=False,
+                )
+                if isinstance(follow_up, list):
+                    combined: Reply = [message, *follow_up] if message else follow_up
+                elif message:
+                    combined = f"{message}\n\n{follow_up}".strip()
+                else:
+                    combined = follow_up
+                return self._append_navigation(combined, next_node)
+        return self._append_navigation(message, node)
+
     def process_message(self, wa_id: str, body: str, *, _inner: bool = False) -> Reply:
         text = (body or "").strip()
         if not text:
             text = "hola"
 
         normalized = normalize_text(text)
+        if normalized == "pedid":
+            normalized = "pedido"
         state = self.state_manager.get(wa_id)
         current_step = state.get("step", "start")
         log_meta: Dict[str, Any] = {"intent": None, "routed": None}
@@ -250,6 +299,34 @@ class FlowEngine:
         if abandon is not None:
             return abandon
 
+        repeat = self._handle_repeat_order(wa_id, text)
+        if repeat is not None:
+            return repeat
+
+        if state.get("data", {}).get("awaiting_repeat_order") and is_greeting(text):
+            self.state_manager.patch_data(
+                wa_id,
+                awaiting_repeat_order=False,
+                skip_repeat_order_once=True,
+            )
+            return self._process_node(wa_id, "start", include_navigation=True)
+
+        node = self.nodes.get(current_step)
+        if not node:
+            self.state_manager.reset(wa_id)
+            return self._process_node(wa_id, "start", include_navigation=True)
+
+        if (
+            node.get("action_on_input")
+            and normalized not in self._NAV_GLOBAL_COMMANDS
+        ):
+            step_response = self._execute_input_action(
+                wa_id, text, node, current_step, state
+            )
+            if step_response is not None:
+                log_meta["routed"] = node.get("action_on_input") or node.get("action")
+                return step_response
+
         if normalized in self.global_commands:
             log_meta["routed"] = normalized
             response = self._resolve_global_command(wa_id, normalized, current_step)
@@ -260,6 +337,8 @@ class FlowEngine:
         intent = infer_user_intent(text, menu_items=menu_items)
         log_meta["intent"] = intent
         intent_command = intent.get("command")
+        if intent_command in {"pedido", "menu", "reservar"} and is_confirmation(text):
+            intent_command = None
         if (
             intent_command
             and intent_command in self.global_commands
@@ -282,23 +361,6 @@ class FlowEngine:
             if response:
                 return self.process_message(wa_id, text, _inner=True)
 
-        if state.get("data", {}).get("awaiting_repeat_order") and is_greeting(text):
-            self.state_manager.patch_data(
-                wa_id,
-                awaiting_repeat_order=False,
-                skip_repeat_order_once=True,
-            )
-            return self._process_node(wa_id, "start", include_navigation=True)
-
-        repeat = self._handle_repeat_order(wa_id, text)
-        if repeat is not None:
-            return repeat
-
-        node = self.nodes.get(current_step)
-        if not node:
-            self.state_manager.reset(wa_id)
-            return self._process_node(wa_id, "start", include_navigation=True)
-
         options = node.get("options", {})
         if normalized in options:
             next_step = options[normalized]
@@ -314,30 +376,11 @@ class FlowEngine:
             return self._process_node(wa_id, "start", include_navigation=True)
 
         if node.get("input_mode") == "free_text":
-            action_name = node.get("action_on_input") or node.get("action")
-            if action_name and action_name in self._actions:
-                message, next_step = self._actions[action_name](wa_id, text)
-                if next_step:
-                    next_node = self.nodes.get(next_step, {})
-                    self.state_manager.set_step(
-                        wa_id,
-                        next_step,
-                        next_node.get("flow", state.get("flow", "idle")),
-                    )
-                    if next_step != current_step:
-                        follow_up = self._process_node(
-                            wa_id,
-                            next_step,
-                            include_navigation=False,
-                        )
-                        if isinstance(follow_up, list):
-                            combined: Reply = [message, *follow_up] if message else follow_up
-                        elif message:
-                            combined = f"{message}\n\n{follow_up}".strip()
-                        else:
-                            combined = follow_up
-                        return self._append_navigation(combined, next_node)
-                return self._append_navigation(message, node)
+            step_response = self._execute_input_action(
+                wa_id, text, node, current_step, state
+            )
+            if step_response is not None:
+                return step_response
 
         if is_greeting(text) and current_step in {"order_start", "order_modify"}:
             return self._append_navigation(
