@@ -1,0 +1,21 @@
+id,categoria,subcategoria,mensaje,intencion_esperada,productos_en_mensaje,notas
+1,I_anti_overfit,cotidiano,amigo me pones 3 hawaianas y una coca bien fria porfa,pedido_con_productos,si,frase nueva anti-overfit
+2,I_anti_overfit,cotidiano,estoy en el trabajo manda 2 cocacolas y una pizza hawaiana,pedido_con_productos,si,frase nueva anti-overfit
+3,I_anti_overfit,cotidiano,para la cena quiero una hawaiana con dos refrescos,pedido_con_productos,si,frase nueva anti-overfit
+4,I_anti_overfit,cotidiano,che jefe una pizza hawaiana y lleva 1 coca cola,pedido_con_productos,si,frase nueva anti-overfit
+5,I_anti_overfit,cotidiano,me urge 1 hawaiana para llevar y 2 sodas,pedido_con_productos,si,frase nueva anti-overfit
+6,I_anti_overfit,cotidiano,oye wey manda dos pizzas hawaianas por favor,pedido_con_productos,si,frase nueva anti-overfit
+7,I_anti_overfit,cotidiano,al rato paso por 1 cocacola y una hawaiana,pedido_con_productos,si,frase nueva anti-overfit
+8,I_anti_overfit,cotidiano,para hoy en la noche 2 hawaianas y 3 cocacolas,pedido_con_productos,si,frase nueva anti-overfit
+9,I_anti_overfit,cotidiano,me das una hawaiana chica y un refresco,pedido_con_productos,si,frase nueva anti-overfit
+10,I_anti_overfit,cotidiano,ponme en la cuenta 1 pizza hawaiana mas 2 cocas,pedido_con_productos,si,frase nueva anti-overfit
+11,I_anti_overfit,comando,ahorita solo quiero ver que tienen,menu,no,frase nueva anti-overfit
+12,I_anti_overfit,comando,me puedes mostrar la carta otra vez,menu,no,frase nueva anti-overfit
+13,I_anti_overfit,comando,va de nuevo desde el menu principal,inicio,no,frase nueva anti-overfit
+14,I_anti_overfit,comando,mejor ya no sigo con este pedido gracias,cancelar,no,frase nueva anti-overfit
+15,I_anti_overfit,comando,ocupo reservar mesa para 6 el sabado,reservar,no,frase nueva anti-overfit
+16,I_anti_overfit,mezcla,cancelar es broma dame 2 hawaianas y 1 coca,pedido_con_productos,si,frase nueva anti-overfit
+17,I_anti_overfit,mezcla,ver carta y tambien quiero una hawaiana con coca,pedido_con_productos,si,frase nueva anti-overfit
+18,I_anti_overfit,parcial,nomas una bebida por favor,pedido_con_productos,parcial,frase nueva anti-overfit
+19,I_anti_overfit,ruido,oye tienen estacionamiento?,ruido,no,frase nueva anti-overfit
+20,I_anti_overfit,confirmacion,va perfecto confirmemos,confirmar,no,frase nueva anti-overfit

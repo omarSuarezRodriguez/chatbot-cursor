@@ -37,6 +37,7 @@ from app.config import (  # noqa: E402
 )
 from app.core.flow_engine import FlowEngine  # noqa: E402
 from app.core.state_manager import StateManager  # noqa: E402
+from app.utils.client_message_log import schedule_client_message_log  # noqa: E402
 from app.integrations.google_sheets import get_google_sheets_client  # noqa: E402
 from app.services.admin_service import AdminService  # noqa: E402
 from app.services.blocked_users_cache import BlockedUsersCache  # noqa: E402
@@ -225,6 +226,11 @@ def create_app() -> Flask:
                 is_admin = True
                 reply = admin_service.handle_admin_message(body)
             elif blocked_cache.is_blocked(wa_id):
+                schedule_client_message_log(
+                    wa_id=wa_id,
+                    client_message=(body or "").strip(),
+                    bot_message="(usuario bloqueado — sin respuesta)",
+                )
                 elapsed_ms = (time.perf_counter() - started) * 1000
                 logger.info(
                     "Blocked user ignored wa_id=%s body=%r",
@@ -247,6 +253,13 @@ def create_app() -> Flask:
         if not reply or (isinstance(reply, str) and not reply.strip()):
             reply = (
                 "Estoy aquí para ayudarte. Escribe *menu*, *pedido* o *reservar*."
+            )
+
+        if not is_admin and wa_id:
+            schedule_client_message_log(
+                wa_id=wa_id,
+                client_message=(body or "").strip(),
+                bot_message=reply,
             )
 
         recipient = admin_service._format_whatsapp_address(wa_id) or from_number or wa_id

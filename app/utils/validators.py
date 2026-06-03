@@ -50,7 +50,9 @@ def is_greeting(text: str) -> bool:
     cleaned = normalize_text(text)
     if cleaned in GREETING_PHRASES:
         return True
-    return any(cleaned.startswith(phrase) for phrase in GREETING_PHRASES if len(phrase) > 4)
+    if any(cleaned.startswith(phrase) for phrase in GREETING_PHRASES if len(phrase) > 4):
+        return True
+    return any(phrase in cleaned for phrase in GREETING_PHRASES)
 
 
 def parse_delivery_type(text: str) -> Optional[str]:
@@ -200,7 +202,8 @@ def parse_time(text: str) -> Optional[time]:
 
 
 def is_confirmation(text: str) -> bool:
-    return normalize_text(text) in {
+    cleaned = normalize_text(text)
+    if cleaned in {
         "si",
         "sí",
         "confirmo",
@@ -209,17 +212,51 @@ def is_confirmation(text: str) -> bool:
         "dale",
         "correcto",
         "yes",
-    }
+        "va",
+        "claro",
+        "simon",
+        "simón",
+        "perfecto",
+        "esta bien",
+        "está bien",
+        "de acuerdo",
+        "listo",
+        "hecho",
+        "sale",
+        "orale",
+        "órale",
+        "arre",
+    }:
+        return True
+    if cleaned.startswith("si ") or cleaned.startswith("ok "):
+        return True
+    prefix = re.match(
+        r"^(?:si|sí|ok|dale|perfecto|esta bien|está bien|claro|va|listo|hecho|sale|"
+        r"de acuerdo|correcto|orale|órale|arre)\b",
+        cleaned,
+    )
+    if prefix:
+        tail = cleaned[prefix.end() :].strip()
+        if not tail or len(tail.split()) <= 3:
+            return True
+    return False
 
 
 def is_rejection(text: str) -> bool:
-    return normalize_text(text) in {
+    cleaned = normalize_text(text)
+    if cleaned in {
         "no",
         "nop",
         "cancelar",
         "cambiar",
         "modificar",
-    }
+        "mejor no",
+        "nel",
+        "nope",
+        "negativo",
+    }:
+        return True
+    return cleaned.startswith("no ") or cleaned.startswith("mejor no")
 
 
 def validate_reservation_slot(

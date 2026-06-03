@@ -1,0 +1,3 @@
+{"ts": "2026-06-03T17:33:10.196742+00:00", "wa_id": "log_test", "step": "start", "body": "quiero ver la carta por favor", "intent_command": "menu", "intent_confidence": 0.96, "intent_has_products": false, "intent_matched": "ver la carta", "routed": "menu"}
+{"ts": "2026-06-03T17:34:11.254551+00:00", "wa_id": "35699155990", "step": "start", "body": "holaa que se dice", "intent_command": null, "intent_confidence": 0.0, "intent_has_products": false, "intent_matched": "", "routed": ""}
+{"ts": "2026-06-03T17:34:38.656025+00:00", "wa_id": "35699155990", "step": "start", "body": "todo bien o que manito", "intent_command": null, "intent_confidence": 0.0, "intent_has_products": false, "intent_matched": "", "routed": ""}

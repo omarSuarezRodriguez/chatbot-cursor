@@ -1,0 +1,2000 @@
+hola, quiero 2 pizzas hawaianas y 1 coca cola
+buenas, una hamburguesa clásica con papas fritas
+dame 3 tacos al pastor por favor
+2 hamburguesas mega y 2 aguas mineral
+una pizza margarita, gracias
+tres cocas cola y una ensalada césar
+me pones 2 burritos de frijol y 1 limonada natural
+un par de hawaianas y una coca
+quisiera 2 ensaladas y 1 café americano
+2x pizza de jamón y queso
+x2 agua mineral
+pizza hawaiana y coca cola
+hamburguesa clásica y papas
+menú porfa
+qué tienen de bebidas
+quítame una coca cola
+cambia la margarita por hawaiana
+para llevar: 2 mega y 1 papas fritas
+bueno, 2 hawaianas y tres cocas
+me das una ranchera y dos papas grandes
+pedido: 2 hawaiana, 1 coca, 1 agua
+dos pizzas margarita, una hawaiana
+tres hamburguesas y una limonada
+solo una ensalada césar
+4 alitas y 2 cocas porfa
+por favor diez ensalada césar | cuatro pizza margarita para llevar
+mi pedido: 2 limonada natural | 10 alitas de pollo | 12 nuggets de pollo
+buenas tardes 4x té helado + 10 coca cola + 10x torta de milanesa + 8 jugo de naranja para comer ahí
+deme dos agua embotellada
+buenas noches x8 té helado aparte tres pizza pizza ranchera aparte 10x pizza pizza ranchera aparte diez pizza pepperoni para llevar
+me traes tres pizza pizza ranchera, tres hamburgesa doble pollo, una pizza pizza margarita, 12 agua embotellada please
+necesito 8 café americano luego x8 té helado por favor
+voy a querer 6 hamburguesa doble pollo + 5 papas grandes para llevar
+voy a querer una docena de hamburguesa hamburguesa mega gracias
+deme 2x hamburguesa mega aparte una torta de milanesa aparte 3 papas grandes por favor
+te encargo 3 coca cola sin azúcar aparte 5 pizza pizza margarita plis
+me das doce pizza ranchera luego 12 ensalada cesar nomás
+cinco té helado además 8 agua mineral además 1 pizza pizza ranchera
+me traes diez ensalada ensalada mixta gracias
+oye 10 nuggets de pollo, 6 agua embotellada please
+buen día 3 pizza pizza margarita también 6 papas fritas también 2x alitas de pollo también 2x café americano nada más
+voy a querer seis hamburgesa con queso para aquí
+hey x6 hot dog sencillo porfa
+disculpa un par de papas grandes; tres pizza margarita; 8 papas grandes; 4 tacos al pastor porfa
+necesito cinco hamburguesa con queso, 3 papas grandes, x2 coca cola, tres papas fritas nada más
+1 hamburguesa hamburguesa mega
+porfa un par de nuggets de pollo; un hamburguesa hamburguesa doble pollo; 6 quesadilla de queso para aquí
+disculpa 4 coca cola, un par de ensalada mixta, un par de orden de aros de cebolla por favor
+te encargo 4 hamburguesa doble pollo, 5x coca cola sin azúcar, 3 pizza margarita, x3 burrito de frijol nomás
+3 burrito de frijol | x2 pizza de pizza de jamón y queso | seis agua embotellada | 8x burrito de frijol
+me pones 3 pizza mexicana + 10 pizza mexicana + 8 café americano porfa
+hola buenas un par de hamburguesa mega y 12x pizza de jamón y queso y una docena de alitas de pollo y 4x nuggets de pollo porfa
+cambia cinco quesadilla de queso por ocho pizza pizza ranchera
+me gustaría 1 burrito de frijol también 10 pizza hawaiana también 2 orden de aros de cebolla también cuatro nuggets de pollo nomás
+deme 10 ensalada ensalada césar | dos coca cola nomás
+pedido: 5 quesadilla de queso | 3 pizza ranchera | una docena de papas fritas
+me mandas 3 burrito de frijol luego tres papas grandes para aquí
+5 coca cola sin azúcar luego un par de nuggets de pollo
+pedido: ocho hot dog sencillo, 4 jugo de naranja, 3x limonada natural, 2x tacos al pastor
+te encargo 6 papas grandes | cuatro cocacola sin azúcar | 3 tacos al pastor | 4 pizza pizza mexicana plis
+disculpa 2 coca cola sin azúcar también diez ensalada mixta también dos pizza de jamón y queso gracias
+buenas noches seis pizza hawaiana también seis agua embotellada para comer ahí
+quiero 6 coca cola; 12 hamburguesa clásica por favor
+una hot dog sencillo | 12 pizza mexicana | 12 ensalada mixta | x1 hamburguesa doble carne
+buenos días 1x papas fritas para aquí
+2 coca cola sin azúcar además tres papas grandes además 3 coca cola además 3 papas grandes
+disculpa diez hamburgesa con queso + 4 pizza de jamón y queso + 1x hamburguesa hamburguesa clásica + 2 hot dog sencillo porfa
+ya no quiero 1 hamburguesa hamburguesa doble pollo
+pásame el menú
+mi pedido: 8 quesadilla de queso, diez hot dog sencillo, 2 tacos al pastor, seis hamburgesa con queso
+ponme 1 hamburgesa doble carne para llevar
+un par de alitas de pollo aparte una pizza pizza pepperoni aparte ocho orden de aros de cebolla aparte seis burrito de frijol
+por favor 6 hamburguesa con queso luego 1 hamburguesa mega por favor
+hola 5 pizza hawaiana y 2 hamburguesa doble carne por favor
+voy a querer 3 pizza ranchera también un hamburguesa con queso también dos burrito de frijol gracias
+me mandas 6 alitas de pollo también 10 tacos al pastor también x5 hamburguesa con queso nada más
+porfa un par de ensalada césar aparte 4 hamburguesa con queso
+voy a querer diez ensalada ensalada mixta
+mostrar carta
+buen día 10 papas grandes también 10 café americano también una docena de tacos al pastor plis
+oye cinco pizza mexicana aparte 3 ensalada mixta aparte 10 pizza pizza hawaiana aparte 3 nuggets de pollo por favor
+3 pizza margarita
+buenas tardes 8 piza mexicana luego 10 papas fritas luego ocho agua embotellada luego ocho quesadilla de queso gracias
+necesito 3 tacos al pastor aparte 4x burrito de frijol nada más
+6 pizza hawaiana
+cinco pizza pizza hawaiana | 3 hamburguesa clásica
+disculpa 10 jugo de naranja, x3 pizza hawaiana, 1 agua embotellada para comer ahí
+5 café americano
+me das 5 torta de milanesa, 12x alitas de pollo, 3 hamburguesa hamburguesa doble pollo, 3 pizza pizza mexicana para llevar
+ponme doce burrito de frijol además 3 hamburguesa hamburguesa mega además x6 hamburguesa doble carne además 2 hot dog sencillo para comer ahí
+buen día tres pizza de jamón y queso + 6 agua embotellada + ocho hamburguesa mega + una docena de quesadilla de queso please
+quiero 10 hamburguesa con queso | una alitas de pollo | 6 nuggets de pollo | seis coca cola
+te encargo 8 pizza pizza pepperoni para aquí
+en vez de ocho café americano pon 4x café americano
+hola buenas cuatro burrito de frijol también una limonada natural también 3 hamburguesa doble carne también 2 ensalada ensalada césar nomás
+hola buenas 2 hamburguesa hamburguesa doble pollo, tres torta de milanesa por favor
+3 limonada natural
+2 hamburguesa doble carne además 8 ensalada ensalada césar además tres hamburguesa hamburguesa doble pollo
+te encargo 3 hamburguesa hamburguesa con queso | 3 burrito de frijol please
+ya no quiero 3 ensalada césar
+buenos días 10 agua embotellada; 8 alitas de pollo nomás
+necesito tres torta de milanesa aparte 8 hamburguesa doble pollo aparte 12 coca cola sin azúcar aparte 8x hamburgesa con queso gracias
+buenas tardes ocho limonada natural también dos coca cola nomás
+disculpa 1x jugo de naranja, una docena de coca cola sin azúcar, 12 papas grandes para llevar
+hey ocho té helado luego ocho hamburguesa doble carne please
+hola buenas diez pizza ranchera | cinco papas fritas | 1 limonada natural | 3 hamburguesa doble carne nomás
+me traes 8 papas fritas aparte ocho pizza pepperoni porfa
+dame 2 nuggets de pollo aparte x3 pizza pizza mexicana para comer ahí
+ponme 5x ensalada césar además 1 jugo de naranja además 12 hamburguesa clásica además una agua embotellada please
+8 coca cola
+mi pedido: ocho tacos al pastor, 12 pizza mexicana, doce burrito de frijol, cinco hamburguesa mega
+doce papas fritas
+hola 8 jugo de naranja | 1 hamburgesa con queso | 8 tacos al pastor gracias
+quiero 1 tacos al pastor también 10 jugo de naranja también 6 hamburguesa con queso también dos ensalada mixta para comer ahí
+hola tres alitas de pollo para aquí
+buenas tardes tres hamburguesa mega
+me das 10x quesadilla de queso please
+me das doce quesadilla de queso luego 6 hot dog sencillo
+un par de hamburguesa hamburguesa con queso
+cinco tacos al pastor
+para pedir x1 agua mineral + un par de papas fritas + 8 coca cola + 10 orden de aros de cebolla please
+para pedir 8 hamburguesa clásica además seis coca cola sin azúcar además 6 hot dog sencillo nomás
+hola buenas cinco pizza pepperoni; un par de papas fritas nada más
+2 papas grandes + 4 hamburguesa hamburguesa con queso
+hola doce hamburguesa doble pollo luego 2 pizza ranchera luego doce ensalada mixta para aquí
+disculpa 12 hot dog sencillo para comer ahí
+cinco pizza de jamón y queso luego diez hamburguesa mega luego 6 agua mineral
+qué tal 5 pizza pizza hawaiana | 12 papas grandes para aquí
+ponme diez coca cola luego 3x jugo de naranja luego 3 pizza pizza pepperoni luego 10 agua mineral nada más
+me gustaría 8x jugo de naranja; 2 hamburguesa clásica; 12 café americano para llevar
+buenas tardes dos pizza mexicana y un par de burrito de frijol y 6 café americano y 4 coca cola nada más
+porfa dos orden de aros de cebolla + 8 café americano please
+buenas tardes 1x pizza margarita y 8 nuggets de pollo y x2 té helado gracias
+disculpa un par de agua embotellada y dos hamburguesa hamburguesa clásica please
+8 pizza ranchera | x10 hamburguesa hamburguesa con queso | 10 limonada natural
+deme 8 hamburguesa con queso también 3 alitas de pollo también 1 coca cola también 10 limonada natural para llevar
+necesito 1 alitas de pollo please
+para pedir 3 agua embotellada, 6 pizza pepperoni, 8 agua embotellada plis
+tres ensalada césar, doce ensalada césar, 4 ensalada ensalada césar, 2 té helado
+12 burrito de frijol
+quisiera 2 limonada natural además 2 torta de milanesa además 3 hamburguesa hamburguesa con queso por favor
+hola 10 pizza mexicana nada más
+me traes 1 limonada natural y un par de agua embotellada y 3 coca cola sin azúcar y x6 papas fritas nada más
+3 hamburguesa con queso + 2 pizza pepperoni + 4 limonada natural + 8 orden de aros de cebolla + 12 alitas de pollo
+me das tres agua embotellada | 6 torta de milanesa | x8 pizza hawaiana | 2 burrito de frijol porfa
+voy a querer 5 pizza margarita; un par de alitas de pollo; 10 ensalada mixta nomás
+hola 10 agua embotellada + 5 pizza piza ranchera + 1 agua mineral + seis agua embotellada para aquí
+5 nuggets de pollo además 4 hamburguesa hamburguesa mega
+3 agua embotellada; diez pizza pizza hawaiana; 3 pizza ranchera; 3 hamburguesa con queso; seis coca cola
+dame 8 hamburguesa doble pollo también 5 pizza ranchera también un par de ensalada césar también cuatro burrito de frijol gracias
+necesito un papas fritas
+para pedir dos cocacola sin azúcar también 10 papas grandes también seis alitas de pollo please
+3 quesadilla de queso
+hola 3 quesadilla de queso nada más
+buenas noches una coca cola sin azúcar y 12 pizza pepperoni y diez hamburguesa clásica y 10x hamburguesa hamburguesa doble pollo para aquí
+diez hamburguesa doble carne
+te encargo un par de quesadilla de queso luego 8 piza margarita luego 2 hamburguesa doble pollo porfa
+quiero 3 nuggets de pollo luego un orden de aros de cebolla plis
+5x burrito de frijol, un par de jugo de naranja, tres burrito de frijol, 8 pizza mexicana
+oye tres hamburguesa doble pollo nada más
+te encargo 10 pizza pizza hawaiana luego x5 papas grandes luego seis coca cola para llevar
+buen día 8x pizza hawaiana además un par de papas fritas please
+me das 4 papas grandes, 12 orden de aros de cebolla, 3 coca cola sin azúcar plis
+dos hamburguesa hamburguesa doble carne
+voy a querer 12 pizza de jamón y queso; tres alitas de pollo
+hola buenas 2 papas grandes nada más
+voy a querer 2x alitas de pollo gracias
+me gustaría 3x orden de aros de cebolla también tres pizza pizza mexicana también 12 alitas de pollo también 6 nuggets de pollo por favor
+voy a querer 10x hamburguesa hamburguesa clásica luego 3 pizza margarita porfa
+quiero 6 hamburguesa doble pollo también cinco hamburguesa mega también seis jugo de naranja también 6x hamburguesa hamburgesa doble carne para aquí
+para pedir x10 orden de aros de cebolla aparte 10 hamburguesa doble carne aparte 3 pizza hawaiana aparte 10 torta de milanesa nomás
+buenas tardes x5 alitas de pollo además 3 pizza pepperoni
+2 alitas de pollo
+tres coca cola | 2 hamburguesa clásica
+necesito 2 nuggets de pollo luego x3 torta de milanesa luego cuatro jugo de naranja luego 4 quesadilla de queso please
+anoto: tres nuggets de pollo, dos burrito de frijol, una docena de pizza hawaiana
+me das 3 papas fritas también 3 té helado también tres papas fritas plis
+cuatro coca cola sin azúcar por favor
+ocho pizza hawaiana
+quiero 10 ensalada ensalada cesar | 6 coca cola | x8 pizza pizza pepperoni plis
+buenos días 10x hamburguesa clásica también un par de alitas de pollo también un par de pizza de jamón y queso nomás
+por favor 2 pizza pizza ranchera y 3 pizza hawaiana y seis limonada natural porfa
+qué tal 6 hamburguesa hamburguesa mega porfa
+quiero 6x papas fritas, x10 hamburguesa doble pollo nada más
+dos pizza hawaiana también tres hamburguesa mega
+deme 3 coca cola sin azúcar aparte 10 pizza pepperoni aparte dos papas fritas para comer ahí
+me mandas tres té helado luego 5 agua embotellada luego 2 hamburguesa hamburguesa con queso luego 2 agua embotellada please
+2 nuggets de pollo aparte 1 hot dog sencillo
+por favor seis pizza de jamón y queso también 8 hamburguesa hamburguesa clásica también 3x pizza hawaiana nada más
+te encargo 10 pizza de pizza de jamón y queso; un par de agua mineral; tres agua mineral nomás
+tráeme seis limonada natural para comer ahí
+x1 coca cola; 6x orden de aros de cebolla; 8x hot dog sencillo
+oye 3x agua mineral; 2 pizza pizza mexicana para aquí
+hey diez agua embotellada además un par de pizza pizza margarita además 10 pizza hawaiana además cinco ensalada mixta para comer ahí
+necesito 5 limonada natural gracias
+necesito ocho torta de milanesa
+12 pizza pizza hawaiana también 10 orden de aros de cebolla
+me mandas 8 agua embotellada, un par de alitas de pollo, 2 papas fritas, 2 jugo de naranja porfa
+una quesadilla de queso luego un par de limonada natural luego seis nuggets de pollo luego 3 pizza margarita
+anoto: tres tacos al pastor, tres hamburguesa mega, 1 pizza pizza margarita
+me pones 3 coca cola aparte 10x pizza pepperoni aparte 12 pizza hawaiana para comer ahí
+me das doce pizza piza margarita por favor
+x2 orden de aros de cebolla además x2 café americano además 12 hamburguesa hamburguesa con queso
+por favor 3 hamburgesa mega aparte 5 tacos al pastor aparte 2x pizza de jamón y queso gracias
+buenas noches 3 torta de milanesa nada más
+6 café americano, tres té helado, 5 alitas de pollo para aquí
+qué tal tres torta de milanesa aparte 5 hamburguesa hamburguesa clásica
+3 papas grandes | 3 limonada natural | 1x agua embotellada
+me das 3 burrito de frijol; tres pizza hawaiana; 1 hot dog sencillo; un par de piza mexicana nada más
+hey 12x papas fritas | 6 pizza pizza hawaiana porfa
+deme cinco torta de milanesa; 4 agua embotellada; dos tacos al pastor para llevar
+ponme ocho agua embotellada aparte 3 ensalada césar please
+anoto: 4 nuggets de pollo | dos pizza ranchera | doce hamburguesa hamburguesa con queso | 10 piza margarita
+qué hay
+quisiera seis limonada natural + 4 torta de milanesa + un par de pizza ranchera + cuatro pizza margarita
+para pedir 4 alitas de pollo y 10x pizza ranchera y dos hamburguesa con queso y 2 quesadilla de queso
+tráeme dos papas fritas | tres pizza de jamón y queso | tres nuggets de pollo para llevar
+me pones x4 coca cola sin azúcar también 8x agua embotellada gracias
+buen día 3 jugo de naranja + 8 alitas de pollo + tres nuggets de pollo para llevar
+ponme dos ensalada ensalada césar y tres tacos al pastor y 10x hot dog sencillo y 4 pizza de pizza de jamón y queso porfa
+disculpa tres papas grandes además 5 hamburguesa clásica además 12 burrito de frijol para aquí
+buen día 3 papas fritas para comer ahí
+ponme diez pizza ranchera + 8 nuggets de pollo + dos orden de aros de cebolla + 10 pizza de pizza de jamón y queso please
+por favor una hot dog sencillo nada más
+deme 3 coca cola, 2 coca cola sin azúcar, 4 pizza de pizza de jamón y queso, 8 pizza pizza hawaiana para llevar
+un par de orden de aros de cebolla
+quisiera diez pizza mexicana please
+me gustaría diez quesadilla de queso gracias
+buenos días 3 orden de aros de cebolla nomás
+quítame 10 alitas de pollo
+2 ensalada césar | 10 coca cola sin azúcar | tres papas grandes | 2x quesadilla de queso | 8 hamburguesa con queso
+disculpa 3 hamburguesa doble pollo; doce coca cola; 3 orden de aros de cebolla nada más
+para pedir diez limonada natural + x4 coca cola sin azúcar plis
+quisiera 8 pizza pizza pepperoni luego x8 agua embotellada plis
+mi pedido: 8 alitas de pollo, 2 agua mineral, 8 pizza margarita
+quiero 4 pizza pizza hawaiana | 4 café americano gracias
+voy a querer un piza mexicana please
+1 pizza ranchera + cuatro jugo de naranja + cuatro hamburguesa doble carne
+anoto: 2 hot dog sencillo, una agua embotellada
+hey 3 alitas de pollo y x10 coca cola y 5 burrito de frijol y 5 alitas de pollo para aquí
+buenos días 10 torta de milanesa, ocho pizza pepperoni nomás
+hola doce hamburguesa doble pollo, un pizza margarita, 3 té helado nomás
+hey 2 hamburguesa hamburguesa mega, 2 coca cola sin azúcar
+me traes 8 té helado nada más
+3 té helado
+qué tal 3 alitas de pollo luego 3 hot dog sencillo nada más
+2 agua embotellada, 2 hamburguesa hamburguesa doble pollo, ocho ensalada mixta
+disculpa 4 hamburgesa con queso también un par de pizza pizza hawaiana nomás
+para pedir 10x agua embotellada luego ocho tacos al pastor luego 6x torta de milanesa nada más
+oye 10 torta de milanesa; ocho jugo de naranja nomás
+me pones 2 pizza pepperoni aparte x6 piza mexicana aparte 5 hamburgesa con queso aparte un par de hamburguesa mega nomás
+quisiera diez torta de milanesa por favor
+me gustaría 8 hamburguesa clásica plis
+por favor diez café americano aparte seis pizza pizza mexicana para comer ahí
+oye dos ensalada ensalada césar porfa
+3 coca cola sin azúcar también 5 alitas de pollo también 4 hot dog sencillo también 3 quesadilla de queso también 1 tacos al pastor
+buen día 12 café americano please
+quita un par de papas grandes
+te encargo 2 quesadilla de queso luego 2 agua mineral porfa
+3 café americano también 3 hamburguesa clásica también una tacos al pastor también un par de cocacola sin azúcar también tres nuggets de pollo
+2 quesadilla de queso también tres papas grandes también 6 hamburguesa mega también 1 pizza ranchera también 2 café americano
+dame 2 hamburguesa hamburguesa mega por favor
+un par de pizza pepperoni
+buenas noches seis quesadilla de queso | dos tacos al pastor gracias
+una docena de limonada natural, diez hamburguesa hamburguesa doble pollo, diez pizza hawaiana, 10 quesadilla de queso
+cinco jugo de naranja aparte cinco tacos al pastor aparte tres quesadilla de queso aparte 4 hamburguesa doble carne aparte un par de burrito de frijol
+voy a querer 2 hamburguesa mega; 8 agua embotellada; diez pizza pepperoni por favor
+qué tal 3 hamburguesa clásica, 2x hamburguesa mega, x8 hamburguesa hamburguesa clásica nada más
+hey 4 burrito de frijol también tres café americano también 6 nuggets de pollo please
+anoto: 3 torta de milanesa, 1 tacos al pastor
+buenos días 2 pizza de jamón y queso además 5 hot dog sencillo plis
+2 limonada natural; 5 ensalada mixta; 1 hamburguesa doble pollo; tres agua mineral
+deme cuatro orden de aros de cebolla | x2 papas fritas | 4 pizza de jamón y queso | ocho pizza pizza ranchera
+hey 10x agua embotellada también 4 burrito de frijol para llevar
+ver el menú
+hola 2 hamburguesa clásica por favor
+necesito 10 hamburguesa doble carne | 3 tacos al pastor please
+hey 2 papas fritas; 2 quesadilla de queso para comer ahí
+me traes 1 hot dog sencillo; un hamburguesa hamburguesa doble carne; 3 nuggets de pollo; 8x pizza hawaiana nomás
+por favor cinco ensalada ensalada mixta y 4 limonada natural
+2 tacos al pastor | x4 hamburguesa doble pollo | 3 pizza ranchera | ocho hamburguesa clásica
+tres hamburguesa doble pollo
+pedido: 6 torta de milanesa | 12 nuggets de pollo | cinco limonada natural | 3 hamburguesa con queso
+1 limonada natural | ocho hamburguesa hamburguesa doble carne | 2 hot dog sencillo
+2 nuggets de pollo, dos hamburguesa doble pollo
+tres burrito de frijol, 2 agua embotellada, ocho pizza de jamón y queso, cinco hamburguesa hamburguesa doble carne
+tráeme 12 hamburgesa mega también 3 hamburguesa con queso
+me das x4 hamburguesa doble pollo aparte un par de alitas de pollo aparte seis hamburguesa doble carne aparte cinco pizza ranchera please
+hola buenas diez pizza de jamón y queso aparte 3x hamburguesa hamburguesa mega porfa
+disculpa dos papas grandes y dos burrito de frijol porfa
+me das 2x pizza pizza margarita + un hamburguesa clásica + 1 hamburguesa hamburguesa doble pollo + 2x coca cola sin azúcar plis
+buenas tardes 3 quesadilla de queso + 3 agua mineral para aquí
+3 hamburguesa doble pollo, tres hamburguesa doble pollo
+me gustaría 1 ensalada césar para aquí
+deme 3 pizza mexicana; una docena de pizza ranchera; tres papas fritas gracias
+me pones tres torta de milanesa | 3 hamburguesa mega para comer ahí
+doce hot dog sencillo luego 3 torta de milanesa luego diez hamburguesa doble pollo luego ocho pizza pizza pepperoni
+hey 6 hot dog sencillo y un par de papas grandes plis
+disculpa 1 pizza de jamón y queso además 4 ensalada mixta además seis quesadilla de queso además 6 alitas de pollo para comer ahí
+me traes 2x hot dog sencillo y 12 pizza de piza de jamón y queso y seis papas grandes para aquí
+me das 12x tacos al pastor | 2 agua mineral | diez quesadilla de queso | 4 café americano nada más
+buenas noches 8 alitas de pollo; dos tacos al pastor; dos pizza de jamón y queso; cinco pizza margarita plis
+porfa x3 hamburguesa doble pollo nada más
+hola buenas 2 pizza pepperoni, x5 hamburguesa hamburgesa doble pollo, ocho nuggets de pollo, cuatro hamburguesa con queso gracias
+te encargo 6 coca cola sin azúcar además dos hamburguesa hamburguesa con queso
+buenas tardes 3x coca cola sin azúcar también 10x hamburguesa clásica please
+deme 12 hamburgesa mega | dos pizza de pizza de jamón y queso para comer ahí
+buenas noches 6 café americano, 6 coca cola sin azúcar, doce hot dog sencillo, x5 café americano please
+quisiera tres hamburguesa doble carne + 8 quesadilla de queso + 2 coca cola sin azúcar + 3 hot dog sencillo gracias
+2 hamburguesa hamburguesa doble pollo | 3 orden de aros de cebolla | 10 quesadilla de queso
+deme 8 pizza hawaiana; 10 hamburguesa hamburguesa doble pollo para llevar
+4 hamburguesa con queso | 3 jugo de naranja
+necesito 1 tacos al pastor porfa
+dame 2 hamburguesa con queso + 4 hamburguesa hamburguesa con queso + 1 nuggets de pollo gracias
+anoto: 12x café americano, 6 pizza pizza pepperoni, 3 orden de aros de cebolla, un hamburgesa doble carne
+buenas tardes 8 tacos al pastor + 3x torta de milanesa + un par de pizza ranchera por favor
+ocho hot dog sencillo
+8 pizza pizza hawaiana luego 1 ensalada mixta luego 2 jugo de naranja
+hola buenas 5 ensalada césar + 4 papas fritas por favor
+quita 6 ensalada ensalada mixta
+quiero 5x agua mineral + x5 papas fritas para aquí
+buenas tardes 5 té helado por favor
+me traes 5 coca cola también 3 tacos al pastor también 4 hamburguesa con queso please
+2 coca cola también ocho alitas de pollo también x2 pizza de piza de jamón y queso también 1 quesadilla de queso también dos ensalada césar
+mi pedido: 3 piza hawaiana | 12 papas fritas
+me das 8 hamburguesa clásica para aquí
+cuatro coca cola sin azúcar, 2 pizza de jamón y queso, una pizza ranchera, cinco jugo de naranja
+deme 12 té helado además un ensalada césar además una docena de hamburguesa doble carne además 6 pizza pizza ranchera
+x3 pizza pizza hawaiana también 6 cocacola sin azúcar también x8 limonada natural también 4 hamburguesa con queso
+te encargo diez coca cola y dos ensalada césar y 10x hamburguesa hamburguesa doble carne y 5 orden de aros de cebolla para aquí
+buenas noches 10 pizza pizza hawaiana luego 2 orden de aros de cebolla luego tres papas grandes porfa
+buenos días 3 pizza ranchera; 12 papas fritas; dos papas fritas nada más
+porfa cinco tacos al pastor, tres torta de milanesa, 3 hamburguesa con queso, 3 tacos al pastor nada más
+me das x3 limonada natural; tres nuggets de pollo; tres agua embotellada; un par de hamburguesa clásica porfa
+tráeme 5 agua embotellada también 10 hamburgesa doble carne nada más
+me gustaría 3x hamburguesa mega y 3 hot dog sencillo y diez hamburguesa doble carne nada más
+me mandas dos ensalada mixta, un par de pizza de jamón y queso, 2x hamburgesa mega, doce té helado gracias
+anoto: 2 café americano | 6 agua mineral | 3 pizza margarita | seis pizza de pizza de jamón y queso
+me gustaría 8 papas fritas | 10x hamburguesa clásica | 3 hamburguesa doble pollo nada más
+una docena de hamburguesa hamburgesa doble pollo
+anoto: doce torta de milanesa, 8 hamburguesa con queso, ocho papas fritas
+5 pizza pizza mexicana aparte cuatro pizza de jamón y queso
+cuatro pizza de jamón y queso + 10 té helado + 6 piza ranchera
+te encargo diez alitas de pollo, 3 coca cola sin azúcar, 12 té helado, 6x hot dog sencillo para comer ahí
+qué tal 1 hamburguesa hamburguesa doble pollo además tres pizza pizza hawaiana además seis pizza hawaiana para aquí
+10x limonada natural; 12x agua mineral; ocho hamburguesa hamburguesa mega; x6 nuggets de pollo; ocho pizza mexicana
+buenos días dos burrito de frijol luego una docena de orden de aros de cebolla para llevar
+ponme un par de burrito de frijol plis
+hola cuatro hamburguesa doble pollo nada más
+me mandas 3 hamburguesa doble carne; diez papas fritas; 2 pizza margarita para llevar
+ocho pizza de jamón y queso, 5x quesadilla de queso
+3 café americano; 3 pizza mexicana; un par de pizza pepperoni; 3 pizza pizza mexicana; x12 hamburguesa hamburguesa mega
+una docena de pizza margarita | x6 hamburguesa doble carne | 6 hot dog sencillo
+oye un par de alitas de pollo además 6x ensalada ensalada mixta además 3 hamburguesa doble carne además 12 nuggets de pollo please
+hey 6 pizza margarita, x12 café americano, 10 limonada natural, 3 jugo de naranja por favor
+porfa 5 coca cola luego 5 agua mineral para llevar
+quiero 1 pizza piza pepperoni además 12 hamburguesa hamburguesa doble pollo además 8 pizza pizza ranchera para comer ahí
+buenas tardes 3 nuggets de pollo por favor
+1 burrito de frijol
+12 pizza piza mexicana también cuatro agua mineral también 4 orden de aros de cebolla también tres torta de milanesa también 6 papas fritas
+dame x2 hamburguesa mega aparte dos orden de aros de cebolla aparte 8 nuggets de pollo aparte una papas grandes nada más
+3 pizza pizza pepperoni; una ensalada ensalada mixta para llevar
+8 torta de milanesa; 2 pizza pizza ranchera
+buen día 2 agua mineral | 4 limonada natural | 5 agua mineral | x2 jugo de naranja para comer ahí
+ponme 3 jugo de naranja, 3 hamburguesa hamburguesa doble carne por favor
+1x papas fritas; un quesadilla de queso; 4 burrito de frijol; 3 pizza margarita; tres pizza ranchera
+porfa 8 pizza hawaiana y 2 hamburguesa clásica y x3 jugo de naranja
+tráeme 8 agua embotellada además 4 burrito de frijol nomás
+cambia 3 pizza mexicana por cinco pizza pepperoni
+hola buenas x2 pizza pizza margarita también diez pizza pepperoni también 1 hamburguesa hamburgesa clásica también seis burrito de frijol plis
+me traes 6x piza hawaiana luego 2 pizza de jamón y queso plis
+porfa 1 burrito de frijol aparte dos hamburguesa hamburguesa clásica aparte doce limonada natural gracias
+buenas tardes dos burrito de frijol por favor
+me traes cuatro alitas de pollo luego 4 pizza de jamón y queso nomás
+por favor 2 pizza margarita además tres té helado además cinco agua embotellada además tres limonada natural gracias
+ponme dos papas grandes nomás
+1 agua embotellada + doce hot dog sencillo para llevar
+deme 12 pizza margarita + 5 agua mineral + 3 pizza ranchera + 10 papas grandes porfa
+para pedir 10 pizza mexicana aparte 6 burrito de frijol para comer ahí
+voy a querer 2 nuggets de pollo + 12 orden de aros de cebolla + tres nuggets de pollo plis
+para pedir 6 pizza mexicana; 12 nuggets de pollo plis
+hola buenas 10 pizza pepperoni, 4 hamburguesa hamburguesa con queso, un par de hamburguesa doble pollo gracias
+doce quesadilla de queso; 2 burrito de frijol; 5 pizza de pizza de jamón y queso; 10 agua embotellada please
+2 burrito de frijol, 1 tacos al pastor, 3x pizza mexicana, dos jugo de naranja
+quisiera 4 hamburguesa hamburguesa mega también 8 papas grandes porfa
+me pones x4 hamburguesa clásica; 10 torta de milanesa por favor
+quiero x3 coca cola además seis pizza pizza mexicana plis
+para pedir cinco agua mineral; x6 papas grandes; x4 piza mexicana por favor
+qué tal una agua embotellada | un hamburguesa hamburguesa clásica | cinco pizza pepperoni | diez quesadilla de queso plis
+quisiera x1 papas fritas también 3 limonada natural nomás
+me traes una pizza ranchera | 10 torta de milanesa | tres té helado para llevar
+ocho quesadilla de queso aparte 1 limonada natural aparte 10 hamburguesa clásica aparte 4 pizza pizza mexicana aparte 10 papas fritas
+buen día cinco pizza pizza margarita
+hey un papas fritas nomás
+deme 5 hamburguesa doble carne también 6 tacos al pastor porfa
+disculpa un par de coca cola sin azúcar y 2 café americano
+qué tal 8x agua embotellada luego 5 papas grandes luego seis jugo de naranja luego cuatro burrito de frijol por favor
+me traes 1 hamburguesa mega aparte cuatro jugo de naranja para llevar
+tres papas grandes
+qué tienen
+me das 1 limonada natural luego 4 agua embotellada para aquí
+mi pedido: 1 limonada natural | 3x burrito de frijol | 8 burrito de frijol | x3 hamburguesa con queso
+voy a querer 4 torta de milanesa y 2 torta de milanesa nada más
+diez pizza pepperoni | tres alitas de pollo | 3 hot dog sencillo | 3 hot dog sencillo | 1 alitas de pollo
+cinco nuggets de pollo, x8 papas fritas, 3x coca cola sin azúcar
+quiero 3 agua embotellada gracias
+me das ocho hamburguesa hamburguesa doble carne gracias
+quisiera 3 agua mineral, una pizza hawaiana, 6 torta de milanesa, 1 alitas de pollo nada más
+qué tal 3 agua mineral luego 12 pizza pizza mexicana luego seis papas grandes para llevar
+buenas tardes cinco coca cola también 10 coca cola plis
+1x pizza de jamón y queso para comer ahí
+12 papas grandes, 8 hamburguesa mega
+buenas noches un par de coca cola sin azúcar aparte una pizza margarita por favor
+oye 2 pizza margarita
+me gustaría 2 limonada natural para aquí
+deme tres pizza piza hawaiana nada más
+qué tal 10x coca cola sin azúcar luego 2 quesadilla de queso luego dos hamburguesa hamburguesa doble carne para comer ahí
+3 pizza pizza ranchera nada más
+6 agua embotellada, 2 café americano, 2 pizza pepperoni, tres hot dog sencillo
+voy a querer diez hamburguesa hamburguesa con queso, 6 orden de aros de cebolla, una coca cola, dos papas fritas para llevar
+ponme tres cocacola por favor
+necesito cinco hamburguesa mega nada más
+x2 quesadilla de queso además 2 jugo de naranja
+x6 agua embotellada
+te encargo 4 pizza mexicana; tres limonada natural nomás
+me traes 4x ensalada cesar | doce papas fritas please
+quisiera dos agua embotellada; 1 papas grandes para llevar
+anoto: x2 tacos al pastor, 3 hamburguesa mega, un torta de milanesa
+1 pizza pizza hawaiana
+buenas noches 10 coca cola sin azúcar para comer ahí
+deme dos tacos al pastor plis
+hola buenas 1 agua mineral y 6 torta de milanesa porfa
+hola tres pizza de jamón y queso y cuatro piza mexicana y 3 limonada natural nada más
+deme 6 hamburguesa clásica | 2 jugo de naranja please
+por favor 8 ensalada césar please
+buenas tardes 6 nuggets de pollo también 12 café americano también 3 alitas de pollo también 2 hot dog sencillo nomás
+voy a querer dos ensalada mixta también una hamburguesa con queso por favor
+1 hamburguesa hamburgesa doble pollo además dos hamburguesa doble pollo
+me pones ocho pizza pizza ranchera además 1 ensalada césar además 1 pizza de jamón y queso además 3 pizza de pizza de jamón y queso porfa
+hey seis nuggets de pollo | un par de limonada natural | 1 nuggets de pollo para llevar
+te encargo 5 pizza de pizza de jamón y queso luego dos pizza mexicana luego 8 hamburguesa doble pollo para aquí
+2 pizza ranchera y 3 agua mineral y 1 pizza mexicana
+dame cinco pizza hawaiana plis
+voy a querer 5 agua mineral además 2 pizza pizza margarita además 5x té helado por favor
+quisiera 10 hot dog sencillo + 8x pizza hawaiana + x3 papas fritas + 10 hamburguesa hamburguesa doble carne nada más
+cambia 2 café americano por 2 pizza ranchera
+quisiera 2 café americano nada más
+cambia diez coca cola por 12 orden de aros de cebolla
+por favor 10 coca cola sin azúcar aparte un par de pizza mexicana porfa
+te encargo una ensalada césar | un par de piza hawaiana plis
+3x pizza pizza ranchera + 12x café americano + 3 pizza de pizza de jamón y queso + 10 té helado + 8 ensalada césar
+me traes 3 té helado también 3 agua embotellada también tres hamburguesa mega también 6x ensalada ensalada mixta nomás
+para pedir 6 café americano, 2 coca cola sin azúcar, 12x pizza mexicana, 4 nuggets de pollo plis
+hola buenas 2x ensalada ensalada mixta + 3x pizza pizza mexicana + 12 agua embotellada + tres ensalada mixta gracias
+2 papas grandes además 4 torta de milanesa además dos agua mineral además una docena de pizza margarita además seis pizza ranchera
+buenos días x12 torta de milanesa y 3 ensalada ensalada césar
+qué tal tres hamburguesa hamburguesa mega plis
+quiero 4 hamburguesa hamburguesa doble pollo aparte 5x ensalada ensalada mixta para aquí
+necesito 2 jugo de naranja plis
+me pones 6 pizza piza mexicana | una pizza ranchera | x10 té helado | diez ensalada mixta para llevar
+hola buenas x2 limonada natural para comer ahí
+por favor seis papas fritas aparte tres hamburguesa con queso para llevar
+oye seis limonada natural; 2 nuggets de pollo; 2x hamburguesa hamburguesa mega nada más
+me gustaría 5 jugo de naranja + seis hamburguesa hamburguesa doble carne + 3 pizza de jamón y queso nomás
+un orden de aros de cebolla además 1 burrito de frijol además 3 coca cola además 4 pizza de pizza de jamón y queso
+buenas tardes 4 coca cola nada más
+pedido: ocho nuggets de pollo | cuatro ensalada ensalada césar
+agrega tres piza mexicana
+me das 8 agua embotellada nada más
+hola buenas 3 pizza hawaiana por favor
+seis pizza de jamón y queso luego cuatro hamburguesa mega luego cuatro ensalada césar
+me pones 12x piza pepperoni luego doce burrito de frijol luego dos pizza de jamón y queso luego 10 hamburguesa hamburguesa con queso plis
+hey tres pizza pizza pepperoni también dos pizza pepperoni
+hola buenas 6 tacos al pastor; 4 papas fritas porfa
+tráeme 5 hamburguesa con queso además 1x coca cola sin azúcar además cinco papas grandes para llevar
+quisiera 3 papas grandes please
+dame dos torta de milanesa además 8 quesadilla de queso
+quisiera 8 quesadilla de queso también 6 coca cola sin azúcar porfa
+4 hamburguesa clásica
+ocho café americano | 3 café americano | doce agua embotellada | un ensalada mixta | ocho pizza de jamón y queso
+hola 8 pizza mexicana; 8 pizza pepperoni nada más
+te encargo 4x ensalada césar nada más
+3 torta de milanesa
+tres pizza pizza ranchera
+3 ensalada ensalada mixta | 6 hamburguesa doble carne | un coca cola
+porfa 2 pizza hawaiana por favor
+voy a querer 1 hamburguesa doble carne plis
+quiero 1 té helado aparte 2 ensalada ensalada mixta aparte doce pizza mexicana aparte 3 pizza pizza pepperoni por favor
+12 papas grandes
+8 café americano | 2 pizza pepperoni
+voy a querer una jugo de naranja
+necesito x12 pizza pizza margarita; 3 quesadilla de queso porfa
+voy a querer 2 pizza pizza hawaiana plis
+porfa 10 papas fritas nomás
+oye 2 coca cola + un par de ensalada mixta + seis café americano porfa
+me das cinco papas grandes también 4 hamburguesa doble pollo también 12 piza margarita nada más
+para pedir cinco burrito de frijol también 3 papas grandes también 4 cocacola nada más
+agrega 10 pizza margarita
+1 pizza pizza ranchera luego una docena de burrito de frijol luego 3 hamburguesa clásica luego 12 quesadilla de queso para llevar
+diez tacos al pastor + 3x alitas de pollo
+para pedir 2 orden de aros de cebolla y 2 pizza pepperoni y 6x pizza de jamón y queso y 12x tacos al pastor gracias
+te encargo x4 papas grandes aparte tres pizza mexicana aparte 3 ensalada mixta nada más
+para pedir 4 hamburguesa hamburguesa doble carne y ocho limonada natural nomás
+4 pizza de jamón y queso
+necesito 10x limonada natural | una café americano | tres pizza ranchera porfa
+hola ocho nuggets de pollo nada más
+hola tres alitas de pollo | 2 hamburguesa mega
+qué tienen de comer
+2 pizza margarita + x10 hamburguesa hamburguesa con queso + 6 hamburguesa mega + ocho hamburguesa hamburguesa mega + 8 quesadilla de queso
+tráeme 4 orden de aros de cebolla también 2 hot dog sencillo también 2 hamburguesa hamburguesa con queso también x6 pizza pizza hawaiana por favor
+4 papas grandes y diez papas fritas y x3 tacos al pastor y 10 pizza de jamón y queso
+3 ensalada ensalada mixta | 6 jugo de naranja | 6 torta de milanesa | 5 hamburguesa doble carne
+me gustaría 5x ensalada cesar luego 2 hamburguesa clásica luego 2 quesadilla de queso luego un limonada natural porfa
+qué tal ocho ensalada mixta también 4 agua mineral también 3 té helado porfa
+por favor 6 coca cola también 2x burrito de frijol
+10 pizza mexicana + 1x pizza hawaiana + x4 pizza margarita + 4 torta de milanesa + 4 papas fritas
+me pones x3 té helado plis
+buen día 12 papas grandes aparte 10x agua mineral aparte 5x pizza mexicana aparte 3 hamburguesa con queso nada más
+necesito dos pizza de jamón y queso | 5 jugo de naranja | ocho jugo de naranja nomás
+un par de hamburguesa doble carne, 1 pizza pizza margarita, 3 jugo de naranja, 5 alitas de pollo
+oye cinco pizza de pizza de jamón y queso también cinco limonada natural también 10 quesadilla de queso también ocho pizza pizza mexicana para aquí
+porfa dos burrito de frijol luego diez orden de aros de cebolla luego doce hamburguesa con queso
+para pedir 2 hamburgesa doble carne nada más
+2 pizza pizza pepperoni
+me traes 4 papas grandes también 5 hamburguesa hamburguesa clásica nada más
+buenas tardes 5 jugo de naranja
+me traes 3 piza margarita además 2 orden de aros de cebolla nada más
+me traes una docena de hamburgesa clásica nada más
+me pones 8 café americano además 5x agua embotellada por favor
+dos papas grandes luego 1 papas fritas luego diez pizza de jamón y queso luego 10 hamburguesa doble pollo luego cuatro pizza pizza ranchera
+quiero 2 pizza de jamón y queso + 6 quesadilla de queso + 4 coca cola nada más
+seis ensalada ensalada mixta + 5 pizza hawaiana + 6 café americano + 5 té helado
+mi pedido: un quesadilla de queso, 3 café americano
+buenas tardes 2 jugo de naranja; x2 coca cola; un par de pizza hawaiana para comer ahí
+8 burrito de frijol, 5 hamburguesa con queso, seis quesadilla de queso
+disculpa 2 quesadilla de queso además diez tacos al pastor además 10x agua embotellada además cinco hamburguesa hamburguesa con queso nada más
+me mandas 3 coca cola please
+me das un jugo de naranja además dos jugo de naranja además x6 torta de milanesa gracias
+menú
+quiero cuatro pizza pizza margarita, 1 té helado, 12 torta de milanesa nada más
+quisiera tres ensalada cesar por favor
+me pones 3x ensalada césar aparte 4x pizza de pizza de jamón y queso porfa
+buenas tardes 3 ensalada ensalada mixta también 6 café americano también 5 café americano para aquí
+dame 2 tacos al pastor además 3 hot dog sencillo además 10 jugo de naranja además 6 orden de aros de cebolla porfa
+ponme 2 agua embotellada luego 12 pizza hawaiana luego 8 nuggets de pollo luego 2 hamburguesa hamburguesa clásica por favor
+buenas noches cinco hamburguesa hamburguesa doble pollo + un par de tacos al pastor
+me traes 3 torta de milanesa aparte 3 hamburguesa doble carne aparte x10 agua embotellada por favor
+2 jugo de naranja + cinco ensalada mixta + 1 té helado + tres hamburguesa doble pollo + 6 agua embotellada
+ponme cuatro té helado por favor
+hola buenas doce ensalada ensalada césar | 1 agua mineral | doce burrito de frijol para comer ahí
+deme dos té helado gracias
+por favor 6 torta de milanesa además doce alitas de pollo además 3 té helado para llevar
+hola 4 nuggets de pollo nomás
+voy a querer 1 agua embotellada luego 4 quesadilla de queso luego 12 limonada natural para comer ahí
+hey 5 pizza hawaiana y seis nuggets de pollo nada más
+hola 4 hot dog sencillo luego 2 hamburguesa mega para comer ahí
+para pedir cinco orden de aros de cebolla también un par de ensalada césar
+buen día 2 coca cola sin azúcar; 5 pizza pizza pepperoni para aquí
+me gustaría un pizza mexicana + tres burrito de frijol
+voy a querer 3 burrito de frijol | 2 pizza pizza pepperoni | 6 hamburguesa hamburguesa doble pollo para comer ahí
+buen día 3 pizza de jamón y queso y 3 papas grandes por favor
+quisiera 6x agua embotellada + 3 café americano + 8 té helado + 3 pizza de jamón y queso please
+2 orden de aros de cebolla además 6 burrito de frijol además x5 tacos al pastor gracias
+anoto: 10 hot dog sencillo, tres torta de milanesa, diez papas grandes, 12x papas grandes
+hola buenas 8 papas fritas + 3 tacos al pastor + cuatro alitas de pollo
+hola buenas una docena de piza pepperoni; un par de café americano porfa
+buenas tardes 6 limonada natural también 6x pizza pizza margarita please
+ponme 2 piza hawaiana + 4x hamburguesa doble carne + tres pizza hawaiana + 12 orden de aros de cebolla por favor
+8 papas fritas y tres ensalada mixta y 12x quesadilla de queso y 3 ensalada césar
+disculpa 6 hamburguesa doble carne; tres burrito de frijol; diez hamburgesa doble carne; tres pizza hawaiana gracias
+buen día 12x hamburguesa con queso para llevar
+tres nuggets de pollo
+ponme ocho ensalada césar para llevar
+anoto: ocho limonada natural, 3 hamburguesa con queso
+1 coca cola sin azúcar
+oye una nuggets de pollo además 2 hamburguesa hamburguesa doble pollo además x3 ensalada mixta además 10 café americano porfa
+10 ensalada césar
+tráeme un pizza ranchera | 1 café americano
+te encargo 3 ensalada mixta aparte doce pizza margarita aparte un hamburguesa mega aparte 8 quesadilla de queso para llevar
+me traes 1 agua embotellada aparte 2 café americano
+buenas noches ocho hamburguesa hamburguesa con queso también 5 papas grandes plis
+deme 5 ensalada ensalada césar + 5 pizza de piza de jamón y queso + 5 torta de milanesa
+para pedir un orden de aros de cebolla para aquí
+deme 6 limonada natural también doce pizza mexicana también 2 coca cola también 2x ensalada césar por favor
+un par de coca cola sin azúcar; 12 pizza pizza pepperoni
+tres pizza margarita porfa
+8 hamburgesa mega y 12 papas grandes y cuatro ensalada mixta
+anoto: 12 agua embotellada | 3 coca cola | 2 quesadilla de queso
+quisiera x3 torta de milanesa | 2 nuggets de pollo
+hola una docena de hamburguesa mega además una docena de pizza mexicana para comer ahí
+hola buenas 3 hamburguesa doble carne + 5 burrito de frijol + 3 pizza de jamón y queso nomás
+oye 6 limonada natural aparte una hamburguesa mega aparte cuatro jugo de naranja aparte 4 pizza pepperoni plis
+diez café americano
+qué tal 3 ensalada mixta plis
+quisiera x4 alitas de pollo y tres hamburgesa con queso y 2 pizza pizza pepperoni y x12 agua mineral para aquí
+buen día dos papas fritas + 12 café americano + diez pizza de jamón y queso + diez torta de milanesa nomás
+oye tres pizza margarita + una hamburguesa clásica + 5 burrito de frijol + 5 coca cola nomás
+me pones 2 coca cola sin azúcar luego 1x agua mineral luego 2 tacos al pastor luego x3 orden de aros de cebolla nomás
+tráeme dos café americano | una docena de coca cola sin azúcar please
+para pedir dos nuggets de pollo; un hot dog sencillo; 8 burrito de frijol porfa
+dame x6 coca cola sin azúcar plis
+anoto: 4x papas grandes, una docena de alitas de pollo, 12 hamburguesa clásica
+10 té helado
+mi pedido: un coca cola | 4 coca cola | ocho pizza hawaiana | ocho agua mineral
+porfa una papas fritas aparte tres hamburguesa doble carne aparte 10 café americano plis
+porfa 6 quesadilla de queso además 8x agua mineral plis
+3 orden de aros de cebolla
+buen día 2 hot dog sencillo por favor
+4 hot dog sencillo también tres café americano también 8x tacos al pastor
+por favor 1 hamburguesa clásica luego 4 hamburguesa mega para aquí
+me pones 3x limonada natural para aquí
+6 hamburguesa con queso luego 1 café americano luego tres ensalada ensalada césar
+me gustaría 6 nuggets de pollo luego una coca cola
+6 orden de aros de cebolla, un par de café americano, seis jugo de naranja
+quisiera tres pizza mexicana nomás
+porfa 5 hamburguesa hamburguesa clásica y seis jugo de naranja y cinco tacos al pastor please
+1 hamburguesa mega
+te encargo 4 té helado please
+porfa 3 torta de milanesa | 10 ensalada mixta | tres hamburguesa hamburguesa clásica
+hola diez coca cola sin azúcar también 2 agua mineral también 4 pizza pizza hawaiana también 8 papas grandes nada más
+quisiera 1 hamburguesa doble pollo y un hamburguesa con queso y 2 agua embotellada para comer ahí
+por favor 3 café americano luego 4 alitas de pollo luego 2 nuggets de pollo para llevar
+qué tal 3 hot dog sencillo please
+oye 10 té helado, tres hot dog sencillo, un par de pizza pepperoni porfa
+12 nuggets de pollo, 12x limonada natural, ocho pizza pepperoni, 2 agua mineral
+oye x2 pizza de pizza de jamón y queso luego ocho papas grandes para comer ahí
+hey 4 hamburguesa mega también 1 hamburguesa doble carne también 12 alitas de pollo también 2 papas grandes para comer ahí
+mi pedido: ocho torta de milanesa, 4 ensalada mixta, 2 pizza pizza margarita
+buenas noches 10x café americano; dos café americano
+buenas noches tres jugo de naranja para aquí
+tráeme 1 pizza de jamón y queso luego 3 hamburguesa clásica please
+diez agua mineral
+qué tal cuatro limonada natural; 3 orden de aros de cebolla; 6 ensalada ensalada mixta; 4 jugo de naranja please
+buenas noches cuatro hamburguesa doble carne además tres coca cola sin azúcar además doce papas grandes plis
+buen día un par de pizza ranchera; un agua embotellada; x5 pizza pizza pepperoni; 8 ensalada mixta please
+doce papas grandes además 1 limonada natural además seis pizza ranchera además 3 pizza ranchera además dos limonada natural
+buenas tardes 10 ensalada ensalada césar aparte x5 tacos al pastor aparte 8 hamburgesa doble pollo nomás
+tres hamburguesa clásica también tres orden de aros de cebolla para comer ahí
+me das 4 agua embotellada please
+oye tres pizza de jamón y queso además 6 torta de milanesa para aquí
+10 tacos al pastor | tres pizza pizza mexicana | 2x tacos al pastor
+buenas noches diez alitas de pollo para comer ahí
+dame dos agua embotellada + 6 pizza mexicana + 8 hamburguesa mega + cuatro limonada natural nomás
+dame cinco pizza de jamón y queso también 2 agua embotellada también una docena de pizza ranchera también 4 jugo de naranja gracias
+tráeme 5 pizza pizza mexicana + un par de alitas de pollo + 2 pizza pizza ranchera
+6 orden de aros de cebolla, 3 tacos al pastor para llevar
+necesito 1x pizza de jamón y queso | x1 pizza mexicana nada más
+buenas tardes tres ensalada mixta, x1 hamburguesa hamburguesa doble carne porfa
+oye cinco pizza de jamón y queso; tres quesadilla de queso; un par de pizza pizza pepperoni porfa
+oye un pizza pepperoni también 3 café americano para comer ahí
+voy a querer 2 pizza margarita please
+4 jugo de naranja
+mi pedido: tres coca cola | 8 ensalada césar | diez papas fritas | 2 ensalada ensalada césar
+doce coca cola además 1 hamburguesa hamburguesa doble pollo además 2 alitas de pollo
+5 pizza hawaiana luego 2 ensalada ensalada mixta luego dos hamburguesa hamburguesa doble pollo
+mi pedido: x3 hamburguesa doble carne, 2x alitas de pollo, 4 hamburguesa hamburguesa doble pollo
+10x burrito de frijol
+anoto: 8 burrito de frijol | 8 torta de milanesa | ocho tacos al pastor
+8 hamburguesa hamburguesa con queso; 1x pizza pizza margarita; cuatro agua embotellada para llevar
+ponme 8 pizza de jamón y queso para llevar
+te encargo 5 café americano luego 2 pizza pizza pepperoni luego tres hamburguesa con queso luego un agua embotellada nomás
+2x pizza pizza pepperoni también 3 pizza de pizza de jamón y queso también 3 piza hawaiana también doce hot dog sencillo
+4 quesadilla de queso + cuatro coca cola sin azúcar + 6 coca cola sin azúcar + dos hamburguesa mega plis
+te encargo 10 pizza de jamón y queso además 1 hamburguesa mega además tres agua mineral
+buenas noches 12x agua embotellada + 8 ensalada ensalada césar + 5 nuggets de pollo + 1 hamburguesa hamburgesa mega para comer ahí
+un par de ensalada césar
+tráeme 12 limonada natural nada más
+una hot dog sencillo plis
+por favor ocho coca cola plis
+buenos días 4 hamburguesa con queso también 12 hamburguesa clásica para comer ahí
+hola buenas diez pizza pizza margarita + seis jugo de naranja nada más
+deme 2 pizza ranchera aparte 2 alitas de pollo aparte 8 torta de milanesa aparte 3 hamburguesa hamburguesa clásica nomás
+buen día x12 agua embotellada; cuatro pizza pepperoni; cuatro pizza de jamón y queso nada más
+3 hot dog sencillo, 12 pizza de jamón y queso, dos hamburguesa clásica, seis tacos al pastor
+voy a querer 4 té helado gracias
+mi pedido: tres burrito de frijol | 3 nuggets de pollo
+quisiera 3x tacos al pastor + x12 hamburguesa hamburguesa con queso porfa
+deme 3 hot dog sencillo además tres coca cola además seis hamburguesa mega además 1 coca cola por favor
+tráeme dos hot dog sencillo y 5 nuggets de pollo y 5 pizza de jamón y queso
+te encargo 4 pizza pizza margarita para comer ahí
+3 tacos al pastor | diez pizza ranchera
+hey dos nuggets de pollo plis
+deme 3 pizza margarita | 5 hamburguesa clásica | 2 ensalada césar | dos agua embotellada para aquí
+un par de té helado también 2 hot dog sencillo también 1 jugo de naranja también 5x quesadilla de queso nada más
+mi pedido: 12 nuggets de pollo | ocho tacos al pastor
+buenas noches 12 pizza ranchera aparte cinco burrito de frijol aparte dos té helado plis
+ocho alitas de pollo también 8 pizza de pizza de jamón y queso también 6 papas fritas también tres burrito de frijol también 8 burrito de frijol
+12 hamburguesa hamburguesa clásica
+12x nuggets de pollo también cinco hamburguesa hamburguesa mega también 6 hamburguesa doble pollo también un hot dog sencillo
+me pones 3 pizza pizza pepperoni también seis jugo de naranja también 3 burrito de frijol please
+me gustaría 2 burrito de frijol | un par de agua embotellada para llevar
+10x papas grandes + una docena de pizza pepperoni + 1 hamburguesa hamburguesa mega + 1 hamburguesa hamburguesa doble carne para llevar
+buenas tardes un par de pizza de jamón y queso; 1 té helado; 2 pizza pepperoni para aquí
+12 papas grandes aparte 1 pizza pizza ranchera aparte 6 burrito de frijol aparte 2 té helado please
+1x nuggets de pollo aparte una docena de papas fritas
+me mandas x1 papas fritas; tres hamburgesa doble pollo; 8 coca cola; 2 café americano gracias
+anoto: 2 pizza de jamón y queso | x3 jugo de naranja | 10 café americano | 3 hamburguesa clásica
+quiero 1 pizza ranchera y 12x torta de milanesa gracias
+1 alitas de pollo | 2 ensalada césar | 3 hamburgesa doble carne | 3 jugo de naranja para llevar
+buenos días diez coca cola sin azúcar + x2 papas grandes + una docena de limonada natural para aquí
+10 té helado además un par de pizza de jamón y queso nomás
+buen día tres pizza ranchera y un par de agua mineral y 3 té helado y 6 tacos al pastor para comer ahí
+cinco pizza de jamón y queso además seis limonada natural además diez hamburgesa mega
+tráeme 6 ensalada césar | tres hamburguesa hamburguesa clásica plis
+quisiera 1 hamburguesa doble pollo para comer ahí
+hola 4 pizza de jamón y queso, 3 pizza de jamón y queso, 5 piza hawaiana por favor
+un par de torta de milanesa luego 12x burrito de frijol luego 5 hamburguesa mega
+3 hot dog sencillo + 6 papas grandes + una docena de hamburguesa clásica + cinco alitas de pollo + 10 agua mineral
+disculpa 2 papas grandes please
+3 limonada natural también un par de limonada natural también 12 nuggets de pollo también 1 burrito de frijol también 5 tacos al pastor
+me gustaría 8 quesadilla de queso plis
+buenas tardes 4x hamburguesa mega y 8x ensalada césar y tres ensalada césar please
+hola buenas 3x hamburguesa doble pollo | 10 ensalada mixta nomás
+me das un par de nuggets de pollo | 4 hamburguesa hamburguesa mega por favor
+súmale 5 pizza margarita
+10 papas fritas | 5 pizza hawaiana | seis torta de milanesa
+seis torta de milanesa | 8 café americano por favor
+agrega seis pizza pepperoni
+12x hamburguesa mega también dos papas fritas también 6 coca cola sin azúcar gracias
+quisiera cuatro pizza ranchera aparte 6 hamburguesa con queso aparte 3 jugo de naranja please
+hey 3 hot dog sencillo, 3 agua mineral
+buen día cinco burrito de frijol luego ocho pizza pizza ranchera
+tráeme seis burrito de frijol aparte 10 pizza de pizza de jamón y queso gracias
+6 jugo de naranja aparte 4 agua embotellada aparte seis coca cola aparte 10 hamburguesa con queso para aquí
+te encargo 6 torta de milanesa también 8x pizza pepperoni también 5 alitas de pollo también 2 agua embotellada plis
+anoto: 1 burrito de frijol, 3x pizza ranchera, 6 ensalada césar
+dame cinco pizza de jamón y queso y 1x pizza de pizza de jamón y queso
+hola buenas 3 nuggets de pollo | 3 papas grandes | 6 hamburguesa mega
+ponme 3 hamburguesa doble pollo + dos hamburguesa hamburguesa clásica porfa
+disculpa 3 agua mineral también 12 hamburguesa doble pollo también 1x agua mineral también 1x café americano porfa
+10 nuggets de pollo
+hey 12 hamburguesa hamburguesa doble pollo además dos hamburguesa hamburguesa con queso además 2 hamburguesa hamburguesa doble pollo además una limonada natural nada más
+porfa 6 ensalada mixta y cuatro hamburguesa mega y 3 limonada natural para aquí
+me gustaría 3 café americano + 3 piza de jamón y queso + 3x agua embotellada + 4 hamburguesa con queso para llevar
+disculpa 2x agua mineral aparte 4 hamburguesa mega aparte 3 coca cola aparte 5 nuggets de pollo
+5x nuggets de pollo, 5 burrito de frijol, 2 ensalada ensalada cesar
+para pedir doce hamburgesa doble pollo luego 4 pizza ranchera luego 8 orden de aros de cebolla luego 3 agua mineral
+deme 4 ensalada césar además seis pizza margarita además una docena de burrito de frijol además 4 pizza pizza pepperoni para aquí
+porfa 3 hamburguesa con queso, una agua mineral, x2 hamburgesa clásica, cuatro agua embotellada para comer ahí
+disculpa 3 ensalada ensalada césar luego 5 hamburguesa hamburguesa mega luego cinco orden de aros de cebolla por favor
+dame x6 orden de aros de cebolla luego 3 alitas de pollo luego 6 ensalada mixta gracias
+dos limonada natural, 8 papas grandes, 10 orden de aros de cebolla
+voy a querer un hamburguesa hamburguesa con queso + 10 pizza pizza mexicana + un par de burrito de frijol por favor
+quiero seis pizza pizza pepperoni además 6 coca cola sin azúcar para aquí
+buenos días cuatro pizza hawaiana también una docena de ensalada mixta nada más
+te encargo 5 alitas de pollo además doce jugo de naranja porfa
+ponme tres hamburguesa doble pollo por favor
+voy a querer 12 ensalada césar luego una agua embotellada luego 10 pizza pepperoni plis
+me gustaría 6x limonada natural, 3 té helado, 12 hot dog sencillo, tres coca cola sin azúcar
+me pones dos nuggets de pollo por favor
+pedido: 2 ensalada ensalada césar | 10 cocacola sin azúcar | una ensalada ensalada césar | 12x orden de aros de cebolla
+5 alitas de pollo aparte 8 pizza pizza hawaiana aparte cuatro ensalada mixta aparte doce ensalada mixta
+disculpa dos tacos al pastor luego 8 hamburgesa doble carne nomás
+buenos días 5 limonada natural aparte dos ensalada mixta para comer ahí
+buenos días un par de tacos al pastor además 12 piza de jamón y queso además un par de papas grandes además 8 agua mineral
+me das ocho torta de milanesa para aquí
+seis hamburguesa hamburgesa doble pollo también una docena de orden de aros de cebolla
+buen día 10 hamburguesa mega aparte una docena de jugo de naranja aparte seis jugo de naranja aparte dos coca cola para llevar
+tráeme tres hot dog sencillo, 3x papas fritas por favor
+tres pizza margarita, 4 hamburguesa doble carne
+hola 5 coca cola también un par de pizza pizza mexicana también 10 pizza piza pepperoni también ocho pizza de jamón y queso please
+en vez de cinco tacos al pastor pon 8 papas grandes
+tráeme 8 hamburgesa clásica nada más
+6 hamburguesa doble pollo | 2 té helado
+voy a querer un par de agua mineral para aquí
+buenas noches un par de pizza hawaiana | dos torta de milanesa gracias
+buenos días 2 pizza pizza margarita también 5x ensalada ensalada mixta please
+quisiera tres papas fritas aparte x2 pizza piza mexicana para aquí
+dame 3 hamburguesa con queso, 5 café americano, 12 limonada natural
+me traes 8 alitas de pollo además doce nuggets de pollo please
+me das 10 coca cola sin azúcar, tres hamburguesa hamburguesa doble carne nomás
+4 piza ranchera, x3 alitas de pollo, seis orden de aros de cebolla, 4 coca cola, dos alitas de pollo
+quiero 10 pizza pizza margarita y 8 pizza hawaiana nada más
+8 café americano, diez hamburguesa hamburguesa mega, 1x café americano, 2 papas fritas, 6 torta de milanesa
+porfa 6 pizza hawaiana nomás
+deme dos nuggets de pollo nomás
+porfa 3 coca cola sin azúcar | 3 jugo de naranja | un papas fritas para comer ahí
+oye 1 jugo de naranja aparte 10 pizza margarita porfa
+tráeme 5 nuggets de pollo luego 10x tacos al pastor para aquí
+hola un par de té helado, un par de té helado, 3 agua mineral nomás
+buenos días 3 limonada natural luego 2 torta de milanesa luego 6 hamburguesa con queso nada más
+disculpa 6 pizza margarita
+porfa 12 pizza pepperoni; 4 pizza pizza mexicana; un par de papas grandes; x4 agua embotellada please
+4 hamburguesa hamburguesa mega
+quiero 4 torta de milanesa y 5 burrito de frijol nomás
+8 té helado + 3 alitas de pollo
+5 hamburguesa hamburguesa mega
+me traes 2 hamburguesa hamburguesa mega además un par de orden de aros de cebolla nomás
+10 pizza de jamón y queso también seis tacos al pastor también 10 coca cola sin azúcar
+un par de té helado | un par de burrito de frijol | 12 hamburguesa hamburguesa con queso | 3 piza margarita
+quiero 2 pizza ranchera | 1 té helado | 2 pizza hawaiana | cinco ensalada ensalada mixta nomás
+para pedir 5 pizza de jamón y queso además cuatro café americano
+quiero 10 pizza pizza hawaiana y 8 hamburguesa doble pollo por favor
+quisiera cuatro hamburguesa clásica, 8 hamburguesa con queso, un par de tacos al pastor porfa
+ponme 10 papas fritas plis
+tráeme 12 burrito de frijol y diez hamburguesa doble carne y 8 tacos al pastor por favor
+2 pizza hawaiana; 4 ensalada césar; 6 hamburguesa doble carne
+tres hamburgesa doble carne + 10 hamburguesa doble carne para aquí
+necesito 3 nuggets de pollo aparte 2 café americano please
+3 coca cola sin azúcar
+4 coca cola aparte 4 hamburguesa doble pollo aparte 1 pizza de piza de jamón y queso
+pedido: una hamburguesa mega | 2 jugo de naranja | 2 coca cola sin azúcar | 8 tacos al pastor
+diez ensalada mixta por favor
+buenas tardes cinco hamburguesa clásica, 3 ensalada ensalada cesar
+deme 8 hamburgesa mega, 12 hamburguesa hamburgesa doble carne, 8 pizza pizza ranchera para aquí
+porfa 3 burrito de frijol + 4 alitas de pollo + tres pizza de jamón y queso + cuatro cocacola nomás
+quisiera doce té helado y dos ensalada mixta nomás
+buenas tardes seis papas grandes + 4 pizza pizza mexicana + 8 pizza margarita nada más
+necesito 3 hamburguesa hamburguesa con queso además ocho burrito de frijol gracias
+tres hamburguesa clásica | 3 hamburguesa clásica | 3 burrito de frijol | 4 papas fritas | ocho pizza margarita
+disculpa ocho orden de aros de cebolla además 10 hamburguesa doble carne nada más
+deme un par de hamburguesa con queso gracias
+lista de precios
+te encargo 10 limonada natural; 3 pizza hawaiana; ocho tacos al pastor porfa
+anoto: x3 quesadilla de queso, 5 quesadilla de queso, 6 ensalada ensalada mixta, 3 orden de aros de cebolla
+quiero 2x torta de milanesa + 4 ensalada césar + 3x tacos al pastor nada más
+mi pedido: 2x café americano, 1 quesadilla de queso, un par de hamburguesa con queso, 1 tacos al pastor
+hola x8 hot dog sencillo | 2 coca cola | 12 hamburguesa hamburguesa mega para llevar
+deme 6 hamburgesa clásica también 2 hot dog sencillo también tres hamburguesa hamburgesa doble pollo para comer ahí
+5 nuggets de pollo, 8 jugo de naranja, 6 limonada natural
+voy a querer 6 hamburguesa hamburguesa mega además 5 hamburguesa hamburguesa mega please
+hola buenas 3 coca cola nomás
+qué tal 2 hamburguesa con queso | dos pizza de jamón y queso | una docena de coca cola plis
+hey 10 alitas de pollo también dos pizza de jamón y queso también 6 papas grandes también cinco hamburguesa hamburguesa con queso nada más
+agrega x3 papas grandes
+tráeme 3 burrito de frijol para aquí
+buen día 2 hot dog sencillo nomás
+por favor cinco ensalada césar también 5 limonada natural también una docena de hamburguesa doble carne nomás
+dos hamburguesa doble pollo también 4 agua mineral también seis ensalada césar también 12 agua mineral también un par de té helado
+voy a querer 2 papas fritas; x12 torta de milanesa; 2 café americano; seis ensalada mixta
+voy a querer tres hamburguesa doble carne para aquí
+porfa 8 hot dog sencillo; cinco tacos al pastor; 8 torta de milanesa plis
+en vez de x10 coca cola pon cuatro piza de jamón y queso
+una papas fritas + 10 limonada natural + cuatro agua mineral + 5 hot dog sencillo + 10 nuggets de pollo
+dame diez hot dog sencillo + 8 burrito de frijol + 4 hot dog sencillo nada más
+por favor diez pizza de jamón y queso please
+anoto: 3 torta de milanesa | 3 orden de aros de cebolla
+ponme 4 tacos al pastor aparte tres pizza mexicana aparte x5 coca cola sin azúcar aparte 2x ensalada ensalada mixta para llevar
+buen día 3 agua embotellada + 2 hamburguesa clásica + una hamburguesa doble pollo + 2 hot dog sencillo nada más
+quiero doce jugo de naranja luego un pizza ranchera luego 12 papas grandes plis
+para pedir 4 nuggets de pollo, doce hamburguesa con queso, 4 hamburguesa doble carne por favor
+me pones 10 pizza hawaiana también 6 ensalada mixta también ocho coca cola sin azúcar también 5 alitas de pollo por favor
+ponme un burrito de frijol luego un par de limonada natural nomás
+quisiera 10 papas fritas por favor
+porfa 3 papas fritas además x2 pizza pizza ranchera además 6x pizza mexicana gracias
+mi pedido: 2 hamburgesa con queso, 10 papas grandes, tres agua mineral, 3 jugo de naranja
+hola buenas 3x té helado; 1 papas grandes; diez tacos al pastor para comer ahí
+2 pizza mexicana
+x10 hot dog sencillo | 12x pizza de piza de jamón y queso | 2 ensalada mixta | 3 pizza hawaiana | cinco tacos al pastor
+oye seis coca cola; 12 burrito de frijol; ocho coca cola sin azúcar; 4 pizza de jamón y queso gracias
+anoto: 6 agua embotellada, 2 coca cola sin azúcar, 3 hamburguesa hamburguesa doble pollo, 1 té helado
+me gustaría 10x tacos al pastor plis
+qué tal un par de hamburguesa hamburgesa doble carne | 4 limonada natural para aquí
+hola un par de hamburguesa hamburguesa doble carne plis
+porfa un papas fritas, 3 hamburguesa doble pollo para comer ahí
+buenas noches seis hamburguesa doble carne + 8 café americano + 3 papas fritas + 1x hamburguesa doble pollo porfa
+3 papas fritas además un par de jugo de naranja además ocho coca cola además 3 orden de aros de cebolla además seis cocacola sin azúcar
+2 agua mineral + x4 pizza margarita + 10x quesadilla de queso + un par de coca cola + 3 limonada natural
+hola 3x pizza de jamón y queso; 2 hamburguesa hamburguesa doble carne; 4 papas fritas para comer ahí
+x10 pizza de jamón y queso también 6 torta de milanesa
+8 nuggets de pollo aparte 3 hot dog sencillo aparte 6 jugo de naranja aparte cinco coca cola
+hey x4 ensalada mixta | dos orden de aros de cebolla para comer ahí
+disculpa 2 hamburguesa con queso please
+buenas tardes 5 agua embotellada + 3x limonada natural nada más
+buenos días 8 café americano | 8 coca cola sin azúcar | 2 agua embotellada nada más
+anoto: tres burrito de frijol | tres hamburguesa doble carne | 6x pizza pizza ranchera | cinco quesadilla de queso
+tráeme 8 tacos al pastor; una docena de hamburguesa doble carne plis
+buen día 5 burrito de frijol aparte 1x alitas de pollo aparte 4 pizza de pizza de jamón y queso aparte 3 coca cola para aquí
+la carta
+me pones 5 torta de milanesa aparte 8 hamburguesa clásica aparte 5 agua embotellada nomás
+cuatro pizza pepperoni aparte tres hamburguesa hamburguesa mega
+buenas noches 2 pizza margarita luego un ensalada césar luego tres torta de milanesa porfa
+me das diez jugo de naranja, ocho coca cola sin azúcar, 1 pizza ranchera plis
+dame tres hot dog sencillo, 2 quesadilla de queso, una docena de jugo de naranja nomás
+2x orden de aros de cebolla y 3 pizza pizza mexicana
+tres hamburgesa clásica | una quesadilla de queso | 12 torta de milanesa | 8 tacos al pastor
+2 orden de aros de cebolla también 3 alitas de pollo también 2 jugo de naranja también 2 pizza mexicana también 5x pizza mexicana
+me das 2x té helado para llevar
+dos orden de aros de cebolla, 5 burrito de frijol para comer ahí
+ponme 5x pizza pepperoni, 3 hamburguesa clásica, 3x hamburguesa doble carne, una docena de torta de milanesa gracias
+mi pedido: 2 pizza pepperoni, 3 tacos al pastor, x2 ensalada césar
+diez burrito de frijol
+10 burrito de frijol aparte x3 pizza pepperoni aparte 4 hamburguesa doble pollo gracias
+me gustaría seis ensalada ensalada mixta, diez hamburguesa mega, 1 coca cola, un ensalada mixta para aquí
+quisiera x5 agua embotellada, 10 limonada natural, 3 ensalada mixta, doce hot dog sencillo nomás
+3 nuggets de pollo también 3 coca cola también 2 ensalada mixta también 12x alitas de pollo también 2 ensalada mixta
+10 torta de milanesa | ocho hot dog sencillo | tres orden de aros de cebolla | 2 burrito de frijol
+hey 8 pizza pizza margarita, un par de tacos al pastor, 2 pizza de jamón y queso para comer ahí
+hey 4 pizza de jamón y queso | 2 papas fritas | 2 papas fritas | 8x hamburguesa clásica nada más
+ponme 10 ensalada mixta aparte un par de pizza pepperoni aparte 5 pizza de pizza de jamón y queso gracias
+hola buenas 3 hamburguesa clásica y un par de hot dog sencillo y 3 agua embotellada y diez hamburguesa doble carne
+deme 4 coca cola además tres pizza pizza margarita además 10x ensalada césar
+me pones 3 pizza margarita nomás
+te encargo seis papas fritas, 10 agua embotellada por favor
+voy a querer tres pizza margarita; una docena de limonada natural; 10 hamburguesa doble pollo; diez coca cola para aquí
+quisiera seis limonada natural; 12 hot dog sencillo para llevar
+deme 12x pizza margarita | 2 té helado | 5 café americano plis
+me traes 2x limonada natural + 2x burrito de frijol + 12 agua mineral + una docena de café americano nomás
+buenas noches cinco hamburguesa clásica + 10 pizza hawaiana + seis tacos al pastor para aquí
+deme x5 ensalada césar también dos hamburguesa clásica nomás
+buenas tardes un par de pizza de jamón y queso además 2 pizza margarita nomás
+ponme 6x nuggets de pollo además una nuggets de pollo además un café americano además 3 coca cola nomás
+pedido: ocho quesadilla de queso | cinco coca cola | 12 papas grandes | tres pizza hawaiana
+8 agua mineral
+hola buenas 8 jugo de naranja gracias
+me das 6 alitas de pollo también 1 hamburguesa hamburguesa mega nada más
+para pedir 1 hamburguesa doble carne, tres papas grandes, 3 café americano
+voy a querer 5 papas fritas, dos té helado, tres orden de aros de cebolla, cinco hamburguesa clásica gracias
+tráeme 2 café americano aparte 10 coca cola sin azúcar
+2 papas grandes + 2 papas fritas + cuatro pizza pizza hawaiana + dos pizza pizza hawaiana
+dos hamburgesa con queso; doce coca cola sin azúcar para aquí
+mi pedido: 3 papas grandes | 6 hot dog sencillo | 3 papas fritas
+mi pedido: 5 ensalada mixta, 4x orden de aros de cebolla
+anoto: 12 coca cola, 3 hamburguesa hamburguesa doble pollo
+me gustaría 12 papas fritas también 5 nuggets de pollo
+para pedir ocho hamburguesa mega además tres burrito de frijol además 3 café americano además un café americano please
+quisiera 12 burrito de frijol, 10 pizza pizza mexicana, 6 agua embotellada por favor
+necesito tres burrito de frijol + 1 café americano + 10 nuggets de pollo + 2 pizza pizza mexicana para aquí
+10x hot dog sencillo | cuatro hot dog sencillo | 10 hamburguesa clásica
+3 papas grandes, dos hamburguesa con queso
+agrega 2 hamburguesa hamburguesa mega
+2x hamburguesa clásica + 2 torta de milanesa + 5 té helado + 5 torta de milanesa
+cinco burrito de frijol, tres agua embotellada
+2 hot dog sencillo; dos pizza mexicana nada más
+hola buenas 1 papas grandes | 5 agua embotellada plis
+quiero 2 agua mineral | 1 hamburgesa clásica | 1x burrito de frijol | 5 alitas de pollo por favor
+tres hamburguesa doble carne también diez té helado
+ponme doce nuggets de pollo para llevar
+4 hamburguesa doble carne | 3 agua embotellada
+10 nuggets de pollo y 3 pizza pepperoni y una docena de nuggets de pollo y 6 ensalada ensalada césar y 3 hamburguesa doble pollo
+mi pedido: cinco hamburguesa doble carne | 10 jugo de naranja
+qué tal 1x hamburgesa mega; 5 nuggets de pollo plis
+quisiera 6 piza ranchera aparte seis pizza margarita aparte tres papas fritas aparte 5 hamburguesa doble carne para comer ahí
+dame 10 ensalada mixta, un par de hamburguesa doble pollo, 10 jugo de naranja, x6 hot dog sencillo gracias
+quiero 4 burrito de frijol, un par de pizza piza ranchera porfa
+dame cinco ensalada ensalada césar | 12 agua mineral | 8 hot dog sencillo | 2 hamburguesa hamburguesa clásica nada más
+en vez de 1 hamburguesa hamburguesa mega pon tres hamburguesa hamburguesa mega
+ponme 5 papas grandes; seis pizza ranchera; diez hot dog sencillo; 10 tacos al pastor porfa
+hola 2 nuggets de pollo | una docena de coca cola sin azúcar | ocho pizza ranchera nomás
+hey un par de pizza hawaiana también 2 ensalada césar también 3 burrito de frijol gracias
+una café americano
+3 tacos al pastor, 3 quesadilla de queso, 12 papas fritas, 2 coca cola sin azúcar
+tráeme 1 hamburguesa doble carne gracias
+quiero un par de hamburguesa hamburguesa con queso, 1 coca cola sin azúcar, 2 papas grandes, 3 pizza pizza pepperoni para llevar
+me traes 12 papas fritas para comer ahí
+cinco jugo de naranja y un par de papas fritas
+necesito 5 pizza ranchera + 2 nuggets de pollo + tres ensalada mixta + 3 quesadilla de queso gracias
+hey 3 burrito de frijol porfa
+3 hamburguesa clásica también 4x pizza ranchera
+necesito x6 hamburguesa mega, x12 agua embotellada plis
+me gustaría 2 hamburguesa doble pollo
+12 hamburguesa clásica
+para pedir 3 hamburguesa doble pollo gracias
+tráeme 10 hot dog sencillo | un hot dog sencillo | 6x agua embotellada para aquí
+dos agua mineral + x6 hamburguesa hamburguesa clásica + 4 pizza de jamón y queso + 6x hamburguesa con queso + 1 ensalada ensalada mixta
+porfa 3 agua embotellada + 12 agua embotellada para comer ahí
+mi pedido: tres té helado | un par de torta de milanesa | 4x ensalada ensalada césar
+anoto: tres pizza ranchera | 3 papas fritas | una docena de piza de jamón y queso
+quiero 5 hamburguesa doble pollo; 2x burrito de frijol
+mi pedido: 10 jugo de naranja | 1 orden de aros de cebolla | 8 alitas de pollo
+pedido: cinco torta de milanesa, tres alitas de pollo, 12 jugo de naranja
+cuatro pizza pizza pepperoni; 4 agua embotellada; 6 pizza pizza pepperoni; 12 pizza mexicana
+ponme x1 hamburguesa con queso además 12 orden de aros de cebolla además 10 burrito de frijol además 5 hamburguesa doble pollo plis
+diez orden de aros de cebolla; un par de agua mineral please
+necesito 6x nuggets de pollo también x12 ensalada mixta también una pizza piza margarita también cuatro papas fritas por favor
+te encargo tres agua mineral también 2 pizza ranchera también 8 hamburgesa doble pollo gracias
+me pones tres hamburguesa doble pollo aparte dos torta de milanesa aparte 6 hamburguesa con queso porfa
+me traes 3 hamburguesa doble pollo | 8 ensalada césar para comer ahí
+hey 2 pizza de jamón y queso; 6 pizza pizza hawaiana porfa
+ocho alitas de pollo luego x2 hamburguesa clásica
+qué tal un par de agua mineral también ocho pizza ranchera plis
+2 jugo de naranja + cinco jugo de naranja
+me das cuatro hamburguesa hamburguesa clásica; 5x hamburguesa doble pollo para aquí
+buenas tardes 3 nuggets de pollo; 2 agua embotellada; 3 torta de milanesa plis
+dame 3 quesadilla de queso + ocho hamburgesa doble carne para llevar
+me das x4 pizza pizza margarita también una docena de pizza mexicana también seis pizza pizza mexicana también tres nuggets de pollo nomás
+te encargo 3 té helado | 2x pizza de jamón y queso para aquí
+buenas noches 8 quesadilla de queso | cuatro jugo de naranja porfa
+dame 2 hamburguesa mega además cuatro alitas de pollo además un par de café americano además doce hamburguesa doble pollo gracias
+cinco tacos al pastor también 8 hamburguesa mega también 12 hamburguesa con queso también 3 torta de milanesa
+hola buenas 2 papas grandes para comer ahí
+me mandas 3 burrito de frijol y 4 agua embotellada y 2 orden de aros de cebolla para aquí
+dame 10x hamburguesa hamburguesa doble pollo para llevar
+me gustaría diez hamburguesa con queso luego 5 pizza de jamón y queso luego 1 pizza pizza ranchera para comer ahí
+necesito un alitas de pollo + 6 hamburguesa hamburguesa doble carne + ocho agua mineral plis
+mi pedido: 10 agua mineral | dos orden de aros de cebolla | 3 orden de aros de cebolla | 4 hamburgesa mega
+hola 4x pizza ranchera además 12x pizza margarita nomás
+me gustaría cuatro hamburguesa doble pollo también cinco hamburguesa mega también 5 coca cola porfa
+2 ensalada mixta, 12x piza de jamón y queso, 10 pizza hawaiana, cinco quesadilla de queso, 1 hamburguesa hamburgesa doble carne
+por favor cuatro jugo de naranja además cuatro burrito de frijol además 12 hamburguesa doble pollo para aquí
+me pones 4 hamburguesa mega + 2 quesadilla de queso + 3 pizza de piza de jamón y queso please
+4 agua mineral además 6 ensalada césar además x8 hamburguesa hamburguesa con queso
+dame 3 hamburguesa hamburguesa con queso
+x2 pizza pepperoni + 6 pizza pizza margarita + doce té helado + 4 burrito de frijol + 2 pizza pizza hawaiana
+buenas noches un agua embotellada aparte x2 torta de milanesa aparte tres jugo de naranja aparte 12 té helado por favor
+mi pedido: 1x agua embotellada | 4 jugo de naranja | 10x coca cola
+cinco pizza hawaiana plis
+un par de papas grandes también cuatro agua embotellada también 2 hot dog sencillo también 8 orden de aros de cebolla por favor
+me traes dos café americano también 2 pizza de jamón y queso también doce agua mineral nada más
+3 pizza pepperoni
+oye 8 papas grandes y 3 tacos al pastor y 3x té helado y seis hamburguesa hamburguesa clásica porfa
+me das 12 ensalada mixta y 2 pizza pepperoni y 3 té helado para llevar
+sácame un par de hamburguesa hamburguesa doble carne
+para pedir cuatro café americano nada más
+ponme tres agua embotellada + 3 ensalada césar para aquí
+1 torta de milanesa también 10 quesadilla de queso también 12 limonada natural
+hola buenas 12 hamburguesa doble carne aparte 3 pizza de jamón y queso aparte 10 coca cola aparte 1 piza hawaiana
+me mandas 10 papas grandes también 10x papas fritas también 1 nuggets de pollo
+buenos días 3 burrito de frijol y 12x jugo de naranja y 8 hamburguesa clásica y 1 pizza pizza pepperoni para llevar
+hola buenas 1 quesadilla de queso luego 1 agua embotellada plis
+anoto: 10x pizza pizza pepperoni | una docena de orden de aros de cebolla | 1 papas grandes | 1 café americano
+buen día 5 pizza piza ranchera | diez ensalada césar para llevar
+3 agua embotellada
+necesito 8 pizza margarita | 3 pizza hawaiana | 5 coca cola por favor
+me das tres pizza de jamón y queso y un coca cola sin azúcar y cuatro limonada natural y 3 té helado nomás
+voy a querer 2 orden de aros de cebolla | una alitas de pollo por favor
+disculpa x3 pizza ranchera para aquí
+quiero 12 jugo de naranja y seis orden de aros de cebolla para llevar
+hola 6 torta de milanesa + 5x nuggets de pollo nada más
+me gustaría 10 pizza mexicana
+quiero un par de coca cola, dos coca cola sin azúcar, 4x tacos al pastor para aquí
+porfa 2 pizza de pizza de jamón y queso y x8 pizza pepperoni y 5 torta de milanesa
+buenas tardes 8 pizza pizza margarita y 1 café americano nomás
+disculpa tres agua mineral
+me gustaría una docena de pizza de jamón y queso; 1 coca cola sin azúcar gracias
+hola 2 té helado luego 4x jugo de naranja luego una café americano luego seis coca cola plis
+3 té helado luego 4 jugo de naranja luego 4 hamburguesa con queso luego 12 pizza de jamón y queso gracias
+para pedir 2 hot dog sencillo; 3 hamburguesa doble pollo; una coca cola sin azúcar nada más
+4 papas fritas además 2 burrito de frijol además 1 pizza piza pepperoni
+3 quesadilla de queso plis
+para pedir 1 orden de aros de cebolla; 5x pizza de pizza de jamón y queso
+10 té helado y una docena de hot dog sencillo y diez hamburguesa mega y cinco alitas de pollo y seis orden de aros de cebolla
+me das 3 papas fritas aparte tres pizza pepperoni aparte una docena de tacos al pastor aparte x8 alitas de pollo para comer ahí
+hey 12 torta de milanesa nomás
+3 hamburguesa doble carne | 3 orden de aros de cebolla | cuatro papas grandes | ocho torta de milanesa
+me gustaría seis papas fritas porfa
+12 pizza de pizza de jamón y queso | 3 alitas de pollo | 12x agua mineral | 1 hamburguesa doble carne
+buenas noches 1x pizza mexicana luego tres hamburguesa clásica plis
+disculpa 4 torta de milanesa además 1 papas fritas además 2 nuggets de pollo nomás
+porfa 10 hamburguesa con queso, cinco papas grandes por favor
+ponme 1x cocacola sin azúcar please
+quiero 3 hot dog sencillo gracias
+buen día un par de orden de aros de cebolla también 6 ensalada ensalada mixta please
+buenas tardes 4 pizza pepperoni por favor
+cinco ensalada césar además dos hamburguesa hamburguesa clásica además un coca cola sin azúcar además 2 pizza mexicana
+por favor 12 tacos al pastor para aquí
+quiero un par de coca cola sin azúcar aparte 3 torta de milanesa please
+dame 10 torta de milanesa además tres papas grandes además 1 té helado además un par de papas grandes para comer ahí
+deme cinco hot dog sencillo también 1 pizza pizza mexicana también 2 coca cola sin azúcar también 10 cocacola sin azúcar para aquí
+buenas noches 4 pizza margarita aparte 3 papas grandes aparte seis hamburguesa clásica para llevar
+dame seis hamburguesa clásica luego 8 pizza ranchera luego 5 alitas de pollo luego 3 café americano nada más
+voy a querer 8 burrito de frijol + 3 hamburguesa mega + 10 pizza de jamón y queso para comer ahí
+qué tal 5 agua embotellada luego ocho pizza piza pepperoni luego 10 pizza pizza pepperoni plis
+buenos días 3 papas grandes | 12x pizza hawaiana | 2 nuggets de pollo please
+hola buenas diez agua mineral + 10 ensalada ensalada mixta + 8 café americano
+buen día 3 café americano por favor
+me traes 2 agua mineral para llevar
+2 pizza pizza pepperoni y una alitas de pollo
+para pedir cuatro quesadilla de queso y 5 pizza hawaiana para aquí
+4 ensalada ensalada mixta please
+me das 5 limonada natural | 10 ensalada ensalada césar | 1 burrito de frijol para llevar
+oye 5 pizza mexicana nomás
+me das tres alitas de pollo nomás
+cambia 4 pizza mexicana por 3 ensalada ensalada césar
+1 burrito de frijol, 2x ensalada ensalada mixta, 5 agua embotellada, 6 hamburguesa doble pollo
+hola buenas 4 ensalada césar también cuatro pizza pizza pepperoni
+pedido: 2 ensalada ensalada mixta | dos pizza margarita | 4 coca cola | una nuggets de pollo
+me pones 3 orden de aros de cebolla también dos hamburguesa con queso también dos papas grandes para llevar
+cambia doce ensalada mixta por diez tacos al pastor
+dame 4 agua mineral + 8 agua mineral + 8 limonada natural para llevar
+pedido: tres agua embotellada, 6 torta de milanesa, 3 café americano
+ponme diez burrito de frijol please
+me mandas 2 ensalada mixta | 3 nuggets de pollo | 4 pizza ranchera porfa
+necesito tres pizza pizza ranchera además 10 quesadilla de queso además 8 hamburguesa con queso gracias
+por favor 2x tacos al pastor aparte tres hamburguesa hamburguesa clásica aparte 4 hot dog sencillo gracias
+oye 3 agua embotellada luego 3x pizza pizza mexicana por favor
+me gustaría 4 hamburguesa mega; 12 ensalada césar please
+tres pizza de pizza de jamón y queso
+pedido: 8 torta de milanesa | tres pizza pizza hawaiana
+quisiera 8 ensalada ensalada mixta aparte doce papas fritas plis
+hey tres orden de aros de cebolla luego un par de hamburgesa clásica luego 3 ensalada ensalada césar nada más
+2 orden de aros de cebolla | tres coca cola sin azúcar
+hola buenas una té helado y una docena de hamburguesa doble pollo y 12 hamburguesa con queso y doce hamburguesa hamburguesa mega nomás
+pedido: ocho pizza pizza mexicana | 5 pizza de pizza de jamón y queso
+buenos días 2 agua embotellada luego 12 té helado luego tres café americano luego ocho hamburguesa con queso para llevar
+hey un hot dog sencillo, 2 pizza hawaiana, una docena de burrito de frijol, dos café americano nomás
+quiero 12 hamburguesa clásica además una hot dog sencillo además 3 té helado para comer ahí
+tráeme 8 pizza pizza ranchera aparte un hamburguesa clásica aparte x3 alitas de pollo aparte un par de nuggets de pollo please
+hola una ensalada ensalada mixta, tres quesadilla de queso, una docena de tacos al pastor
+necesito 2 hamburguesa doble pollo también un té helado también 6 ensalada césar por favor
+quiero 6 tacos al pastor | 4x hamburguesa hamburgesa doble carne | 1 hot dog sencillo | 10 torta de milanesa plis
+quítame ocho pizza pizza mexicana
+deme tres hamburguesa clásica plis
+buenas noches ocho agua mineral + 5x pizza margarita + 4 quesadilla de queso please
+mi pedido: 12x agua mineral | tres piza margarita | un nuggets de pollo | 5 quesadilla de queso
+ponme un jugo de naranja nada más
+6x orden de aros de cebolla; ocho agua embotellada; 10 torta de milanesa; 10 jugo de naranja
+buenos días tres pizza pepperoni, 1 ensalada mixta, 12 orden de aros de cebolla, tres quesadilla de queso porfa
+te encargo una alitas de pollo además 8 ensalada césar además 5 café americano además 4 quesadilla de queso para llevar
+tráeme 5 agua mineral, 12 agua mineral nomás
+cinco coca cola y 3 alitas de pollo y 10 tacos al pastor y 3 burrito de frijol y cuatro nuggets de pollo
+porfa 2 hamburguesa clásica luego 5 agua mineral luego 3x té helado please
+2 alitas de pollo; 2 nuggets de pollo
+hola diez alitas de pollo plis
+cuatro hamburguesa clásica
+disculpa x6 limonada natural plis
+necesito tres papas grandes; 3 coca cola para llevar
+me pones doce hamburguesa doble pollo; una docena de papas grandes
+te encargo 1 agua embotellada y un coca cola please
+disculpa un par de limonada natural; una cocacola; un par de pizza margarita; 12x té helado please
+10 cocacola sin azúcar
+me mandas 6 quesadilla de queso aparte 12 ensalada mixta aparte un par de café americano aparte 1 pizza piza hawaiana por favor
+me gustaría 3 hamburguesa doble pollo; 1 hamburgesa doble pollo; un agua embotellada por favor
+buen día doce café americano también 1 hamburguesa con queso también doce pizza mexicana plis
+qué tal 6 agua embotellada y tres quesadilla de queso para comer ahí
+anoto: 5 limonada natural, 6 orden de aros de cebolla, cinco tacos al pastor, 4 quesadilla de queso
+mi pedido: 4 hamburguesa clásica, x6 hamburguesa clásica, 4x torta de milanesa, cuatro agua embotellada
+buenos días tres agua embotellada y 6 coca cola gracias
+pedido: seis pizza hawaiana, 1 pizza margarita, tres café americano
+me pones 4 agua embotellada; cuatro pizza pizza pepperoni; tres pizza margarita; un par de hamburguesa clásica nomás
+me mandas 3 ensalada césar por favor
+me traes 8 ensalada mixta para llevar
+ponme 4 torta de milanesa aparte 4 tacos al pastor aparte 12 pizza pizza mexicana por favor
+pedido: 4x papas fritas | 12x té helado
+ocho jugo de naranja aparte 1 ensalada césar aparte tres pizza mexicana
+porfa ocho alitas de pollo luego diez nuggets de pollo luego seis quesadilla de queso luego 2 pizza pizza margarita nomás
+buenas tardes 6 nuggets de pollo please
+oye dos agua mineral también 2 hamburgesa con queso porfa
+voy a querer 10 hot dog sencillo además 4x agua embotellada además 1 ensalada césar gracias
+12 piza hawaiana y 6 hamburguesa doble carne y 12 pizza pizza pepperoni
+dame dos té helado
+6 quesadilla de queso
+me pones diez burrito de frijol aparte 8 pizza de jamón y queso para comer ahí
+pedido: 6 orden de aros de cebolla | ocho té helado | una docena de agua embotellada
+anoto: 5 agua embotellada, 1 pizza de pizza de jamón y queso, 5 hot dog sencillo, 8 cocacola sin azúcar
+oye 2 orden de aros de cebolla luego 2 coca cola luego 3 hamburguesa doble carne por favor
+tráeme 12 papas grandes además 2 papas grandes por favor
+hola 1 burrito de frijol + doce jugo de naranja nomás
+oye 10 limonada natural también 10x agua embotellada también 2 quesadilla de queso nomás
+3 pizza margarita | 2 agua embotellada | 1 hamburguesa doble pollo | 6 pizza hawaiana
+me gustaría 12 té helado además tres piza margarita además 6 papas grandes además 3 té helado plis
+un par de hamburguesa doble pollo también 3x hot dog sencillo también 12 limonada natural también un quesadilla de queso
+pedido: 8x jugo de naranja | ocho hot dog sencillo
+voy a querer 6 torta de milanesa aparte 8 tacos al pastor aparte 8 hot dog sencillo para comer ahí
+porfa 1 té helado luego 12 ensalada mixta luego dos coca cola sin azúcar luego cuatro piza pepperoni nada más
+quiero 2 papas grandes luego 5 agua mineral luego dos pizza hawaiana luego 3 agua mineral para comer ahí
+2 coca cola | una alitas de pollo
+ocho papas fritas además 8x alitas de pollo además 8 papas fritas además 5x hamburguesa hamburguesa clásica además 12x papas grandes
+ponme cinco orden de aros de cebolla para comer ahí
+buen día dos torta de milanesa luego 8 quesadilla de queso luego 3 ensalada césar luego 2x pizza pepperoni para comer ahí
+quisiera doce hamburguesa hamburguesa doble carne además 3 ensalada mixta nada más
+ponme 3 limonada natural también 1 café americano también 1x orden de aros de cebolla también 5 té helado gracias
+me mandas 1 piza pepperoni; 1 papas grandes; 2x té helado; 8 pizza hawaiana por favor
+4x pizza hawaiana además 3 pizza de jamón y queso nomás
+por favor doce pizza pizza margarita, 3 orden de aros de cebolla, 3x hamburguesa doble carne, un par de torta de milanesa nomás
+3 pizza pizza margarita aparte 3 torta de milanesa aparte una tacos al pastor aparte 6 torta de milanesa aparte 8 hamburguesa doble carne
+hola buenas cuatro agua embotellada | 6 limonada natural nada más
+para pedir diez coca cola por favor
+oye x10 hamburguesa hamburguesa clásica | una docena de nuggets de pollo | 1 papas fritas | 2 piza ranchera para llevar
+me pones 3 hamburguesa hamburguesa clásica aparte 1 coca cola sin azúcar aparte dos pizza hawaiana porfa
+5 ensalada césar aparte x10 agua embotellada aparte 3 ensalada ensalada mixta
+6 pizza margarita | 3 torta de milanesa
+ocho ensalada césar; 10x pizza de pizza de jamón y queso; 3 hamburguesa doble pollo
+hola buenas seis pizza pepperoni + diez papas grandes gracias
+ponme 3 hamburguesa doble carne además dos agua mineral además seis té helado además cuatro coca cola sin azúcar nomás
+me mandas 4 hamburguesa hamburguesa con queso
+hola buenas 2 coca cola sin azúcar | diez burrito de frijol | tres burrito de frijol para aquí
+ocho té helado
+buenas tardes 2 burrito de frijol luego cinco coca cola luego 1 té helado luego 6 coca cola sin azúcar nomás
+qué tal 4 pizza piza mexicana también 1 coca cola sin azúcar también cuatro hamburguesa mega porfa
+hola 8 pizza pepperoni nada más
+quisiera 2 pizza pizza mexicana | 6 hamburguesa doble carne | 3 pizza hawaiana | 4 papas fritas nada más
+dame x12 pizza pizza hawaiana luego seis hamburguesa doble pollo para llevar
+te encargo 6 hamburguesa doble pollo también 4 tacos al pastor también 5x torta de milanesa nada más
+3 quesadilla de queso | 3 hamburguesa mega | tres pizza pizza mexicana
+2 limonada natural
+quiero 10 hamburguesa mega para comer ahí
+mi pedido: 1 orden de aros de cebolla | 3 orden de aros de cebolla | 10x pizza pizza ranchera
+me traes 12 hamburguesa mega también x3 agua embotellada por favor
+porfa ocho hamburguesa mega | tres papas fritas | 2 ensalada césar plis
+hola 2 hamburguesa mega
+anoto: 10 hamburguesa clásica | cuatro café americano | 8 nuggets de pollo
+me das 4 nuggets de pollo aparte cinco alitas de pollo aparte 8 hamburguesa hamburguesa doble carne
+me pones 2 quesadilla de queso | 5 hamburguesa hamburguesa clásica | dos piza ranchera por favor
+para pedir 5 hamburguesa hamburguesa mega también una docena de cocacola sin azúcar también una orden de aros de cebolla también ocho quesadilla de queso please
+hola buenas 3 burrito de frijol aparte ocho ensalada ensalada césar gracias
+deme 2x hot dog sencillo plis
+qué tal tres burrito de frijol además 6 quesadilla de queso
+hola diez café americano luego 10 hamburgesa mega luego tres agua mineral luego 2 limonada natural nomás
+hey 6 jugo de naranja además un par de coca cola sin azúcar para aquí
+buen día 5 papas fritas nomás
+buenas noches 1 hamburguesa mega + x12 papas fritas + 4 quesadilla de queso + seis hamburguesa mega plis
+me das seis hamburguesa hamburguesa doble pollo luego 8 hot dog sencillo nada más
+quiero cuatro alitas de pollo luego 5 hamburguesa hamburguesa doble carne luego cuatro pizza margarita luego 2 coca cola para llevar
+voy a querer un par de coca cola sin azúcar para comer ahí
+anoto: 8 hamburguesa clásica, 5 tacos al pastor, 12 orden de aros de cebolla, cinco pizza pizza mexicana
+buen día x1 agua mineral, 4 hamburguesa mega, una hamburguesa con queso, tres pizza pizza mexicana nada más
+disculpa tres alitas de pollo + 10 café americano + 10 tacos al pastor porfa
+quiero 5 café americano y 5 burrito de frijol y 5x hamburguesa hamburguesa con queso y 10 hamburguesa clásica para llevar
+mi pedido: 2x papas fritas | 12 café americano
+un par de pizza hawaiana; 2 nuggets de pollo; 8 torta de milanesa; un agua mineral
+anoto: 3 té helado, 1 nuggets de pollo, 3 orden de aros de cebolla, 10 hamburguesa hamburguesa doble carne
+me gustaría un par de hot dog sencillo + 2 pizza margarita + 2 pizza margarita nomás
+buenos días un par de té helado luego 2 té helado luego tres alitas de pollo gracias
+buen día 4x ensalada cesar aparte seis orden de aros de cebolla
+6 burrito de frijol | 1 ensalada césar | 5x pizza pizza mexicana | 8 nuggets de pollo | 4 burrito de frijol
+pedido: 5 coca cola, 1x hot dog sencillo, una quesadilla de queso
+hola ocho tacos al pastor
+cinco hamburgesa doble pollo
+quita 8 papas grandes
+anoto: 3 quesadilla de queso | 2 alitas de pollo
+necesito 2 ensalada ensalada mixta aparte 4 orden de aros de cebolla aparte 2 orden de aros de cebolla aparte 3 pizza de pizza de jamón y queso plis
+por favor 4 ensalada ensalada césar luego 3 hamburguesa hamburguesa clásica luego 2 limonada natural nomás
+tráeme un par de ensalada césar, tres papas fritas, 4 hot dog sencillo, 5 pizza mexicana
+necesito un tacos al pastor para aquí
+una docena de hamburguesa clásica | x12 hamburguesa doble carne | 10 té helado
+10 pizza piza ranchera
+porfa tres ensalada césar porfa
+1 hamburguesa clásica
+hola buenas 6 orden de aros de cebolla además 6 torta de milanesa además 10 agua embotellada gracias
+hola cuatro cocacola + cuatro nuggets de pollo + 2 hot dog sencillo + 2 coca cola nomás
+tráeme 3x jugo de naranja aparte x12 piza pepperoni aparte 4 té helado gracias
+oye 10 jugo de naranja también 4 ensalada ensalada césar también 6 quesadilla de queso para aquí
+ocho nuggets de pollo además cinco burrito de frijol además cinco coca cola además 6x hamburguesa con queso por favor
+buenos días 8x agua mineral además un par de orden de aros de cebolla plis
+hola diez papas grandes aparte ocho limonada natural por favor
+necesito 5 hamburguesa doble pollo también 3 hot dog sencillo nada más
+me mandas 4 hamburguesa hamburguesa doble pollo; 1 tacos al pastor; 3 pizza pizza hawaiana; cuatro té helado please
+3 hamburguesa con queso también 10 tacos al pastor también 3 orden de aros de cebolla también 5 ensalada ensalada césar también 3 quesadilla de queso
+hey 4 pizza pizza mexicana; 2 hamburguesa hamburguesa doble carne; 1 hamburguesa hamburguesa doble carne para aquí
+hola buenas 8 quesadilla de queso luego 10 nuggets de pollo plis
+tres coca cola
+necesito 2 agua mineral; cuatro hamburguesa mega; cinco quesadilla de queso para comer ahí
+para pedir x10 papas grandes aparte cuatro hamburguesa hamburguesa doble carne gracias
+me pones 6x café americano gracias
+me gustaría 2 hamburguesa hamburgesa doble carne para comer ahí
+oye 6 pizza pizza pepperoni también 8x jugo de naranja porfa
+me pones 6 pizza de jamón y queso porfa
+dame 8 pizza hawaiana aparte un café americano aparte 4 agua embotellada aparte una torta de milanesa para aquí
+te encargo 3 pizza ranchera | tres papas grandes | tres hamburguesa con queso por favor
+buenas tardes cuatro pizza de jamón y queso aparte 3 nuggets de pollo please
+diez ensalada mixta | 8 hamburguesa hamburguesa doble pollo | 3x pizza pizza hawaiana | 12 burrito de frijol | 2 ensalada mixta
+me mandas 2 pizza pizza margarita; 1 papas grandes porfa
+10x coca cola
+10 quesadilla de queso
+me das 12 tacos al pastor para comer ahí
+ponme 3 pizza de pizza de jamón y queso aparte doce alitas de pollo aparte cuatro hamburguesa con queso por favor
+dame 3 pizza piza pepperoni; 1x papas grandes; dos hot dog sencillo para comer ahí
+buenas noches 3 limonada natural | x6 agua mineral please
+hey 1 pizza pepperoni luego 2 alitas de pollo luego una docena de agua embotellada luego una ensalada mixta nomás
+me mandas 5 agua embotellada y 3 té helado please
+me mandas un par de pizza mexicana | 1 ensalada césar | tres pizza pepperoni gracias
+disculpa 5 jugo de naranja luego 3 jugo de naranja luego 6 burrito de frijol please
+me gustaría 4 torta de milanesa luego x5 coca cola sin azúcar luego x2 hamburguesa hamburguesa clásica nada más
+porfa 4 pizza pizza ranchera + 6 hamburguesa mega + 2 hamburguesa hamburguesa doble pollo + 10 hamburguesa hamburguesa doble pollo nada más
+buenas noches 8 café americano también 5x ensalada césar para llevar
+pedido: 3 pizza mexicana, un par de pizza hawaiana, 1 pizza pizza hawaiana, 3 pizza de jamón y queso
+anoto: cinco té helado, 6 papas grandes
+dame 4x pizza margarita aparte 5 torta de milanesa aparte diez ensalada mixta nomás
+hey dos nuggets de pollo nomás
+ponme 8x coca cola sin azúcar porfa
+anoto: 4 papas fritas, tres ensalada césar, 2 jugo de naranja
+3 jugo de naranja
+anoto: 3 nuggets de pollo | 5 cocacola sin azúcar
+hola x2 té helado, tres pizza pizza ranchera nada más
+oye 5 coca cola luego 5 pizza hawaiana luego x10 pizza de jamón y queso para llevar
+buenas noches 1 jugo de naranja y 2 pizza margarita y 3 coca cola sin azúcar porfa
+anoto: 3 pizza de jamón y queso | 5 quesadilla de queso | 12 alitas de pollo
+por favor un par de alitas de pollo | 3 pizza hawaiana nada más
+10 pizza pizza margarita además dos hamburguesa doble carne
+voy a querer 6 hamburguesa hamburguesa con queso
+me pones seis hamburguesa hamburguesa con queso; x5 piza ranchera; 3 burrito de frijol; x2 nuggets de pollo para llevar
+tráeme 3 coca cola sin azúcar aparte 1 pizza pizza pepperoni aparte 1 pizza pizza mexicana aparte 5 alitas de pollo nada más
+quiero dos papas fritas nada más
+mi pedido: 3 pizza pizza mexicana, 5 coca cola sin azúcar, 10 pizza ranchera, una quesadilla de queso
+me das 3 hamburguesa hamburguesa clásica | 8 hot dog sencillo porfa
+10 pizza margarita
+me das 8 agua mineral aparte 10 hamburguesa con queso aparte 12 té helado por favor
+buenas noches 1 pizza mexicana please
+deme 8 té helado además 8 agua mineral nada más
+me gustaría 10 pizza pepperoni | 4 hamburguesa clásica | 5 torta de milanesa | cuatro burrito de frijol
+tres ensalada mixta, tres té helado, 10 piza mexicana, 1 hamburguesa mega
+me gustaría cuatro hot dog sencillo por favor
+hey 6 ensalada mixta, un par de torta de milanesa nada más
+porfa diez hamburgesa con queso porfa
+hey 3x café americano para comer ahí
+ponme 3 pizza pizza hawaiana aparte cinco tacos al pastor aparte x4 pizza pizza margarita por favor
+mi pedido: una pizza piza margarita | 5 hamburguesa hamburguesa doble pollo
+buenos días dos pizza de jamón y queso + 10 hamburguesa clásica + 1 hamburguesa hamburguesa doble pollo por favor
+hola buenas dos ensalada césar + 8 hamburguesa hamburguesa doble carne + 4 pizza pizza pepperoni por favor
+anoto: 8 coca cola, 8 ensalada césar, 3 jugo de naranja, tres hamburguesa hamburguesa mega
+6 torta de milanesa, 12 pizza margarita, 3 piza hawaiana por favor
+porfa diez tacos al pastor luego 5 hamburguesa clásica luego tres hamburgesa doble pollo luego dos coca cola sin azúcar
+súmale 12 pizza pepperoni
+buenas tardes 3 burrito de frijol | un par de pizza pizza mexicana | 2 torta de milanesa nada más
+tráeme 2 pizza hawaiana luego diez hamburguesa clásica luego un jugo de naranja por favor
+necesito 2 hamburgesa doble pollo aparte 6x hamburguesa con queso
+buenos días tres café americano, tres té helado gracias
+por favor 2 té helado gracias
+buen día 2 papas fritas, tres quesadilla de queso plis
+hola buenas tres papas fritas | un par de pizza pepperoni | seis pizza pizza hawaiana | 3 pizza pizza hawaiana please
+tráeme un par de agua embotellada además dos pizza pizza margarita además 1 coca cola sin azúcar nomás
+ponme 8 coca cola también dos tacos al pastor también 4 hamburguesa hamburgesa doble pollo porfa
+dos hamburguesa doble carne
+buenas tardes 8 hamburguesa doble carne + 4 pizza pepperoni + doce té helado + una docena de alitas de pollo por favor
+me das 1x jugo de naranja también una docena de hamburguesa doble carne para aquí
+necesito 2 jugo de naranja; 8 hamburguesa doble carne; 4 hamburguesa clásica porfa
+te encargo 3 pizza margarita y 3 torta de milanesa plis
+quisiera seis pizza de pizza de jamón y queso también 10 coca cola sin azúcar también 2 pizza pizza hawaiana también 3 ensalada césar nada más
+me mandas cuatro pizza pepperoni y 10 papas grandes y un pizza margarita please
+te encargo seis pizza de pizza de jamón y queso | dos papas grandes | 2 pizza pizza pepperoni | ocho pizza pizza pepperoni please
+voy a querer 3 torta de milanesa, tres hot dog sencillo, una docena de jugo de naranja gracias
+disculpa tres hamburguesa mega luego x5 coca cola sin azúcar luego 4 nuggets de pollo para comer ahí
+me traes cuatro agua embotellada luego 1 hot dog sencillo luego una docena de hot dog sencillo luego 8 orden de aros de cebolla please
+buenas noches tres tacos al pastor para comer ahí
+dame 3 pizza pizza ranchera aparte 8 hamburgesa doble pollo aparte tres hamburguesa doble carne para aquí
+te encargo 3 pizza hawaiana además 12 papas grandes además 5 café americano para aquí
+voy a querer 12 orden de aros de cebolla nomás
+necesito tres hamburguesa con queso nomás
+me mandas 6x café americano además 2 hamburguesa doble pollo plis
+me traes 3 hot dog sencillo | 6 pizza ranchera | 2 agua mineral para llevar
+para pedir 3 nuggets de pollo luego dos ensalada césar luego tres torta de milanesa gracias
+quiero 4 alitas de pollo | 8 hot dog sencillo nada más
+diez pizza piza margarita
+ponme una docena de hot dog sencillo además tres pizza de jamón y queso gracias
+por favor 6 agua embotellada + 8 hamburguesa doble pollo + tres alitas de pollo + 3 limonada natural nada más
+ponme x5 hot dog sencillo aparte 5 agua mineral aparte 5 hamburguesa doble pollo aparte 10 orden de aros de cebolla para aquí
+me pones un jugo de naranja aparte 4 pizza pizza mexicana aparte ocho tacos al pastor
+hey x2 limonada natural además 10 jugo de naranja además 2x jugo de naranja para aquí
+1x orden de aros de cebolla | seis burrito de frijol | 3 limonada natural | 2 nuggets de pollo
+buenos días un par de pizza piza pepperoni y diez alitas de pollo para aquí
+buen día x2 limonada natural por favor
+hola buenas 5 té helado | 3 hamburguesa clásica | ocho hamburguesa hamburguesa clásica | x8 hamburguesa mega por favor
+disculpa 2 alitas de pollo | 10x jugo de naranja | dos piza mexicana | 5 orden de aros de cebolla nomás
+tres alitas de pollo por favor
+te encargo 1 ensalada cesar luego una docena de hamburguesa hamburgesa doble carne luego 2 ensalada césar
+necesito 8 coca cola nomás
+me mandas 4x jugo de naranja nada más
+mi pedido: 12 tacos al pastor, ocho pizza de pizza de jamón y queso, 1 tacos al pastor, doce limonada natural
+por favor 10 agua mineral y un par de ensalada cesar y 6 coca cola para comer ahí
+me das 8 alitas de pollo además dos hamburguesa hamburguesa con queso además 3x alitas de pollo gracias
+x2 coca cola aparte 4 tacos al pastor aparte 2x pizza hawaiana
+qué tal x12 agua mineral | 3 piza pepperoni | 2 hamburguesa hamburguesa doble pollo | 10 jugo de naranja para comer ahí
+buenos días 2 hot dog sencillo además tres nuggets de pollo además tres café americano además 10 limonada natural para llevar
+cuatro hot dog sencillo aparte diez pizza hawaiana
+3 orden de aros de cebolla; 8 jugo de naranja; ocho agua mineral; 1 pizza margarita; un par de café americano
+buenas tardes 10 pizza margarita + 3 coca cola + 6 tacos al pastor nomás
+hola doce hamburguesa hamburguesa con queso; 2x pizza pizza hawaiana; tres papas fritas para llevar
+me das 4 piza ranchera y 10 orden de aros de cebolla y 5 hamburguesa doble pollo para llevar
+porfa 6 ensalada césar nomás
+me mandas 10 quesadilla de queso luego dos quesadilla de queso
+tráeme x6 pizza mexicana; cuatro ensalada ensalada césar; cuatro quesadilla de queso para llevar
+quiero 3 nuggets de pollo para llevar
+buenas tardes 5 papas fritas y 8 ensalada mixta y 3x café americano nomás
+buenos días 10 limonada natural; doce papas grandes; ocho cocacola; 8 tacos al pastor porfa
+buen día 5 hamburguesa clásica luego cinco limonada natural gracias
+hey un par de jugo de naranja luego cuatro pizza mexicana luego 10 hamburguesa hamburguesa mega porfa
+buenos días 3 papas grandes luego 5 hamburguesa hamburguesa con queso por favor
+buenos días 5 orden de aros de cebolla además 6 hamburguesa hamburguesa mega además 3 jugo de naranja please
+6 limonada natural luego 2 pizza pizza mexicana luego diez té helado luego 2 hamburguesa doble pollo
+dame 4x coca cola sin azúcar para aquí
+3 pizza de jamón y queso | tres pizza de jamón y queso | 6 hamburguesa con queso | cinco hamburguesa clásica | tres ensalada ensalada mixta
+te encargo 6 hamburguesa hamburguesa mega luego 5x hamburgesa clásica luego 2 pizza de jamón y queso para aquí
+hola buenas tres torta de milanesa luego 3 pizza pizza margarita luego un par de orden de aros de cebolla luego 3 pizza ranchera por favor
+4 pizza hawaiana, 6 torta de milanesa
+disculpa cinco agua embotellada también 4 pizza margarita también seis hamburgesa doble carne también tres ensalada mixta nada más
+quisiera 12 papas fritas + 5 hamburguesa mega para comer ahí
+me das 8 hamburguesa hamburguesa con queso + un hamburguesa doble pollo + 4 ensalada mixta + ocho hamburguesa hamburguesa mega plis
+para pedir 5 café americano gracias
+me pones 12 hamburguesa doble pollo aparte 2 coca cola sin azúcar aparte 3 alitas de pollo para aquí
+buen día cinco papas fritas también una coca cola también ocho alitas de pollo también 3 hamburguesa clásica para comer ahí
+te encargo 4 orden de aros de cebolla | 12 burrito de frijol | 10 pizza de jamón y queso | tres pizza ranchera para aquí
+5 hot dog sencillo
+necesito 2 agua embotellada; 2 hamburguesa con queso para aquí
+qué tal 1 limonada natural plis
+anoto: cinco quesadilla de queso, dos coca cola sin azúcar
+3x pizza hawaiana, 1 coca cola sin azúcar, 2 burrito de frijol, 12x agua embotellada
+me traes 2 burrito de frijol, un té helado, 2 pizza pizza pepperoni para comer ahí
+me pones 5 café americano para aquí
+para pedir 5 hamburguesa hamburguesa doble carne además 6 hamburguesa hamburguesa con queso nada más
+8 piza hawaiana | 3 hamburguesa doble pollo | 1 quesadilla de queso | 2 pizza pizza hawaiana
+buen día 3 nuggets de pollo y 3x té helado nomás
+qué tal 12 limonada natural aparte cuatro pizza mexicana porfa
+8 hamburguesa hamburguesa doble carne, 4 café americano, doce agua mineral, 3 hamburguesa clásica
+porfa 5 torta de milanesa también 6 burrito de frijol nomás
+dame diez quesadilla de queso luego 10 papas grandes luego 10 hot dog sencillo luego un café americano nomás
+hola 10 pizza de pizza de jamón y queso nomás
+12 pizza ranchera
+doce agua mineral | 5 piza hawaiana
+anoto: tres té helado | 12 hamburguesa mega | cinco coca cola | 2 ensalada mixta
+pedido: 5x pizza de jamón y queso | doce hamburgesa clásica | 1 nuggets de pollo | ocho pizza margarita
+anoto: 3 pizza pepperoni, 12 tacos al pastor, 6 pizza pizza ranchera
+por favor una hamburguesa doble carne, 6 pizza de jamón y queso, 4 pizza de jamón y queso gracias
+deme 4 alitas de pollo también 2x agua embotellada porfa
+8 orden de aros de cebolla luego tres orden de aros de cebolla luego 2 agua mineral luego doce burrito de frijol luego cuatro ensalada mixta
+necesito 2 café americano + 5x pizza de jamón y queso porfa
+porfa 12x limonada natural aparte 5 coca cola sin azúcar porfa
+buenas tardes cuatro pizza margarita, 10x ensalada ensalada mixta, 5 hot dog sencillo por favor
+ponme 10 pizza pizza pepperoni y 3 ensalada mixta y 2 pizza hawaiana y 2 pizza mexicana para aquí
+anoto: un par de torta de milanesa, 4x pizza de pizza de jamón y queso, 2 hamburguesa doble carne
+4 torta de milanesa aparte 2 ensalada mixta aparte 2 orden de aros de cebolla aparte 2 ensalada mixta
+buenos días 2 ensalada ensalada mixta además 3 quesadilla de queso además seis pizza de jamón y queso para comer ahí
+te encargo un par de orden de aros de cebolla, 12 pizza margarita please
+necesito 3 agua mineral aparte 8 orden de aros de cebolla aparte 5 agua embotellada
+12 papas grandes, tres hamburguesa hamburguesa mega, 3 jugo de naranja, 10x piza pepperoni
+quiero dos pizza mexicana aparte 1 té helado aparte x5 agua mineral por favor
+x5 té helado | 2 papas grandes por favor
+un par de ensalada césar + 10 hot dog sencillo + 4 papas fritas + cuatro hamburguesa clásica + 3 papas fritas
+hey 1 pizza de pizza de jamón y queso también 8 ensalada césar plis
+dame 3 alitas de pollo para comer ahí
+oye 8 coca cola | tres agua mineral | 12 hamburguesa clásica | una hamburguesa clásica please
+pedido: tres pizza pizza mexicana, una torta de milanesa, 5 agua mineral, 3 hamburguesa hamburguesa clásica
+quiero 3 pizza margarita | 3 pizza pizza ranchera | x12 coca cola | 6x pizza mexicana por favor
+10 coca cola sin azúcar; 4 jugo de naranja; 4x papas fritas para llevar
+buenas noches un par de papas fritas también 8x quesadilla de queso nada más
+me traes 2 ensalada ensalada césar | diez agua embotellada nada más
+buen día seis ensalada ensalada césar | 3 ensalada césar | 10 burrito de frijol gracias
+sácame 3 pizza pizza hawaiana
+2x hamburguesa hamburguesa doble pollo
+tres jugo de naranja, cuatro coca cola
+buenas tardes 8 pizza mexicana además 2 orden de aros de cebolla además 3 pizza mexicana para aquí
+3 té helado; 12x hot dog sencillo; 8 jugo de naranja; seis hamburguesa doble pollo; doce burrito de frijol
+necesito tres tacos al pastor; 12 coca cola sin azúcar
+tres tacos al pastor
+mi pedido: 5 tacos al pastor, 8 torta de milanesa, 2 alitas de pollo, tres quesadilla de queso
+3 hamburguesa doble pollo también 12 papas grandes también 5 ensalada ensalada césar también 4x té helado también 6 torta de milanesa
+necesito 8 alitas de pollo porfa
+anoto: una pizza margarita, 3 pizza ranchera, tres té helado
+porfa 3 pizza hawaiana | 10 pizza margarita por favor
+hey 1 hamburgesa doble carne please
+por favor 1 hamburguesa clásica luego 1 cocacola sin azúcar luego 12 torta de milanesa luego dos hot dog sencillo
+necesito 12 té helado y tres coca cola sin azúcar y 5 ensalada césar por favor
+una docena de café americano | tres ensalada césar
+me das 6 hamburguesa clásica también cinco coca cola también seis café americano también 3 hamburguesa hamburguesa doble pollo para comer ahí
+buen día 3 agua embotellada please
+me gustaría 3 agua embotellada, 5 agua embotellada, 6 té helado para llevar
+hey 4 burrito de frijol, 8 hot dog sencillo, 12 limonada natural, x8 ensalada ensalada mixta please
+buenas tardes 10 coca cola sin azúcar + 5 burrito de frijol
+disculpa cuatro ensalada ensalada césar y dos hot dog sencillo y un par de hot dog sencillo gracias
+x1 ensalada mixta
+dame x2 ensalada ensalada césar aparte 2 agua mineral aparte 10 pizza de jamón y queso
+buenas tardes un limonada natural y tres pizza pizza hawaiana y x2 coca cola y 4 alitas de pollo gracias
+quisiera doce té helado también 3 pizza hawaiana para llevar
+para pedir doce pizza hawaiana | diez orden de aros de cebolla | dos agua embotellada para llevar
+me das diez agua mineral please
+5 quesadilla de queso
+por favor x8 hamburguesa mega; 10 burrito de frijol; ocho agua embotellada plis
+anoto: una té helado, 2 hamburguesa con queso
+mi pedido: 3 pizza pizza hawaiana | 5 jugo de naranja
+5 piza margarita
+hola 3 hamburguesa hamburguesa doble carne; 4 pizza de pizza de jamón y queso para llevar
+qué tal seis pizza pizza hawaiana y un par de quesadilla de queso y cuatro quesadilla de queso y 3 alitas de pollo para aquí
+buenas tardes 1 limonada natural, 4 papas grandes por favor
+mi pedido: 2 piza mexicana, 5 hamburguesa hamburguesa clásica
+pedido: tres pizza hawaiana, cinco pizza pizza mexicana, 6 torta de milanesa, 8 coca cola sin azúcar
+me mandas 10 té helado; doce coca cola sin azúcar; una docena de pizza pepperoni; 2 pizza pizza mexicana please
+me das 6 quesadilla de queso + 10 torta de milanesa + una papas fritas nada más
+ponme 6 hamburguesa doble carne y 6x hamburguesa hamburguesa con queso y 1 café americano y un par de alitas de pollo nomás
+buen día 12 orden de aros de cebolla por favor
+me das 6 pizza pizza pepperoni para aquí
+6 alitas de pollo
+por favor 6 pizza pizza pepperoni; tres hot dog sencillo; 8 papas fritas please
+oye 2 agua embotellada; cinco quesadilla de queso para comer ahí
+ponme 12 limonada natural además 4 pizza mexicana además 4 nuggets de pollo
+quiero 10 papas grandes; 4 torta de milanesa; tres jugo de naranja; 12 pizza margarita porfa
+qué tal un par de pizza mexicana; 2 nuggets de pollo para llevar
+necesito 5 torta de milanesa además 2x torta de milanesa para aquí
+ponme 2 tacos al pastor también 12 ensalada césar también 5 café americano porfa
+buenas tardes cinco ensalada cesar, 6 pizza de pizza de jamón y queso, 8 papas grandes
+12 hamburguesa doble carne y 3 alitas de pollo y una pizza mexicana y diez jugo de naranja
+mi pedido: una agua embotellada | 3x pizza pizza ranchera
+dame x5 hamburguesa hamburguesa con queso, seis coca cola, 2 piza hawaiana, diez papas fritas para llevar
+por favor ocho torta de milanesa también 5 coca cola también 3 ensalada mixta también seis hamburgesa clásica por favor
+12 pizza de pizza de jamón y queso y 2x nuggets de pollo y 2 hamburguesa mega
+voy a querer cinco ensalada ensalada mixta además un hamburguesa con queso además 4 pizza hawaiana además 12 ensalada mixta por favor
+qué tal dos pizza margarita, un par de jugo de naranja para llevar
+6 hamburguesa hamburguesa doble pollo también 12 té helado
+mi pedido: 3 té helado | 1x alitas de pollo | 2 quesadilla de queso | un agua embotellada
+dame 2 pizza margarita aparte seis agua embotellada para aquí
+me das 2 hamburguesa hamburguesa doble pollo | 4 nuggets de pollo para comer ahí
+por favor 12 papas fritas; ocho hot dog sencillo; x6 burrito de frijol; x1 hamburguesa mega nomás
+pedido: 3 té helado | 8 pizza mexicana | x2 burrito de frijol
+5x orden de aros de cebolla
+voy a querer 4 ensalada mixta | 1 tacos al pastor | 1x café americano | tres papas grandes nada más
+una hamburguesa mega | 8 orden de aros de cebolla | 8 ensalada mixta | 3 piza pepperoni
+cinco orden de aros de cebolla
+quisiera 3 coca cola aparte 6 cocacola sin azúcar aparte 3 hamburguesa mega aparte un par de té helado
+ponme 1 jugo de naranja + tres agua embotellada para aquí
+dame 3x coca cola además 1 ensalada césar además 12x hamburguesa hamburguesa con queso porfa
+por favor un par de limonada natural luego 10 nuggets de pollo luego una docena de papas grandes para comer ahí
+ponme 8 coca cola sin azúcar | 3 nuggets de pollo para aquí
+buenas noches un par de coca cola; 12 hamburguesa hamburguesa con queso porfa
+porfa tres quesadilla de queso aparte x2 burrito de frijol aparte 3 pizza pizza margarita por favor
+pedido: tres quesadilla de queso, x4 té helado, 5 pizza margarita, 10 torta de milanesa
+anoto: 5 hot dog sencillo, 8 ensalada ensalada cesar
+diez pizza hawaiana + ocho agua mineral + 10 limonada natural + diez nuggets de pollo
+quisiera tres agua embotellada + una pizza pizza ranchera + un par de coca cola para llevar
+deme 1 ensalada mixta | 1 burrito de frijol | 2 hamburguesa hamburguesa clásica | 4 nuggets de pollo please
+quisiera 6 jugo de naranja y tres hamburgesa con queso y una quesadilla de queso y 5 pizza mexicana gracias
+hola buenas 3 burrito de frijol por favor
+hola 3 orden de aros de cebolla también 5x hot dog sencillo también cinco ensalada ensalada césar please
+te encargo 12 pizza ranchera y una docena de alitas de pollo plis
+deme ocho limonada natural; 6 pizza pizza margarita; un par de hot dog sencillo; 6x pizza mexicana porfa
+quisiera 12 hamburguesa con queso | 3 pizza de jamón y queso | 2x coca cola sin azúcar | una alitas de pollo nomás
+dos nuggets de pollo
+disculpa tres tacos al pastor | 3 quesadilla de queso | un par de hamburguesa clásica porfa
+cinco hamburguesa hamburguesa clásica
+buenos días 3 coca cola luego una hamburguesa con queso luego dos jugo de naranja luego 5 té helado
+voy a querer dos pizza margarita, 3 pizza mexicana, doce pizza pizza margarita, 8x agua embotellada porfa
+buenos días 2 ensalada ensalada mixta para llevar
+oye 4 coca cola sin azúcar gracias
+2 papas grandes + tres papas fritas + 10 té helado
+3 coca cola | 10 jugo de naranja | 6 agua embotellada | ocho jugo de naranja | 2 pizza ranchera
+buenas tardes cuatro hot dog sencillo | 2x tacos al pastor | x8 ensalada ensalada césar plis
+hey 3 pizza piza margarita aparte x5 agua embotellada aparte diez ensalada mixta aparte 1 papas grandes plis
+para pedir 1 agua mineral luego cinco café americano para llevar
+hola 6 agua embotellada; 6 hamburguesa hamburguesa mega; 3 hamburguesa hamburguesa clásica; tres alitas de pollo porfa
+10x hamburguesa clásica + 6 té helado plis
+me gustaría 2 hamburguesa doble pollo nomás
+un par de jugo de naranja luego 4 papas grandes luego 5 agua mineral plis
+buen día cuatro pizza de pizza de jamón y queso porfa
+seis hamburguesa doble pollo + ocho hamburgesa mega + 2 hot dog sencillo please
+por favor ocho coca cola sin azúcar; ocho pizza ranchera para llevar
+8 alitas de pollo y dos hamburguesa doble carne y cuatro papas fritas
+deme una docena de torta de milanesa también 10 hot dog sencillo también un hamburguesa hamburguesa clásica también un coca cola sin azúcar please
+hola buenas cuatro hamburguesa hamburguesa doble pollo luego 2 tacos al pastor luego x12 té helado luego diez ensalada césar para llevar
+voy a querer 1x jugo de naranja para aquí
+me mandas 3 limonada natural para llevar
+dos hamburguesa clásica
+ponme 3 té helado + 12x hamburguesa hamburguesa doble carne nomás
+dos ensalada ensalada mixta, x4 coca cola sin azúcar, 3 pizza pizza pepperoni
+porfa 1 pizza pizza pepperoni también 5 hamburguesa mega también diez pizza hawaiana nada más
+me gustaría 1 burrito de frijol | una pizza mexicana | un par de pizza piza hawaiana
+buenas noches 12x hot dog sencillo plis
+4 pizza hawaiana; seis tacos al pastor
+oye 2x coca cola sin azúcar + tres tacos al pastor + 3 burrito de frijol + dos ensalada césar plis
+4 pizza ranchera | 6 té helado | cuatro limonada natural | 3 pizza de pizza de jamón y queso | 8x hamburguesa hamburguesa mega
+me gustaría 4 hot dog sencillo además doce alitas de pollo please
+hey x3 limonada natural también 4 hot dog sencillo también una docena de coca cola sin azúcar
+pedido: ocho quesadilla de queso, 4 orden de aros de cebolla, 12 té helado, 3 orden de aros de cebolla
+buen día 4 pizza hawaiana además 8 hamburguesa mega además dos hamburguesa doble carne además dos hamburguesa doble pollo please
+pedido: cuatro ensalada mixta, cinco papas grandes, 8 coca cola, 6 pizza pepperoni
+me mandas 3 pizza de jamón y queso además 8 hamburguesa clásica además 3x coca cola además tres ensalada mixta plis
+qué tal cuatro ensalada ensalada césar para comer ahí
+voy a querer 6 ensalada ensalada mixta + 2 pizza pizza margarita + 6 coca cola + 2x hamburgesa mega para llevar
+hola buenas 12 burrito de frijol luego un par de té helado nada más
+tráeme tres alitas de pollo + ocho hamburgesa clásica + 6 agua embotellada + un par de tacos al pastor para comer ahí
+buen día 5 hamburguesa con queso | 12 pizza ranchera plis
+me pones 6 agua mineral + cuatro agua embotellada + 10 coca cola nada más
+tres alitas de pollo además una docena de pizza mexicana por favor
+me mandas 6 hamburguesa mega luego tres pizza pizza hawaiana luego doce pizza de jamón y queso para aquí
+porfa un par de coca cola luego 6x pizza pizza hawaiana please
+por favor 2 pizza pizza mexicana y 6 pizza margarita y cuatro papas grandes y cinco pizza ranchera
+dame 5 hamburguesa hamburgesa clásica aparte 6 quesadilla de queso nomás
+hola 6 hamburguesa doble carne; 10x jugo de naranja; 3 orden de aros de cebolla; 2 té helado para aquí
+tráeme tres té helado también ocho pizza ranchera también 10 papas fritas también un par de hamburguesa doble carne por favor
+4 burrito de frijol + dos papas grandes + 10 pizza margarita
+hola 12 limonada natural, 10 hamburguesa con queso, 5 limonada natural, 2 pizza pepperoni please
+mi pedido: 2 orden de aros de cebolla, ocho quesadilla de queso
+oye 12x tacos al pastor además un orden de aros de cebolla nada más
+una docena de hamburguesa hamburguesa doble pollo
+hola buenas 4 papas grandes y 2 pizza margarita y 10 tacos al pastor para llevar
+mi pedido: 4 pizza pepperoni | doce pizza margarita | 3 té helado | 2 ensalada césar
+deme dos té helado + 8 coca cola + 4 hamburguesa hamburguesa con queso + 3 limonada natural gracias
+buenas noches doce pizza mexicana y diez papas fritas y 1 quesadilla de queso y cuatro hot dog sencillo
+cuatro coca cola sin azúcar
+buen día 12 hamburgesa doble pollo por favor
+buen día 2 jugo de naranja y ocho torta de milanesa nomás
+pedido: 3 jugo de naranja, 3 piza mexicana, 2 pizza mexicana
+me pones diez hamburguesa mega, seis hamburguesa doble pollo, ocho piza pepperoni para llevar
+para pedir 3 torta de milanesa y 6 jugo de naranja y 5 nuggets de pollo nomás
+pedido: 1 hamburguesa con queso, 3 hamburguesa doble pollo, 5x pizza pizza ranchera
+buenas tardes 6 papas fritas; seis orden de aros de cebolla porfa
+necesito seis hamburguesa mega también cuatro hamburguesa con queso gracias
+4 ensalada césar, 8 pizza de jamón y queso
+dos jugo de naranja
+disculpa un par de alitas de pollo + 3x jugo de naranja + una pizza pizza mexicana + ocho hot dog sencillo para aquí
+3 orden de aros de cebolla, 4 burrito de frijol, x3 hot dog sencillo, 12x pizza pizza hawaiana
+te encargo diez nuggets de pollo, doce nuggets de pollo, 3 limonada natural gracias
+buenos días dos hot dog sencillo | 1 hamburguesa mega gracias
+ponme 10 orden de aros de cebolla para comer ahí
+3 agua mineral también 6 hot dog sencillo también tres ensalada mixta también ocho pizza pizza mexicana
+buen día doce cocacola luego una docena de pizza pepperoni luego 1 orden de aros de cebolla luego ocho hamburguesa doble carne please
+me mandas dos burrito de frijol y 2 pizza pepperoni y un par de agua mineral y 1 agua embotellada gracias
+ponme 3 pizza hawaiana luego 3 burrito de frijol luego un hot dog sencillo para aquí
+buen día x10 hamburguesa clásica nada más
+oye 4 hamburguesa hamburguesa doble carne y una coca cola y 10 alitas de pollo please
+buenos días 2 hamburguesa hamburguesa con queso aparte 12 pizza hawaiana aparte 1 pizza pizza pepperoni aparte 3 burrito de frijol porfa
+por favor 5 pizza pizza mexicana
+voy a querer 2 hamburgesa clásica aparte un hamburguesa doble carne aparte 3x pizza margarita nomás
+hola 2 hamburguesa clásica nomás
+me pones 2 hot dog sencillo nada más
+te encargo 3 hamburguesa hamburgesa doble carne aparte 8 pizza mexicana para llevar
+para pedir 4 hamburguesa hamburguesa doble pollo aparte 4 papas grandes aparte x4 agua embotellada aparte 6 quesadilla de queso plis
+quisiera 12 coca cola sin azúcar además un par de torta de milanesa además dos pizza de jamón y queso nada más
+3 papas grandes | una docena de torta de milanesa | cinco orden de aros de cebolla
+me pones una docena de pizza margarita + 10 café americano + 3x coca cola sin azúcar + 1 coca cola nada más
+buenos días doce orden de aros de cebolla además un par de ensalada ensalada cesar además 3 hamburguesa hamburguesa mega además seis hamburguesa mega please
+porfa 12 pizza margarita, 12 limonada natural para aquí
+buenas tardes 3 hamburguesa doble pollo + diez hamburguesa doble pollo + 4 quesadilla de queso para comer ahí
+anoto: 3 agua mineral, doce papas grandes, x2 papas fritas, 12 ensalada mixta
+quisiera 4 pizza mexicana aparte 5 ensalada césar aparte 2 limonada natural nomás
+buen día diez tacos al pastor luego dos nuggets de pollo luego x10 cocacola luego tres quesadilla de queso para comer ahí
+anoto: 6 quesadilla de queso, una hamburguesa con queso
+buenos días 3 limonada natural y 2 agua mineral
+quisiera 3 pizza margarita también 6 burrito de frijol para aquí
+voy a querer un par de té helado para comer ahí
+anoto: 6 limonada natural | seis agua mineral
+me pones tres papas fritas, un par de tacos al pastor please
+me traes ocho papas fritas + 6x pizza pizza hawaiana + 1 papas fritas nada más
+sácame un limonada natural
+oye 3 hot dog sencillo | 10 hamburguesa doble pollo | 1 coca cola sin azúcar para aquí
+un par de ensalada césar + 6 pizza de pizza de jamón y queso
+oye 3 ensalada mixta, 3 orden de aros de cebolla plis
+por favor 12 nuggets de pollo para comer ahí
+3 hamburguesa clásica
+ponme 1 nuggets de pollo por favor
+anoto: 8 pizza pepperoni | x1 papas grandes | 6 coca cola
+disculpa 10 coca cola + un par de tacos al pastor nada más
+quisiera 5 hamburguesa hamburgesa mega también 4 hamburguesa con queso también 6 limonada natural también 1 pizza mexicana gracias
+por favor 5 papas grandes; seis coca cola sin azúcar
+me das 12 pizza mexicana también x8 ensalada ensalada césar también 4 alitas de pollo también tres café americano porfa
+deme dos café americano luego 10 tacos al pastor luego 12 pizza ranchera luego un par de coca cola sin azúcar por favor
+buenos días 2 hamburguesa hamburguesa doble pollo, seis tacos al pastor, 10 ensalada ensalada césar, 10 pizza pizza margarita
+ponme diez tacos al pastor | x3 papas grandes por favor
+deme 3 alitas de pollo y 6 jugo de naranja para llevar
+4 piza ranchera
+diez tacos al pastor | x12 orden de aros de cebolla | tres pizza piza pepperoni
+un ensalada césar
+quiero 5 limonada natural | 8 pizza mexicana | 3 pizza de jamón y queso | 3 pizza ranchera plis
+x6 ensalada césar luego 10 alitas de pollo luego seis torta de milanesa luego 5 pizza de pizza de jamón y queso please
+quisiera 1x hamburguesa mega aparte un par de quesadilla de queso aparte dos ensalada mixta aparte 8 jugo de naranja
+buenas noches 3 hot dog sencillo + 4x café americano para comer ahí
+qué tal 8 pizza mexicana + 2 papas grandes gracias
+ponme x10 hamburguesa con queso también 3x nuggets de pollo para comer ahí
+te encargo una docena de limonada natural | un par de té helado | seis quesadilla de queso | 10x pizza hawaiana nomás
+quítame tres orden de aros de cebolla
+me mandas una docena de pizza hawaiana luego x2 agua mineral luego dos pizza pizza mexicana luego x10 té helado nomás
+me das seis ensalada césar luego 1 quesadilla de queso para aquí
+porfa 10x pizza piza margarita + 3 coca cola sin azúcar + ocho agua embotellada
+me pones x2 tacos al pastor y 1 pizza mexicana y un par de agua mineral y x2 papas grandes porfa
+ponme 8 coca cola sin azúcar
+2 hamburguesa hamburguesa clásica luego 4 hamburguesa mega para llevar
+3 té helado aparte 8 coca cola aparte 1 hamburgesa con queso
+me mandas 3 café americano para aquí
+ocho quesadilla de queso y un hamburguesa hamburguesa clásica y cinco papas grandes
+me pones 12 hamburguesa hamburgesa doble carne para comer ahí
+me pones una docena de papas grandes también 2x café americano también 3 hamburguesa mega nada más
+8 torta de milanesa | 3 hamburguesa con queso | 3 quesadilla de queso | dos ensalada césar
+1 tacos al pastor también 2 pizza de jamón y queso también tres agua mineral también 6 coca cola gracias
+dame una quesadilla de queso + 2 ensalada césar + 12 hot dog sencillo + 10 orden de aros de cebolla porfa
+oye 10 hamburguesa con queso | 2 coca cola sin azúcar por favor
+oye 2 ensalada césar; 10 hamburguesa doble pollo; 3 torta de milanesa; 4 hamburguesa doble carne por favor
+buenas tardes seis burrito de frijol también tres coca cola sin azúcar para comer ahí
+deme 2 agua mineral luego un agua mineral nomás
+buenas tardes cuatro hamburguesa con queso porfa
+porfa 12 papas fritas y una pizza hawaiana y 5 pizza de piza de jamón y queso nada más
+me pones 3 papas grandes | dos pizza ranchera
+me gustaría 5 pizza mexicana además 5 papas fritas además 3x ensalada mixta para comer ahí
+por favor x3 hamburguesa mega + x10 hamburguesa mega + 3x hot dog sencillo + x8 hot dog sencillo please
+una pizza pizza mexicana | 4 hamburguesa clásica | x4 cocacola
+un coca cola
+tráeme 1x burrito de frijol para aquí
+buenas noches 3 pizza hawaiana aparte 5 pizza pizza hawaiana aparte una pizza piza hawaiana para llevar
+buenas noches 2 ensalada mixta y cuatro pizza pepperoni porfa
+para pedir 8 limonada natural please
+buenas tardes 3 pizza hawaiana y 4 coca cola sin azúcar y cinco hamburguesa doble pollo y seis agua embotellada porfa
+cinco ensalada mixta, 2 papas fritas, tres hot dog sencillo
+hey 2 coca cola sin azúcar; 3 papas fritas; 2 torta de milanesa; cuatro hamburguesa doble carne para aquí
+10 torta de milanesa aparte cuatro ensalada ensalada césar aparte 2 pizza margarita aparte 3 hamburguesa con queso
+necesito una docena de café americano también diez hamburguesa con queso plis
+tráeme 3 papas fritas además 6 pizza pizza mexicana además 1 té helado además 2 limonada natural por favor
+dame 2 orden de aros de cebolla también ocho pizza margarita también 6 pizza de jamón y queso por favor
+hola buenas 4 té helado también 5 coca cola también dos coca cola
+2x pizza mexicana
+pedido: 1 papas fritas | cuatro hamburguesa con queso
+quisiera 2 limonada natural | ocho papas grandes nomás
+2x hamburguesa hamburguesa mega luego 6 ensalada cesar luego seis hamburguesa clásica luego 8 hamburguesa hamburguesa doble carne
+oye 3 burrito de frijol; 4 tacos al pastor; 8 burrito de frijol please
+voy a querer x4 alitas de pollo | 10 burrito de frijol | 8x ensalada mixta porfa
+ponme 6 café americano aparte 10 hamburguesa clásica aparte 6x té helado aparte x4 hamburguesa con queso plis
+buenas tardes 6 hamburguesa mega nomás
+buen día 3 quesadilla de queso plis
+quiero cinco pizza de jamón y queso y 6 coca cola sin azúcar y 3 nuggets de pollo nada más
+hola 3 pizza margarita, cinco pizza de jamón y queso plis
+ponme 12 agua embotellada y diez orden de aros de cebolla y una ensalada ensalada césar y dos nuggets de pollo please
+4 coca cola sin azúcar y una papas grandes y 2 alitas de pollo para llevar
+buenas noches seis alitas de pollo porfa
+2x agua embotellada, 2 quesadilla de queso, x3 hamburguesa con queso, tres alitas de pollo
+por favor 10 quesadilla de queso y una ensalada mixta nomás
+me pones 10 hamburguesa doble carne luego un par de ensalada césar para llevar
+me gustaría 3 limonada natural además ocho pizza de jamón y queso además 3 papas grandes además 12 agua embotellada para llevar
+voy a querer un par de pizza pepperoni también 6 agua mineral también 10 coca cola sin azúcar también tres coca cola gracias
+x1 coca cola sin azúcar; 3 hamburgesa clásica
+tráeme 10 hamburguesa hamburguesa doble pollo aparte una docena de hamburguesa hamburguesa mega para llevar
+buenos días tres ensalada césar además cinco piza margarita para aquí
+3 quesadilla de queso | 8 papas grandes
+buen día 1 pizza ranchera y 10 nuggets de pollo y cuatro pizza pizza mexicana para comer ahí
+necesito 1 torta de milanesa nada más
+oye 12 quesadilla de queso luego 10 té helado por favor
+me traes 4 coca cola y 6x alitas de pollo para llevar
+pedido: 8 pizza pepperoni | tres pizza piza mexicana
+seis ensalada mixta luego 6 hamburgesa mega
+me mandas tres ensalada césar además 10 hamburguesa mega además 2 limonada natural además 2 pizza mexicana gracias
+voy a querer 3 pizza pepperoni para comer ahí
+anoto: x1 orden de aros de cebolla, un par de orden de aros de cebolla, 2 orden de aros de cebolla, x2 pizza hawaiana
+buen día 1 pizza ranchera para comer ahí
+deme seis té helado luego 1 nuggets de pollo luego ocho limonada natural por favor
+necesito 4 pizza ranchera nomás
+para pedir 8 tacos al pastor también ocho papas grandes por favor
+voy a querer un par de té helado y un par de ensalada césar y 3x burrito de frijol para comer ahí
+necesito x6 pizza piza ranchera también diez café americano también 6 orden de aros de cebolla también 10 hamburgesa con queso nada más
+me gustaría 4 nuggets de pollo; 4 pizza mexicana nomás
+dame un par de café americano además tres burrito de frijol además 8 alitas de pollo nomás
+dame 2 pizza de pizza de jamón y queso, ocho orden de aros de cebolla, 2 pizza pizza ranchera, 4x agua embotellada para comer ahí
+hola 4 hamburguesa doble pollo y ocho agua mineral please
+en vez de 3 hamburguesa mega pon 12 torta de milanesa
+te encargo ocho hamburguesa hamburguesa mega luego 6 café americano
+necesito 2 café americano luego tres hamburguesa mega luego un par de orden de aros de cebolla
+6 hamburgesa clásica
+buen día 4 jugo de naranja además 8 papas grandes please
+tráeme x2 nuggets de pollo luego 12x ensalada césar luego 12 pizza hawaiana nomás
+deme 10 ensalada ensalada mixta aparte 5 hamburguesa hamburguesa mega aparte seis hamburguesa con queso porfa
+cinco pizza pizza mexicana aparte doce pizza ranchera aparte ocho hamburguesa con queso aparte dos hamburguesa doble pollo aparte cuatro pizza pepperoni
+me mandas 8 orden de aros de cebolla aparte 2 coca cola sin azúcar porfa
+necesito 6 agua embotellada además un par de coca cola sin azúcar además cinco torta de milanesa para comer ahí
+voy a querer 6 orden de aros de cebolla además 12 orden de aros de cebolla plis
+quiero un par de cocacola aparte 2 torta de milanesa porfa
+anoto: 2 hamburguesa mega, 12 limonada natural
+dame seis pizza pepperoni luego 8 torta de milanesa luego 8 jugo de naranja luego 3 agua mineral para comer ahí
+me mandas 4 coca cola sin azúcar y 12 hot dog sencillo y 3x pizza pizza hawaiana y 8 hamburguesa doble pollo para llevar
+quiero 8 coca cola nada más
+8 coca cola sin azúcar + 5 papas grandes + ocho coca cola por favor
+oye 2 alitas de pollo además 2 ensalada mixta porfa
+quisiera cinco burrito de frijol para aquí
+tráeme 1 jugo de naranja porfa
+oye diez pizza hawaiana porfa
+voy a querer tres café americano además ocho limonada natural además 3 pizza pizza hawaiana además 6 pizza pizza hawaiana para comer ahí
+oye doce pizza mexicana + x3 hamburguesa clásica para comer ahí
+mi pedido: una limonada natural, 4 hot dog sencillo
+2 pizza margarita
+por favor x5 hamburgesa doble pollo luego diez hamburguesa hamburguesa mega
+8x jugo de naranja
+una ensalada ensalada mixta luego un par de té helado
+diez alitas de pollo
+voy a querer 2x pizza ranchera aparte 10 alitas de pollo aparte tres orden de aros de cebolla para llevar
+voy a querer 3 pizza pepperoni y 4 orden de aros de cebolla y un café americano y 3 agua mineral plis
+10 pizza ranchera
+necesito 5x hamburguesa hamburguesa con queso; tres coca cola sin azúcar; seis pizza pizza ranchera porfa
+3x ensalada mixta aparte 6 tacos al pastor aparte dos hamburguesa hamburguesa clásica aparte 1 nuggets de pollo
+hola 3 pizza ranchera + tres ensalada mixta + 5 hamburguesa con queso + 3x hamburguesa con queso gracias
+3 quesadilla de queso nomás
+quisiera 4x pizza ranchera además 5 torta de milanesa gracias
+hey 5 agua mineral | tres papas fritas gracias
+12 ensalada cesar, tres pizza pizza hawaiana, x2 jugo de naranja
+4 pizza mexicana, x6 piza ranchera, una docena de torta de milanesa
+seis pizza pizza mexicana + 3 pizza pepperoni + 3 café americano
+buen día 3 coca cola además 12x alitas de pollo
+4x nuggets de pollo y 1 nuggets de pollo
+buenos días 8 pizza hawaiana nada más
+quítame seis hamburguesa con queso
+dame diez papas fritas porfa
+me traes tres pizza mexicana para comer ahí
+2 pizza pepperoni | 6 ensalada césar | 3x pizza pepperoni | 2 pizza pepperoni
+anoto: 3 orden de aros de cebolla | diez alitas de pollo | 1 tacos al pastor | 2x alitas de pollo
+disculpa cinco alitas de pollo; 2 hamburguesa hamburguesa clásica; tres ensalada ensalada césar por favor
+qué tal un par de papas grandes; una pizza piza mexicana; 2x pizza pizza ranchera; 3 hamburguesa clásica para llevar
+mi pedido: 3 hamburguesa hamburguesa mega, 1 cocacola sin azúcar, tres hamburguesa clásica
+por favor 8 orden de aros de cebolla también cuatro piza mexicana también 3 hamburguesa doble pollo plis
+buenas tardes 8 hamburguesa doble pollo aparte 3 pizza hawaiana aparte 12x agua mineral por favor
+dame 6 agua embotellada; 10 quesadilla de queso; diez limonada natural
+voy a querer una docena de pizza pizza hawaiana + 5 piza mexicana + 8 papas fritas please
+buen día 1 hamburguesa con queso luego dos cocacola luego 5x pizza pizza hawaiana luego 12 agua mineral nomás
+4 hamburguesa clásica + cinco hamburguesa clásica + 4 café americano plis
+buen día una agua mineral + 2 tacos al pastor + 2 agua mineral para aquí
+me gustaría 10 quesadilla de queso | tres papas grandes para llevar
+oye 6 pizza ranchera + cinco torta de milanesa + un par de quesadilla de queso + una hamburguesa con queso nomás
+necesito 12 pizza pizza pepperoni para llevar
+pedido: seis tacos al pastor | 1 papas fritas | 2 jugo de naranja | 4x nuggets de pollo
+me pones un nuggets de pollo aparte tres papas fritas aparte tres agua embotellada aparte 1 pizza ranchera nada más
+buenas noches 3 torta de milanesa y ocho pizza pepperoni y ocho agua embotellada y 2 coca cola sin azúcar nomás
+4 pizza mexicana, 3x agua mineral
+3 alitas de pollo + 3 nuggets de pollo + 4 pizza hawaiana + diez limonada natural
+anoto: 2 burrito de frijol, 12 quesadilla de queso
+porfa una jugo de naranja además cuatro pizza de jamón y queso además 3 ensalada ensalada césar además 3 limonada natural please
+diez pizza de pizza de jamón y queso
+me mandas tres torta de milanesa para llevar
+anoto: 12 torta de milanesa, 3 pizza piza hawaiana, cinco hamburguesa hamburguesa doble carne
+hola buenas 8 hamburguesa doble carne y doce pizza pizza ranchera para llevar
+pedido: 5x café americano, 3 pizza hawaiana, 1 jugo de naranja
+me mandas un par de burrito de frijol nada más
+para pedir 1 hot dog sencillo además 3 ensalada ensalada mixta además 8 hamburguesa doble pollo además 8 papas grandes plis
+quítame 6 pizza pizza mexicana
+oye 12 coca cola + 4x torta de milanesa please
+te encargo 5 limonada natural nada más
+hola 4 pizza de jamón y queso luego 8 té helado luego 2 tacos al pastor luego 3x hamburguesa doble pollo para llevar
+pedido: 10x coca cola | 6 hamburguesa hamburguesa con queso
+dame 6 ensalada mixta además 2 torta de milanesa además 6 coca cola además cuatro nuggets de pollo por favor
+me gustaría x3 burrito de frijol para comer ahí
+tráeme 3 agua embotellada, 12 ensalada césar, tres jugo de naranja please
+porfa dos torta de milanesa también tres ensalada ensalada mixta también dos hamburguesa hamburguesa clásica también 8 burrito de frijol nada más
+anoto: 5 limonada natural, 3 cocacola
+por favor 5 nuggets de pollo además cuatro hot dog sencillo porfa
+disculpa diez quesadilla de queso también 5x hamburguesa clásica también 12x ensalada mixta también 3 agua embotellada para aquí
+una docena de papas grandes
+quiero 5 agua mineral por favor
+necesito una pizza pizza margarita además 6 ensalada ensalada césar además 4 hot dog sencillo gracias
+buen día 12 limonada natural para comer ahí
+tres alitas de pollo
+2 hamburgesa doble pollo
+quisiera 2 tacos al pastor; 1 papas fritas para comer ahí
+para pedir 1 alitas de pollo | 10 nuggets de pollo nomás
+x3 hamburguesa clásica luego x5 agua mineral
+quisiera 8 papas fritas luego 8 nuggets de pollo luego 12 papas fritas luego 8 papas grandes gracias
+4 papas grandes
+tráeme 5 pizza hawaiana además 4 pizza hawaiana además 2 agua mineral además 3 pizza margarita gracias
+anoto: una docena de burrito de frijol | 3 torta de milanesa | doce jugo de naranja
+12 torta de milanesa aparte 6x papas fritas aparte 2 alitas de pollo
+3 tacos al pastor
+seis agua embotellada luego un torta de milanesa
+6x jugo de naranja también tres ensalada césar
+2 torta de milanesa, 4 hamburguesa hamburguesa mega, 2 papas grandes, x1 hamburguesa mega
+deme 3 papas grandes; 3 agua mineral
+buenos días 2 hamburguesa clásica además un par de tacos al pastor además 2 hamburguesa con queso nada más
+dame 10 torta de milanesa además una docena de nuggets de pollo además un par de pizza de jamón y queso
+x12 nuggets de pollo + cuatro pizza de piza de jamón y queso + seis agua embotellada
+para pedir 8 coca cola y 3 quesadilla de queso y una docena de tacos al pastor para comer ahí
+oye 3 burrito de frijol también un par de té helado también un par de jugo de naranja también 3 hamburguesa hamburguesa clásica para comer ahí
+me das 3x nuggets de pollo + 6 hamburguesa con queso + 3 piza ranchera + un par de pizza mexicana please
+me traes cinco hamburguesa hamburguesa con queso + una hamburguesa doble carne
+me mandas doce papas grandes; tres pizza margarita; 2 pizza ranchera please
+me das 5 piza pepperoni además 2x jugo de naranja por favor
+3 nuggets de pollo
+ponme 4 hamburguesa clásica gracias
+pedido: 8 té helado | 2 burrito de frijol
+qué tal 4 pizza de jamón y queso luego 6 papas grandes plis
+voy a querer cuatro coca cola sin azúcar | 1x pizza pizza hawaiana | 3 agua mineral gracias
+10 coca cola sin azúcar también diez piza mexicana también 3 hamburguesa hamburguesa doble pollo
+me das 3 pizza hawaiana
+tráeme 4 té helado, ocho pizza pizza hawaiana, tres ensalada mixta, 4 pizza de jamón y queso nomás
+seis papas fritas
+una docena de hot dog sencillo, una hamburgesa doble carne, doce hamburguesa doble pollo, 3 coca cola sin azúcar
+me traes 5x ensalada ensalada mixta plis
+necesito 4 pizza ranchera + 12 jugo de naranja + 12 alitas de pollo nomás
+10 hot dog sencillo aparte ocho coca cola aparte 6 pizza hawaiana aparte 3 torta de milanesa aparte 3x papas fritas
+me traes seis ensalada mixta + 10 pizza pepperoni + cinco torta de milanesa gracias
+oye 3 papas grandes luego 10x torta de milanesa luego 6 cocacola gracias
+te encargo 12 torta de milanesa + 3x orden de aros de cebolla + 3 coca cola sin azúcar porfa
+5 agua embotellada + 8 piza ranchera + 3x hamburguesa con queso
+oye tres hamburguesa doble pollo además 10 pizza hawaiana además una docena de café americano please
+me pones 2x pizza mexicana por favor
+tráeme tres hamburguesa hamburguesa con queso además seis pizza pizza ranchera además x3 tacos al pastor además dos papas grandes gracias
+me das 3 tacos al pastor aparte 6 pizza ranchera aparte 2 quesadilla de queso aparte un par de pizza pizza hawaiana nomás
+5 orden de aros de cebolla | 6 hamburguesa hamburguesa doble pollo | 3 papas grandes
+para pedir 10 ensalada mixta luego 4 burrito de frijol luego tres hot dog sencillo por favor
+6 coca cola + cinco ensalada césar + seis hamburguesa hamburguesa mega
+cinco torta de milanesa
+voy a querer 1 coca cola sin azúcar; 8 alitas de pollo para llevar
+te encargo x2 alitas de pollo además una papas fritas además 8 papas fritas nada más
+me traes 2 hamburguesa mega; tres nuggets de pollo; 6x papas grandes; 3 nuggets de pollo nomás
+doce coca cola, 12 café americano, x6 ensalada ensalada césar, x6 pizza pepperoni, 3 pizza mexicana
+qué tal cinco ensalada ensalada mixta, cinco café americano, 5 alitas de pollo, 5 jugo de naranja por favor
+me traes 10 pizza mexicana además 5 tacos al pastor además seis coca cola además 4 hamburguesa doble carne
+dame 4 pizza de jamón y queso además 2 agua mineral además cuatro quesadilla de queso porfa
+hola 4 limonada natural + 5 hamburguesa clásica plis
+voy a querer x3 hamburguesa hamburguesa doble pollo luego 1 hamburguesa doble carne luego 1 alitas de pollo please
+anoto: 6 piza mexicana, x6 pizza pizza margarita, 1 pizza mexicana
+para pedir cinco coca cola sin azúcar también 2 hamburguesa clásica también 3x hamburguesa doble pollo plis
+un ensalada ensalada césar
+un par de hamburguesa hamburguesa doble pollo | 12 quesadilla de queso | dos hamburguesa mega | ocho hamburguesa mega
+3 coca cola sin azúcar luego 5 burrito de frijol luego 5x nuggets de pollo luego 4x papas grandes luego diez tacos al pastor
+hola buenas x12 hamburguesa hamburgesa clásica porfa
+buenas tardes x1 burrito de frijol + 5 hamburguesa mega + ocho coca cola nomás
+porfa 1 papas grandes además 2 quesadilla de queso además 10 hamburguesa doble carne además 2 pizza pizza pepperoni porfa
+6 jugo de naranja, cinco coca cola, 3 ensalada mixta, 2x ensalada mixta
+oye diez jugo de naranja
+anoto: 4 ensalada ensalada mixta, 2 ensalada mixta, 6 hamburgesa doble carne
+me mandas diez coca cola también 12 pizza de pizza de jamón y queso también 2 torta de milanesa please
+para pedir 2x orden de aros de cebolla además 4 hamburguesa clásica para llevar
+2 limonada natural | 4 quesadilla de queso | 3 ensalada mixta
+buenas noches 8 nuggets de pollo nada más
+quiero dos quesadilla de queso + 3x hot dog sencillo gracias
+porfa 1 ensalada ensalada mixta; ocho café americano
+dame 6 hot dog sencillo, 3 hot dog sencillo, 3 nuggets de pollo, 8 ensalada mixta gracias
+deme 6 hamburguesa hamburguesa doble pollo
+oye un par de pizza ranchera, 4x torta de milanesa, 6 torta de milanesa para llevar
+me das 8 agua mineral; un hamburguesa hamburguesa doble pollo; 4 burrito de frijol para aquí
+te encargo 8 jugo de naranja para comer ahí
+por favor 12x papas fritas | 12 hamburguesa con queso | dos pizza pizza margarita | 3 pizza pepperoni para llevar
+dame 8 ensalada ensalada césar + 8 hamburguesa hamburguesa clásica + 4 pizza piza pepperoni + dos té helado para aquí
+8 hamburguesa doble carne luego seis hamburguesa doble carne plis
+buenas noches 1 hamburguesa hamburguesa con queso también una tacos al pastor para aquí
+2 ensalada mixta
+2x agua embotellada también 5 papas grandes también 6 hamburguesa hamburguesa doble carne también seis piza pepperoni nada más
+necesito una ensalada césar también cuatro jugo de naranja para aquí
+ya no quiero 8x agua embotellada
+me traes seis papas grandes además doce hot dog sencillo además 2 hamburguesa doble pollo además 3 pizza margarita please
+qué tal 2 coca cola sin azúcar por favor
+deme 10x ensalada mixta luego 4 té helado luego 5 hamburguesa doble pollo para aquí
+hola cinco ensalada mixta | 2x burrito de frijol para comer ahí
+3 hamburguesa doble pollo, doce ensalada mixta
+hey seis quesadilla de queso, un par de torta de milanesa, 1 coca cola sin azúcar please
+doce café americano, 3x nuggets de pollo, 10 ensalada césar, 3 té helado
+un par de piza mexicana
+4 ensalada ensalada mixta y 5 papas fritas gracias
+10 piza pepperoni
+oye un hamburguesa hamburguesa mega; 8 torta de milanesa; 10x coca cola por favor
+hey 3 torta de milanesa | 4 nuggets de pollo | 12 alitas de pollo nomás
+deme 6 alitas de pollo y un ensalada mixta gracias
+tres limonada natural + 3 tacos al pastor + una ensalada ensalada césar gracias
+me pones 12 pizza de jamón y queso aparte 2 limonada natural aparte tres limonada natural aparte 3 tacos al pastor por favor
+ponme 5x café americano, doce hamburguesa doble pollo para aquí
+una docena de hamburguesa hamburgesa doble pollo | x3 piza margarita | cuatro papas fritas | 5 hamburguesa hamburguesa mega | 4 limonada natural
+hey diez limonada natural aparte x3 hamburguesa clásica gracias
+me mandas 6 hamburguesa mega | x5 hamburguesa doble carne | 10 agua embotellada nada más
+quiero cinco papas fritas también x2 agua mineral también 4 orden de aros de cebolla plis
+buen día cuatro coca cola sin azúcar y 3 quesadilla de queso para llevar
+oye seis hamburguesa doble pollo aparte x1 hamburguesa con queso porfa
+buenas tardes 8 papas fritas, 5 hamburguesa doble carne, cuatro quesadilla de queso please
+qué tal 1 papas grandes gracias
+disculpa 8 pizza pizza hawaiana nada más
+qué tal 3 burrito de frijol + 4 coca cola sin azúcar + 2 quesadilla de queso + cuatro pizza pizza hawaiana para llevar
+10 jugo de naranja | 10 pizza pizza pepperoni nada más
+buenos días 10 papas fritas
+voy a querer una tacos al pastor también 1x ensalada mixta también tres orden de aros de cebolla también una pizza de jamón y queso nomás
+12 jugo de naranja y 12 hot dog sencillo
+pedido: 3 orden de aros de cebolla | cuatro papas fritas
+hola buenas 3x alitas de pollo además 2 hamburguesa doble carne además dos hamburgesa doble carne please
+6x papas fritas | 3x alitas de pollo | doce café americano | 4 hot dog sencillo
+me traes 12 pizza margarita; 2 nuggets de pollo; 2 ensalada ensalada mixta; 10 hamburgesa doble carne nomás
+hola buenas 5x agua embotellada gracias
+oye 6 pizza pizza mexicana + x3 papas fritas + 6 pizza ranchera please
+deme diez ensalada ensalada césar luego 3 piza ranchera please
+x4 té helado; tres alitas de pollo; 1 alitas de pollo; 8 té helado; una pizza pizza ranchera
+disculpa 2 ensalada ensalada cesar, 10 burrito de frijol, 6 pizza mexicana, 3 café americano nomás
+buenos días 5 hot dog sencillo además cuatro papas grandes además dos hamburguesa con queso además 1 pizza hawaiana por favor
+quiero 6 pizza pepperoni please
+dame 3 nuggets de pollo | dos jugo de naranja | 3 té helado | 3 ensalada césar para llevar
+anoto: 4 cocacola, 4 papas grandes, una docena de papas fritas
+tráeme doce pizza pepperoni luego 3 coca cola por favor
+me traes 8 pizza ranchera nomás
+buenas noches 8 orden de aros de cebolla aparte 8 agua embotellada aparte una docena de torta de milanesa para comer ahí
+te encargo tres torta de milanesa
+necesito 2x pizza pepperoni | x8 café americano nada más
+voy a querer 10x tacos al pastor para llevar
+disculpa 1 agua mineral también 3 ensalada césar también 10 pizza hawaiana porfa
+hola buenas 8 agua embotellada + 2 hamburguesa clásica + 2 pizza margarita plis
+buenas noches diez pizza pizza pepperoni para aquí
+me das 12 torta de milanesa, 10 ensalada césar, un par de ensalada césar plis
+3 pizza pizza pepperoni además un té helado
+6 pizza pizza ranchera, 4 nuggets de pollo, 1x jugo de naranja, 5 quesadilla de queso, 5 limonada natural
+quiero tres hamburguesa clásica además 5x orden de aros de cebolla además seis té helado además 10 piza hawaiana gracias
+me mandas 3 pizza ranchera | doce té helado | seis hamburguesa doble pollo | 5x jugo de naranja para llevar
+oye 2x orden de aros de cebolla | 2 hamburguesa hamburguesa con queso nada más
+2 agua mineral, 8x agua embotellada, diez limonada natural, 8 alitas de pollo
+qué tal 5 tacos al pastor; x8 agua embotellada; 1 nuggets de pollo para aquí
+porfa 1 hamburguesa doble carne luego 2 orden de aros de cebolla porfa
+1 pizza pizza mexicana
+para pedir 10 torta de milanesa; 6 hamburguesa hamburguesa doble carne; 2 pizza pizza hawaiana; 12 coca cola please
+necesito dos café americano y cuatro jugo de naranja y 10 hot dog sencillo gracias
+necesito 3 hamburguesa con queso gracias
+porfa 5 orden de aros de cebolla | 12 hot dog sencillo | 10 hamburguesa doble pollo porfa
+mi pedido: diez quesadilla de queso, 2 café americano, ocho pizza ranchera
+quisiera 2x agua mineral plis
+me gustaría 12 tacos al pastor + 3 papas fritas + 2 té helado + 2 tacos al pastor
+anoto: 4 coca cola, 2 papas grandes, 8 hamburguesa con queso
+cambia cinco pizza hawaiana por diez burrito de frijol
+mi pedido: 8 burrito de frijol, ocho papas grandes, 1 quesadilla de queso, una docena de hamburguesa con queso
+me das 6 jugo de naranja, cinco torta de milanesa, 6 torta de milanesa, una nuggets de pollo
+deme doce hamburguesa con queso, tres limonada natural please
+necesito tres agua mineral + ocho agua embotellada + diez hot dog sencillo
+buenas noches 6 té helado, 5 papas fritas, tres burrito de frijol, x6 hamburguesa mega nomás
+1 papas grandes y 6 agua embotellada y 1 ensalada césar y tres papas fritas
+me mandas tres alitas de pollo; 12 ensalada ensalada mixta; 3 pizza pepperoni; cinco orden de aros de cebolla nomás
+8 hamburguesa hamburguesa clásica; 3 agua embotellada
+ponme dos coca cola | 6 pizza ranchera | 3 té helado | 12 hamburguesa hamburgesa doble pollo nada más
+pedido: 8 tacos al pastor, 3 hamburguesa clásica
+porfa 10 hamburguesa mega + 5 pizza pizza margarita gracias
+dos torta de milanesa; 4 limonada natural; 1 agua mineral; 3 tacos al pastor
+dos coca cola | cinco pizza mexicana | 2 tacos al pastor por favor
+por favor 2 agua mineral nada más
+mi pedido: 8 hamburguesa hamburgesa con queso | tres hamburguesa hamburguesa mega | 5 hamburguesa hamburguesa doble carne
+buen día 3 hamburguesa hamburguesa con queso luego 10 papas fritas luego cuatro pizza pizza ranchera para llevar
+oye cinco ensalada ensalada césar y 3 jugo de naranja y ocho té helado por favor
+3 papas fritas
+disculpa 3 limonada natural, cuatro pizza pepperoni por favor
+5 hamburguesa doble pollo
+1 pizza hawaiana luego 4 hamburguesa con queso luego x6 hamburguesa doble carne luego 4 hot dog sencillo gracias
+quita 1x café americano
+hola un par de ensalada mixta además 3 burrito de frijol please
+oye 12 pizza hawaiana luego 2 papas fritas luego 1 café americano por favor
+quiero 3 alitas de pollo luego 1 papas fritas luego 5 coca cola luego seis orden de aros de cebolla gracias
+dos agua embotellada, 2 pizza margarita
+pedido: 8 pizza piza mexicana | 5 orden de aros de cebolla | un par de nuggets de pollo | 10 agua mineral
+disculpa una docena de alitas de pollo y 8 nuggets de pollo y 6 torta de milanesa y 2 jugo de naranja porfa
+buenos días 8 alitas de pollo; 1 pizza pepperoni nomás
+buenos días un par de nuggets de pollo + tres limonada natural gracias
+me gustaría 12 burrito de frijol + 10 tacos al pastor + 6 burrito de frijol + 2 hamburguesa hamburguesa con queso para comer ahí
+1 papas grandes, dos hamburguesa doble pollo
+deme dos coca cola sin azúcar; 6 ensalada césar; seis papas grandes gracias

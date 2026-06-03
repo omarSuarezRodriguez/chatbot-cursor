@@ -1,0 +1,201 @@
+linea,frase,corpus,menu,status,items,unknown,needs_review,fail_safe,tiempo_ms
+1,"hola buenas, quiero 2 pizzas hawaianas",realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]",[],False,False,0.571
+2,"buenas tardes, me gustaria pedir una hamburguesa clasica",realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}]",[],False,False,0.841
+3,"hola, dame 3 cocas cola por favor",realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 3}]",[],False,False,0.48
+4,"buenos dias, quisiera 2 aguas mineral",realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 2}]",[],False,False,0.451
+5,"hey, 1 pizza margarita y 1 ensalada cesar",realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}, {""product"": ""Ensalada César"", ""quantity"": 1}]","[""hey""]",False,False,1.022
+6,2 papas fritas,realistic,demo,needs_clarification,[],"[""2 papas fritas""]",True,True,0.725
+7,una pizza hawaiana,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}]",[],False,False,0.397
+8,3 hamburguesas mega,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}]",[],False,False,0.748
+9,2x coca cola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 2}]",[],False,False,0.443
+10,x2 agua mineral,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 2}]",[],False,False,0.763
+11,quiero 4 ensaladas cesar,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 4}]",[],False,False,1.018
+12,dame 2 pizzas margarita,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],False,False,0.486
+13,necesito 1 hamburguesa doble carne,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}]",[],False,False,1.609
+14,ponme 3 cocas,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 3}]",[],False,False,0.798
+15,traeme 2 hawaianas porfa,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]",[],False,False,0.59
+16,2 hawaianas y 1 coca,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}, {""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,1.027
+17,"una margarita, dos cocas y una agua",realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}, {""product"": ""Coca Cola"", ""quantity"": 2}, {""product"": ""Agua Mineral"", ""quantity"": 1}]",[],False,False,1.176
+18,3 pizzas hawaianas + 2 gaseosas,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 3}, {""product"": ""Coca Cola"", ""quantity"": 2}]",[],False,False,0.808
+19,hamburguesa clasica y papas fritas,realistic,demo,needs_clarification,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}]","[""papas fritas""]",False,False,0.804
+20,2 mega; 1 ensalada cesar; 2 aguas,realistic,demo,needs_clarification,"[{""product"": ""Ensalada César"", ""quantity"": 1}, {""product"": ""Agua Mineral"", ""quantity"": 2}]","[""2 mega""]",False,False,0.911
+21,pizza margarita | 1 coca | 1 agua,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}, {""product"": ""Coca Cola"", ""quantity"": 1}, {""product"": ""Agua Mineral"", ""quantity"": 1}]",[],False,False,0.789
+22,dos hawaianas luego 1 coca cola,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}, {""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.561
+23,una margarita y aparte 2 aguas,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}, {""product"": ""Agua Mineral"", ""quantity"": 2}]","[""aparte""]",False,False,0.88
+24,tambien quiero 1 ensalada cesar,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 1}]",[],False,False,0.399
+25,dos pizzas hawaianas,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]",[],False,False,0.43
+26,tres cocas cola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 3}]",[],False,False,0.341
+27,una hamburguesa clasica,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}]",[],False,False,0.356
+28,cuatro papas fritas,realistic,demo,needs_clarification,[],"[""cuatro papas fritas""]",True,True,0.641
+29,cinco ensaladas cesar,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 5}]",[],False,False,0.471
+30,seis aguas mineral,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 6}]",[],False,False,1.517
+31,siete hamburguesas mega,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 7}]",[],False,False,0.98
+32,ocho cocas,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 8}]",[],False,False,0.469
+33,diez pizzas margarita,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 10}]",[],False,False,0.462
+34,un par de hawaianas,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]",[],False,False,0.486
+35,una docena de cocas,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 12}]",[],False,False,0.355
+36,2 hamburgesas clasica,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]",[],False,False,0.375
+37,una piza hawaiana,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}]",[],False,False,0.355
+38,3 gaseosas,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 3}]",[],False,False,0.404
+39,2 ensalada cesar,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 2}]",[],False,False,0.333
+40,una cocacola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.288
+41,2 papas fritas porfa,realistic,demo,needs_clarification,[],"[""2 papas fritas porfa""]",True,True,0.544
+42,3 hamburgesas mega y 1 agua,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}, {""product"": ""Agua Mineral"", ""quantity"": 1}]",[],False,False,0.662
+43,bueno pues 2 hawaianas y 1 coca porfa,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}, {""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.527
+44,oye amigo dame 3 margaritas,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 3}]",[],False,False,0.376
+45,"disculpa, quiero 2 hamburguesas clasica",realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]",[],False,False,0.419
+46,por favor 1 pizza hawaiana y 2 aguas,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}, {""product"": ""Agua Mineral"", ""quantity"": 2}]",[],False,False,0.719
+47,me pones 2 cocas cola?,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 2}]","[""me pones""]",False,False,0.649
+48,quisiera pedir 2 mega y 1 ensalada,realistic,demo,needs_clarification,"[{""product"": ""Ensalada César"", ""quantity"": 1}]","[""2 mega""]",False,False,0.469
+49,voy a pedir 3 hawaianas gracias,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 1}, {""product"": ""Pizza Hawaiana"", ""quantity"": 3}]",[],True,False,0.835
+50,"fijate, 2 margaritas y una coca",realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}, {""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.521
+51,* 2 pizza hawaiana,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]",[],False,False,0.351
+52,* 1 coca cola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.306
+53,- 2 hamburguesas mega,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]",[],False,False,0.444
+54,- 1 agua,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 1}]",[],False,False,0.275
+55,"2 hawaiana, 1 margarita, 2 cocas",realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}, {""product"": ""Pizza Margarita"", ""quantity"": 1}, {""product"": ""Coca Cola"", ""quantity"": 2}]",[],False,False,0.754
+56,pedido:,realistic,demo,needs_clarification,[],"[""texto no interpretable""]",True,True,0.071
+57,2 hawaianas,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]",[],False,False,0.312
+58,1 coca,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.246
+59,2 pizzas de jamon y queso,realistic,demo,needs_clarification,[],"[""2 pizzas de jamon y queso""]",True,True,0.69
+60,una pizza de jamon y queso porfa,realistic,demo,needs_clarification,[],"[""una pizza de jamon y queso porfa""]",True,True,0.585
+61,3 hamburguesas doble carne,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}]",[],False,False,0.671
+62,2 hamburguesas doble pollo,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]",[],False,False,0.668
+63,quitame la coca cola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.534
+64,sacame las papas fritas,realistic,demo,needs_clarification,[],"[""sacame las papas fritas""]",True,True,0.773
+65,ya no quiero la hamburguesa,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}]",[],False,False,0.519
+66,cambia la margarita por hawaiana,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}]",[],True,False,0.659
+67,en vez de coca por agua,realistic,demo,needs_clarification,"[{""product"": ""Agua Mineral"", ""quantity"": 1}]",[],True,False,0.56
+68,agrega 2 cocas mas,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 2}]",[],False,False,0.391
+69,menu,realistic,demo,needs_clarification,[],"[""intención de menú""]",False,False,0.079
+70,menú porfa,realistic,demo,needs_clarification,[],"[""intención de menú""]",False,False,0.078
+71,que tienen de bebidas,realistic,demo,needs_clarification,[],"[""que tienen de bebidas""]",True,True,0.89
+72,ver la carta,realistic,demo,needs_clarification,[],"[""intención de menú""]",False,False,0.109
+73,tengo hambre,realistic,demo,needs_clarification,[],"[""intención de pedido sin productos""]",False,False,0.039
+74,quisiera pedir algo,realistic,demo,needs_clarification,[],"[""texto no interpretable""]",True,True,0.084
+75,2 pizzas hawaianas y 1 ensalada césar,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}, {""product"": ""Ensalada César"", ""quantity"": 1}]",[],False,False,0.843
+76,menú,realistic,demo,needs_clarification,[],"[""intención de menú""]",False,False,0.08
+77,quisiera una margarita,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}]",[],False,False,0.394
+78,me pones una agua mineral,realistic,demo,needs_clarification,"[{""product"": ""Agua Mineral"", ""quantity"": 1}]","[""me pones""]",False,False,0.814
+79,por favor cuatro pizza de jamon y queso plis,realistic,demo,needs_clarification,[],"[""cuatro pizza de jamon y queso plis""]",True,True,0.72
+80,quiero cuatro papas fritas,realistic,demo,needs_clarification,[],"[""cuatro papas fritas""]",True,True,0.646
+81,1 coca cola plis,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.348
+82,dame 5 papas fritas porfa,realistic,demo,needs_clarification,[],"[""5 papas fritas porfa""]",True,True,0.6
+83,por favor dos agua mineral,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 2}]",[],False,False,0.414
+84,me pones una pizza de jamon y queso gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}]","[""me pones""]",True,False,1.098
+85,quiero 2 papas fritas gracias,realistic,demo,needs_clarification,[],"[""2 papas fritas gracias""]",True,True,0.769
+86,dame 5 agua mineral plis,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 5}]",[],False,False,0.412
+87,por favor tres pizza de jamon y queso,realistic,demo,needs_clarification,[],"[""tres pizza de jamon y queso""]",True,True,0.639
+88,me pones tres pizza de jamon y queso plis,realistic,demo,needs_clarification,[],"[""me pones"", ""tres pizza de jamon y queso plis""]",True,True,0.965
+89,dame tres pizza de jamon y queso plis,realistic,demo,needs_clarification,[],"[""tres pizza de jamon y queso plis""]",True,True,0.63
+90,me pones cuatro papas fritas,realistic,demo,needs_clarification,[],"[""me pones"", ""cuatro papas fritas""]",True,True,1.135
+91,me pones dos pizza hawaiana,realistic,demo,needs_clarification,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]","[""me pones""]",False,False,0.912
+92,por favor 5 ensalada cesar porfa,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 5}]",[],False,False,0.468
+93,por favor dos pizza margarita plis,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],False,False,1.144
+94,dame cinco pizza de jamon y queso plis,realistic,demo,needs_clarification,[],"[""cinco pizza de jamon y queso plis""]",True,True,0.804
+95,me pones cinco coca cola plis,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 5}]","[""me pones""]",False,False,0.746
+96,quiero tres ensalada cesar gracias,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 3}]",[],False,False,0.552
+97,quiero una pizza hawaiana plis,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}]",[],False,False,0.428
+98,dame 4 papas fritas porfa,realistic,demo,needs_clarification,[],"[""4 papas fritas porfa""]",True,True,0.619
+99,me pones tres papas fritas plis,realistic,demo,needs_clarification,[],"[""me pones"", ""tres papas fritas plis""]",True,True,1.014
+100,dame cuatro pizza hawaiana gracias,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 4}]",[],False,False,0.527
+101,por favor tres pizza margarita gracias,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 3}]",[],False,False,0.556
+102,por favor tres hamburguesa clasica plis,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}]",[],False,False,0.442
+103,por favor 1 coca cola gracias,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.484
+104,quiero cinco ensalada cesar plis,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 5}]",[],False,False,0.448
+105,por favor una pizza hawaiana,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}]",[],False,False,0.405
+106,quiero cuatro hamburguesa mega,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 4}]",[],False,False,0.462
+107,me pones cuatro pizza hawaiana gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 4}]","[""me pones""]",False,False,0.847
+108,quiero 5 agua mineral,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 5}]",[],False,False,0.393
+109,quiero 4 papas fritas porfa,realistic,demo,needs_clarification,[],"[""4 papas fritas porfa""]",True,True,0.611
+110,dame dos pizza de jamon y queso,realistic,demo,needs_clarification,[],"[""dos pizza de jamon y queso""]",True,True,0.629
+111,quiero tres hamburguesa clasica gracias,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}]",[],False,False,0.531
+112,por favor cuatro ensalada cesar porfa,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 4}]",[],False,False,0.447
+113,dame una pizza hawaiana gracias,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}]",[],False,False,0.499
+114,me pones una pizza hawaiana plis,realistic,demo,needs_clarification,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}]","[""me pones""]",False,False,0.764
+115,por favor dos coca cola gracias,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 2}]",[],False,False,0.486
+116,me pones 3 papas fritas porfa,realistic,demo,needs_clarification,[],"[""me pones"", ""3 papas fritas porfa""]",True,True,0.986
+117,por favor cuatro hamburguesa mega gracias,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 4}]",[],False,False,0.611
+118,tres hamburguesa mega plis,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}]",[],False,False,0.585
+119,quiero una hamburguesa mega,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}]",[],False,False,0.477
+120,cinco pizza de jamon y queso plis,realistic,demo,needs_clarification,[],"[""cinco pizza de jamon y queso plis""]",True,True,0.633
+121,por favor cinco hamburguesa mega,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 5}]",[],False,False,0.483
+122,quiero dos pizza de jamon y queso porfa,realistic,demo,needs_clarification,[],"[""dos pizza de jamon y queso porfa""]",True,True,0.644
+123,por favor dos hamburguesa clasica gracias,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]",[],False,False,0.534
+124,quiero 3 coca cola gracias,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 3}]",[],False,False,0.462
+125,por favor 3 papas fritas gracias,realistic,demo,needs_clarification,[],"[""3 papas fritas gracias""]",True,True,0.765
+126,por favor dos pizza de jamon y queso plis,realistic,demo,needs_clarification,[],"[""dos pizza de jamon y queso plis""]",True,True,0.664
+127,dame una papas fritas plis,realistic,demo,needs_clarification,[],"[""una papas fritas plis""]",True,True,0.621
+128,cinco hamburguesa clasica gracias,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 5}]",[],False,False,0.497
+129,me pones 2 agua mineral porfa,realistic,demo,needs_clarification,"[{""product"": ""Agua Mineral"", ""quantity"": 2}]","[""me pones""]",False,False,0.755
+130,me pones cinco coca cola porfa,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 5}]","[""me pones""]",False,False,0.723
+131,me pones 4 coca cola porfa,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 4}]","[""me pones""]",False,False,0.695
+132,por favor dos pizza margarita porfa,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],False,False,0.458
+133,dame una pizza hawaiana porfa,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 1}]",[],False,False,0.421
+134,me pones cinco pizza margarita gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 5}]","[""me pones""]",False,False,0.813
+135,dame dos pizza margarita gracias,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],False,False,0.468
+136,dame 2 coca cola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 2}]",[],False,False,0.347
+137,una coca cola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.298
+138,dame cuatro agua mineral plis,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 4}]",[],False,False,0.389
+139,por favor cinco pizza hawaiana gracias,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 5}]",[],False,False,0.476
+140,me pones cuatro hamburguesa mega plis,realistic,demo,needs_clarification,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 4}]","[""me pones""]",False,False,0.764
+141,dame tres pizza margarita gracias,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 3}]",[],False,False,0.473
+142,dame tres coca cola,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 3}]",[],False,False,0.395
+143,dame tres pizza hawaiana gracias,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 3}]",[],False,False,0.508
+144,dame dos pizza margarita plis,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],False,False,0.427
+145,me pones dos pizza hawaiana gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]","[""me pones""]",False,False,0.842
+146,dos pizza de jamon y queso,realistic,demo,needs_clarification,[],"[""dos pizza de jamon y queso""]",True,True,0.887
+147,dos pizza margarita,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],False,False,0.473
+148,dame dos pizza de jamon y queso gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],True,False,1.014
+149,me pones 1 ensalada cesar porfa,realistic,demo,needs_clarification,"[{""product"": ""Ensalada César"", ""quantity"": 1}]","[""me pones""]",False,False,0.791
+150,quiero tres ensalada cesar plis,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 3}]",[],False,False,0.971
+151,me pones dos hamburguesa clasica,realistic,demo,needs_clarification,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]","[""me pones""]",False,False,0.769
+152,me pones cinco pizza de jamon y queso plis,realistic,demo,needs_clarification,[],"[""me pones"", ""cinco pizza de jamon y queso plis""]",True,True,1.082
+153,quiero dos hamburguesa clasica,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]",[],False,False,0.599
+154,me pones 1 coca cola plis,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 1}]","[""me pones""]",False,False,1.585
+155,dos pizza de jamon y queso gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 2}]",[],True,False,1.001
+156,quiero cinco pizza hawaiana plis,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 5}]",[],False,False,0.652
+157,me pones una hamburguesa mega porfa,realistic,demo,needs_clarification,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}]","[""me pones""]",False,False,0.873
+158,dame cinco ensalada cesar porfa,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 5}]",[],False,False,0.49
+159,quiero 2 agua mineral gracias,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 2}]",[],False,False,0.523
+160,me pones cinco papas fritas plis,realistic,demo,needs_clarification,[],"[""me pones"", ""cinco papas fritas plis""]",True,True,1.445
+161,quiero cinco coca cola porfa,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 5}]",[],False,False,0.415
+162,dos papas fritas gracias,realistic,demo,needs_clarification,[],"[""dos papas fritas gracias""]",True,True,0.756
+163,4 ensalada cesar porfa,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 4}]",[],False,False,0.403
+164,dame dos pizza de jamon y queso porfa,realistic,demo,needs_clarification,[],"[""dos pizza de jamon y queso porfa""]",True,True,0.644
+165,cinco pizza margarita porfa,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 5}]",[],False,False,0.418
+166,me pones cinco coca cola,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 5}]","[""me pones""]",False,False,1.031
+167,me pones tres pizza de jamon y queso porfa,realistic,demo,needs_clarification,[],"[""me pones"", ""tres pizza de jamon y queso porfa""]",True,True,1.137
+168,cuatro pizza margarita porfa,realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 4}]",[],False,False,0.495
+169,dame 5 ensalada cesar gracias,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 5}]",[],False,False,0.61
+170,quiero cinco hamburguesa mega gracias,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 5}]",[],False,False,0.61
+171,quiero dos ensalada cesar,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 2}]",[],False,False,0.42
+172,por favor cinco papas fritas gracias,realistic,demo,needs_clarification,[],"[""cinco papas fritas gracias""]",True,True,0.829
+173,me pones cuatro hamburguesa clasica,realistic,demo,needs_clarification,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 4}]","[""me pones""]",False,False,0.78
+174,una pizza de jamon y queso gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}]",[],True,False,0.748
+175,dame una agua mineral porfa,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 1}]",[],False,False,0.439
+176,4 coca cola gracias,realistic,demo,ok,"[{""product"": ""Coca Cola"", ""quantity"": 4}]",[],False,False,0.445
+177,me pones tres pizza margarita porfa,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 3}]","[""me pones""]",False,False,0.781
+178,me pones 2 papas fritas gracias,realistic,demo,needs_clarification,[],"[""me pones"", ""2 papas fritas gracias""]",True,True,1.125
+179,dame una papas fritas gracias,realistic,demo,needs_clarification,[],"[""una papas fritas gracias""]",True,True,0.782
+180,dame dos hamburguesa clasica plis,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 2}]",[],False,False,0.441
+181,dame cuatro pizza de jamon y queso gracias,realistic,demo,needs_clarification,"[{""product"": ""Pizza Margarita"", ""quantity"": 4}]",[],True,False,0.774
+182,por favor 5 papas fritas gracias,realistic,demo,needs_clarification,[],"[""5 papas fritas gracias""]",True,True,0.875
+183,dame tres hamburguesa mega gracias,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}]",[],False,False,0.579
+184,quiero 3 ensalada cesar porfa,realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 3}]",[],False,False,0.431
+185,por favor cuatro hamburguesa clasica gracias,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 4}]",[],False,False,0.534
+186,por favor 2 papas fritas plis,realistic,demo,needs_clarification,[],"[""2 papas fritas plis""]",True,True,0.629
+187,por favor 5 agua mineral gracias,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 5}]",[],False,False,0.506
+188,dame tres agua mineral,realistic,demo,ok,"[{""product"": ""Agua Mineral"", ""quantity"": 3}]",[],False,False,0.405
+189,"hola, 2 hawaianas y 3 cocas para llevar",realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}, {""product"": ""Coca Cola"", ""quantity"": 3}]",[],False,False,0.864
+190,me das 1 margarita con 2 aguas mineral,realistic,demo,needs_clarification,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 1}, {""product"": ""Pizza Margarita"", ""quantity"": 1}, {""product"": ""Agua Mineral"", ""quantity"": 2}]",[],True,False,2.226
+191,pedido: 4 hamburguesas clasica y 2 papas,realistic,demo,needs_clarification,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 4}]","[""2 papas""]",False,False,1.016
+192,"buenas, solo 1 ensalada cesar por favor",realistic,demo,ok,"[{""product"": ""Ensalada César"", ""quantity"": 1}]",[],False,False,0.472
+193,2 pizzas hawaianas y 2 cocacolas gracias,realistic,demo,ok,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}, {""product"": ""Coca Cola"", ""quantity"": 2}]",[],False,False,0.797
+194,tres hamburguesas mega y una coca,realistic,demo,ok,"[{""product"": ""Hamburguesa Clásica"", ""quantity"": 3}, {""product"": ""Coca Cola"", ""quantity"": 1}]",[],False,False,0.709
+195,"una pizza margarita, una hawaiana",realistic,demo,ok,"[{""product"": ""Pizza Margarita"", ""quantity"": 1}, {""product"": ""Pizza Hawaiana"", ""quantity"": 1}]",[],False,False,0.667
+196,repite: 2 cocas y 1 agua,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 2}, {""product"": ""Agua Mineral"", ""quantity"": 1}]","[""repite""]",False,False,0.903
+197,para cenar: 2 mega y 1 ensalada,realistic,demo,needs_clarification,"[{""product"": ""Ensalada César"", ""quantity"": 2}]","[""2 mega""]",False,False,0.811
+198,el de siempre: 2 hawaianas,realistic,demo,needs_clarification,"[{""product"": ""Pizza Hawaiana"", ""quantity"": 2}]","[""el de siempre""]",False,False,0.748
+199,igual que ayer 2 cocas y 1 mega,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 2}]","[""que ayer"", ""1 mega""]",False,False,1.078
+200,sumale 1 coca cola al pedido,realistic,demo,needs_clarification,"[{""product"": ""Coca Cola"", ""quantity"": 1}]","[""sumale""]",False,False,0.75

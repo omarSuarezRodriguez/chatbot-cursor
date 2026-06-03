@@ -1,4 +1,4 @@
-## v0.34
+## v0.35
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4762,3 +4762,80 @@ python scripts/measure_latency.py
 ##########################################################
 ## v0.34
 
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[Haz que parser.py lea e interprete todas las entradas que haga el cliente o el administrador, osea que las interprete y las lea y las entienda y trate de darle significado, quiero que como mejora incremental trates de que todo lo que lea el bot de parte del usuario para que lo pueda entender, como si fuera lenguaje natural, trata de implementar como mejora incremental, las mejores tecnicas para entender lo que quiere el usuario, utilizando parser y añadiendo más de ser necesario, y que eso analice todo, también es importante mantener la velocidad]
+
+
+## resp cursor ##
+
+### Análisis previo
+
+El parser ya tenía un motor sólido (segmentación, fuzzy matching, typos, conectores). La tarea pedía **mejor comprensión de lenguaje natural** sin romper compatibilidad ni velocidad. Según `AI_RULES.md`, el cambio se limitó a **un solo archivo**: `app/core/parser.py`.
+
+### Cambios implementados
+
+1. **`NaturalLanguagePreprocessor`** — Capa rápida (solo regex) que normaliza mensajes antes de interpretarlos:
+   - Prefijos conversacionales (`bueno`, `pues`, `oye`, `mira`, etc.)
+   - Cantidades coloquiales (`un par de` → 2, `media docena de` → 6, `una docena de` → 12)
+   - Viñetas de WhatsApp (`-`, `•`)
+   - Preserva conectores `+`, `*`, `&` para no perder segmentos
+
+2. **Números en palabras 13–20** (`trece` … `veinte`) para pedidos largos en texto natural.
+
+3. **Más palabras ruido** y **frases de intención** (menú / pedido) para filtrar charla sin confundir pedidos reales.
+
+4. **Intención de menú más inteligente** — Frases como “qué tienen” solo cuentan como menú si **no** hay productos reconocibles en el mensaje.
+
+5. **Conectores NL** — `luego`, `además`, `aparte`, `también quiero`, etc., para separar ítems en un solo mensaje.
+
+6. **Operaciones de carrito más naturales** — `quítame`, `sácame`, `ya no quiero`, `en vez de … por …`, etc., en `parse_remove`, `parse_replace` y `apply_message`.
+
+7. **Sinónimos** — `cocacola`, `refresco(s)` hacia bebidas del menú.
+
+8. **4 pruebas de regresión** (suite **29/29 OK**).
+
+### Archivos modificados
+
+- `app/core/parser.py`
+
+### Riesgos mitigados
+
+- Regresión con `hamburguesa + agua` (el `+` se borraba al preprocesar) — corregida guardando conectores.
+- No se inventan productos: el menú sigue siendo la única fuente.
+- Sin ML ni llamadas externas: impacto mínimo en latencia.
+
+### Compatibilidad verificada
+
+| Componente | Estado |
+|------------|--------|
+| Parser (API pública) | `apply_message`, `parse_order`, `format_cart` intactos |
+| Flask / Twilio / Flow Engine | Sin cambios |
+| Order Service | Sin cambios |
+| Persistencia / estados | Sin cambios |
+
+```bash
+python -m app.core.parser
+# PARSER VALIDATION: OK (29/29)
+```
+
+### Funcionalidades agregadas
+
+- Preprocesamiento conversacional centralizado.
+- Cantidades coloquiales y números 13–20 en palabras.
+- Mejor detección de “quiero ver la carta” vs pedido con productos.
+- Más formas de quitar/cambiar ítems y de enlazar varios productos en un mensaje.
+
+### Funcionalidades preservadas
+
+- Contrato JSON del parser (`items`, `status`, `unknown`).
+- Matching fuzzy, typos, `de X y Y`, categorías, auditoría `log_parser_errors`.
+- Todos los casos anteriores de la suite (pedido largo jamón/queso, hamburguesas variadas, etc.).
+
+
+####################################################

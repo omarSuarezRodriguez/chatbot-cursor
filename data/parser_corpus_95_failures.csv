@@ -1,0 +1,27 @@
+id,categoria,mensaje,intencion_esperada,obtenido,check_type,causa_probable
+1466,B_pedido_nl,voy a querer refresco,pedido_con_productos,items=1 status=ok,parse_order,falso positivo en producto fuera de menú
+3044,H_adversarial,qwerty pizza,ruido,command=None items=1,ruido,ruido interpretado como pedido/comando
+3046,H_adversarial,5 10 pizzas pepperoni y 5 ensalada cesar,pedido_con_productos,"items=0 status=needs_clarification unknown=['5', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3056,H_adversarial,5 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['5', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3071,H_adversarial,2 10 pizzas pepperoni y 5 burger doble,pedido_con_productos,"items=0 status=needs_clarification unknown=['2', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3072,H_adversarial,2 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['2', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3073,H_adversarial,una 10 pizzas pepperoni y 5 latte grande,pedido_con_productos,"items=0 status=needs_clarification unknown=['una 10 pizzas pepperoni', '5 latte grande']",parse_order,no reconoció productos del menú
+3090,H_adversarial,una 10 pizzas pepperoni,pedido_con_productos,items=0 status=needs_clarification unknown=['una 10 pizzas pepperoni'],parse_order,no reconoció productos del menú
+3097,H_adversarial,2 10 pizzas pepperoni y una latte grande,pedido_con_productos,"items=0 status=needs_clarification unknown=['2', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3127,H_adversarial,docena de tacos al pastor y 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['docena de tacos al pastor', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3141,H_adversarial,2 wings picosas y docena de 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['2 wings picosas', 'docena de']",parse_order,no reconoció productos del menú
+3150,H_adversarial,wings picosas y una 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['wings picosas', 'una 10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3152,H_adversarial,2 10 pizzas pepperoni y docena de burger doble,pedido_con_productos,"items=0 status=needs_clarification unknown=['2', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3198,H_adversarial,docena de 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['docena de', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3208,H_adversarial,5 burger doble y una 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['5 burger doble', 'una 10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3219,H_adversarial,10 pizzas pepperoni,pedido_con_productos,items=0 status=needs_clarification unknown=['10 pizzas pepperoni'],parse_order,no reconoció productos del menú
+3239,H_adversarial,una 10 pizzas pepperoni y tacos al pastor,pedido_con_productos,"items=0 status=needs_clarification unknown=['una 10 pizzas pepperoni', 'tacos al pastor']",parse_order,no reconoció productos del menú
+3244,H_adversarial,10 pizzas pepperoni y burger doble,pedido_con_productos,"items=0 status=needs_clarification unknown=['10 pizzas pepperoni', 'burger doble']",parse_order,no reconoció productos del menú
+3263,H_adversarial,2 lasagna y una 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['2 lasagna', 'una 10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3266,H_adversarial,docena de burger doble y docena de 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['docena de burger doble', 'docena de']",parse_order,no reconoció productos del menú
+3272,H_adversarial,2 10 pizzas pepperoni y 2 sushi roll,pedido_con_productos,"items=0 status=needs_clarification unknown=['2', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3288,H_adversarial,docena de 10 pizzas pepperoni y una 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['docena de', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3290,H_adversarial,una 10 pizzas pepperoni y 5 wings picosas,pedido_con_productos,"items=0 status=needs_clarification unknown=['una 10 pizzas pepperoni', '5 wings picosas']",parse_order,no reconoció productos del menú
+3296,H_adversarial,docena de sushi roll y docena de 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['docena de sushi roll', 'docena de']",parse_order,no reconoció productos del menú
+3299,H_adversarial,5 10 pizzas pepperoni y tacos al pastor,pedido_con_productos,"items=0 status=needs_clarification unknown=['5', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú
+3300,H_adversarial,2 latte grande y 5 10 pizzas pepperoni,pedido_con_productos,"items=0 status=needs_clarification unknown=['3 latte grande', '10 pizzas pepperoni']",parse_order,no reconoció productos del menú

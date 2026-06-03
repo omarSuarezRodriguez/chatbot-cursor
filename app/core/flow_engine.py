@@ -13,6 +13,7 @@ from app.services.menu_service import MenuService
 from app.services.order_service import OrderService
 from app.services.reservation_service import ReservationService
 from app.services.user_service import UserService
+from app.core.parser import infer_user_intent
 from app.utils.validators import (
     is_confirmation,
     is_greeting,
@@ -214,7 +215,7 @@ class FlowEngine:
 
         return self._process_node(wa_id, target, include_navigation=True)
 
-    def process_message(self, wa_id: str, body: str) -> Reply:
+    def process_message(self, wa_id: str, body: str, *, _inner: bool = False) -> Reply:
         text = (body or "").strip()
         if not text:
             text = "hola"
@@ -222,15 +223,64 @@ class FlowEngine:
         normalized = normalize_text(text)
         state = self.state_manager.get(wa_id)
         current_step = state.get("step", "start")
+        log_meta: Dict[str, Any] = {"intent": None, "routed": None}
 
+        return self._process_message_body(
+            wa_id,
+            text,
+            normalized,
+            state,
+            current_step,
+            log_meta,
+            _inner=_inner,
+        )
+
+    def _process_message_body(
+        self,
+        wa_id: str,
+        text: str,
+        normalized: str,
+        state: Dict[str, Any],
+        current_step: str,
+        log_meta: Dict[str, Any],
+        *,
+        _inner: bool,
+    ) -> Reply:
         abandon = self._handle_abandon_confirm(wa_id, text)
         if abandon is not None:
             return abandon
 
         if normalized in self.global_commands:
+            log_meta["routed"] = normalized
             response = self._resolve_global_command(wa_id, normalized, current_step)
             if response:
                 return response
+
+        menu_items = self.menu_service.get_available_menu()
+        intent = infer_user_intent(text, menu_items=menu_items)
+        log_meta["intent"] = intent
+        intent_command = intent.get("command")
+        if (
+            intent_command
+            and intent_command in self.global_commands
+            and not intent.get("has_products")
+        ):
+            log_meta["routed"] = str(intent_command)
+            response = self._resolve_global_command(wa_id, intent_command, current_step)
+            if response:
+                return response
+
+        node_for_intent = self.nodes.get(current_step, {})
+        if (
+            not intent_command
+            and intent.get("has_products")
+            and current_step in {"start", "menu_node"}
+            and node_for_intent.get("flow") == "idle"
+        ):
+            log_meta["routed"] = "pedido_implicito"
+            response = self._resolve_global_command(wa_id, "pedido", current_step)
+            if response:
+                return self.process_message(wa_id, text, _inner=True)
 
         if state.get("data", {}).get("awaiting_repeat_order") and is_greeting(text):
             self.state_manager.patch_data(
@@ -422,16 +472,8 @@ class FlowEngine:
         result = self.order_service.parse_order_text(text, cart, wa_id=wa_id)
 
         if not result["items"]:
-            unknown_note = ""
-            if result["unknown"]:
-                unknown_note = (
-                    "\n\nNo reconocí: "
-                    + ", ".join(result["unknown"])
-                    + ". Revisa el menú y vuelve a intentarlo."
-                )
             return (
                 "Aún no tengo productos en tu pedido."
-                + unknown_note
                 + "\n\nCuéntame qué te gustaría ordenar.",
                 None,
             )
@@ -439,17 +481,9 @@ class FlowEngine:
         self.state_manager.patch_data(wa_id, cart=result["items"])
         notes = result.get("notes", [])
         note_text = f"\n\n{' '.join(notes)}" if notes else ""
-        unknown = result.get("unknown", [])
-        unknown_text = ""
-        if unknown:
-            unknown_text = (
-                "\n\nNo pude identificar: "
-                + ", ".join(unknown)
-                + ". Si quieres, corrígelo en tu siguiente mensaje."
-            )
 
         return (
-            f"Perfecto, actualicé tu pedido.{note_text}{unknown_text}",
+            f"Perfecto, actualicé tu pedido.{note_text}",
             "order_review",
         )
 
