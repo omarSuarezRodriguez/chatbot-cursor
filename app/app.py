@@ -188,7 +188,10 @@ def create_app() -> Flask:
 
         is_admin = False
         try:
-            if admin_service.is_admin(wa_id) or admin_service.is_admin(from_number):
+            sender_ids = [wa_id]
+            if from_number and from_number != wa_id:
+                sender_ids.append(from_number)
+            if any(admin_service.is_admin(sender) for sender in sender_ids):
                 is_admin = True
                 reply = admin_service.handle_admin_message(body)
             else:
@@ -207,10 +210,17 @@ def create_app() -> Flask:
                 "Estoy aquí para ayudarte. Escribe *menu*, *pedido* o *reservar*."
             )
 
-        _attach_replies(response, reply)
+        recipient = from_number or wa_id
+        _deliver_bot_reply(
+            admin_service,
+            recipient,
+            reply,
+            response,
+            use_rest=_use_rest_webhook_replies(),
+        )
         elapsed_ms = (time.perf_counter() - started) * 1000
         _log_bot_completion(elapsed_ms, wa_id, is_admin, body)
-        return str(response), 200, {"Content-Type": "application/xml"}
+        return str(response), 200, {"Content-Type": "text/xml; charset=utf-8"}
 
     @flask_app.post("/bot/reload-flow")
     def reload_flow():
@@ -221,6 +231,15 @@ def create_app() -> Flask:
     return flask_app
 
 
+def _use_rest_webhook_replies() -> bool:
+    explicit = os.getenv("TWILIO_REST_WEBHOOK_REPLIES", "").strip().lower()
+    if explicit in {"0", "false", "no", "off"}:
+        return False
+    if explicit in {"1", "true", "yes", "on"}:
+        return True
+    return not is_twilio_whatsapp_sandbox()
+
+
 def _attach_replies(response: MessagingResponse, reply: Reply) -> None:
     if isinstance(reply, list):
         for part in reply:
@@ -228,6 +247,50 @@ def _attach_replies(response: MessagingResponse, reply: Reply) -> None:
                 response.message(str(part).strip())
     elif reply and str(reply).strip():
         response.message(str(reply).strip())
+
+
+def _reply_parts(reply: Reply) -> List[str]:
+    if isinstance(reply, list):
+        return [str(part).strip() for part in reply if part and str(part).strip()]
+    if reply and str(reply).strip():
+        return [str(reply).strip()]
+    return []
+
+
+def _deliver_bot_reply(
+    admin_service: AdminService,
+    recipient: str,
+    reply: Reply,
+    twiml_response: MessagingResponse,
+    *,
+    use_rest: bool,
+) -> None:
+    parts = _reply_parts(reply)
+    if not parts:
+        return
+
+    if not use_rest:
+        _attach_replies(twiml_response, reply)
+        return
+
+    delivered = False
+    for part in parts:
+        if admin_service._send_whatsapp(recipient, part):
+            delivered = True
+
+    if delivered:
+        logger.info(
+            "Webhook reply sent via Twilio REST to %s (%d part(s))",
+            recipient,
+            len(parts),
+        )
+        return
+
+    logger.warning(
+        "REST WhatsApp delivery failed for %s; falling back to TwiML",
+        recipient,
+    )
+    _attach_replies(twiml_response, reply)
 
 
 app = create_app()

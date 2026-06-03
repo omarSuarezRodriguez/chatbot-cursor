@@ -1,4 +1,4 @@
-## v0.27
+## v0.28
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4009,3 +4009,193 @@ python scripts/verify_admin_flow.py
 
 
 ##########################################################
+## v0.28
+
+
+
+## Prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[
+  
+Ya puse el número de whatsapp en messaging_service en sender pool y ahí está ya, también lo agregué en meta busines y de hecho cuando le escribo al número, el bot me responde, pero me toma ese número +573242497352 como si fuera el número del admin del restaurante pero yo quiero que lo tome es como el número principal del bot, osea el que empieza a vender cuando uno lo saluda, y que el número del admin del bot se mantenga en +573001111032, arreglalo
+
+
+]
+
+
+## Respuesta cursor ##
+
+
+### Análisis previo
+
+El `.env` local ya estaba bien separado:
+- **Bot (clientes):** `TWILIO_WHATSAPP_FROM=whatsapp:+573242497352`
+- **Admin:** `ADMIN_WHATSAPP_NUMBER=whatsapp:+573001111032`
+
+El problema ocurría cuando el número del bot coincidía con el configurado como admin (común al migrar del sandbox al número de producción en Twilio/Messaging Service). En ese caso, cualquier mensaje desde `+573242497352` entraba al flujo admin (`Comando admin no reconocido…`) en lugar del flujo de ventas.
+
+### Cambios implementados
+
+En `admin_service.py`:
+- **`is_bot_number()`** — identifica si un `WaId` es la línea del bot (`TWILIO_WHATSAPP_FROM`).
+- **`is_admin()`** — excluye explícitamente el número del bot; solo `+573001111032` puede ser admin.
+- **Alerta al arrancar** — si `ADMIN_WHATSAPP_NUMBER` y `TWILIO_WHATSAPP_FROM` apuntan al mismo número, se registra un warning en logs.
+
+### Archivos modificados
+
+- `app/services/admin_service.py`
+- `app/app.py` (detección de admin unificada por remitente)
+
+### Riesgos mitigados
+
+- El número del bot **nunca** se trata como admin, aunque esté mal configurado en Render.
+- El admin real (`+573001111032`) sigue funcionando con `CONFIRMAR ORD-…`.
+
+### Compatibilidad verificada
+
+```bash
+python scripts/verify_admin_flow.py
+# === verify_admin_flow: ALL PASSED ===
+```
+
+Comportamiento confirmado:
+- `573242497352` → `is_bot=True`, `is_admin=False` → flujo cliente (menú, pedido, etc.)
+- `573001111032` → `is_admin=True` → comandos admin
+
+### Funcionalidades agregadas
+
+- Separación explícita bot vs admin en el código.
+- Warning en logs si ambas variables apuntan al mismo número.
+
+### Funcionalidades preservadas
+
+- Flujo conversacional de clientes, notificaciones al admin, confirmación de pedidos y recordatorios.
+
+---
+
+**Importante en Render:** verifica que las variables de entorno sean distintas:
+
+```
+TWILIO_WHATSAPP_FROM=whatsapp:+573242497352
+ADMIN_WHATSAPP_NUMBER=whatsapp:+573001111032
+```
+
+Si en Render `ADMIN_WHATSAPP_NUMBER` sigue siendo `+573242497352`, corrígelo y redeploy. Después de desplegar, escribe `hola` al `+573242497352` y deberías ver el saludo de ventas; desde `+573001111032` podrás confirmar pedidos con `CONFIRMAR ORD-…`.
+
+
+
+
+
+## Segundo prompt ##
+
+OBLIGATORIO:
+
+Lee y aplica completamente AI_RULES.md.
+
+Cumple todas sus restricciones antes de realizar cambios.
+
+TAREA:
+[
+Cuando le escribo al bot, +573242497352 , recibo respuesta de flask 2026-06-02 19:43:46,967 [INFO] app.integrations.google_sheets: Orders local cache refreshed: 27 orders
+2026-06-02 19:43:54,099 [INFO] app.app: POST /bot completed in 2.9 ms wa_id=35699155990 admin=False body='Hola'
+2026-06-02 19:44:17,001 [INFO] app.app: POST /bot completed in 2.3 ms wa_id=35699155990 admin=False body='.'
+pero no funcoina, solucionalo para que siga funcionando como siempre, como mejora incremental
+
+]
+
+## Resp cursor ##
+
+### Análisis previo
+
+Había **dos causas** de “Flask responde pero WhatsApp no”:
+
+1. **Producción con Messaging Service** (`+573242497352`): el webhook procesaba bien (~3 ms, `admin=False`), pero TwiML del webhook **no siempre entrega** mensajes en WhatsApp Business. Hay que enviar por **REST API** (`messages.create`), igual que las confirmaciones al admin/cliente.
+
+2. **Estado bloqueado**: tu `wa_id=35699155990` tenía `awaiting_repeat_order=true`. Eso interceptaba `Hola`, `.`, `pedido`, etc. **antes** de los comandos globales, generando respuestas que TwiML no entregaba → silencio en el teléfono.
+
+Además, revisa en Twilio Console si hay error **63038** (límite 50 msgs/día en cuenta Trial); durante las pruebas apareció ese límite.
+
+---
+
+### Cambios implementados
+
+**`app/app.py`**
+- En producción (número distinto al sandbox), las respuestas del webhook se envían por **Twilio REST**.
+- Si REST falla, **fallback a TwiML** (compatibilidad).
+- `Content-Type: text/xml; charset=utf-8`.
+- Variable opcional: `TWILIO_REST_WEBHOOK_REPLIES=0|1` (auto = REST en producción).
+
+**`app/core/flow_engine.py`**
+- Comandos globales (`inicio`, `pedido`, `menu`, etc.) se evalúan **antes** del bloqueo de “repetir pedido”.
+- `Hola` con `awaiting_repeat_order` activo vuelve al flujo de bienvenida normal.
+
+**Scripts de prueba** — desactivan REST en tests locales para seguir validando TwiML.
+
+---
+
+### Archivos modificados
+
+- `app/app.py`
+- `app/core/flow_engine.py`
+- `scripts/verify_admin_flow.py`
+- `scripts/regression_checklist.py`
+
+*(Los cambios v0.28 de `is_bot_number` en `admin_service.py` ya estaban aplicados.)*
+
+---
+
+### Riesgos mitigados
+
+- Sandbox sigue usando TwiML (sin cambio).
+- REST con fallback TwiML si Twilio rechaza el envío.
+- Tests automatizados pasan con `TWILIO_REST_WEBHOOK_REPLIES=0`.
+
+---
+
+### Compatibilidad verificada
+
+```bash
+python scripts/verify_admin_flow.py
+# === verify_admin_flow: ALL PASSED ===
+```
+
+---
+
+### Funcionalidades agregadas
+
+- Entrega WhatsApp en producción vía REST API desde el webhook.
+- Recuperación del flujo con `Hola` / comandos globales aunque quede bloqueado “repetir pedido”.
+
+---
+
+### Funcionalidades preservadas
+
+- Flujo conversacional, parser, admin (`+573001111032`), confirmación de pedidos, Twilio sandbox.
+
+---
+
+### Qué hacer tú
+
+1. **Despliega** estos cambios en Render (reinicia el servicio).
+2. En Render, confirma:
+   ```
+   TWILIO_WHATSAPP_FROM=whatsapp:+573242497352
+   ADMIN_WHATSAPP_NUMBER=whatsapp:+573001111032
+   ```
+3. Escribe **`hola`** o **`inicio`** al `+573242497352` → deberías ver el saludo de ventas (2 mensajes).
+4. Si sigue sin llegar nada, revisa **Twilio Console → Monitor → Logs** por error **63038** (cuenta Trial agotada) o **63016** (ventana 24 h).
+
+En logs de producción deberías ver:
+```
+Webhook reply sent via Twilio REST to whatsapp:+573569915590 (N part(s))
+```
+
+#########################################################
+

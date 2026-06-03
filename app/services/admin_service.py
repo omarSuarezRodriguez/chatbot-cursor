@@ -75,19 +75,33 @@ class AdminService:
         return self._resolve_e164_digits(raw) or raw
 
     @staticmethod
-    def is_admin(wa_id: str) -> bool:
-        if not ADMIN_WHATSAPP_NUMBER:
+    def _phones_match(a: str, b: str) -> bool:
+        normalized_a = AdminService._normalize_phone(a)
+        normalized_b = AdminService._normalize_phone(b)
+        if not normalized_a or not normalized_b:
             return False
-        normalized_admin = AdminService._normalize_phone(ADMIN_WHATSAPP_NUMBER)
-        normalized_wa = AdminService._normalize_phone(wa_id)
-        if not normalized_admin or not normalized_wa:
-            return False
-        if normalized_admin == normalized_wa:
+        if normalized_a == normalized_b:
             return True
         # Twilio WaId may omit country code (e.g. 3001111032 vs 573001111032).
-        if len(normalized_admin) >= 10 and len(normalized_wa) >= 10:
-            return normalized_admin[-10:] == normalized_wa[-10:]
+        if len(normalized_a) >= 10 and len(normalized_b) >= 10:
+            return normalized_a[-10:] == normalized_b[-10:]
         return False
+
+    @staticmethod
+    def is_bot_number(wa_id: str) -> bool:
+        """True if wa_id is the outbound bot line (TWILIO_WHATSAPP_FROM)."""
+        if not TWILIO_WHATSAPP_FROM or not wa_id:
+            return False
+        return AdminService._phones_match(wa_id, TWILIO_WHATSAPP_FROM)
+
+    @staticmethod
+    def is_admin(wa_id: str) -> bool:
+        if not ADMIN_WHATSAPP_NUMBER or not wa_id:
+            return False
+        # The bot line is always customer-facing, never admin commands.
+        if AdminService.is_bot_number(wa_id):
+            return False
+        return AdminService._phones_match(wa_id, ADMIN_WHATSAPP_NUMBER)
 
     def _format_whatsapp_address(self, number: str) -> str:
         digits = self._resolve_e164_digits(number)
@@ -377,3 +391,13 @@ class AdminService:
                 handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         except Exception:
             logger.exception("Failed to log reminder stop event")
+
+
+if ADMIN_WHATSAPP_NUMBER and TWILIO_WHATSAPP_FROM:
+    if AdminService._phones_match(ADMIN_WHATSAPP_NUMBER, TWILIO_WHATSAPP_FROM):
+        logger.warning(
+            "ADMIN_WHATSAPP_NUMBER y TWILIO_WHATSAPP_FROM apuntan al mismo numero (%s). "
+            "TWILIO_WHATSAPP_FROM debe ser el bot de clientes; "
+            "ADMIN_WHATSAPP_NUMBER debe ser el celular del administrador.",
+            TWILIO_WHATSAPP_FROM,
+        )

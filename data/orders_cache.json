@@ -756,6 +756,25 @@
       "customer_name": "Omar Suarez",
       "address": "",
       "delivery_type": "recoger"
+    },
+    "ORD-26CD7444": {
+      "order_id": "ORD-26CD7444",
+      "wa_id": "573009998877",
+      "items": [
+        {
+          "product_id": "",
+          "product": "Coca Cola",
+          "qty": 2,
+          "unit_price": 25.0,
+          "subtotal": 50.0
+        }
+      ],
+      "total": 50.0,
+      "status": "pending",
+      "timestamp": "2026-06-03T00:48:05.673969",
+      "customer_name": "Test",
+      "address": "",
+      "delivery_type": "recoger"
     }
   },
   "row_index": {
@@ -785,7 +804,8 @@
     "ORD-C286D1C9": 28,
     "ORD-A2B22F92": 29,
     "ORD-E48AB77B": 30,
-    "ORD-45E612E5": 31
+    "ORD-45E612E5": 31,
+    "ORD-26CD7444": 32
   },
   "dirty_new": [],
   "dirty_status": {}

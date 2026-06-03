@@ -18,7 +18,7 @@
     },
     "35699155990": {
       "wa_id": "35699155990",
-      "name": "Cliente11",
+      "name": "Omar Suarez",
       "address": "",
       "last_order_date": "2026-06-02T23:43:43.957439",
       "last_order_items": [
@@ -44,7 +44,7 @@
           "subtotal": 25.0
         }
       ],
-      "last_seen": "2026-06-02T23:48:28.590754"
+      "last_seen": "2026-06-03T01:07:32.457861"
     },
     "client_baseline_test": {
       "wa_id": "client_baseline_test",
@@ -385,17 +385,25 @@
       "wa_id": "573009998877",
       "name": "Test",
       "address": "",
-      "last_order_date": "2026-06-02T23:35:11.865983",
+      "last_order_date": "2026-06-03T00:48:05.675049",
       "last_order_items": [
         {
           "product_id": "",
-          "product": "Hamburguesa Doble Carne",
+          "product": "Coca Cola",
           "qty": 2,
           "unit_price": 25.0,
           "subtotal": 50.0
         }
       ],
-      "last_seen": "2026-06-02T23:35:11.865983"
+      "last_seen": "2026-06-03T00:48:05.675049"
+    },
+    "regression_d7041906": {
+      "wa_id": "regression_d7041906",
+      "name": "Regression",
+      "address": "",
+      "last_order_date": "",
+      "last_order_items": [],
+      "last_seen": "2026-06-03T00:48:12.103110"
     }
   },
   "row_index": {
@@ -442,7 +450,8 @@
     "deploy_f3591723": 42,
     "deploy_c711288b": 43,
     "deploy_a57ca447": 44,
-    "573009998877": 45
+    "573009998877": 45,
+    "regression_d7041906": 46
   },
   "dirty": []
 }

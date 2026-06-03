@@ -6,6 +6,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -13,6 +14,8 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+
+os.environ.setdefault("TWILIO_REST_WEBHOOK_REPLIES", "0")
 
 from app.app import create_app  # noqa: E402
 from app.config import ADMIN_WHATSAPP_NUMBER  # noqa: E402

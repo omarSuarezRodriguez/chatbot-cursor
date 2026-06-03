@@ -227,14 +227,22 @@ class FlowEngine:
         if abandon is not None:
             return abandon
 
-        repeat = self._handle_repeat_order(wa_id, text)
-        if repeat is not None:
-            return repeat
-
         if normalized in self.global_commands:
             response = self._resolve_global_command(wa_id, normalized, current_step)
             if response:
                 return response
+
+        if state.get("data", {}).get("awaiting_repeat_order") and is_greeting(text):
+            self.state_manager.patch_data(
+                wa_id,
+                awaiting_repeat_order=False,
+                skip_repeat_order_once=True,
+            )
+            return self._process_node(wa_id, "start", include_navigation=True)
+
+        repeat = self._handle_repeat_order(wa_id, text)
+        if repeat is not None:
+            return repeat
 
         node = self.nodes.get(current_step)
         if not node:
