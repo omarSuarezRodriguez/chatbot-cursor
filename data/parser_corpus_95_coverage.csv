@@ -2360,942 +2360,540 @@ id,categoria,subcategoria,mensaje,intencion_esperada,productos_en_mensaje,notas
 2359,D_reserva,reserva,reserva 15/06/2026 a las nueve para 6,dato_reserva,no,flujo reserva
 2360,D_reserva,reserva,reserva 28 de marzo a las 8:30 para 3,dato_reserva,no,flujo reserva
 2361,E_entrega,tipo_entrega,opcion 1,datos_entrega,no,captura entrega
-2362,E_entrega,direccion,Calle Hidalgo 47 col Sur,datos_entrega,no,captura entrega
-2363,E_entrega,nombre,me llamo Carlos Juan,datos_entrega,no,captura entrega
-2364,E_entrega,tipo_entrega,paso a recoger,datos_entrega,no,captura entrega
-2365,E_entrega,direccion,si uso mi direccion guardada,datos_entrega,no,captura entrega
-2366,E_entrega,telefono,cel 4150876,datos_entrega,no,captura entrega
-2367,E_entrega,tipo_entrega,recoger,datos_entrega,no,captura entrega
-2368,E_entrega,direccion,Calle Reforma 167 col col del valle,datos_entrega,no,captura entrega
-2369,E_entrega,direccion,misma direccion de siempre porfa,datos_entrega,no,captura entrega
+2362,E_entrega,direccion,la de siempre,datos_entrega,no,captura entrega
+2363,E_entrega,tipo_entrega,pickup,datos_entrega,no,captura entrega
+2364,E_entrega,nombre,me llamo Juan,datos_entrega,no,captura entrega
+2365,E_entrega,tipo_entrega,paso a recoger,datos_entrega,no,captura entrega
+2366,E_entrega,nombre,Carlos,datos_entrega,no,captura entrega
+2367,E_entrega,direccion,av juarez 45 entre 5 y 7,datos_entrega,no,captura entrega
+2368,E_entrega,tipo_entrega,recoger,datos_entrega,no,captura entrega
+2369,E_entrega,direccion,Calle Reforma 123 col Centro,datos_entrega,no,captura entrega
 2370,E_entrega,tipo_entrega,pasar por el,datos_entrega,no,captura entrega
-2371,E_entrega,direccion,Calle Morelos 32 col Centro,datos_entrega,no,captura entrega
-2372,E_entrega,direccion,Calle Hidalgo 140 col Sur,datos_entrega,no,captura entrega
-2373,E_entrega,direccion,la de siempre,datos_entrega,no,captura entrega
-2374,E_entrega,direccion,Calle Hidalgo 199 col col del valle,datos_entrega,no,captura entrega
-2375,E_entrega,direccion,Calle Morelos 37 col Norte,datos_entrega,no,captura entrega
-2376,E_entrega,tipo_entrega,pickup,datos_entrega,no,captura entrega
-2377,E_entrega,telefono,cel 9112458,datos_entrega,no,captura entrega
-2378,E_entrega,tipo_entrega,en tienda,datos_entrega,no,captura entrega
-2379,E_entrega,nombre,me llamo Luis Carlos,datos_entrega,no,captura entrega
-2380,E_entrega,nombre,me llamo Juan Pedro,datos_entrega,no,captura entrega
-2381,E_entrega,telefono,tel 9972981,datos_entrega,no,captura entrega
-2382,E_entrega,telefono,tel 4965797,datos_entrega,no,captura entrega
-2383,E_entrega,direccion,Calle Reforma 197 col centro,datos_entrega,no,captura entrega
-2384,E_entrega,telefono,cel 5767994,datos_entrega,no,captura entrega
-2385,E_entrega,tipo_entrega,envio a casa,datos_entrega,no,captura entrega
-2386,E_entrega,direccion,Calle Reforma 198 col Norte,datos_entrega,no,captura entrega
-2387,E_entrega,telefono,tel 7563010,datos_entrega,no,captura entrega
-2388,E_entrega,nombre,me llamo Sofia Maria,datos_entrega,no,captura entrega
-2389,E_entrega,tipo_entrega,1,datos_entrega,no,captura entrega
-2390,E_entrega,telefono,cel 1951552,datos_entrega,no,captura entrega
-2391,E_entrega,direccion,Calle Insurgentes 181 col Norte,datos_entrega,no,captura entrega
-2392,E_entrega,nombre,me llamo Juan Lucia,datos_entrega,no,captura entrega
-2393,E_entrega,nombre,me llamo Maria Maria,datos_entrega,no,captura entrega
-2394,E_entrega,telefono,tel 5690412,datos_entrega,no,captura entrega
-2395,E_entrega,direccion,Calle Juarez 5 col Sur,datos_entrega,no,captura entrega
-2396,E_entrega,telefono,cel 6848417,datos_entrega,no,captura entrega
-2397,E_entrega,telefono,tel 9469988,datos_entrega,no,captura entrega
-2398,E_entrega,nombre,me llamo Carlos Lucia,datos_entrega,no,captura entrega
-2399,E_entrega,direccion,Calle Insurgentes 173 col Centro,datos_entrega,no,captura entrega
-2400,E_entrega,nombre,me llamo Pedro Ana,datos_entrega,no,captura entrega
-2401,E_entrega,direccion,Calle Hidalgo 79 col Sur,datos_entrega,no,captura entrega
-2402,E_entrega,telefono,tel 6987409,datos_entrega,no,captura entrega
-2403,E_entrega,direccion,Calle Juarez 165 col Sur,datos_entrega,no,captura entrega
-2404,E_entrega,direccion,Calle Reforma 56 col Centro,datos_entrega,no,captura entrega
-2405,E_entrega,direccion,Calle 5 de Mayo 19 col Centro,datos_entrega,no,captura entrega
-2406,E_entrega,tipo_entrega,domicilio,datos_entrega,no,captura entrega
-2407,E_entrega,tipo_entrega,para mi casa,datos_entrega,no,captura entrega
-2408,E_entrega,direccion,Calle Juarez 46 col Norte,datos_entrega,no,captura entrega
-2409,E_entrega,telefono,cel 3018372,datos_entrega,no,captura entrega
-2410,E_entrega,telefono,cel 7059424,datos_entrega,no,captura entrega
-2411,E_entrega,direccion,Calle Insurgentes 183 col Centro,datos_entrega,no,captura entrega
-2412,E_entrega,direccion,Calle 5 de Mayo 95 col Sur,datos_entrega,no,captura entrega
-2413,E_entrega,telefono,cel 4455367,datos_entrega,no,captura entrega
-2414,E_entrega,nombre,me llamo Pedro Pedro,datos_entrega,no,captura entrega
-2415,E_entrega,direccion,Calle Hidalgo 59 col Sur,datos_entrega,no,captura entrega
-2416,E_entrega,nombre,me llamo Lucia Lucia,datos_entrega,no,captura entrega
-2417,E_entrega,telefono,tel 1118642,datos_entrega,no,captura entrega
-2418,E_entrega,direccion,Calle 5 de Mayo 187 col centro,datos_entrega,no,captura entrega
-2419,E_entrega,tipo_entrega,a domicilio,datos_entrega,no,captura entrega
-2420,E_entrega,nombre,me llamo Sofia Carlos,datos_entrega,no,captura entrega
-2421,E_entrega,direccion,Calle Juarez 7 col Norte,datos_entrega,no,captura entrega
-2422,E_entrega,telefono,tel 3797873,datos_entrega,no,captura entrega
-2423,E_entrega,nombre,me llamo Juan Maria,datos_entrega,no,captura entrega
-2424,E_entrega,direccion,Calle Hidalgo 136 col col del valle,datos_entrega,no,captura entrega
-2425,E_entrega,direccion,Calle Reforma 6 col Centro,datos_entrega,no,captura entrega
-2426,E_entrega,nombre,me llamo Lucia Pedro,datos_entrega,no,captura entrega
-2427,E_entrega,nombre,me llamo Sofia Sofia,datos_entrega,no,captura entrega
-2428,E_entrega,telefono,tel 9381487,datos_entrega,no,captura entrega
-2429,E_entrega,direccion,Calle Juarez 107 col centro,datos_entrega,no,captura entrega
-2430,E_entrega,nombre,me llamo Maria Ana,datos_entrega,no,captura entrega
-2431,E_entrega,nombre,me llamo Luis Pedro,datos_entrega,no,captura entrega
-2432,E_entrega,telefono,tel 1974259,datos_entrega,no,captura entrega
-2433,E_entrega,direccion,Calle Juarez 115 col Centro,datos_entrega,no,captura entrega
-2434,E_entrega,direccion,Calle Juarez 81 col col del valle,datos_entrega,no,captura entrega
-2435,E_entrega,nombre,me llamo Luis Sofia,datos_entrega,no,captura entrega
-2436,E_entrega,nombre,me llamo Ana Carlos,datos_entrega,no,captura entrega
-2437,E_entrega,nombre,me llamo Juan Carlos,datos_entrega,no,captura entrega
-2438,E_entrega,direccion,Calle Hidalgo 8 col Norte,datos_entrega,no,captura entrega
-2439,E_entrega,tipo_entrega,2,datos_entrega,no,captura entrega
-2440,E_entrega,direccion,Calle Insurgentes 59 col Sur,datos_entrega,no,captura entrega
-2441,E_entrega,nombre,me llamo Ana Pedro,datos_entrega,no,captura entrega
-2442,E_entrega,telefono,tel 5477419,datos_entrega,no,captura entrega
-2443,E_entrega,telefono,cel 7642765,datos_entrega,no,captura entrega
-2444,E_entrega,nombre,me llamo Lucia Ana,datos_entrega,no,captura entrega
-2445,E_entrega,direccion,Calle Insurgentes 57 col Sur,datos_entrega,no,captura entrega
-2446,E_entrega,direccion,Calle Hidalgo 109 col Norte,datos_entrega,no,captura entrega
-2447,E_entrega,nombre,me llamo Lucia Carlos,datos_entrega,no,captura entrega
-2448,E_entrega,telefono,cel 2023382,datos_entrega,no,captura entrega
-2449,E_entrega,telefono,tel 1544814,datos_entrega,no,captura entrega
-2450,E_entrega,telefono,tel 6266275,datos_entrega,no,captura entrega
-2451,E_entrega,direccion,Calle Hidalgo 98 col centro,datos_entrega,no,captura entrega
-2452,E_entrega,nombre,me llamo Juan Luis,datos_entrega,no,captura entrega
-2453,E_entrega,direccion,Calle Reforma 50 col Sur,datos_entrega,no,captura entrega
-2454,E_entrega,telefono,cel 3168322,datos_entrega,no,captura entrega
-2455,E_entrega,telefono,tel 1991727,datos_entrega,no,captura entrega
-2456,E_entrega,direccion,Calle Insurgentes 46 col Norte,datos_entrega,no,captura entrega
-2457,E_entrega,nombre,me llamo Lucia Maria,datos_entrega,no,captura entrega
-2458,E_entrega,direccion,Calle Reforma 20 col col del valle,datos_entrega,no,captura entrega
-2459,E_entrega,telefono,tel 3729698,datos_entrega,no,captura entrega
-2460,E_entrega,telefono,cel 6746720,datos_entrega,no,captura entrega
-2461,E_entrega,telefono,cel 8904953,datos_entrega,no,captura entrega
-2462,E_entrega,direccion,Calle Insurgentes 48 col Norte,datos_entrega,no,captura entrega
-2463,E_entrega,telefono,tel 3735370,datos_entrega,no,captura entrega
-2464,E_entrega,direccion,Calle Insurgentes 6 col col del valle,datos_entrega,no,captura entrega
-2465,E_entrega,nombre,me llamo Lucia Juan,datos_entrega,no,captura entrega
-2466,E_entrega,direccion,Calle Hidalgo 175 col Norte,datos_entrega,no,captura entrega
-2467,E_entrega,telefono,cel 1748956,datos_entrega,no,captura entrega
-2468,E_entrega,direccion,Calle Juarez 180 col Centro,datos_entrega,no,captura entrega
-2469,E_entrega,direccion,Calle Insurgentes 196 col col del valle,datos_entrega,no,captura entrega
-2470,E_entrega,direccion,Calle Morelos 88 col Sur,datos_entrega,no,captura entrega
-2471,E_entrega,nombre,me llamo Luis Ana,datos_entrega,no,captura entrega
-2472,E_entrega,telefono,tel 5570125,datos_entrega,no,captura entrega
-2473,E_entrega,direccion,Calle Juarez 125 col Centro,datos_entrega,no,captura entrega
-2474,E_entrega,telefono,cel 5507685,datos_entrega,no,captura entrega
-2475,E_entrega,direccion,Calle Reforma 35 col col del valle,datos_entrega,no,captura entrega
-2476,E_entrega,nombre,me llamo Carlos Luis,datos_entrega,no,captura entrega
-2477,E_entrega,telefono,tel 6866716,datos_entrega,no,captura entrega
-2478,E_entrega,direccion,Calle Juarez 46 col Sur,datos_entrega,no,captura entrega
-2479,E_entrega,direccion,Calle Insurgentes 174 col Centro,datos_entrega,no,captura entrega
-2480,E_entrega,nombre,me llamo Carlos Sofia,datos_entrega,no,captura entrega
-2481,E_entrega,direccion,Calle 5 de Mayo 9 col Sur,datos_entrega,no,captura entrega
-2482,E_entrega,telefono,cel 5662019,datos_entrega,no,captura entrega
-2483,E_entrega,nombre,me llamo Ana Luis,datos_entrega,no,captura entrega
-2484,E_entrega,direccion,Calle Reforma 61 col Centro,datos_entrega,no,captura entrega
-2485,E_entrega,telefono,cel 1435838,datos_entrega,no,captura entrega
-2486,E_entrega,direccion,Calle Juarez 145 col centro,datos_entrega,no,captura entrega
-2487,E_entrega,direccion,Calle 5 de Mayo 68 col Centro,datos_entrega,no,captura entrega
-2488,E_entrega,direccion,Calle Morelos 48 col centro,datos_entrega,no,captura entrega
-2489,E_entrega,direccion,Calle Hidalgo 156 col Norte,datos_entrega,no,captura entrega
-2490,E_entrega,telefono,tel 2278998,datos_entrega,no,captura entrega
-2491,E_entrega,nombre,me llamo Maria Juan,datos_entrega,no,captura entrega
-2492,E_entrega,direccion,Calle Insurgentes 5 col Norte,datos_entrega,no,captura entrega
-2493,E_entrega,telefono,tel 9537017,datos_entrega,no,captura entrega
-2494,E_entrega,direccion,Calle Reforma 139 col Sur,datos_entrega,no,captura entrega
-2495,E_entrega,telefono,cel 7416460,datos_entrega,no,captura entrega
-2496,E_entrega,direccion,Calle Juarez 159 col Centro,datos_entrega,no,captura entrega
-2497,E_entrega,direccion,Calle Juarez 154 col Centro,datos_entrega,no,captura entrega
-2498,E_entrega,telefono,tel 6902521,datos_entrega,no,captura entrega
-2499,E_entrega,direccion,Calle Morelos 96 col Centro,datos_entrega,no,captura entrega
-2500,E_entrega,direccion,Calle Reforma 147 col col del valle,datos_entrega,no,captura entrega
-2501,E_entrega,direccion,Calle Morelos 154 col Sur,datos_entrega,no,captura entrega
-2502,E_entrega,direccion,Calle Hidalgo 82 col Centro,datos_entrega,no,captura entrega
-2503,E_entrega,telefono,cel 8095845,datos_entrega,no,captura entrega
-2504,E_entrega,telefono,tel 6984010,datos_entrega,no,captura entrega
-2505,E_entrega,telefono,cel 8357532,datos_entrega,no,captura entrega
-2506,E_entrega,direccion,Calle Morelos 60 col centro,datos_entrega,no,captura entrega
-2507,E_entrega,direccion,Calle Juarez 26 col Sur,datos_entrega,no,captura entrega
-2508,E_entrega,direccion,Calle Insurgentes 157 col centro,datos_entrega,no,captura entrega
-2509,E_entrega,direccion,Calle Morelos 149 col Centro,datos_entrega,no,captura entrega
-2510,E_entrega,nombre,me llamo Maria Luis,datos_entrega,no,captura entrega
-2511,E_entrega,nombre,me llamo Maria Sofia,datos_entrega,no,captura entrega
-2512,E_entrega,direccion,Calle 5 de Mayo 81 col centro,datos_entrega,no,captura entrega
-2513,E_entrega,direccion,Calle Hidalgo 74 col Centro,datos_entrega,no,captura entrega
-2514,E_entrega,telefono,tel 9137603,datos_entrega,no,captura entrega
-2515,E_entrega,direccion,Calle 5 de Mayo 141 col centro,datos_entrega,no,captura entrega
-2516,E_entrega,nombre,me llamo Juan Ana,datos_entrega,no,captura entrega
-2517,E_entrega,telefono,tel 9886908,datos_entrega,no,captura entrega
-2518,E_entrega,telefono,tel 2956056,datos_entrega,no,captura entrega
-2519,E_entrega,telefono,cel 8833475,datos_entrega,no,captura entrega
-2520,E_entrega,nombre,me llamo Pedro Carlos,datos_entrega,no,captura entrega
-2521,E_entrega,direccion,Calle Reforma 165 col centro,datos_entrega,no,captura entrega
-2522,E_entrega,telefono,tel 8053055,datos_entrega,no,captura entrega
-2523,E_entrega,direccion,Calle Juarez 35 col col del valle,datos_entrega,no,captura entrega
-2524,E_entrega,direccion,Calle Insurgentes 179 col Norte,datos_entrega,no,captura entrega
-2525,E_entrega,direccion,Calle Morelos 184 col centro,datos_entrega,no,captura entrega
-2526,E_entrega,nombre,me llamo Pedro Lucia,datos_entrega,no,captura entrega
-2527,E_entrega,telefono,tel 8784383,datos_entrega,no,captura entrega
-2528,E_entrega,telefono,cel 6531842,datos_entrega,no,captura entrega
-2529,E_entrega,direccion,Calle Insurgentes 98 col Centro,datos_entrega,no,captura entrega
-2530,E_entrega,nombre,me llamo Sofia Ana,datos_entrega,no,captura entrega
-2531,E_entrega,direccion,Calle Reforma 53 col Centro,datos_entrega,no,captura entrega
-2532,E_entrega,telefono,tel 8023031,datos_entrega,no,captura entrega
-2533,E_entrega,telefono,tel 7012964,datos_entrega,no,captura entrega
-2534,E_entrega,direccion,Calle Juarez 29 col Centro,datos_entrega,no,captura entrega
-2535,E_entrega,direccion,Calle Insurgentes 197 col Norte,datos_entrega,no,captura entrega
-2536,E_entrega,direccion,Calle Juarez 144 col centro,datos_entrega,no,captura entrega
-2537,E_entrega,direccion,Calle Hidalgo 154 col centro,datos_entrega,no,captura entrega
-2538,E_entrega,telefono,cel 9767397,datos_entrega,no,captura entrega
-2539,E_entrega,direccion,Calle Reforma 41 col Norte,datos_entrega,no,captura entrega
-2540,E_entrega,telefono,cel 3522238,datos_entrega,no,captura entrega
-2541,E_entrega,direccion,Calle 5 de Mayo 90 col Sur,datos_entrega,no,captura entrega
-2542,E_entrega,direccion,Calle Juarez 46 col centro,datos_entrega,no,captura entrega
-2543,E_entrega,telefono,cel 7380793,datos_entrega,no,captura entrega
-2544,E_entrega,telefono,tel 9670391,datos_entrega,no,captura entrega
-2545,E_entrega,direccion,Calle Reforma 8 col Centro,datos_entrega,no,captura entrega
-2546,E_entrega,direccion,Calle Hidalgo 162 col Sur,datos_entrega,no,captura entrega
-2547,E_entrega,telefono,cel 6780231,datos_entrega,no,captura entrega
-2548,E_entrega,direccion,Calle Morelos 152 col Centro,datos_entrega,no,captura entrega
-2549,E_entrega,telefono,tel 8806931,datos_entrega,no,captura entrega
-2550,E_entrega,telefono,tel 8762651,datos_entrega,no,captura entrega
-2551,E_entrega,nombre,me llamo Ana Maria,datos_entrega,no,captura entrega
-2552,E_entrega,direccion,Calle Juarez 169 col col del valle,datos_entrega,no,captura entrega
-2553,E_entrega,direccion,Calle Reforma 143 col centro,datos_entrega,no,captura entrega
-2554,E_entrega,direccion,Calle Morelos 165 col Centro,datos_entrega,no,captura entrega
-2555,E_entrega,direccion,Calle Reforma 114 col Norte,datos_entrega,no,captura entrega
-2556,E_entrega,direccion,Calle Reforma 47 col centro,datos_entrega,no,captura entrega
-2557,E_entrega,telefono,tel 8176050,datos_entrega,no,captura entrega
-2558,E_entrega,direccion,Calle Morelos 144 col centro,datos_entrega,no,captura entrega
-2559,E_entrega,telefono,cel 2733043,datos_entrega,no,captura entrega
-2560,E_entrega,nombre,me llamo Maria Carlos,datos_entrega,no,captura entrega
-2561,E_entrega,telefono,cel 1120648,datos_entrega,no,captura entrega
-2562,E_entrega,telefono,tel 7064166,datos_entrega,no,captura entrega
-2563,E_entrega,telefono,cel 6854713,datos_entrega,no,captura entrega
-2564,E_entrega,nombre,me llamo Sofia Juan,datos_entrega,no,captura entrega
-2565,E_entrega,telefono,tel 3445696,datos_entrega,no,captura entrega
-2566,E_entrega,telefono,tel 7071274,datos_entrega,no,captura entrega
-2567,E_entrega,direccion,Calle Insurgentes 52 col col del valle,datos_entrega,no,captura entrega
-2568,E_entrega,direccion,Calle Juarez 77 col Sur,datos_entrega,no,captura entrega
-2569,E_entrega,direccion,Calle Reforma 176 col col del valle,datos_entrega,no,captura entrega
-2570,E_entrega,direccion,Calle 5 de Mayo 39 col Norte,datos_entrega,no,captura entrega
-2571,E_entrega,direccion,Calle 5 de Mayo 181 col Sur,datos_entrega,no,captura entrega
-2572,E_entrega,telefono,tel 8071658,datos_entrega,no,captura entrega
-2573,E_entrega,direccion,Calle Reforma 93 col Norte,datos_entrega,no,captura entrega
-2574,E_entrega,nombre,me llamo Pedro Maria,datos_entrega,no,captura entrega
-2575,E_entrega,direccion,Calle 5 de Mayo 40 col Centro,datos_entrega,no,captura entrega
-2576,E_entrega,telefono,cel 8223733,datos_entrega,no,captura entrega
-2577,E_entrega,nombre,me llamo Carlos Pedro,datos_entrega,no,captura entrega
-2578,E_entrega,telefono,tel 9767515,datos_entrega,no,captura entrega
-2579,E_entrega,nombre,me llamo Sofia Pedro,datos_entrega,no,captura entrega
-2580,E_entrega,telefono,tel 6179115,datos_entrega,no,captura entrega
-2581,E_entrega,telefono,tel 6356835,datos_entrega,no,captura entrega
-2582,E_entrega,direccion,Calle Morelos 3 col col del valle,datos_entrega,no,captura entrega
-2583,E_entrega,direccion,Calle Reforma 182 col Centro,datos_entrega,no,captura entrega
-2584,E_entrega,telefono,cel 5356285,datos_entrega,no,captura entrega
-2585,E_entrega,direccion,Calle Reforma 191 col col del valle,datos_entrega,no,captura entrega
-2586,E_entrega,direccion,Calle 5 de Mayo 114 col Sur,datos_entrega,no,captura entrega
-2587,E_entrega,direccion,Calle 5 de Mayo 137 col Norte,datos_entrega,no,captura entrega
-2588,E_entrega,direccion,Calle Hidalgo 17 col Sur,datos_entrega,no,captura entrega
-2589,E_entrega,telefono,cel 3814177,datos_entrega,no,captura entrega
-2590,E_entrega,telefono,tel 3019798,datos_entrega,no,captura entrega
-2591,F_mezclas,combinada,hola porfa 2 hawaiana pizza tambien 1 coca kola porfa,pedido_con_productos,si,mezcla intenciones
-2592,F_mezclas,combinada,"cancelar ... es broma, ponme 1 hawaiiana tambien 2 refresco porfa",pedido_con_productos,si,mezcla intenciones
-2593,F_mezclas,combinada,hola quiero 1 de hawaianas + 1×una cocacola nomás,pedido_con_productos,si,mezcla intenciones
-2594,F_mezclas,combinada,reservar mesa y necesito 2 hawaiana ; un refresco plis,pedido_con_productos,si,mezcla intenciones
-2595,F_mezclas,combinada,dame 3 hawaiiana ; 2 de soda porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2596,F_mezclas,combinada,reservar mesa y hola 2 hawaiano ademas uno de cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2597,F_mezclas,combinada,"cancelar ... es broma, quiero 3 de hawaiiana luego una de cocacolas",pedido_con_productos,si,mezcla intenciones
-2598,F_mezclas,combinada,"buenas, la hawaiana",pedido_con_productos,si,mezcla intenciones
-2599,F_mezclas,combinada,reservar mesa y porfa una de hawaiano + 2 cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2600,F_mezclas,combinada,reservar mesa y hola 2 hawaiiana tambien dos de coca nomás,pedido_con_productos,si,mezcla intenciones
-2601,F_mezclas,combinada,hola quiero par de de hawaina luego 1 x 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
-2602,F_mezclas,combinada,"cancelar ... es broma, necesito 1×pizza hawaiana ; una de 2 cocacolas porfa",pedido_con_productos,si,mezcla intenciones
-2603,F_mezclas,combinada,reservar mesa y hola 3 la hawaiana luego 1 cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2604,F_mezclas,combinada,inicio ... no mejor porfa 1 x hawaiiana luego un de cocacolas porfa,pedido_con_productos,si,mezcla intenciones
-2605,F_mezclas,combinada,hola buenas una de hawaiiana + 1x soda plis,ambiguo,parcial,mezcla intenciones
-2606,F_mezclas,combinada,reservar mesa y dame 1×hawaina | un coca kola porfa,pedido_con_productos,si,mezcla intenciones
-2607,F_mezclas,combinada,hola 2 piza hawaiana y 2 refresco para llevar,pedido_con_productos,si,mezcla intenciones
-2608,F_mezclas,combinada,ver carta y quisiera uno de hawaiiana | 2x koka cola porfa,ambiguo,parcial,mezcla intenciones
-2609,F_mezclas,combinada,"cancelar ... es broma, quiero 2×hawaiiana + una de cocacola nomás",pedido_con_productos,si,mezcla intenciones
-2610,F_mezclas,combinada,"buenas, hawaiiana",ambiguo,parcial,mezcla intenciones
-2611,F_mezclas,combinada,reservar mesa y dame dos de hawaiana ademas 1x refresco porfa,pedido_con_productos,si,mezcla intenciones
-2612,F_mezclas,combinada,dos de pizza hawaiana | un cocacolas para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2613,F_mezclas,combinada,hola me traes un par de de hawaiana luego 1 coca gracias,pedido_con_productos,si,mezcla intenciones
-2614,F_mezclas,combinada,"menu y hola tres hawaina, 2 coca",pedido_con_productos,si,mezcla intenciones
-2615,F_mezclas,combinada,menu y ponme 2 una hawaiana tambien 1 soda para llevar,pedido_con_productos,si,mezcla intenciones
-2616,F_mezclas,combinada,inicio ... no mejor necesito una hawaiana ademas par de koka cola plis,pedido_con_productos,si,mezcla intenciones
-2617,F_mezclas,combinada,pedido: tres hawaiana pizza ademas 2 x refresco gracias,pedido_con_productos,si,mezcla intenciones
-2618,F_mezclas,combinada,"ver carta y quiero un par de de hawaianas, un de soda nomás",pedido_con_productos,si,mezcla intenciones
-2619,F_mezclas,combinada,menu y buenas 3x hawaiiana + 1×koka cola nomás,ambiguo,parcial,mezcla intenciones
-2620,F_mezclas,combinada,inicio ... no mejor quiero 2 x pizza hawaiiana tambien 2 2 cocacolas porfa,pedido_con_productos,si,mezcla intenciones
-2621,F_mezclas,combinada,ver carta y quiero 3x hawaianas tambien 1 de soda porfa,pedido_con_productos,si,mezcla intenciones
-2622,F_mezclas,combinada,hola necesito 2 de hawaiana ; 2 koka cola nomás,pedido_con_productos,si,mezcla intenciones
-2623,F_mezclas,combinada,pedido: buenas 2 pizza hawaiana luego una de coca cola,pedido_con_productos,si,mezcla intenciones
-2624,F_mezclas,combinada,ver carta y 2x piza hawaiana + una koka cola porfa,pedido_con_productos,si,mezcla intenciones
-2625,F_mezclas,combinada,inicio ... no mejor 1×piza hawaiana ademas 2 coca cola para llevar,pedido_con_productos,si,mezcla intenciones
-2626,F_mezclas,combinada,reservar mesa y necesito 1 hawaiana ademas 1 de coca cola,pedido_con_productos,si,mezcla intenciones
-2627,F_mezclas,combinada,menu y me traes 1 x hawaiiana + 1 soda,ambiguo,parcial,mezcla intenciones
-2628,F_mezclas,combinada,pedido: oye dos de pizza hawaiiana | 2 x cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2629,F_mezclas,combinada,reservar mesa y quiero 3x la hawaiana | 2 coca kola gracias,pedido_con_productos,si,mezcla intenciones
-2630,F_mezclas,combinada,hola necesito 1 de una hawaiana y 2 una cocacola plis,pedido_con_productos,si,mezcla intenciones
-2631,F_mezclas,combinada,hola oye un par de una hawaiana ; 1 2 cocacolas plis,pedido_con_productos,si,mezcla intenciones
-2632,F_mezclas,combinada,ver carta y tres de una hawaiana y 2 x refresco,pedido_con_productos,si,mezcla intenciones
-2633,F_mezclas,combinada,pedido: voy a querer 2×pizza hawaiana y 1x coca cola,pedido_con_productos,si,mezcla intenciones
-2634,F_mezclas,combinada,"buenas, una hawaiana",pedido_con_productos,si,mezcla intenciones
-2635,F_mezclas,combinada,hola buenas 2×hawaina ; 1 soda nomás,ambiguo,parcial,mezcla intenciones
-2636,F_mezclas,combinada,hola me traes 2 de una hawaiana + 1 x soda plis,pedido_con_productos,si,mezcla intenciones
-2637,F_mezclas,combinada,hola quiero uno de piza hawaiana y 1 x cocacola plis,pedido_con_productos,si,mezcla intenciones
-2638,F_mezclas,combinada,pedido: hola 2 pizza hawaiana | una refresco gracias,pedido_con_productos,si,mezcla intenciones
-2639,F_mezclas,combinada,oye 1 la hawaiana | par de cocacola plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2640,F_mezclas,combinada,"ver carta y hola tres hawaiana, 2×coca kola porfa",pedido_con_productos,si,mezcla intenciones
-2641,F_mezclas,combinada,"cancelar ... es broma, quiero 1x hawaina, 2 una cocacola porfa",pedido_con_productos,si,mezcla intenciones
-2642,F_mezclas,combinada,ver carta y dame 3×una hawaiana ; uno cocacola gracias,pedido_con_productos,si,mezcla intenciones
-2643,F_mezclas,combinada,hola 1 pizza hawaiana + 2 de coca kola plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2644,F_mezclas,combinada,"pedido: voy a querer 1 hawaiiana, 1 x cocacolas plis",pedido_con_productos,si,mezcla intenciones
-2645,F_mezclas,combinada,1 x hawaiano | 1×2 cocacolas gracias y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2646,F_mezclas,combinada,reservar mesa y quisiera 3 hawaina ademas 1 coca cola plis,pedido_con_productos,si,mezcla intenciones
-2647,F_mezclas,combinada,hola necesito un par de de hawaina + un de cocacola porfa,pedido_con_productos,si,mezcla intenciones
-2648,F_mezclas,combinada,reservar mesa y me traes 1 hawaiana ademas una de cocacola plis,pedido_con_productos,si,mezcla intenciones
-2649,F_mezclas,combinada,ver carta y 2 x hawaiana luego 1 de soda plis,pedido_con_productos,si,mezcla intenciones
-2650,F_mezclas,combinada,reservar mesa y par de una hawaiana y una una cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2651,F_mezclas,combinada,"inicio ... no mejor necesito 1×la hawaiana, 1x 2 cocacolas para llevar",pedido_con_productos,si,mezcla intenciones
-2652,F_mezclas,combinada,me traes 2 pizza hawaiiana | 1×2 cocacolas gracias y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2653,F_mezclas,combinada,1 hawaianas + un par de de cocacola plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2654,F_mezclas,combinada,"buenas, hawaiana",pedido_con_productos,si,mezcla intenciones
-2655,F_mezclas,combinada,"cancelar ... es broma, necesito un par de de pizza hawaiiana tambien 1 koka cola plis",pedido_con_productos,si,mezcla intenciones
-2656,F_mezclas,combinada,hola ponme 1 hawaiana ; 1 coca cola nomás,pedido_con_productos,si,mezcla intenciones
-2657,F_mezclas,combinada,"pedido: voy a querer 3x hawaiana pizza, 1 una cocacola",pedido_con_productos,si,mezcla intenciones
-2658,F_mezclas,combinada,ver carta y quiero un hawaianas tambien 2 x coca kola nomás,pedido_con_productos,si,mezcla intenciones
-2659,F_mezclas,combinada,hola me traes 2 de hawaiana + 2×una cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2660,F_mezclas,combinada,ver carta y necesito 3x la hawaiana tambien par de coca plis,pedido_con_productos,si,mezcla intenciones
-2661,F_mezclas,combinada,inicio ... no mejor un hawaiana + 1 x cocacolas porfa,pedido_con_productos,si,mezcla intenciones
-2662,F_mezclas,combinada,3 x hawaiana tambien un coca plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2663,F_mezclas,combinada,"inicio ... no mejor hola 2 hawaiana pizza, un de 2 cocacolas para llevar",pedido_con_productos,si,mezcla intenciones
-2664,F_mezclas,combinada,menu y oye dos de hawaiana pizza | un coca plis,pedido_con_productos,si,mezcla intenciones
-2665,F_mezclas,combinada,ver carta y buenas uno de hawaina y 2x refresco nomás,ambiguo,parcial,mezcla intenciones
-2666,F_mezclas,combinada,"menu y uno una hawaiana, una de refresco",pedido_con_productos,si,mezcla intenciones
-2667,F_mezclas,combinada,hola dame 2 piza hawaiana ; 2×coca kola,pedido_con_productos,si,mezcla intenciones
-2668,F_mezclas,combinada,oye par de de piza hawaiana ; un 2 cocacolas gracias y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2669,F_mezclas,combinada,ver carta y me traes una de la hawaiana ademas 1 coca kola plis,pedido_con_productos,si,mezcla intenciones
-2670,F_mezclas,combinada,menu y hola 2x hawaiana ; una de coca para llevar,pedido_con_productos,si,mezcla intenciones
-2671,F_mezclas,combinada,reservar mesa y 2 piza hawaiana luego uno cocacolas nomás,pedido_con_productos,si,mezcla intenciones
-2672,F_mezclas,combinada,hola oye tres hawaiano tambien 2 cocacola porfa,pedido_con_productos,si,mezcla intenciones
-2673,F_mezclas,combinada,"buenas, piza hawaiana",pedido_con_productos,si,mezcla intenciones
-2674,F_mezclas,combinada,reservar mesa y oye 1 hawaiana ; 2 coca cola plis,pedido_con_productos,si,mezcla intenciones
-2675,F_mezclas,combinada,reservar mesa y buenas tres pizza hawaiana tambien 2 koka cola para llevar,pedido_con_productos,si,mezcla intenciones
-2676,F_mezclas,combinada,"quisiera 1 hawaiiana, 2 cocacola nomás y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
-2677,F_mezclas,combinada,inicio ... no mejor porfa 3 x hawaina luego una soda,pedido_con_productos,si,mezcla intenciones
-2678,F_mezclas,combinada,"inicio ... no mejor me traes 2 hawaiano, 1 x cocacola plis",pedido_con_productos,si,mezcla intenciones
-2679,F_mezclas,combinada,pedido: hola 2 hawaianas y 2 coca para llevar,pedido_con_productos,si,mezcla intenciones
-2680,F_mezclas,combinada,reservar mesa y dame dos de pizza hawaiiana tambien 1×coca plis,pedido_con_productos,si,mezcla intenciones
-2681,F_mezclas,combinada,menu y me traes una de hawaiana luego 1 x coca,pedido_con_productos,si,mezcla intenciones
-2682,F_mezclas,combinada,"cancelar ... es broma, hola 3 x la hawaiana luego uno coca gracias",pedido_con_productos,si,mezcla intenciones
-2683,F_mezclas,combinada,ver carta y buenas 1 una hawaiana ademas dos de cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2684,F_mezclas,combinada,"inicio ... no mejor oye 1 hawaiiana, par de cocacolas gracias",pedido_con_productos,si,mezcla intenciones
-2685,F_mezclas,combinada,reservar mesa y buenas una de hawaianas tambien 1×koka cola plis,pedido_con_productos,si,mezcla intenciones
-2686,F_mezclas,combinada,porfa 2x una hawaiana ; 1 2 cocacolas plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2687,F_mezclas,combinada,ver carta y necesito uno hawaiana ; 1 cocacola porfa,pedido_con_productos,si,mezcla intenciones
-2688,F_mezclas,combinada,menu y ponme 1 hawaiana + 1×koka cola nomás,pedido_con_productos,si,mezcla intenciones
-2689,F_mezclas,combinada,ver carta y me traes 2 de hawaiana pizza luego 2 x coca cola nomás,pedido_con_productos,si,mezcla intenciones
-2690,F_mezclas,combinada,ver carta y me traes un par de hawaiana + 1 x coca kola porfa,pedido_con_productos,si,mezcla intenciones
-2691,F_mezclas,combinada,"cancelar ... es broma, hola un par de de la hawaiana y 1 x koka cola",pedido_con_productos,si,mezcla intenciones
-2692,F_mezclas,combinada,ver carta y buenas 2×hawaianas y un coca cola nomás,pedido_con_productos,si,mezcla intenciones
-2693,F_mezclas,combinada,ver carta y dame 2 hawaiana luego 2 de koka cola para llevar,pedido_con_productos,si,mezcla intenciones
-2694,F_mezclas,combinada,"cancelar ... es broma, buenas 1 hawaiano ademas 1 una cocacola plis",pedido_con_productos,si,mezcla intenciones
-2695,F_mezclas,combinada,hola oye 1 x hawaiano ; uno de soda plis,ambiguo,parcial,mezcla intenciones
-2696,F_mezclas,combinada,ver carta y porfa tres hawaiiana | un par de de soda para llevar,ambiguo,parcial,mezcla intenciones
-2697,F_mezclas,combinada,reservar mesa y quiero tres pizza hawaiiana + 2 cocacola,pedido_con_productos,si,mezcla intenciones
-2698,F_mezclas,combinada,pedido: me traes 2 piza hawaiana + 1 cocacola plis,pedido_con_productos,si,mezcla intenciones
-2699,F_mezclas,combinada,pedido: necesito 2x hawaiiana ademas 1 cocacolas gracias,pedido_con_productos,si,mezcla intenciones
-2700,F_mezclas,combinada,pedido: porfa par de de una hawaiana ; 1 koka cola nomás,pedido_con_productos,si,mezcla intenciones
-2701,F_mezclas,combinada,"cancelar ... es broma, necesito 3×piza hawaiana + uno de koka cola nomás",pedido_con_productos,si,mezcla intenciones
-2702,F_mezclas,combinada,menu y me traes 2 x hawaina tambien 1 una cocacola plis,pedido_con_productos,si,mezcla intenciones
-2703,F_mezclas,combinada,inicio ... no mejor me traes tres hawaiana ademas 2 cocacola gracias,pedido_con_productos,si,mezcla intenciones
-2704,F_mezclas,combinada,ver carta y hola 1 hawaiana pizza ; dos cocacola plis,pedido_con_productos,si,mezcla intenciones
-2705,F_mezclas,combinada,"cancelar ... es broma, 1 hawaina ademas 1 refresco plis",ambiguo,parcial,mezcla intenciones
-2706,F_mezclas,combinada,menu y hola 2×hawaiiana | 1x coca cola porfa,pedido_con_productos,si,mezcla intenciones
-2707,F_mezclas,combinada,hola voy a querer 1 una hawaiana + 1 refresco nomás,pedido_con_productos,si,mezcla intenciones
-2708,F_mezclas,combinada,"buenas, pizza hawaiiana",pedido_con_productos,si,mezcla intenciones
-2709,F_mezclas,combinada,ver carta y hola una de la hawaiana y una una cocacola plis,pedido_con_productos,si,mezcla intenciones
-2710,F_mezclas,combinada,hola buenas 2x hawaiiana ; 1 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
-2711,F_mezclas,combinada,inicio ... no mejor quiero tres de hawaiana pizza + uno de coca nomás,pedido_con_productos,si,mezcla intenciones
-2712,F_mezclas,combinada,"inicio ... no mejor ponme 3 piza hawaiana, 1 de refresco para llevar",pedido_con_productos,si,mezcla intenciones
-2713,F_mezclas,combinada,ver carta y buenas 1 de hawaiana ademas un coca kola porfa,pedido_con_productos,si,mezcla intenciones
-2714,F_mezclas,combinada,"cancelar ... es broma, voy a querer 1 x piza hawaiana ademas 1 coca kola plis",pedido_con_productos,si,mezcla intenciones
-2715,F_mezclas,combinada,ver carta y buenas dos hawaiana | 1x soda,pedido_con_productos,si,mezcla intenciones
-2716,F_mezclas,combinada,pedido: quiero tres de hawaianas | par de de cocacolas,pedido_con_productos,si,mezcla intenciones
-2717,F_mezclas,combinada,ver carta y dame 1x pizza hawaiana tambien uno cocacola plis,pedido_con_productos,si,mezcla intenciones
-2718,F_mezclas,combinada,necesito uno hawaiiana y 2 coca porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2719,F_mezclas,combinada,quisiera 2 hawaianas luego 1 de coca kola y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2720,F_mezclas,combinada,ver carta y quisiera 1×hawaiana y una de cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
-2721,F_mezclas,combinada,"cancelar ... es broma, necesito 3 la hawaiana y uno de cocacola para llevar",pedido_con_productos,si,mezcla intenciones
-2722,F_mezclas,combinada,quisiera 2×pizza hawaiana luego 1 cocacola gracias y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2723,F_mezclas,combinada,"cancelar ... es broma, porfa un piza hawaiana + 2 x coca kola nomás",pedido_con_productos,si,mezcla intenciones
-2724,F_mezclas,combinada,"menu y buenas un hawaiano, dos koka cola",ambiguo,parcial,mezcla intenciones
-2725,F_mezclas,combinada,menu y ponme 1 hawaiana | par de cocacolas,pedido_con_productos,si,mezcla intenciones
-2726,F_mezclas,combinada,hola dame 2 una hawaiana + 1 soda,pedido_con_productos,si,mezcla intenciones
-2727,F_mezclas,combinada,reservar mesa y voy a querer dos hawaianas ademas 2 coca cola plis,pedido_con_productos,si,mezcla intenciones
-2728,F_mezclas,combinada,"buenas, pizza hawaiana",pedido_con_productos,si,mezcla intenciones
-2729,F_mezclas,combinada,reservar mesa y oye 2 una hawaiana ; 2 una cocacola gracias,pedido_con_productos,si,mezcla intenciones
-2730,F_mezclas,combinada,menu y quiero un de hawaiiana ; 2×cocacola gracias,pedido_con_productos,si,mezcla intenciones
-2731,F_mezclas,combinada,necesito 2 x piza hawaiana luego uno coca cola nomás y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2732,F_mezclas,combinada,"cancelar ... es broma, porfa 1 piza hawaiana ademas 1 coca gracias",pedido_con_productos,si,mezcla intenciones
-2733,F_mezclas,combinada,inicio ... no mejor buenas uno hawaianas y 1 coca cola plis,pedido_con_productos,si,mezcla intenciones
-2734,F_mezclas,combinada,ver carta y porfa un par de una hawaiana luego 2 de 2 cocacolas porfa,pedido_con_productos,si,mezcla intenciones
-2735,F_mezclas,combinada,pedido: me traes un par de de hawaiana y una de cocacolas plis,pedido_con_productos,si,mezcla intenciones
-2736,F_mezclas,combinada,"cancelar ... es broma, me traes dos de hawaiana ademas 1 coca kola plis",pedido_con_productos,si,mezcla intenciones
-2737,F_mezclas,combinada,inicio ... no mejor quisiera 1×pizza hawaiiana tambien 2×coca cola porfa,pedido_con_productos,si,mezcla intenciones
-2738,F_mezclas,combinada,me traes 1 hawaiana tambien 2 cocacolas y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2739,F_mezclas,combinada,"ponme dos de hawaiana pizza, 2 x koka cola y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
-2740,F_mezclas,combinada,inicio ... no mejor me traes 1 de hawaina | 1 de 2 cocacolas plis,pedido_con_productos,si,mezcla intenciones
-2741,F_mezclas,combinada,menu y dame tres de hawaiano tambien 1 una cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2742,F_mezclas,combinada,inicio ... no mejor quisiera un par de de una hawaiana ; 1 de una cocacola,pedido_con_productos,si,mezcla intenciones
-2743,F_mezclas,combinada,menu y dos de una hawaiana tambien uno cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2744,F_mezclas,combinada,"cancelar ... es broma, necesito par de hawaiana pizza | 2 2 cocacolas porfa",pedido_con_productos,si,mezcla intenciones
-2745,F_mezclas,combinada,ver carta y oye 2 la hawaiana ; 2×refresco nomás,pedido_con_productos,si,mezcla intenciones
-2746,F_mezclas,combinada,"cancelar ... es broma, dame 2 hawaiano ademas 1 coca kola nomás",pedido_con_productos,si,mezcla intenciones
-2747,F_mezclas,combinada,3 la hawaiana luego un soda porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2748,F_mezclas,combinada,pedido: quiero 3 x hawaiiana tambien 1x cocacolas,pedido_con_productos,si,mezcla intenciones
-2749,F_mezclas,combinada,menu y voy a querer un de hawaiana | un par de soda,pedido_con_productos,si,mezcla intenciones
-2750,F_mezclas,combinada,"cancelar ... es broma, porfa uno pizza hawaiiana | 2 2 cocacolas plis",pedido_con_productos,si,mezcla intenciones
-2751,F_mezclas,combinada,pedido: me traes dos una hawaiana y 1 coca kola plis,pedido_con_productos,si,mezcla intenciones
-2752,F_mezclas,combinada,ver carta y necesito 3 hawaiana y 2 cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
-2753,F_mezclas,combinada,"pedido: un hawaiiana, dos coca plis",pedido_con_productos,si,mezcla intenciones
-2754,F_mezclas,combinada,reservar mesa y dame uno de piza hawaiana luego 2 koka cola porfa,pedido_con_productos,si,mezcla intenciones
-2755,F_mezclas,combinada,ver carta y una pizza hawaiana luego un par de cocacolas,pedido_con_productos,si,mezcla intenciones
-2756,F_mezclas,combinada,ver carta y quiero par de de hawaiana + 2 una cocacola,pedido_con_productos,si,mezcla intenciones
-2757,F_mezclas,combinada,reservar mesa y buenas 2 hawaiana tambien 1 coca cola nomás,pedido_con_productos,si,mezcla intenciones
-2758,F_mezclas,combinada,"inicio ... no mejor una de hawaianas, 2 koka cola",pedido_con_productos,si,mezcla intenciones
-2759,F_mezclas,combinada,"cancelar ... es broma, oye un par de de hawaiano, dos de koka cola nomás",ambiguo,parcial,mezcla intenciones
-2760,F_mezclas,combinada,"cancelar ... es broma, voy a querer un de una hawaiana tambien 1 de coca para llevar",pedido_con_productos,si,mezcla intenciones
-2761,F_mezclas,combinada,menu y 1 hawaiiana ademas 2×una cocacola para llevar,pedido_con_productos,si,mezcla intenciones
-2762,F_mezclas,combinada,"cancelar ... es broma, voy a querer 2x hawaina | 2 cocacola gracias",pedido_con_productos,si,mezcla intenciones
-2763,F_mezclas,combinada,ver carta y necesito 1 hawaiano + 2 coca kola,pedido_con_productos,si,mezcla intenciones
-2764,F_mezclas,combinada,menu y me traes un par de de una hawaiana tambien 2 koka cola porfa,pedido_con_productos,si,mezcla intenciones
-2765,F_mezclas,combinada,hola necesito uno piza hawaiana ; 2 coca kola,pedido_con_productos,si,mezcla intenciones
-2766,F_mezclas,combinada,menu y voy a querer 1x hawaina tambien 1 cocacolas porfa,pedido_con_productos,si,mezcla intenciones
-2767,F_mezclas,combinada,buenas 1 x hawaianas ; 1 cocacola para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2768,F_mezclas,combinada,menu y necesito uno de la hawaiana y 1 koka cola porfa,pedido_con_productos,si,mezcla intenciones
-2769,F_mezclas,combinada,inicio ... no mejor quiero 2×piza hawaiana tambien uno cocacola nomás,pedido_con_productos,si,mezcla intenciones
-2770,F_mezclas,combinada,pedido: ponme 1 hawaiana ademas uno de coca cola nomás,pedido_con_productos,si,mezcla intenciones
-2771,F_mezclas,combinada,"cancelar ... es broma, quiero dos hawaiana, 1 koka cola plis",pedido_con_productos,si,mezcla intenciones
-2772,F_mezclas,combinada,"cancelar ... es broma, hola 2x hawaiana pizza ademas 1×2 cocacolas para llevar",pedido_con_productos,si,mezcla intenciones
-2773,F_mezclas,combinada,menu y necesito 2 hawaiana pizza y 1 una cocacola porfa,pedido_con_productos,si,mezcla intenciones
-2774,F_mezclas,combinada,reservar mesa y necesito un par de de hawaiana pizza luego 2x coca cola,pedido_con_productos,si,mezcla intenciones
-2775,F_mezclas,combinada,"ver carta y voy a querer dos de la hawaiana, un par de cocacola gracias",pedido_con_productos,si,mezcla intenciones
-2776,F_mezclas,combinada,"buenas, hawaiana pizza",pedido_con_productos,si,mezcla intenciones
-2777,F_mezclas,combinada,"cancelar ... es broma, quiero 1 la hawaiana + 1 soda porfa",pedido_con_productos,si,mezcla intenciones
-2778,F_mezclas,combinada,menu y porfa 1×hawaiano ; un de koka cola porfa,ambiguo,parcial,mezcla intenciones
-2779,F_mezclas,combinada,inicio ... no mejor quisiera 1 la hawaiana ademas 1 soda nomás,pedido_con_productos,si,mezcla intenciones
-2780,F_mezclas,combinada,menu y voy a querer tres hawaiiana ademas 1 cocacola,pedido_con_productos,si,mezcla intenciones
-2781,F_mezclas,combinada,hola voy a querer 2 x hawaianas + un par de coca kola nomás,pedido_con_productos,si,mezcla intenciones
-2782,F_mezclas,combinada,inicio ... no mejor ponme 2 piza hawaiana tambien 1x soda,pedido_con_productos,si,mezcla intenciones
-2783,F_mezclas,combinada,hola porfa una hawaiano y un par de de refresco,ambiguo,parcial,mezcla intenciones
-2784,F_mezclas,combinada,hola 2×hawaiana ademas 1 cocacola porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2785,F_mezclas,combinada,hola quisiera 1 una hawaiana + 1 2 cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
-2786,F_mezclas,combinada,reservar mesa y oye 3 x pizza hawaiana + 2 coca nomás,pedido_con_productos,si,mezcla intenciones
-2787,F_mezclas,combinada,"menu y hola 1 hawaiiana, 2 cocacola porfa",pedido_con_productos,si,mezcla intenciones
-2788,F_mezclas,combinada,ver carta y porfa uno hawaiana pizza y un de refresco,pedido_con_productos,si,mezcla intenciones
-2789,F_mezclas,combinada,ver carta y voy a querer 1 x hawaiana | un par de de refresco,pedido_con_productos,si,mezcla intenciones
-2790,F_mezclas,combinada,"pedido: quiero 3 pizza hawaiiana, 1 refresco",pedido_con_productos,si,mezcla intenciones
-2791,F_mezclas,combinada,"cancelar ... es broma, necesito 2 pizza hawaiana ; uno de soda plis",pedido_con_productos,si,mezcla intenciones
-2792,F_mezclas,combinada,pedido: voy a querer 1 hawaiana pizza ademas 1x 2 cocacolas gracias,pedido_con_productos,si,mezcla intenciones
-2793,F_mezclas,combinada,voy a querer par de de la hawaiana + un de koka cola nomás y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2794,F_mezclas,combinada,pedido: quiero 1x pizza hawaiana + 1 soda para llevar,pedido_con_productos,si,mezcla intenciones
-2795,F_mezclas,combinada,menu y oye un de pizza hawaiiana tambien 1 de coca kola para llevar,pedido_con_productos,si,mezcla intenciones
-2796,F_mezclas,combinada,quisiera 1 la hawaiana ; 1 cocacola para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2797,F_mezclas,combinada,inicio ... no mejor ponme 1 x la hawaiana ; 2 de una cocacola porfa,pedido_con_productos,si,mezcla intenciones
-2798,F_mezclas,combinada,pedido: 3 x una hawaiana ademas uno coca cola porfa,pedido_con_productos,si,mezcla intenciones
-2799,F_mezclas,combinada,pedido: 2 x pizza hawaiana tambien par de de soda,pedido_con_productos,si,mezcla intenciones
-2800,F_mezclas,combinada,"cancelar ... es broma, me traes 1 hawaiiana y uno de refresco",ambiguo,parcial,mezcla intenciones
-2801,F_mezclas,combinada,"cancelar ... es broma, quiero 1 x hawaiiana ademas uno coca kola para llevar",pedido_con_productos,si,mezcla intenciones
-2802,F_mezclas,combinada,"ver carta y buenas dos hawaiano, 1×coca cola nomás",pedido_con_productos,si,mezcla intenciones
-2803,F_mezclas,combinada,inicio ... no mejor buenas uno hawaiana ; 1 de 2 cocacolas gracias,pedido_con_productos,si,mezcla intenciones
-2804,F_mezclas,combinada,"cancelar ... es broma, oye 1 de hawaiano ; 2 koka cola nomás",pedido_con_productos,si,mezcla intenciones
-2805,F_mezclas,combinada,menu y dame 2 x hawaianas ; 2 x 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
-2806,F_mezclas,combinada,menu y dame 3×piza hawaiana | 1 de coca kola para llevar,pedido_con_productos,si,mezcla intenciones
-2807,F_mezclas,combinada,"ver carta y quisiera 2 una hawaiana, 1×coca cola nomás",pedido_con_productos,si,mezcla intenciones
-2808,F_mezclas,combinada,inicio ... no mejor buenas par de hawaiana pizza ; un par de de koka cola nomás,pedido_con_productos,si,mezcla intenciones
-2809,F_mezclas,combinada,hola dame 1 hawaiana tambien una coca cola para llevar,pedido_con_productos,si,mezcla intenciones
-2810,F_mezclas,combinada,menu y buenas 1 hawaiiana luego 1 cocacola plis,pedido_con_productos,si,mezcla intenciones
-2811,F_mezclas,combinada,ver carta y voy a querer 1 hawaiiana tambien uno refresco nomás,ambiguo,parcial,mezcla intenciones
-2812,F_mezclas,combinada,buenas 3 hawaina ; 2 x cocacolas para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2813,F_mezclas,combinada,"cancelar ... es broma, voy a querer 1 hawaiana + 1 de una cocacola",pedido_con_productos,si,mezcla intenciones
-2814,F_mezclas,combinada,hola 1 pizza hawaiana | una de cocacola porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2815,F_mezclas,combinada,hola necesito par de de hawaianas y 1x soda gracias,pedido_con_productos,si,mezcla intenciones
-2816,F_mezclas,combinada,ver carta y quiero 1 x hawaina ; 1 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
-2817,F_mezclas,combinada,hola quisiera 3 hawaiiana | uno coca,pedido_con_productos,si,mezcla intenciones
-2818,F_mezclas,combinada,inicio ... no mejor dame 2 de hawaiana y un de coca plis,pedido_con_productos,si,mezcla intenciones
-2819,F_mezclas,combinada,ver carta y necesito uno la hawaiana ; dos de cocacolas nomás,pedido_con_productos,si,mezcla intenciones
-2820,F_mezclas,combinada,"ver carta y quiero par de pizza hawaiiana, un par de una cocacola",pedido_con_productos,si,mezcla intenciones
-2821,F_mezclas,combinada,ver carta y porfa 2 x hawaiana + 2 refresco gracias,pedido_con_productos,si,mezcla intenciones
-2822,F_mezclas,combinada,"pedido: oye una de pizza hawaiana, 2 x soda",pedido_con_productos,si,mezcla intenciones
-2823,F_mezclas,combinada,hola necesito 3 de hawaiiana ; 1 coca kola nomás,pedido_con_productos,si,mezcla intenciones
-2824,F_mezclas,combinada,hola voy a querer 2 de hawaianas tambien un de cocacolas gracias,pedido_con_productos,si,mezcla intenciones
-2825,F_mezclas,combinada,pedido: porfa 2 pizza hawaiana + un par de cocacolas plis,pedido_con_productos,si,mezcla intenciones
-2826,F_mezclas,combinada,necesito 1×hawaianas y un par de cocacola nomás y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
-2827,F_mezclas,combinada,reservar mesa y me traes par de piza hawaiana | un koka cola,pedido_con_productos,si,mezcla intenciones
-2828,F_mezclas,combinada,menu y 1 hawaiiana | 1x 2 cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
-2829,F_mezclas,combinada,menu y necesito 3×pizza hawaiana tambien 1 refresco para llevar,pedido_con_productos,si,mezcla intenciones
-2830,F_mezclas,combinada,"pedido: quisiera 1 hawaianas, 1 soda",pedido_con_productos,si,mezcla intenciones
-2831,G_ruido,ruido_realista,busco trabajo plis 5,ruido,no,fuera de alcance
-2832,G_ruido,ruido_realista,🍕 no se 5,ruido,no,emoji
-2833,G_ruido,ruido_realista,hola? ayuda 2,ambiguo,no,saludo duda
-2834,G_ruido,ruido_realista,asdf plis 5,ruido,no,gibberish
-2835,G_ruido,ruido_realista,? ayuda 5,ruido,no,signo
-2836,G_ruido,ruido_realista,ok no se 2,ambiguo,no,monosilabo
-2837,G_ruido,ruido_realista,aceptan tarjeta oye,ruido,no,pago
-2838,G_ruido,ruido_realista,a que hora abren plis,ruido,no,fuera de alcance
-2839,G_ruido,ruido_realista,... ???,ruido,no,ellipsis
-2840,G_ruido,ruido_realista,a que hora abren ??? 2,ruido,no,fuera de alcance
-2841,G_ruido,ruido_realista,gracias jaja 5,saludo,no,cierre
-2842,G_ruido,ruido_realista,ok plis,ambiguo,no,monosilabo
-2843,G_ruido,ruido_realista,... !! 12,ruido,no,ellipsis
-2844,G_ruido,ruido_realista,ok no se,ambiguo,no,monosilabo
-2845,G_ruido,ruido_realista,jajaja no se,ruido,no,risa
-2846,G_ruido,ruido_realista,ok jaja,ambiguo,no,monosilabo
-2847,G_ruido,ruido_realista,a que hora abren ???,ruido,no,fuera de alcance
-2848,G_ruido,ruido_realista,👍 oye 5,ruido,no,emoji
-2849,G_ruido,ruido_realista,busco trabajo oye 2,ruido,no,fuera de alcance
-2850,G_ruido,ruido_realista,aceptan tarjeta oye 5,ruido,no,pago
-2851,G_ruido,ruido_realista,ok jaja 1,ambiguo,no,monosilabo
-2852,G_ruido,ruido_realista,cuanto tardan 12,ruido,no,logistica
-2853,G_ruido,ruido_realista,aceptan tarjeta ??? 12,ruido,no,pago
-2854,G_ruido,ruido_realista,ok plis 1,ambiguo,no,monosilabo
-2855,G_ruido,ruido_realista,tienen baño oye 5,ruido,no,fuera de alcance
-2856,G_ruido,ruido_realista,menu pls ???,menu,no,spanglish menu
-2857,G_ruido,ruido_realista,cuanto tardan !! 12,ruido,no,logistica
-2858,G_ruido,ruido_realista,perfecto 12,confirmar,no,confirmacion
-2859,G_ruido,ruido_realista,asdf oye,ruido,no,gibberish
-2860,G_ruido,ruido_realista,cuanto tardan plis 12,ruido,no,logistica
-2861,G_ruido,ruido_realista,menu pls jaja 12,menu,no,spanglish menu
-2862,G_ruido,ruido_realista,hola? ??? 1,ambiguo,no,saludo duda
-2863,G_ruido,ruido_realista,jajaja ayuda 12,ruido,no,risa
-2864,G_ruido,ruido_realista,esta bien,confirmar,no,confirmacion
-2865,G_ruido,ruido_realista,gracias plis 12,saludo,no,cierre
-2866,G_ruido,ruido_realista,... !! 1,ruido,no,ellipsis
-2867,G_ruido,ruido_realista,🍕,ruido,no,emoji
-2868,G_ruido,ruido_realista,... !!,ruido,no,ellipsis
-2869,G_ruido,ruido_realista,busco trabajo ???,ruido,no,fuera de alcance
-2870,G_ruido,ruido_realista,tienen baño,ruido,no,fuera de alcance
-2871,G_ruido,ruido_realista,jajaja plis 2,ruido,no,risa
-2872,G_ruido,ruido_realista,? ??? 12,ruido,no,mensaje vacio
-2873,G_ruido,ruido_realista,a que hora abren ayuda,ruido,no,fuera de alcance
-2874,G_ruido,ruido_realista,menu pls ayuda 12,menu,no,spanglish menu
-2875,G_ruido,ruido_realista,ok ayuda 12,ambiguo,no,monosilabo
-2876,G_ruido,ruido_realista,🍕 jaja 12,ruido,no,emoji
-2877,G_ruido,ruido_realista,do you have pizza ayuda 5,ruido,no,spanglish
-2878,G_ruido,ruido_realista,aceptan tarjeta !! 1,ruido,no,pago
-2879,G_ruido,ruido_realista,ok 12,ambiguo,no,monosilabo
-2880,G_ruido,ruido_realista,aceptan tarjeta ??? 2,ruido,no,pago
-2881,G_ruido,ruido_realista,? ??? 5,ruido,no,signo
-2882,G_ruido,ruido_realista,🍕 ayuda 5,ruido,no,emoji
-2883,G_ruido,ruido_realista,perfecto no se,confirmar,no,confirmacion
-2884,G_ruido,ruido_realista,gracias 5,saludo,no,cierre
-2885,G_ruido,ruido_realista,a que hora abren jaja 2,ruido,no,fuera de alcance
-2886,G_ruido,ruido_realista,busco trabajo ayuda,ruido,no,fuera de alcance
-2887,G_ruido,ruido_realista,gracias plis,saludo,no,cierre
-2888,G_ruido,ruido_realista,... plis 1,ruido,no,ellipsis
-2889,G_ruido,ruido_realista,menu pls !! 12,menu,no,spanglish menu
-2890,G_ruido,ruido_realista,hola? plis 12,ambiguo,no,saludo duda
-2891,G_ruido,ruido_realista,aceptan tarjeta plis 1,ruido,no,pago
-2892,G_ruido,ruido_realista,cuanto tardan oye 2,ruido,no,logistica
-2893,G_ruido,ruido_realista,jajaja ayuda 5,ruido,no,risa
-2894,G_ruido,ruido_realista,gracias 2,saludo,no,cierre
-2895,G_ruido,ruido_realista,tienen baño ??? 5,ruido,no,fuera de alcance
-2896,G_ruido,ruido_realista,... ??? 5,ruido,no,ellipsis
-2897,G_ruido,ruido_realista,tienen baño no se 1,ruido,no,fuera de alcance
-2898,G_ruido,ruido_realista,esta bien oye 1,confirmar,no,confirmacion
-2899,G_ruido,ruido_realista,menu pls ayuda,menu,no,spanglish menu
-2900,G_ruido,ruido_realista,👍 jaja 5,ruido,no,emoji
-2901,G_ruido,ruido_realista,ok !! 2,ambiguo,no,monosilabo
-2902,G_ruido,ruido_realista,🍕 jaja 5,ruido,no,emoji
-2903,G_ruido,ruido_realista,a que hora abren no se 5,ruido,no,fuera de alcance
-2904,G_ruido,ruido_realista,cuanto tardan ???,ruido,no,logistica
-2905,G_ruido,ruido_realista,hola?,ambiguo,no,saludo duda
-2906,G_ruido,ruido_realista,esta bien jaja 2,confirmar,no,confirmacion
-2907,G_ruido,ruido_realista,busco trabajo plis,ruido,no,fuera de alcance
-2908,G_ruido,ruido_realista,tienen baño jaja,ruido,no,fuera de alcance
-2909,G_ruido,ruido_realista,perfecto ??? 12,confirmar,no,confirmacion
-2910,G_ruido,ruido_realista,menu pls plis 12,menu,no,spanglish menu
-2911,G_ruido,ruido_realista,esta bien ??? 12,confirmar,no,confirmacion
-2912,G_ruido,ruido_realista,tienen baño plis 12,ruido,no,fuera de alcance
-2913,G_ruido,ruido_realista,jajaja plis 12,ruido,no,risa
-2914,G_ruido,ruido_realista,ok no se 5,ambiguo,no,monosilabo
-2915,G_ruido,ruido_realista,a que hora abren no se 12,ruido,no,fuera de alcance
-2916,G_ruido,ruido_realista,... plis,ruido,no,ellipsis
-2917,G_ruido,ruido_realista,busco trabajo jaja 5,ruido,no,fuera de alcance
-2918,G_ruido,ruido_realista,perfecto ayuda 1,confirmar,no,confirmacion
-2919,G_ruido,ruido_realista,gracias ??? 12,saludo,no,cierre
-2920,G_ruido,ruido_realista,busco trabajo ??? 2,ruido,no,fuera de alcance
-2921,G_ruido,ruido_realista,esta bien ??? 5,confirmar,no,confirmacion
-2922,G_ruido,ruido_realista,... plis 5,ruido,no,ellipsis
-2923,G_ruido,ruido_realista,esta bien 5,confirmar,no,confirmacion
-2924,G_ruido,ruido_realista,do you have pizza plis 5,ruido,no,spanglish
-2925,G_ruido,ruido_realista,cuanto tardan !! 1,ruido,no,logistica
-2926,G_ruido,ruido_realista,... 12,ruido,no,ellipsis
-2927,G_ruido,ruido_realista,gracias ayuda 2,saludo,no,cierre
-2928,G_ruido,ruido_realista,hola? !! 5,ambiguo,no,saludo duda
-2929,G_ruido,ruido_realista,busco trabajo jaja 2,ruido,no,fuera de alcance
-2930,G_ruido,ruido_realista,... !! 2,ruido,no,ellipsis
-2931,G_ruido,ruido_realista,... 5,ruido,no,ellipsis
-2932,G_ruido,ruido_realista,ok oye 1,ambiguo,no,monosilabo
-2933,G_ruido,ruido_realista,perfecto ayuda 2,confirmar,no,confirmacion
-2934,G_ruido,ruido_realista,tienen baño ayuda 5,ruido,no,fuera de alcance
-2935,G_ruido,ruido_realista,?,ruido,no,mensaje vacio
-2936,G_ruido,ruido_realista,asdf !! 1,ruido,no,gibberish
-2937,G_ruido,ruido_realista,hola? no se 2,ambiguo,no,saludo duda
-2938,G_ruido,ruido_realista,esta bien plis,confirmar,no,confirmacion
-2939,G_ruido,ruido_realista,esta bien plis 2,confirmar,no,confirmacion
-2940,G_ruido,ruido_realista,🍕 plis 12,ruido,no,emoji
-2941,G_ruido,ruido_realista,🍕 plis 1,ruido,no,emoji
-2942,G_ruido,ruido_realista,jajaja jaja 2,ruido,no,risa
-2943,G_ruido,ruido_realista,cuanto tardan oye 1,ruido,no,logistica
-2944,G_ruido,ruido_realista,jajaja !! 1,ruido,no,risa
-2945,G_ruido,ruido_realista,... no se 2,ruido,no,ellipsis
-2946,G_ruido,ruido_realista,gracias oye 5,saludo,no,cierre
-2947,G_ruido,ruido_realista,hola? !! 12,ambiguo,no,saludo duda
-2948,G_ruido,ruido_realista,? plis 1,ruido,no,mensaje vacio
-2949,G_ruido,ruido_realista,? !! 12,ruido,no,signo
-2950,G_ruido,ruido_realista,jajaja 2,ruido,no,risa
-2951,G_ruido,ruido_realista,busco trabajo 1,ruido,no,fuera de alcance
-2952,G_ruido,ruido_realista,... no se 12,ruido,no,ellipsis
-2953,G_ruido,ruido_realista,gracias jaja 2,saludo,no,cierre
-2954,G_ruido,ruido_realista,a que hora abren plis 1,ruido,no,fuera de alcance
-2955,G_ruido,ruido_realista,asdf no se,ruido,no,gibberish
-2956,G_ruido,ruido_realista,hola? plis 1,ambiguo,no,saludo duda
-2957,G_ruido,ruido_realista,do you have pizza ??? 1,ruido,no,spanglish
-2958,G_ruido,ruido_realista,... ayuda 5,ruido,no,ellipsis
-2959,G_ruido,ruido_realista,? ??? 2,ruido,no,mensaje vacio
-2960,G_ruido,ruido_realista,👍 plis 12,ruido,no,emoji
-2961,G_ruido,ruido_realista,do you have pizza jaja 12,ruido,no,spanglish
-2962,G_ruido,ruido_realista,gracias oye 12,saludo,no,cierre
-2963,G_ruido,ruido_realista,a que hora abren ??? 12,ruido,no,fuera de alcance
-2964,G_ruido,ruido_realista,asdf jaja 2,ruido,no,gibberish
-2965,G_ruido,ruido_realista,cuanto tardan no se,ruido,no,logistica
-2966,G_ruido,ruido_realista,cuanto tardan jaja,ruido,no,logistica
-2967,G_ruido,ruido_realista,perfecto ??? 1,confirmar,no,confirmacion
-2968,G_ruido,ruido_realista,tienen baño ayuda,ruido,no,fuera de alcance
-2969,G_ruido,ruido_realista,tienen baño oye 1,ruido,no,fuera de alcance
-2970,G_ruido,ruido_realista,🍕 oye 1,ruido,no,emoji
-2971,G_ruido,ruido_realista,do you have pizza ??? 12,ruido,no,spanglish
-2972,G_ruido,ruido_realista,cuanto tardan !!,ruido,no,logistica
-2973,G_ruido,ruido_realista,jajaja no se 5,ruido,no,risa
-2974,G_ruido,ruido_realista,a que hora abren jaja 12,ruido,no,fuera de alcance
-2975,G_ruido,ruido_realista,aceptan tarjeta oye 1,ruido,no,pago
-2976,G_ruido,ruido_realista,asdf ayuda,ruido,no,gibberish
-2977,G_ruido,ruido_realista,hola? no se,ambiguo,no,saludo duda
-2978,G_ruido,ruido_realista,gracias ayuda,saludo,no,cierre
-2979,G_ruido,ruido_realista,hola? !! 2,ambiguo,no,saludo duda
-2980,G_ruido,ruido_realista,aceptan tarjeta no se 1,ruido,no,pago
-2981,G_ruido,ruido_realista,tienen baño jaja 1,ruido,no,fuera de alcance
-2982,G_ruido,ruido_realista,a que hora abren plis 12,ruido,no,fuera de alcance
-2983,G_ruido,ruido_realista,👍 jaja,ruido,no,emoji
-2984,G_ruido,ruido_realista,? !! 2,ruido,no,mensaje vacio
-2985,G_ruido,ruido_realista,🍕 oye 5,ruido,no,emoji
-2986,G_ruido,ruido_realista,busco trabajo,ruido,no,fuera de alcance
-2987,G_ruido,ruido_realista,... no se,ruido,no,ellipsis
-2988,G_ruido,ruido_realista,menu pls jaja 5,menu,no,spanglish menu
-2989,G_ruido,ruido_realista,do you have pizza ayuda 12,ruido,no,spanglish
-2990,G_ruido,ruido_realista,menu pls oye,menu,no,spanglish menu
-2991,G_ruido,ruido_realista,menu pls jaja,menu,no,spanglish menu
-2992,G_ruido,ruido_realista,aceptan tarjeta plis 2,ruido,no,pago
-2993,G_ruido,ruido_realista,menu pls !!,menu,no,spanglish menu
-2994,G_ruido,ruido_realista,perfecto no se 5,confirmar,no,confirmacion
-2995,G_ruido,ruido_realista,? jaja 1,ruido,no,mensaje vacio
-2996,G_ruido,ruido_realista,esta bien ayuda,confirmar,no,confirmacion
-2997,G_ruido,ruido_realista,menu pls ??? 5,menu,no,spanglish menu
-2998,G_ruido,ruido_realista,asdf ayuda 2,ruido,no,gibberish
-2999,G_ruido,ruido_realista,esta bien oye,confirmar,no,confirmacion
-3000,G_ruido,ruido_realista,a que hora abren !! 12,ruido,no,fuera de alcance
-3001,G_ruido,ruido_realista,tienen baño plis 2,ruido,no,fuera de alcance
-3002,G_ruido,ruido_realista,jajaja no se 2,ruido,no,risa
-3003,G_ruido,ruido_realista,tienen baño !!,ruido,no,fuera de alcance
-3004,G_ruido,ruido_realista,menu pls ayuda 2,menu,no,spanglish menu
-3005,G_ruido,ruido_realista,👍 jaja 2,ruido,no,emoji
-3006,G_ruido,ruido_realista,🍕 2,ruido,no,emoji
-3007,G_ruido,ruido_realista,🍕 no se 1,ruido,no,emoji
-3008,G_ruido,ruido_realista,... oye 2,ruido,no,ellipsis
-3009,G_ruido,ruido_realista,? !! 1,ruido,no,mensaje vacio
-3010,G_ruido,ruido_realista,👍 !! 1,ruido,no,emoji
-3011,G_ruido,ruido_realista,asdf jaja 1,ruido,no,gibberish
-3012,G_ruido,ruido_realista,gracias !! 2,saludo,no,cierre
-3013,G_ruido,ruido_realista,tienen baño no se 2,ruido,no,fuera de alcance
-3014,G_ruido,ruido_realista,a que hora abren no se 1,ruido,no,fuera de alcance
-3015,G_ruido,ruido_realista,gracias plis 5,saludo,no,cierre
-3016,G_ruido,ruido_realista,a que hora abren plis 5,ruido,no,fuera de alcance
-3017,G_ruido,ruido_realista,🍕 oye 12,ruido,no,emoji
-3018,G_ruido,ruido_realista,busco trabajo ??? 5,ruido,no,fuera de alcance
-3019,G_ruido,ruido_realista,aceptan tarjeta jaja 5,ruido,no,pago
-3020,G_ruido,ruido_realista,asdf ayuda 5,ruido,no,gibberish
-3021,G_ruido,ruido_realista,asdf oye 5,ruido,no,gibberish
-3022,G_ruido,ruido_realista,? jaja 5,ruido,no,signo
-3023,G_ruido,ruido_realista,tienen baño jaja 2,ruido,no,fuera de alcance
-3024,G_ruido,ruido_realista,perfecto !! 2,confirmar,no,confirmacion
-3025,G_ruido,ruido_realista,... oye,ruido,no,ellipsis
-3026,G_ruido,ruido_realista,👍 jaja 1,ruido,no,emoji
-3027,G_ruido,ruido_realista,jajaja plis 1,ruido,no,risa
-3028,G_ruido,ruido_realista,? no se 1,ruido,no,mensaje vacio
-3029,G_ruido,ruido_realista,... ??? 1,ruido,no,ellipsis
-3030,G_ruido,ruido_realista,perfecto !!,confirmar,no,confirmacion
-3031,H_adversarial,adversarial,si y no 69 quiero todo y nada,ambiguo,no,contradiccion
-3032,H_adversarial,adversarial,docena de sushi roll,pedido_con_productos,parcial,producto no en menu
-3033,H_adversarial,adversarial,una wings picosas,pedido_con_productos,parcial,producto no en menu
-3034,H_adversarial,adversarial,asdf qwerty,ruido,no,gibberish
-3035,H_adversarial,adversarial,una lasagna,pedido_con_productos,parcial,producto no en menu
-3036,H_adversarial,adversarial,5 tacos al pastor y 2 latte grande,pedido_con_productos,parcial,multi fake
-3037,H_adversarial,adversarial,2 latte grande,pedido_con_productos,parcial,producto no en menu
-3038,H_adversarial,adversarial,si y no 89 quiero todo y nada,ambiguo,no,contradiccion
-3039,H_adversarial,adversarial,zzzz,ruido,no,gibberish
-3040,H_adversarial,adversarial,5 cero cocacolas y 2 lasagna,pedido_con_productos,parcial,multi fake
-3041,H_adversarial,adversarial,si y no 68 quiero todo y nada,ambiguo,no,contradiccion
-3042,H_adversarial,adversarial,docena de sushi roll y 2 tacos al pastor,pedido_con_productos,parcial,multi fake
-3043,H_adversarial,adversarial,;;;,ruido,no,gibberish
-3044,H_adversarial,adversarial,qwerty pizza,ruido,no,gibberish
-3045,H_adversarial,adversarial,si y no 11 quiero todo y nada,ambiguo,no,contradiccion
-3046,H_adversarial,adversarial,5 10 pizzas pepperoni y 5 ensalada cesar,pedido_con_productos,parcial,multi fake
-3047,H_adversarial,adversarial,5 100 hawaianas,pedido_con_productos,parcial,producto no en menu
-3048,H_adversarial,adversarial,5 -2 pizzas y ensalada cesar,pedido_con_productos,parcial,multi fake
-3049,H_adversarial,adversarial,si y no 73 quiero todo y nada,ambiguo,no,contradiccion
-3050,H_adversarial,adversarial,si y no 65 quiero todo y nada,ambiguo,no,contradiccion
-3051,H_adversarial,adversarial,si y no 93 quiero todo y nada,ambiguo,no,contradiccion
-3052,H_adversarial,adversarial,docena de cero cocacolas,pedido_con_productos,parcial,producto no en menu
-3053,H_adversarial,adversarial,si y no 22 quiero todo y nada,ambiguo,no,contradiccion
-3054,H_adversarial,adversarial,123456789,ruido,no,gibberish
-3055,H_adversarial,adversarial,si y no 47 quiero todo y nada,ambiguo,no,contradiccion
-3056,H_adversarial,adversarial,5 10 pizzas pepperoni,pedido_con_productos,parcial,producto no en menu
-3057,H_adversarial,adversarial,docena de tacos al pastor y 100 hawaianas,pedido_con_productos,parcial,multi fake
-3058,H_adversarial,adversarial,si y no 78 quiero todo y nada,ambiguo,no,contradiccion
-3059,H_adversarial,adversarial,5 tacos al pastor,pedido_con_productos,parcial,producto no en menu
-3060,H_adversarial,adversarial,si y no 79 quiero todo y nada,ambiguo,no,contradiccion
-3061,H_adversarial,adversarial,una burger doble y 2 tacos al pastor,pedido_con_productos,parcial,multi fake
-3062,H_adversarial,adversarial,una -2 pizzas y una sushi roll,pedido_con_productos,parcial,multi fake
-3063,H_adversarial,adversarial,5 ensalada cesar,pedido_con_productos,parcial,producto no en menu
-3064,H_adversarial,adversarial,5 latte grande,pedido_con_productos,parcial,producto no en menu
-3065,H_adversarial,adversarial,docena de lasagna y docena de tacos al pastor,pedido_con_productos,parcial,multi fake
-3066,H_adversarial,adversarial,si y no 97 quiero todo y nada,ambiguo,no,contradiccion
-3067,H_adversarial,adversarial,2 100 hawaianas y 5 latte grande,pedido_con_productos,parcial,multi fake
-3068,H_adversarial,adversarial,docena de tacos al pastor y -2 pizzas,pedido_con_productos,parcial,multi fake
-3069,H_adversarial,adversarial,2 100 hawaianas y 5 -2 pizzas,pedido_con_productos,parcial,multi fake
-3070,H_adversarial,adversarial,una -2 pizzas y 5 cero cocacolas,pedido_con_productos,parcial,multi fake
-3071,H_adversarial,adversarial,2 10 pizzas pepperoni y 5 burger doble,pedido_con_productos,parcial,multi fake
-3072,H_adversarial,adversarial,2 10 pizzas pepperoni,pedido_con_productos,parcial,producto no en menu
-3073,H_adversarial,adversarial,una 10 pizzas pepperoni y 5 latte grande,pedido_con_productos,parcial,multi fake
-3074,H_adversarial,adversarial,si y no 99 quiero todo y nada,ambiguo,no,contradiccion
-3075,H_adversarial,adversarial,burger doble,pedido_con_productos,parcial,producto no en menu
-3076,H_adversarial,adversarial,una -2 pizzas,pedido_con_productos,parcial,producto no en menu
-3077,H_adversarial,adversarial,5 wings picosas,pedido_con_productos,parcial,producto no en menu
-3078,H_adversarial,adversarial,si y no 44 quiero todo y nada,ambiguo,no,contradiccion
-3079,H_adversarial,adversarial,2 cero cocacolas,pedido_con_productos,parcial,producto no en menu
-3080,H_adversarial,adversarial,2 -2 pizzas,pedido_con_productos,parcial,producto no en menu
-3081,H_adversarial,adversarial,si y no 75 quiero todo y nada,ambiguo,no,contradiccion
-3082,H_adversarial,adversarial,si y no 26 quiero todo y nada,ambiguo,no,contradiccion
-3083,H_adversarial,adversarial,docena de cero cocacolas y una sushi roll,pedido_con_productos,parcial,multi fake
-3084,H_adversarial,adversarial,5 100 hawaianas y 5 lasagna,pedido_con_productos,parcial,multi fake
-3085,H_adversarial,adversarial,lasagna,pedido_con_productos,parcial,producto no en menu
-3086,H_adversarial,adversarial,docena de burger doble y 5 -2 pizzas,pedido_con_productos,parcial,multi fake
-3087,H_adversarial,adversarial,5 -2 pizzas,pedido_con_productos,parcial,producto no en menu
-3088,H_adversarial,adversarial,si y no 62 quiero todo y nada,ambiguo,no,contradiccion
-3089,H_adversarial,adversarial,si y no 98 quiero todo y nada,ambiguo,no,contradiccion
-3090,H_adversarial,adversarial,una 10 pizzas pepperoni,pedido_con_productos,parcial,producto no en menu
-3091,H_adversarial,adversarial,una 100 hawaianas y wings picosas,pedido_con_productos,parcial,multi fake
-3092,H_adversarial,adversarial,si y no 36 quiero todo y nada,ambiguo,no,contradiccion
-3093,H_adversarial,adversarial,una tacos al pastor y 2 burger doble,pedido_con_productos,parcial,multi fake
-3094,H_adversarial,adversarial,5 cero cocacolas,pedido_con_productos,parcial,producto no en menu
-3095,H_adversarial,adversarial,una latte grande,pedido_con_productos,parcial,producto no en menu
-3096,H_adversarial,adversarial,si y no 87 quiero todo y nada,ambiguo,no,contradiccion
-3097,H_adversarial,adversarial,2 10 pizzas pepperoni y una latte grande,pedido_con_productos,parcial,multi fake
-3098,H_adversarial,adversarial,si y no 1 quiero todo y nada,ambiguo,no,contradiccion
-3099,H_adversarial,adversarial,si y no 31 quiero todo y nada,ambiguo,no,contradiccion
-3100,H_adversarial,adversarial,una sushi roll y docena de tacos al pastor,pedido_con_productos,parcial,multi fake
-3101,H_adversarial,adversarial,2 100 hawaianas,pedido_con_productos,parcial,producto no en menu
-3102,H_adversarial,adversarial,sushi roll,pedido_con_productos,parcial,producto no en menu
-3103,H_adversarial,adversarial,si y no 17 quiero todo y nada,ambiguo,no,contradiccion
-3104,H_adversarial,adversarial,cero cocacolas y docena de sushi roll,pedido_con_productos,parcial,multi fake
-3105,H_adversarial,adversarial,si y no 63 quiero todo y nada,ambiguo,no,contradiccion
-3106,H_adversarial,adversarial,ensalada cesar,pedido_con_productos,parcial,producto no en menu
-3107,H_adversarial,adversarial,wings picosas y docena de wings picosas,pedido_con_productos,parcial,multi fake
-3108,H_adversarial,adversarial,2 -2 pizzas y docena de wings picosas,pedido_con_productos,parcial,multi fake
-3109,H_adversarial,adversarial,si y no 6 quiero todo y nada,ambiguo,no,contradiccion
-3110,H_adversarial,adversarial,una cero cocacolas,pedido_con_productos,parcial,producto no en menu
-3111,H_adversarial,adversarial,si y no 19 quiero todo y nada,ambiguo,no,contradiccion
-3112,H_adversarial,adversarial,si y no 34 quiero todo y nada,ambiguo,no,contradiccion
-3113,H_adversarial,adversarial,si y no 80 quiero todo y nada,ambiguo,no,contradiccion
-3114,H_adversarial,adversarial,una latte grande y docena de cero cocacolas,pedido_con_productos,parcial,multi fake
-3115,H_adversarial,adversarial,2 cero cocacolas y docena de sushi roll,pedido_con_productos,parcial,multi fake
-3116,H_adversarial,adversarial,docena de tacos al pastor,pedido_con_productos,parcial,producto no en menu
-3117,H_adversarial,adversarial,si y no 14 quiero todo y nada,ambiguo,no,contradiccion
-3118,H_adversarial,adversarial,si y no 53 quiero todo y nada,ambiguo,no,contradiccion
-3119,H_adversarial,adversarial,latte grande,pedido_con_productos,parcial,producto no en menu
-3120,H_adversarial,adversarial,si y no 38 quiero todo y nada,ambiguo,no,contradiccion
-3121,H_adversarial,adversarial,si y no 45 quiero todo y nada,ambiguo,no,contradiccion
-3122,H_adversarial,adversarial,docena de cero cocacolas y docena de 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3123,H_adversarial,adversarial,2 lasagna,pedido_con_productos,parcial,producto no en menu
-3124,H_adversarial,adversarial,si y no 40 quiero todo y nada,ambiguo,no,contradiccion
-3125,H_adversarial,adversarial,si y no 86 quiero todo y nada,ambiguo,no,contradiccion
-3126,H_adversarial,adversarial,una sushi roll y docena de 100 hawaianas,pedido_con_productos,parcial,multi fake
-3127,H_adversarial,adversarial,docena de tacos al pastor y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3128,H_adversarial,adversarial,si y no 35 quiero todo y nada,ambiguo,no,contradiccion
-3129,H_adversarial,adversarial,latte grande y 2 -2 pizzas,pedido_con_productos,parcial,multi fake
-3130,H_adversarial,adversarial,si y no 96 quiero todo y nada,ambiguo,no,contradiccion
-3131,H_adversarial,adversarial,si y no 39 quiero todo y nada,ambiguo,no,contradiccion
-3132,H_adversarial,adversarial,2 sushi roll,pedido_con_productos,parcial,producto no en menu
-3133,H_adversarial,adversarial,una sushi roll y docena de lasagna,pedido_con_productos,parcial,multi fake
-3134,H_adversarial,adversarial,2 tacos al pastor,pedido_con_productos,parcial,producto no en menu
-3135,H_adversarial,adversarial,una lasagna y lasagna,pedido_con_productos,parcial,multi fake
-3136,H_adversarial,adversarial,si y no 43 quiero todo y nada,ambiguo,no,contradiccion
-3137,H_adversarial,adversarial,si y no 70 quiero todo y nada,ambiguo,no,contradiccion
-3138,H_adversarial,adversarial,5 lasagna,pedido_con_productos,parcial,producto no en menu
-3139,H_adversarial,adversarial,latte grande y -2 pizzas,pedido_con_productos,parcial,multi fake
-3140,H_adversarial,adversarial,una tacos al pastor y docena de -2 pizzas,pedido_con_productos,parcial,multi fake
-3141,H_adversarial,adversarial,2 wings picosas y docena de 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3142,H_adversarial,adversarial,2 sushi roll y docena de wings picosas,pedido_con_productos,parcial,multi fake
-3143,H_adversarial,adversarial,si y no 57 quiero todo y nada,ambiguo,no,contradiccion
-3144,H_adversarial,adversarial,una lasagna y 5 burger doble,pedido_con_productos,parcial,multi fake
-3145,H_adversarial,adversarial,si y no 25 quiero todo y nada,ambiguo,no,contradiccion
-3146,H_adversarial,adversarial,si y no 55 quiero todo y nada,ambiguo,no,contradiccion
-3147,H_adversarial,adversarial,5 wings picosas y docena de burger doble,pedido_con_productos,parcial,multi fake
-3148,H_adversarial,adversarial,docena de tacos al pastor y lasagna,pedido_con_productos,parcial,multi fake
-3149,H_adversarial,adversarial,una -2 pizzas y 5 burger doble,pedido_con_productos,parcial,multi fake
-3150,H_adversarial,adversarial,wings picosas y una 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3151,H_adversarial,adversarial,docena de wings picosas y 5 ensalada cesar,pedido_con_productos,parcial,multi fake
-3152,H_adversarial,adversarial,2 10 pizzas pepperoni y docena de burger doble,pedido_con_productos,parcial,multi fake
-3153,H_adversarial,adversarial,-2 pizzas y una -2 pizzas,pedido_con_productos,parcial,multi fake
-3154,H_adversarial,adversarial,-2 pizzas y docena de ensalada cesar,pedido_con_productos,parcial,multi fake
-3155,H_adversarial,adversarial,docena de burger doble y una wings picosas,pedido_con_productos,parcial,multi fake
-3156,H_adversarial,adversarial,si y no 8 quiero todo y nada,ambiguo,no,contradiccion
-3157,H_adversarial,adversarial,una tacos al pastor y docena de wings picosas,pedido_con_productos,parcial,multi fake
-3158,H_adversarial,adversarial,2 ensalada cesar y 5 100 hawaianas,pedido_con_productos,parcial,multi fake
-3159,H_adversarial,adversarial,5 -2 pizzas y cero cocacolas,pedido_con_productos,parcial,multi fake
-3160,H_adversarial,adversarial,100 hawaianas y 100 hawaianas,pedido_con_productos,parcial,multi fake
-3161,H_adversarial,adversarial,una wings picosas y una ensalada cesar,pedido_con_productos,parcial,multi fake
-3162,H_adversarial,adversarial,docena de tacos al pastor y ensalada cesar,pedido_con_productos,parcial,multi fake
-3163,H_adversarial,adversarial,5 cero cocacolas y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3164,H_adversarial,adversarial,si y no 12 quiero todo y nada,ambiguo,no,contradiccion
-3165,H_adversarial,adversarial,si y no 4 quiero todo y nada,ambiguo,no,contradiccion
-3166,H_adversarial,adversarial,una ensalada cesar,pedido_con_productos,parcial,producto no en menu
-3167,H_adversarial,adversarial,si y no 24 quiero todo y nada,ambiguo,no,contradiccion
-3168,H_adversarial,adversarial,una cero cocacolas y docena de ensalada cesar,pedido_con_productos,parcial,multi fake
-3169,H_adversarial,adversarial,si y no 83 quiero todo y nada,ambiguo,no,contradiccion
-3170,H_adversarial,adversarial,docena de ensalada cesar,pedido_con_productos,parcial,producto no en menu
-3171,H_adversarial,adversarial,cero cocacolas,pedido_con_productos,parcial,producto no en menu
-3172,H_adversarial,adversarial,burger doble y 2 cero cocacolas,pedido_con_productos,parcial,multi fake
-3173,H_adversarial,adversarial,burger doble y una latte grande,pedido_con_productos,parcial,multi fake
-3174,H_adversarial,adversarial,docena de lasagna y 2 wings picosas,pedido_con_productos,parcial,multi fake
-3175,H_adversarial,adversarial,una tacos al pastor,pedido_con_productos,parcial,producto no en menu
-3176,H_adversarial,adversarial,una wings picosas y 5 sushi roll,pedido_con_productos,parcial,multi fake
-3177,H_adversarial,adversarial,docena de wings picosas y docena de latte grande,pedido_con_productos,parcial,multi fake
-3178,H_adversarial,adversarial,2 tacos al pastor y 5 latte grande,pedido_con_productos,parcial,multi fake
-3179,H_adversarial,adversarial,docena de -2 pizzas,pedido_con_productos,parcial,producto no en menu
-3180,H_adversarial,adversarial,2 latte grande y burger doble,pedido_con_productos,parcial,multi fake
-3181,H_adversarial,adversarial,docena de burger doble,pedido_con_productos,parcial,producto no en menu
-3182,H_adversarial,adversarial,si y no 50 quiero todo y nada,ambiguo,no,contradiccion
-3183,H_adversarial,adversarial,si y no 49 quiero todo y nada,ambiguo,no,contradiccion
-3184,H_adversarial,adversarial,si y no 85 quiero todo y nada,ambiguo,no,contradiccion
-3185,H_adversarial,adversarial,2 wings picosas,pedido_con_productos,parcial,producto no en menu
-3186,H_adversarial,adversarial,docena de 100 hawaianas y 5 lasagna,pedido_con_productos,parcial,multi fake
-3187,H_adversarial,adversarial,latte grande y una burger doble,pedido_con_productos,parcial,multi fake
-3188,H_adversarial,adversarial,si y no 67 quiero todo y nada,ambiguo,no,contradiccion
-3189,H_adversarial,adversarial,docena de 100 hawaianas,pedido_con_productos,parcial,producto no en menu
-3190,H_adversarial,adversarial,una burger doble,pedido_con_productos,parcial,producto no en menu
-3191,H_adversarial,adversarial,si y no 10 quiero todo y nada,ambiguo,no,contradiccion
-3192,H_adversarial,adversarial,burger doble y una sushi roll,pedido_con_productos,parcial,multi fake
-3193,H_adversarial,adversarial,2 burger doble,pedido_con_productos,parcial,producto no en menu
-3194,H_adversarial,adversarial,docena de sushi roll y 5 wings picosas,pedido_con_productos,parcial,multi fake
-3195,H_adversarial,adversarial,2 -2 pizzas y tacos al pastor,pedido_con_productos,parcial,multi fake
-3196,H_adversarial,adversarial,100 hawaianas,pedido_con_productos,parcial,producto no en menu
-3197,H_adversarial,adversarial,si y no 74 quiero todo y nada,ambiguo,no,contradiccion
-3198,H_adversarial,adversarial,docena de 10 pizzas pepperoni,pedido_con_productos,parcial,producto no en menu
-3199,H_adversarial,adversarial,una 100 hawaianas,pedido_con_productos,parcial,producto no en menu
-3200,H_adversarial,adversarial,5 burger doble,pedido_con_productos,parcial,producto no en menu
-3201,H_adversarial,adversarial,-2 pizzas y una wings picosas,pedido_con_productos,parcial,multi fake
-3202,H_adversarial,adversarial,si y no 90 quiero todo y nada,ambiguo,no,contradiccion
-3203,H_adversarial,adversarial,docena de ensalada cesar y 5 tacos al pastor,pedido_con_productos,parcial,multi fake
-3204,H_adversarial,adversarial,wings picosas,pedido_con_productos,parcial,producto no en menu
-3205,H_adversarial,adversarial,docena de lasagna,pedido_con_productos,parcial,producto no en menu
-3206,H_adversarial,adversarial,wings picosas y latte grande,pedido_con_productos,parcial,multi fake
-3207,H_adversarial,adversarial,5 100 hawaianas y 5 latte grande,pedido_con_productos,parcial,multi fake
-3208,H_adversarial,adversarial,5 burger doble y una 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3209,H_adversarial,adversarial,2 tacos al pastor y tacos al pastor,pedido_con_productos,parcial,multi fake
-3210,H_adversarial,adversarial,docena de latte grande y docena de cero cocacolas,pedido_con_productos,parcial,multi fake
-3211,H_adversarial,adversarial,docena de burger doble y 2 ensalada cesar,pedido_con_productos,parcial,multi fake
-3212,H_adversarial,adversarial,una 100 hawaianas y 5 lasagna,pedido_con_productos,parcial,multi fake
-3213,H_adversarial,adversarial,2 tacos al pastor y 5 cero cocacolas,pedido_con_productos,parcial,multi fake
-3214,H_adversarial,adversarial,5 -2 pizzas y 2 cero cocacolas,pedido_con_productos,parcial,multi fake
-3215,H_adversarial,adversarial,5 latte grande y lasagna,pedido_con_productos,parcial,multi fake
-3216,H_adversarial,adversarial,2 ensalada cesar,pedido_con_productos,parcial,producto no en menu
-3217,H_adversarial,adversarial,si y no 7 quiero todo y nada,ambiguo,no,contradiccion
-3218,H_adversarial,adversarial,si y no 33 quiero todo y nada,ambiguo,no,contradiccion
-3219,H_adversarial,adversarial,10 pizzas pepperoni,pedido_con_productos,parcial,producto no en menu
-3220,H_adversarial,adversarial,2 burger doble y una lasagna,pedido_con_productos,parcial,multi fake
-3221,H_adversarial,adversarial,si y no 48 quiero todo y nada,ambiguo,no,contradiccion
-3222,H_adversarial,adversarial,si y no 72 quiero todo y nada,ambiguo,no,contradiccion
-3223,H_adversarial,adversarial,una 100 hawaianas y docena de 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3224,H_adversarial,adversarial,docena de latte grande,pedido_con_productos,parcial,producto no en menu
-3225,H_adversarial,adversarial,sushi roll y una cero cocacolas,pedido_con_productos,parcial,multi fake
-3226,H_adversarial,adversarial,docena de lasagna y docena de latte grande,pedido_con_productos,parcial,multi fake
-3227,H_adversarial,adversarial,2 cero cocacolas y docena de 100 hawaianas,pedido_con_productos,parcial,multi fake
-3228,H_adversarial,adversarial,2 sushi roll y burger doble,pedido_con_productos,parcial,multi fake
-3229,H_adversarial,adversarial,una ensalada cesar y docena de burger doble,pedido_con_productos,parcial,multi fake
-3230,H_adversarial,adversarial,sushi roll y una 100 hawaianas,pedido_con_productos,parcial,multi fake
-3231,H_adversarial,adversarial,docena de -2 pizzas y docena de 100 hawaianas,pedido_con_productos,parcial,multi fake
-3232,H_adversarial,adversarial,una -2 pizzas y lasagna,pedido_con_productos,parcial,multi fake
-3233,H_adversarial,adversarial,-2 pizzas y docena de burger doble,pedido_con_productos,parcial,multi fake
-3234,H_adversarial,adversarial,si y no 3 quiero todo y nada,ambiguo,no,contradiccion
-3235,H_adversarial,adversarial,docena de sushi roll y docena de 100 hawaianas,pedido_con_productos,parcial,multi fake
-3236,H_adversarial,adversarial,una ensalada cesar y docena de wings picosas,pedido_con_productos,parcial,multi fake
-3237,H_adversarial,adversarial,2 tacos al pastor y lasagna,pedido_con_productos,parcial,multi fake
-3238,H_adversarial,adversarial,una burger doble y una ensalada cesar,pedido_con_productos,parcial,multi fake
-3239,H_adversarial,adversarial,una 10 pizzas pepperoni y tacos al pastor,pedido_con_productos,parcial,multi fake
-3240,H_adversarial,adversarial,docena de lasagna y una ensalada cesar,pedido_con_productos,parcial,multi fake
-3241,H_adversarial,adversarial,si y no 30 quiero todo y nada,ambiguo,no,contradiccion
-3242,H_adversarial,adversarial,2 burger doble y ensalada cesar,pedido_con_productos,parcial,multi fake
-3243,H_adversarial,adversarial,2 cero cocacolas y 5 sushi roll,pedido_con_productos,parcial,multi fake
-3244,H_adversarial,adversarial,10 pizzas pepperoni y burger doble,pedido_con_productos,parcial,multi fake
-3245,H_adversarial,adversarial,5 sushi roll,pedido_con_productos,parcial,producto no en menu
-3246,H_adversarial,adversarial,5 ensalada cesar y una ensalada cesar,pedido_con_productos,parcial,multi fake
-3247,H_adversarial,adversarial,si y no 60 quiero todo y nada,ambiguo,no,contradiccion
-3248,H_adversarial,adversarial,si y no 46 quiero todo y nada,ambiguo,no,contradiccion
-3249,H_adversarial,adversarial,si y no 5 quiero todo y nada,ambiguo,no,contradiccion
-3250,H_adversarial,adversarial,2 lasagna y 2 100 hawaianas,pedido_con_productos,parcial,multi fake
-3251,H_adversarial,adversarial,-2 pizzas,pedido_con_productos,parcial,producto no en menu
-3252,H_adversarial,adversarial,una sushi roll y docena de -2 pizzas,pedido_con_productos,parcial,multi fake
-3253,H_adversarial,adversarial,docena de wings picosas y 2 100 hawaianas,pedido_con_productos,parcial,multi fake
-3254,H_adversarial,adversarial,docena de lasagna y docena de ensalada cesar,pedido_con_productos,parcial,multi fake
-3255,H_adversarial,adversarial,docena de cero cocacolas y 2 tacos al pastor,pedido_con_productos,parcial,multi fake
-3256,H_adversarial,adversarial,docena de 100 hawaianas y ensalada cesar,pedido_con_productos,parcial,multi fake
-3257,H_adversarial,adversarial,si y no 2 quiero todo y nada,ambiguo,no,contradiccion
-3258,H_adversarial,adversarial,docena de ensalada cesar y 5 cero cocacolas,pedido_con_productos,parcial,multi fake
-3259,H_adversarial,adversarial,docena de sushi roll y una ensalada cesar,pedido_con_productos,parcial,multi fake
-3260,H_adversarial,adversarial,docena de latte grande y una lasagna,pedido_con_productos,parcial,multi fake
-3261,H_adversarial,adversarial,docena de -2 pizzas y 2 tacos al pastor,pedido_con_productos,parcial,multi fake
-3262,H_adversarial,adversarial,una -2 pizzas y tacos al pastor,pedido_con_productos,parcial,multi fake
-3263,H_adversarial,adversarial,2 lasagna y una 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3264,H_adversarial,adversarial,2 tacos al pastor y burger doble,pedido_con_productos,parcial,multi fake
-3265,H_adversarial,adversarial,-2 pizzas y 2 wings picosas,pedido_con_productos,parcial,multi fake
-3266,H_adversarial,adversarial,docena de burger doble y docena de 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3267,H_adversarial,adversarial,una burger doble y una 100 hawaianas,pedido_con_productos,parcial,multi fake
-3268,H_adversarial,adversarial,sushi roll y ensalada cesar,pedido_con_productos,parcial,multi fake
-3269,H_adversarial,adversarial,5 100 hawaianas y tacos al pastor,pedido_con_productos,parcial,multi fake
-3270,H_adversarial,adversarial,2 100 hawaianas y 2 lasagna,pedido_con_productos,parcial,multi fake
-3271,H_adversarial,adversarial,2 -2 pizzas y lasagna,pedido_con_productos,parcial,multi fake
-3272,H_adversarial,adversarial,2 10 pizzas pepperoni y 2 sushi roll,pedido_con_productos,parcial,multi fake
-3273,H_adversarial,adversarial,una ensalada cesar y 2 sushi roll,pedido_con_productos,parcial,multi fake
-3274,H_adversarial,adversarial,docena de wings picosas y wings picosas,pedido_con_productos,parcial,multi fake
-3275,H_adversarial,adversarial,docena de wings picosas y 5 latte grande,pedido_con_productos,parcial,multi fake
-3276,H_adversarial,adversarial,cero cocacolas y 5 burger doble,pedido_con_productos,parcial,multi fake
-3277,H_adversarial,adversarial,2 tacos al pastor y 5 -2 pizzas,pedido_con_productos,parcial,multi fake
-3278,H_adversarial,adversarial,tacos al pastor y 2 lasagna,pedido_con_productos,parcial,multi fake
-3279,H_adversarial,adversarial,si y no 76 quiero todo y nada,ambiguo,no,contradiccion
-3280,H_adversarial,adversarial,2 tacos al pastor y 2 ensalada cesar,pedido_con_productos,parcial,multi fake
-3281,H_adversarial,adversarial,una 100 hawaianas y una sushi roll,pedido_con_productos,parcial,multi fake
-3282,H_adversarial,adversarial,una lasagna y 5 wings picosas,pedido_con_productos,parcial,multi fake
-3283,H_adversarial,adversarial,tacos al pastor,pedido_con_productos,parcial,producto no en menu
-3284,H_adversarial,adversarial,5 ensalada cesar y docena de latte grande,pedido_con_productos,parcial,multi fake
-3285,H_adversarial,adversarial,5 100 hawaianas y una sushi roll,pedido_con_productos,parcial,multi fake
-3286,H_adversarial,adversarial,2 sushi roll y una wings picosas,pedido_con_productos,parcial,multi fake
-3287,H_adversarial,adversarial,si y no 91 quiero todo y nada,ambiguo,no,contradiccion
-3288,H_adversarial,adversarial,docena de 10 pizzas pepperoni y una 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3289,H_adversarial,adversarial,2 100 hawaianas y docena de 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3290,H_adversarial,adversarial,una 10 pizzas pepperoni y 5 wings picosas,pedido_con_productos,parcial,multi fake
-3291,H_adversarial,adversarial,docena de ensalada cesar y docena de burger doble,pedido_con_productos,parcial,multi fake
-3292,H_adversarial,adversarial,docena de 100 hawaianas y una -2 pizzas,pedido_con_productos,parcial,multi fake
-3293,H_adversarial,adversarial,una 100 hawaianas y una -2 pizzas,pedido_con_productos,parcial,multi fake
-3294,H_adversarial,adversarial,latte grande y docena de latte grande,pedido_con_productos,parcial,multi fake
-3295,H_adversarial,adversarial,5 burger doble y 100 hawaianas,pedido_con_productos,parcial,multi fake
-3296,H_adversarial,adversarial,docena de sushi roll y docena de 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
-3297,H_adversarial,adversarial,si y no 82 quiero todo y nada,ambiguo,no,contradiccion
-3298,H_adversarial,adversarial,una -2 pizzas y 2 burger doble,pedido_con_productos,parcial,multi fake
-3299,H_adversarial,adversarial,5 10 pizzas pepperoni y tacos al pastor,pedido_con_productos,parcial,multi fake
-3300,H_adversarial,adversarial,2 latte grande y 5 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2371,E_entrega,tipo_entrega,envio a casa,datos_entrega,no,captura entrega
+2372,E_entrega,direccion,si uso mi direccion guardada,datos_entrega,no,captura entrega
+2373,E_entrega,direccion,nueva direccion: calle 10 #22,datos_entrega,no,captura entrega
+2374,E_entrega,nombre,soy Maria Lopez,datos_entrega,no,captura entrega
+2375,E_entrega,tipo_entrega,a domicilio,datos_entrega,no,captura entrega
+2376,E_entrega,tipo_entrega,1,datos_entrega,no,captura entrega
+2377,E_entrega,nombre,a nombre de Pedro,datos_entrega,no,captura entrega
+2378,E_entrega,tipo_entrega,2,datos_entrega,no,captura entrega
+2379,E_entrega,tipo_entrega,domicilio,datos_entrega,no,captura entrega
+2380,E_entrega,tipo_entrega,para mi casa,datos_entrega,no,captura entrega
+2381,E_entrega,tipo_entrega,en tienda,datos_entrega,no,captura entrega
+2382,F_mezclas,combinada,"cancelar ... es broma, necesito un par de de hawaiiana, 1 x una cocacola plis",pedido_con_productos,si,mezcla intenciones
+2383,F_mezclas,combinada,hola porfa 3×hawaiiana luego par de coca para llevar,pedido_con_productos,si,mezcla intenciones
+2384,F_mezclas,combinada,"quisiera 1×una hawaiana, 1 de refresco y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
+2385,F_mezclas,combinada,ver carta y quiero 2 x hawaiana luego 1 cocacola plis,pedido_con_productos,si,mezcla intenciones
+2386,F_mezclas,combinada,"cancelar ... es broma, oye uno hawaiiana tambien un par de de coca cola",pedido_con_productos,si,mezcla intenciones
+2387,F_mezclas,combinada,hola me traes un par de de pizza hawaiiana ademas 2 soda nomás,pedido_con_productos,si,mezcla intenciones
+2388,F_mezclas,combinada,menu y porfa 1 hawaianas luego 2 cocacola porfa,pedido_con_productos,si,mezcla intenciones
+2389,F_mezclas,combinada,pedido: hola un par de de hawaiiana luego 1x cocacola,pedido_con_productos,si,mezcla intenciones
+2390,F_mezclas,combinada,menu y voy a querer 2x una hawaiana tambien 1 coca cola plis,pedido_con_productos,si,mezcla intenciones
+2391,F_mezclas,combinada,hola 3 hawaina ; uno koka cola nomás,pedido_con_productos,si,mezcla intenciones
+2392,F_mezclas,combinada,"cancelar ... es broma, quiero 2×hawaina ademas 2 x soda gracias",pedido_con_productos,si,mezcla intenciones
+2393,F_mezclas,combinada,"cancelar ... es broma, hola 3 hawaina y 1 de coca para llevar",pedido_con_productos,si,mezcla intenciones
+2394,F_mezclas,combinada,hola 2 pizza hawaiana tambien 2 coca kola gracias,pedido_con_productos,si,mezcla intenciones
+2395,F_mezclas,combinada,pedido: oye 2 hawaiano ademas 1 coca plis,pedido_con_productos,si,mezcla intenciones
+2396,F_mezclas,combinada,menu y ponme 1 hawaiana | 2 cocacola para llevar,pedido_con_productos,si,mezcla intenciones
+2397,F_mezclas,combinada,"cancelar ... es broma, quisiera 2 piza hawaiana ; 1 x cocacola nomás",pedido_con_productos,si,mezcla intenciones
+2398,F_mezclas,combinada,"buenas, hawaiana pizza",pedido_con_productos,si,mezcla intenciones
+2399,F_mezclas,combinada,ver carta y quisiera 3 piza hawaiana ; par de coca cola plis,pedido_con_productos,si,mezcla intenciones
+2400,F_mezclas,combinada,reservar mesa y necesito 1 hawaianas + una refresco porfa,pedido_con_productos,si,mezcla intenciones
+2401,F_mezclas,combinada,"hola porfa 2 hawaiana pizza, 1 x coca plis",pedido_con_productos,si,mezcla intenciones
+2402,F_mezclas,combinada,quisiera un par de hawaiana pizza y 2 coca kola para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2403,F_mezclas,combinada,"cancelar ... es broma, necesito 2 hawaiana pizza tambien 1x cocacolas",pedido_con_productos,si,mezcla intenciones
+2404,F_mezclas,combinada,"cancelar ... es broma, buenas 3 de hawaiana | un koka cola porfa",pedido_con_productos,si,mezcla intenciones
+2405,F_mezclas,combinada,"cancelar ... es broma, dame 1 hawaiana | una 2 cocacolas para llevar",pedido_con_productos,si,mezcla intenciones
+2406,F_mezclas,combinada,"porfa par de hawaiana pizza, par de de refresco para llevar y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
+2407,F_mezclas,combinada,hola dame 2 hawaiana y 1 coca cola plis,pedido_con_productos,si,mezcla intenciones
+2408,F_mezclas,combinada,"cancelar ... es broma, hola 1 la hawaiana, 2 koka cola plis",pedido_con_productos,si,mezcla intenciones
+2409,F_mezclas,combinada,"hola quiero un par de hawaina, 1 cocacolas porfa",pedido_con_productos,si,mezcla intenciones
+2410,F_mezclas,combinada,inicio ... no mejor porfa 2 x la hawaiana ; 2 refresco porfa,pedido_con_productos,si,mezcla intenciones
+2411,F_mezclas,combinada,ver carta y me traes 2 de hawaiiana ademas 2 de coca,pedido_con_productos,si,mezcla intenciones
+2412,F_mezclas,combinada,inicio ... no mejor oye 2 hawaiana ; 2 coca kola porfa,pedido_con_productos,si,mezcla intenciones
+2413,F_mezclas,combinada,hola me traes 1 hawaianas ademas 2 coca kola nomás,pedido_con_productos,si,mezcla intenciones
+2414,F_mezclas,combinada,hola quiero un par de hawaiiana | 2x cocacola gracias,pedido_con_productos,si,mezcla intenciones
+2415,F_mezclas,combinada,pedido: oye 1 de hawaiano ademas 2x coca cola gracias,pedido_con_productos,si,mezcla intenciones
+2416,F_mezclas,combinada,"cancelar ... es broma, hola 1 pizza hawaiana y 1 cocacola plis",pedido_con_productos,si,mezcla intenciones
+2417,F_mezclas,combinada,reservar mesa y 2 x pizza hawaiiana y uno coca kola gracias,pedido_con_productos,si,mezcla intenciones
+2418,F_mezclas,combinada,oye una de piza hawaiana + 1 x 2 cocacolas para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2419,F_mezclas,combinada,"inicio ... no mejor quisiera 2 hawaina, un de coca cola nomás",pedido_con_productos,si,mezcla intenciones
+2420,F_mezclas,combinada,inicio ... no mejor voy a querer uno de piza hawaiana | un una cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2421,F_mezclas,combinada,"cancelar ... es broma, porfa uno piza hawaiana | 2 coca",pedido_con_productos,si,mezcla intenciones
+2422,F_mezclas,combinada,ver carta y quisiera dos de pizza hawaiiana | 1x cocacolas nomás,pedido_con_productos,si,mezcla intenciones
+2423,F_mezclas,combinada,hola hola dos hawaiiana tambien una de koka cola para llevar,ambiguo,parcial,mezcla intenciones
+2424,F_mezclas,combinada,menu y necesito 2×hawaiana pizza luego un cocacolas plis,pedido_con_productos,si,mezcla intenciones
+2425,F_mezclas,combinada,"quiero tres de hawaiano, par de de koka cola plis y tambien quiero reservar",ambiguo,parcial,mezcla intenciones
+2426,F_mezclas,combinada,"ver carta y hola par de hawaiano, 2 x una cocacola gracias",pedido_con_productos,si,mezcla intenciones
+2427,F_mezclas,combinada,menu y buenas 3 hawaiiana tambien una de coca kola porfa,pedido_con_productos,si,mezcla intenciones
+2428,F_mezclas,combinada,necesito 3 de hawaiana luego 1 una cocacola para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2429,F_mezclas,combinada,"buenas, una hawaiana",pedido_con_productos,si,mezcla intenciones
+2430,F_mezclas,combinada,hola ponme 3 una hawaiana | 2 refresco gracias,pedido_con_productos,si,mezcla intenciones
+2431,F_mezclas,combinada,"buenas, la hawaiana",pedido_con_productos,si,mezcla intenciones
+2432,F_mezclas,combinada,inicio ... no mejor porfa 2 pizza hawaiiana y dos de coca kola,pedido_con_productos,si,mezcla intenciones
+2433,F_mezclas,combinada,"reservar mesa y dame 1 hawaiano, 1 x coca kola porfa",pedido_con_productos,si,mezcla intenciones
+2434,F_mezclas,combinada,"cancelar ... es broma, quiero 1 de la hawaiana ; 1x coca cola plis",pedido_con_productos,si,mezcla intenciones
+2435,F_mezclas,combinada,inicio ... no mejor porfa un par de de pizza hawaiiana + 1x una cocacola gracias,pedido_con_productos,si,mezcla intenciones
+2436,F_mezclas,combinada,inicio ... no mejor 3 hawaiiana ; una de soda nomás,pedido_con_productos,si,mezcla intenciones
+2437,F_mezclas,combinada,reservar mesa y necesito uno hawaiana + 2 una cocacola gracias,pedido_con_productos,si,mezcla intenciones
+2438,F_mezclas,combinada,inicio ... no mejor oye par de de pizza hawaiana ademas un par de de coca,pedido_con_productos,si,mezcla intenciones
+2439,F_mezclas,combinada,pedido: necesito 2 pizza hawaiiana ; 2x coca gracias,pedido_con_productos,si,mezcla intenciones
+2440,F_mezclas,combinada,"buenas, piza hawaiana",pedido_con_productos,si,mezcla intenciones
+2441,F_mezclas,combinada,"cancelar ... es broma, porfa tres de la hawaiana tambien 1x cocacolas plis",pedido_con_productos,si,mezcla intenciones
+2442,F_mezclas,combinada,"porfa 1 hawaiana, 2 refresco plis y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
+2443,F_mezclas,combinada,inicio ... no mejor me traes tres de hawaiiana ademas 1 cocacola para llevar,pedido_con_productos,si,mezcla intenciones
+2444,F_mezclas,combinada,pedido: ponme tres hawaiano y 1 una cocacola plis,pedido_con_productos,si,mezcla intenciones
+2445,F_mezclas,combinada,ver carta y necesito par de de hawaiana ; 1 x 2 cocacolas plis,pedido_con_productos,si,mezcla intenciones
+2446,F_mezclas,combinada,ver carta y porfa un de hawaiiana luego una coca cola nomás,pedido_con_productos,si,mezcla intenciones
+2447,F_mezclas,combinada,"cancelar ... es broma, quiero 1 hawaiiana ; 1 soda porfa",ambiguo,parcial,mezcla intenciones
+2448,F_mezclas,combinada,"cancelar ... es broma, buenas dos de hawaiiana + 1 de cocacola",pedido_con_productos,si,mezcla intenciones
+2449,F_mezclas,combinada,pedido: necesito par de hawaiana pizza | un par de de coca kola,pedido_con_productos,si,mezcla intenciones
+2450,F_mezclas,combinada,reservar mesa y porfa 1 una hawaiana ademas una de coca,pedido_con_productos,si,mezcla intenciones
+2451,F_mezclas,combinada,hola oye 1x hawaiana y uno coca cola plis,pedido_con_productos,si,mezcla intenciones
+2452,F_mezclas,combinada,"buenas, hawaiana",pedido_con_productos,si,mezcla intenciones
+2453,F_mezclas,combinada,reservar mesa y quiero tres hawaiiana y 1 x una cocacola,pedido_con_productos,si,mezcla intenciones
+2454,F_mezclas,combinada,inicio ... no mejor oye 3 la hawaiana ; 2 de 2 cocacolas,pedido_con_productos,si,mezcla intenciones
+2455,F_mezclas,combinada,hola 2 x hawaina luego dos 2 cocacolas porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2456,F_mezclas,combinada,"pedido: oye par de hawaina, 2 coca kola plis",pedido_con_productos,si,mezcla intenciones
+2457,F_mezclas,combinada,ver carta y hola un par de de pizza hawaiiana luego 2 x refresco nomás,pedido_con_productos,si,mezcla intenciones
+2458,F_mezclas,combinada,hola ponme 1 de pizza hawaiana | 1 de coca kola para llevar,pedido_con_productos,si,mezcla intenciones
+2459,F_mezclas,combinada,hola 1 x la hawaiana + uno de cocacola porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2460,F_mezclas,combinada,hola porfa 2 la hawaiana luego 1 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
+2461,F_mezclas,combinada,pedido: 2 de una hawaiana ademas 1 cocacola porfa,pedido_con_productos,si,mezcla intenciones
+2462,F_mezclas,combinada,hola quisiera un hawaiana pizza luego un de soda nomás,pedido_con_productos,si,mezcla intenciones
+2463,F_mezclas,combinada,menu y dame 2 x la hawaiana | 1x coca porfa,pedido_con_productos,si,mezcla intenciones
+2464,F_mezclas,combinada,"menu y necesito 2x hawaiano, una cocacolas gracias",pedido_con_productos,si,mezcla intenciones
+2465,F_mezclas,combinada,pedido: quiero uno hawaiiana + una de 2 cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
+2466,F_mezclas,combinada,"pedido: voy a querer tres de hawaiana, 1 koka cola gracias",pedido_con_productos,si,mezcla intenciones
+2467,F_mezclas,combinada,hola necesito 2 de una hawaiana ademas 1 coca cola,pedido_con_productos,si,mezcla intenciones
+2468,F_mezclas,combinada,reservar mesa y buenas un de hawaina luego 2 de soda plis,pedido_con_productos,si,mezcla intenciones
+2469,F_mezclas,combinada,hola quisiera dos una hawaiana + un par de de coca para llevar,pedido_con_productos,si,mezcla intenciones
+2470,F_mezclas,combinada,hola dame 3 de una hawaiana tambien dos de coca nomás,pedido_con_productos,si,mezcla intenciones
+2471,F_mezclas,combinada,menu y hola 1 piza hawaiana + 1 x cocacola,pedido_con_productos,si,mezcla intenciones
+2472,F_mezclas,combinada,"ponme 3 de la hawaiana, un de 2 cocacolas nomás y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
+2473,F_mezclas,combinada,"buenas, pizza hawaiana",pedido_con_productos,si,mezcla intenciones
+2474,F_mezclas,combinada,hola necesito 1 hawaiana y un de coca cola nomás,pedido_con_productos,si,mezcla intenciones
+2475,F_mezclas,combinada,hola 2 hawaiana + una soda plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2476,F_mezclas,combinada,hola quisiera un de pizza hawaiana y 2 x cocacola porfa,pedido_con_productos,si,mezcla intenciones
+2477,F_mezclas,combinada,"inicio ... no mejor 2 de la hawaiana, una de cocacola para llevar",pedido_con_productos,si,mezcla intenciones
+2478,F_mezclas,combinada,reservar mesa y ponme 1 de piza hawaiana ; 2x cocacolas,pedido_con_productos,si,mezcla intenciones
+2479,F_mezclas,combinada,inicio ... no mejor porfa 1x hawaiana ; un par de refresco porfa,pedido_con_productos,si,mezcla intenciones
+2480,F_mezclas,combinada,"hola ponme 3 de hawaianas, un par de de una cocacola nomás",pedido_con_productos,si,mezcla intenciones
+2481,F_mezclas,combinada,ver carta y hola 1×hawaiana pizza y 2 cocacola,pedido_con_productos,si,mezcla intenciones
+2482,F_mezclas,combinada,ver carta y buenas 3 x hawaiana ; 1 x cocacola,pedido_con_productos,si,mezcla intenciones
+2483,F_mezclas,combinada,"inicio ... no mejor buenas una la hawaiana, 1 coca kola gracias",pedido_con_productos,si,mezcla intenciones
+2484,F_mezclas,combinada,"cancelar ... es broma, porfa 1 pizza hawaiana ademas una de coca kola para llevar",pedido_con_productos,si,mezcla intenciones
+2485,F_mezclas,combinada,ver carta y oye 1×la hawaiana ; 2 cocacola gracias,pedido_con_productos,si,mezcla intenciones
+2486,F_mezclas,combinada,"cancelar ... es broma, oye 2 de hawaiana pizza | 2 una cocacola para llevar",pedido_con_productos,si,mezcla intenciones
+2487,F_mezclas,combinada,reservar mesa y quiero 1 pizza hawaiiana luego 1 2 cocacolas porfa,pedido_con_productos,si,mezcla intenciones
+2488,F_mezclas,combinada,menu y dame dos hawaiiana tambien una cocacola para llevar,pedido_con_productos,si,mezcla intenciones
+2489,F_mezclas,combinada,reservar mesa y me traes uno pizza hawaiana y 1 coca cola plis,pedido_con_productos,si,mezcla intenciones
+2490,F_mezclas,combinada,"cancelar ... es broma, dame par de hawaiano | uno cocacolas nomás",pedido_con_productos,si,mezcla intenciones
+2491,F_mezclas,combinada,inicio ... no mejor porfa 2 hawaiiana luego una coca cola gracias,pedido_con_productos,si,mezcla intenciones
+2492,F_mezclas,combinada,ver carta y quisiera un par de hawaiiana tambien 1 coca kola para llevar,pedido_con_productos,si,mezcla intenciones
+2493,F_mezclas,combinada,hola necesito 2 de pizza hawaiiana ademas 2 x coca kola para llevar,pedido_con_productos,si,mezcla intenciones
+2494,F_mezclas,combinada,menu y dame un par de hawaianas ademas 1 x cocacola para llevar,pedido_con_productos,si,mezcla intenciones
+2495,F_mezclas,combinada,"menu y me traes 3 hawaiana, 1 refresco gracias",pedido_con_productos,si,mezcla intenciones
+2496,F_mezclas,combinada,pedido: hola 2 de pizza hawaiiana luego dos coca nomás,pedido_con_productos,si,mezcla intenciones
+2497,F_mezclas,combinada,menu y necesito 2 hawaiiana luego un de cocacolas gracias,pedido_con_productos,si,mezcla intenciones
+2498,F_mezclas,combinada,hola quisiera 2 la hawaiana ademas uno cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
+2499,F_mezclas,combinada,"reservar mesa y quisiera 2 x pizza hawaiana, un par de una cocacola porfa",pedido_con_productos,si,mezcla intenciones
+2500,F_mezclas,combinada,inicio ... no mejor quiero 3 hawaiiana ademas 1×koka cola nomás,pedido_con_productos,si,mezcla intenciones
+2501,F_mezclas,combinada,inicio ... no mejor dame uno de hawaina | 2 coca nomás,pedido_con_productos,si,mezcla intenciones
+2502,F_mezclas,combinada,ver carta y 3 de hawaiano + uno coca cola para llevar,pedido_con_productos,si,mezcla intenciones
+2503,F_mezclas,combinada,"cancelar ... es broma, ponme 2 x piza hawaiana y 1 x coca cola nomás",pedido_con_productos,si,mezcla intenciones
+2504,F_mezclas,combinada,pedido: porfa una de piza hawaiana + un par de de cocacolas,pedido_con_productos,si,mezcla intenciones
+2505,F_mezclas,combinada,voy a querer dos hawaiano + una coca plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2506,F_mezclas,combinada,"cancelar ... es broma, oye par de hawaiana | 1 x coca para llevar",pedido_con_productos,si,mezcla intenciones
+2507,F_mezclas,combinada,pedido: me traes 3 hawaiana pizza | 1 soda plis,pedido_con_productos,si,mezcla intenciones
+2508,F_mezclas,combinada,"menu y buenas dos piza hawaiana, par de de coca cola",pedido_con_productos,si,mezcla intenciones
+2509,F_mezclas,combinada,"cancelar ... es broma, quiero 2×la hawaiana + 1 una cocacola plis",pedido_con_productos,si,mezcla intenciones
+2510,F_mezclas,combinada,pedido: porfa una de piza hawaiana + un soda porfa,pedido_con_productos,si,mezcla intenciones
+2511,F_mezclas,combinada,inicio ... no mejor ponme 3x pizza hawaiiana + 2 coca kola porfa,pedido_con_productos,si,mezcla intenciones
+2512,F_mezclas,combinada,pedido: me traes par de de hawaiana pizza ; 1 una cocacola porfa,pedido_con_productos,si,mezcla intenciones
+2513,F_mezclas,combinada,me traes 1×hawaiana pizza ademas 2×koka cola para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2514,F_mezclas,combinada,menu y quisiera 2 x una hawaiana tambien dos de coca kola porfa,pedido_con_productos,si,mezcla intenciones
+2515,F_mezclas,combinada,menu y 1 hawaiana ademas par de de cocacola,pedido_con_productos,si,mezcla intenciones
+2516,F_mezclas,combinada,porfa 2x hawaiana pizza tambien 1 cocacola para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2517,F_mezclas,combinada,"cancelar ... es broma, hola 1 hawaiano, 2 refresco nomás",pedido_con_productos,si,mezcla intenciones
+2518,F_mezclas,combinada,hola quisiera 1 hawaianas ademas un par de de 2 cocacolas porfa,pedido_con_productos,si,mezcla intenciones
+2519,F_mezclas,combinada,hola dame 2x hawaiiana luego 1 coca nomás,pedido_con_productos,si,mezcla intenciones
+2520,F_mezclas,combinada,voy a querer un pizza hawaiiana + 2×coca kola y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2521,F_mezclas,combinada,pedido: dame 2 piza hawaiana ; 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
+2522,F_mezclas,combinada,ver carta y quiero 1 pizza hawaiiana + 1 de koka cola plis,pedido_con_productos,si,mezcla intenciones
+2523,F_mezclas,combinada,hola porfa 2 hawaiana pizza tambien uno de 2 cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
+2524,F_mezclas,combinada,hola un de hawaiano ademas una de soda y tambien quiero reservar,ambiguo,parcial,mezcla intenciones
+2525,F_mezclas,combinada,ver carta y dame tres de hawaiiana y 1 x coca para llevar,pedido_con_productos,si,mezcla intenciones
+2526,F_mezclas,combinada,hola ponme 2×la hawaiana | 1 coca cola gracias,pedido_con_productos,si,mezcla intenciones
+2527,F_mezclas,combinada,hola quisiera 1 hawaiiana ademas 1 x coca,pedido_con_productos,si,mezcla intenciones
+2528,F_mezclas,combinada,necesito 1 x pizza hawaiiana luego una cocacolas nomás y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2529,F_mezclas,combinada,inicio ... no mejor voy a querer 3 hawaiiana luego 1 soda porfa,pedido_con_productos,si,mezcla intenciones
+2530,F_mezclas,combinada,pedido: me traes una de una hawaiana luego 1×una cocacola gracias,pedido_con_productos,si,mezcla intenciones
+2531,F_mezclas,combinada,reservar mesa y ponme dos de hawaianas luego 2 x cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2532,F_mezclas,combinada,"buenas, pizza hawaiiana",pedido_con_productos,si,mezcla intenciones
+2533,F_mezclas,combinada,"reservar mesa y quiero 2 piza hawaiana, 1 2 cocacolas",pedido_con_productos,si,mezcla intenciones
+2534,F_mezclas,combinada,pedido: quisiera 2 hawaiiana | 1 de soda plis,pedido_con_productos,si,mezcla intenciones
+2535,F_mezclas,combinada,inicio ... no mejor me traes 2 de hawaiiana | uno de coca plis,pedido_con_productos,si,mezcla intenciones
+2536,F_mezclas,combinada,menu y buenas 1 de la hawaiana | 2 coca para llevar,pedido_con_productos,si,mezcla intenciones
+2537,F_mezclas,combinada,hola buenas 3 de hawaina tambien un cocacola plis,pedido_con_productos,si,mezcla intenciones
+2538,F_mezclas,combinada,quisiera 1 hawaiiana tambien 1 refresco porfa y tambien quiero reservar,ambiguo,parcial,mezcla intenciones
+2539,F_mezclas,combinada,"inicio ... no mejor ponme 1 de hawaiano, 2 soda para llevar",pedido_con_productos,si,mezcla intenciones
+2540,F_mezclas,combinada,"hola oye par de hawaiana, una soda gracias",pedido_con_productos,si,mezcla intenciones
+2541,F_mezclas,combinada,ver carta y me traes 1 hawaiana + una de coca nomás,pedido_con_productos,si,mezcla intenciones
+2542,F_mezclas,combinada,"cancelar ... es broma, necesito par de hawaiiana luego un par de de soda",ambiguo,parcial,mezcla intenciones
+2543,F_mezclas,combinada,reservar mesa y oye 1 x piza hawaiana tambien 2 x coca kola plis,pedido_con_productos,si,mezcla intenciones
+2544,F_mezclas,combinada,menu y quiero 1 la hawaiana ; 1 x coca kola,pedido_con_productos,si,mezcla intenciones
+2545,F_mezclas,combinada,"cancelar ... es broma, quisiera 1 pizza hawaiana + 1 2 cocacolas",pedido_con_productos,si,mezcla intenciones
+2546,F_mezclas,combinada,menu y me traes 3x pizza hawaiiana y 1×refresco porfa,pedido_con_productos,si,mezcla intenciones
+2547,F_mezclas,combinada,"menu y dos hawaiana pizza, 1×soda gracias",pedido_con_productos,si,mezcla intenciones
+2548,F_mezclas,combinada,inicio ... no mejor dame 1 de hawaiiana ; 2 coca kola plis,pedido_con_productos,si,mezcla intenciones
+2549,F_mezclas,combinada,reservar mesa y porfa 1 hawaianas tambien 2 x koka cola plis,pedido_con_productos,si,mezcla intenciones
+2550,F_mezclas,combinada,"cancelar ... es broma, quiero 1 hawaiana, 1 una cocacola gracias",pedido_con_productos,si,mezcla intenciones
+2551,F_mezclas,combinada,pedido: necesito 3 de piza hawaiana y un cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2552,F_mezclas,combinada,pedido: dame 2 hawaianas tambien 1 de cocacola para llevar,pedido_con_productos,si,mezcla intenciones
+2553,F_mezclas,combinada,"porfa 2x la hawaiana, 2 x coca para llevar y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
+2554,F_mezclas,combinada,"cancelar ... es broma, ponme un de pizza hawaiiana luego 1 x soda",pedido_con_productos,si,mezcla intenciones
+2555,F_mezclas,combinada,hola quiero 3 de hawaiana ; 1 x cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2556,F_mezclas,combinada,pedido: me traes una hawaiana pizza y un 2 cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
+2557,F_mezclas,combinada,ponme dos de hawaiana pizza tambien 2 refresco gracias y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2558,F_mezclas,combinada,hola hola 2 hawaianas ademas uno coca,pedido_con_productos,si,mezcla intenciones
+2559,F_mezclas,combinada,reservar mesa y necesito 3 hawaiiana tambien un coca cola nomás,pedido_con_productos,si,mezcla intenciones
+2560,F_mezclas,combinada,"cancelar ... es broma, dame un una hawaiana, 1 x coca cola plis",pedido_con_productos,si,mezcla intenciones
+2561,F_mezclas,combinada,menu y buenas 1x hawaianas luego 1×koka cola nomás,pedido_con_productos,si,mezcla intenciones
+2562,F_mezclas,combinada,hola me traes 1 hawaiana ademas par de cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2563,F_mezclas,combinada,reservar mesa y quiero par de hawaina ; uno coca cola gracias,pedido_con_productos,si,mezcla intenciones
+2564,F_mezclas,combinada,"cancelar ... es broma, oye 2 de hawaiana | 2 soda para llevar",pedido_con_productos,si,mezcla intenciones
+2565,F_mezclas,combinada,necesito 1x pizza hawaiiana tambien dos de una cocacola porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2566,F_mezclas,combinada,inicio ... no mejor necesito 2 x hawaiana + un una cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2567,F_mezclas,combinada,hola dame 2 hawaiana pizza ademas un cocacola gracias,pedido_con_productos,si,mezcla intenciones
+2568,F_mezclas,combinada,inicio ... no mejor voy a querer 1 hawaiiana ; par de coca porfa,pedido_con_productos,si,mezcla intenciones
+2569,F_mezclas,combinada,menu y buenas dos hawaiiana y un par de coca,pedido_con_productos,si,mezcla intenciones
+2570,F_mezclas,combinada,ver carta y oye 3 x hawaiiana tambien uno de una cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2571,F_mezclas,combinada,"ver carta y necesito tres de una hawaiana, uno de coca cola gracias",pedido_con_productos,si,mezcla intenciones
+2572,F_mezclas,combinada,menu y hola una de hawaiana + 2 koka cola gracias,pedido_con_productos,si,mezcla intenciones
+2573,F_mezclas,combinada,"buenas, hawaiiana",ambiguo,parcial,mezcla intenciones
+2574,F_mezclas,combinada,menu y ponme 1x la hawaiana ademas 1 cocacola para llevar,pedido_con_productos,si,mezcla intenciones
+2575,F_mezclas,combinada,inicio ... no mejor necesito 1 x la hawaiana ademas un coca nomás,pedido_con_productos,si,mezcla intenciones
+2576,F_mezclas,combinada,hola uno de hawaiano luego 1 x cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2577,F_mezclas,combinada,ver carta y necesito tres pizza hawaiana ; un par de de coca cola para llevar,pedido_con_productos,si,mezcla intenciones
+2578,F_mezclas,combinada,"cancelar ... es broma, quisiera 2 piza hawaiana tambien par de cocacolas",pedido_con_productos,si,mezcla intenciones
+2579,F_mezclas,combinada,quisiera dos de hawaiana pizza y 1 cocacolas plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2580,F_mezclas,combinada,"cancelar ... es broma, ponme 2 hawaiiana ademas 1 cocacola gracias",pedido_con_productos,si,mezcla intenciones
+2581,F_mezclas,combinada,hola voy a querer 3 la hawaiana + uno de 2 cocacolas porfa,pedido_con_productos,si,mezcla intenciones
+2582,F_mezclas,combinada,reservar mesa y ponme 2 x piza hawaiana ; 1 2 cocacolas gracias,pedido_con_productos,si,mezcla intenciones
+2583,F_mezclas,combinada,reservar mesa y porfa 3 x hawaiana pizza ; 1 de coca kola plis,pedido_con_productos,si,mezcla intenciones
+2584,F_mezclas,combinada,hola quisiera una de hawaiana tambien 1 x cocacola plis,pedido_con_productos,si,mezcla intenciones
+2585,F_mezclas,combinada,"hola buenas 1 pizza hawaiiana, uno de cocacola porfa",pedido_con_productos,si,mezcla intenciones
+2586,F_mezclas,combinada,inicio ... no mejor hola 3 de hawaiana luego 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
+2587,F_mezclas,combinada,ver carta y quisiera tres hawaiiana y 1 una cocacola para llevar,pedido_con_productos,si,mezcla intenciones
+2588,F_mezclas,combinada,inicio ... no mejor porfa 2 hawaiana + 1 cocacola porfa,pedido_con_productos,si,mezcla intenciones
+2589,F_mezclas,combinada,"menu y porfa 3 de la hawaiana, 1 x soda nomás",pedido_con_productos,si,mezcla intenciones
+2590,F_mezclas,combinada,reservar mesa y dame uno de una hawaiana tambien 2×cocacolas,pedido_con_productos,si,mezcla intenciones
+2591,F_mezclas,combinada,"hola voy a querer 1x la hawaiana, 1 una cocacola",pedido_con_productos,si,mezcla intenciones
+2592,F_mezclas,combinada,inicio ... no mejor dame par de de una hawaiana + 1 x cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2593,F_mezclas,combinada,pedido: me traes un par de de la hawaiana luego una 2 cocacolas nomás,pedido_con_productos,si,mezcla intenciones
+2594,F_mezclas,combinada,reservar mesa y porfa una hawaiiana ; 2 coca plis,pedido_con_productos,si,mezcla intenciones
+2595,F_mezclas,combinada,"reservar mesa y dame 2 hawaiana pizza, uno refresco",pedido_con_productos,si,mezcla intenciones
+2596,F_mezclas,combinada,pedido: quisiera 2×la hawaiana + 1 soda,pedido_con_productos,si,mezcla intenciones
+2597,F_mezclas,combinada,"cancelar ... es broma, porfa un par de de piza hawaiana ; 2×coca plis",pedido_con_productos,si,mezcla intenciones
+2598,F_mezclas,combinada,inicio ... no mejor buenas 2 de hawaiana ; uno de cocacolas nomás,pedido_con_productos,si,mezcla intenciones
+2599,F_mezclas,combinada,inicio ... no mejor hola 1x pizza hawaiana y 2 soda porfa,pedido_con_productos,si,mezcla intenciones
+2600,F_mezclas,combinada,menu y voy a querer 1 hawaina ; un de cocacolas gracias,pedido_con_productos,si,mezcla intenciones
+2601,F_mezclas,combinada,menu y me traes una hawaiana + una de refresco gracias,pedido_con_productos,si,mezcla intenciones
+2602,F_mezclas,combinada,"hola 2×hawaianas, 1 soda plis y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
+2603,F_mezclas,combinada,menu y necesito 3x piza hawaiana ademas uno coca kola para llevar,pedido_con_productos,si,mezcla intenciones
+2604,F_mezclas,combinada,ponme 3 hawaiiana tambien 1 x coca cola plis y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2605,F_mezclas,combinada,inicio ... no mejor hola 2 una hawaiana + 1 coca kola porfa,pedido_con_productos,si,mezcla intenciones
+2606,F_mezclas,combinada,"reservar mesa y hola tres de hawaiiana, 2 x refresco plis",pedido_con_productos,si,mezcla intenciones
+2607,F_mezclas,combinada,porfa un par de hawaiiana tambien 2x cocacola porfa y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2608,F_mezclas,combinada,inicio ... no mejor porfa tres hawaiano ; uno de soda plis,ambiguo,parcial,mezcla intenciones
+2609,F_mezclas,combinada,hola me traes 3 de hawaiiana | 1x 2 cocacolas para llevar,pedido_con_productos,si,mezcla intenciones
+2610,F_mezclas,combinada,ver carta y oye 1x hawaiiana ademas 1 x coca kola gracias,pedido_con_productos,si,mezcla intenciones
+2611,F_mezclas,combinada,menu y voy a querer 2x hawaiano ademas 1 de cocacola,pedido_con_productos,si,mezcla intenciones
+2612,F_mezclas,combinada,menu y hola 2 hawaiana y 1 refresco porfa,pedido_con_productos,si,mezcla intenciones
+2613,F_mezclas,combinada,pedido: necesito 1 de hawaina | 1×una cocacola porfa,pedido_con_productos,si,mezcla intenciones
+2614,F_mezclas,combinada,hola voy a querer dos de pizza hawaiana ; 1 soda nomás,pedido_con_productos,si,mezcla intenciones
+2615,F_mezclas,combinada,ver carta y dame 3 pizza hawaiana ademas 1x coca cola nomás,pedido_con_productos,si,mezcla intenciones
+2616,F_mezclas,combinada,pedido: quiero 2 hawaiana y uno cocacola porfa,pedido_con_productos,si,mezcla intenciones
+2617,F_mezclas,combinada,necesito par de hawaina + 1 de cocacolas para llevar y tambien quiero reservar,pedido_con_productos,si,mezcla intenciones
+2618,F_mezclas,combinada,menu y me traes 3 hawaiana ademas dos cocacola nomás,pedido_con_productos,si,mezcla intenciones
+2619,F_mezclas,combinada,"me traes 1 de hawaiana, una 2 cocacolas y tambien quiero reservar",pedido_con_productos,si,mezcla intenciones
+2620,F_mezclas,combinada,ver carta y porfa 3 hawaiana luego par de coca kola porfa,pedido_con_productos,si,mezcla intenciones
+2621,F_mezclas,combinada,"pedido: dame tres de hawaiiana, 2 coca nomás",pedido_con_productos,si,mezcla intenciones
+2622,G_ruido,ruido_realista,jajaja,ruido,no,risa
+2623,G_ruido,ruido_realista,?!!!12,ruido,no,signo
+2624,G_ruido,ruido_realista,busco trabajo 5,ruido,no,fuera de alcance
+2625,G_ruido,ruido_realista,aceptan tarjeta plis5,ruido,no,pago
+2626,G_ruido,ruido_realista,busco trabajo plis2,ruido,no,fuera de alcance
+2627,G_ruido,ruido_realista,👍 oye1,ruido,no,emoji
+2628,G_ruido,ruido_realista,🍕!!!5,ruido,no,emoji
+2629,G_ruido,ruido_realista,tienen baño!!!2,ruido,no,fuera de alcance
+2630,G_ruido,ruido_realista,busco trabajo 1,ruido,no,fuera de alcance
+2631,G_ruido,ruido_realista,jajaja2,ruido,no,risa
+2632,G_ruido,ruido_realista,👍 plis2,ruido,no,emoji
+2633,G_ruido,ruido_realista,menu pls plis,menu,no,spanglish menu
+2634,G_ruido,ruido_realista,tienen baño plis12,ruido,no,fuera de alcance
+2635,G_ruido,ruido_realista,aceptan tarjeta1,ruido,no,pago
+2636,G_ruido,ruido_realista,esta bien ayuda12,confirmar,no,confirmacion
+2637,G_ruido,ruido_realista,busco trabajo no se99,ruido,no,fuera de alcance
+2638,G_ruido,ruido_realista,cuanto tardan!!!,ruido,no,logistica
+2639,G_ruido,ruido_realista,cuanto tardan no se99,ruido,no,logistica
+2640,G_ruido,ruido_realista,menu pls!!!5,menu,no,spanglish menu
+2641,G_ruido,ruido_realista,jajaja no se99,ruido,no,risa
+2642,G_ruido,ruido_realista,cuanto tardan plis12,ruido,no,logistica
+2643,G_ruido,ruido_realista,aceptan tarjeta no se,ruido,no,pago
+2644,G_ruido,ruido_realista,menu pls,menu,no,spanglish menu
+2645,G_ruido,ruido_realista,do you have pizza 1,ruido,no,spanglish
+2646,G_ruido,ruido_realista,ok!!!99,ambiguo,no,monosilabo
+2647,G_ruido,ruido_realista,👍,ruido,no,emoji
+2648,G_ruido,ruido_realista,🍕 no se5,ruido,no,emoji
+2649,G_ruido,ruido_realista,asdf ayuda,ruido,no,gibberish
+2650,G_ruido,ruido_realista,ok no se1,ambiguo,no,monosilabo
+2651,G_ruido,ruido_realista,esta bien plis99,confirmar,no,confirmacion
+2652,G_ruido,ruido_realista,hola? ayuda12,ambiguo,no,saludo duda
+2653,G_ruido,ruido_realista,... oye5,ruido,no,ellipsis
+2654,G_ruido,ruido_realista,? plis1,ruido,no,signo
+2655,G_ruido,ruido_realista,? 5,ruido,no,mensaje vacio
+2656,G_ruido,ruido_realista,hola?2,ambiguo,no,saludo duda
+2657,G_ruido,ruido_realista,a que hora abren!!!1,ruido,no,fuera de alcance
+2658,G_ruido,ruido_realista,aceptan tarjeta  2,ruido,no,pago
+2659,G_ruido,ruido_realista,esta bien,confirmar,no,confirmacion
+2660,G_ruido,ruido_realista,cuanto tardan!!!2,ruido,no,logistica
+2661,G_ruido,ruido_realista,hola? no se1,ambiguo,no,saludo duda
+2662,G_ruido,ruido_realista,🍕 ayuda99,ruido,no,emoji
+2663,G_ruido,ruido_realista,? plis12,ruido,no,signo
+2664,G_ruido,ruido_realista,tienen baño 1,ruido,no,fuera de alcance
+2665,G_ruido,ruido_realista,menu pls no se1,menu,no,spanglish menu
+2666,G_ruido,ruido_realista,... plis2,ruido,no,ellipsis
+2667,G_ruido,ruido_realista,esta bien 99,confirmar,no,confirmacion
+2668,G_ruido,ruido_realista,cuanto tardan 2,ruido,no,logistica
+2669,G_ruido,ruido_realista,... plis1,ruido,no,ellipsis
+2670,G_ruido,ruido_realista,gracias 12,saludo,no,cierre
+2671,G_ruido,ruido_realista,asdf plis2,ruido,no,gibberish
+2672,G_ruido,ruido_realista,busco trabajo oye99,ruido,no,fuera de alcance
+2673,G_ruido,ruido_realista,menu pls plis5,menu,no,spanglish menu
+2674,G_ruido,ruido_realista,? 12,ruido,no,mensaje vacio
+2675,G_ruido,ruido_realista,cuanto tardan no se1,ruido,no,logistica
+2676,G_ruido,ruido_realista,esta bien  2,confirmar,no,confirmacion
+2677,G_ruido,ruido_realista,? no se1,ruido,no,signo
+2678,G_ruido,ruido_realista,ok oye2,ambiguo,no,monosilabo
+2679,G_ruido,ruido_realista,... 99,ruido,no,ellipsis
+2680,G_ruido,ruido_realista,aceptan tarjeta!!!5,ruido,no,pago
+2681,G_ruido,ruido_realista,? no se2,ruido,no,signo
+2682,G_ruido,ruido_realista,asdf ayuda99,ruido,no,gibberish
+2683,G_ruido,ruido_realista,esta bien 1,confirmar,no,confirmacion
+2684,G_ruido,ruido_realista,a que hora abren ayuda99,ruido,no,fuera de alcance
+2685,G_ruido,ruido_realista,gracias no se5,saludo,no,cierre
+2686,G_ruido,ruido_realista,👍1,ruido,no,emoji
+2687,G_ruido,ruido_realista,? ayuda12,ruido,no,mensaje vacio
+2688,G_ruido,ruido_realista,gracias  2,saludo,no,cierre
+2689,G_ruido,ruido_realista,do you have pizza plis,ruido,no,spanglish
+2690,G_ruido,ruido_realista,asdf oye5,ruido,no,gibberish
+2691,G_ruido,ruido_realista,ok5,ambiguo,no,monosilabo
+2692,G_ruido,ruido_realista,ok no se12,ambiguo,no,monosilabo
+2693,G_ruido,ruido_realista,perfecto 5,confirmar,no,confirmacion
+2694,G_ruido,ruido_realista,👍 ayuda2,ruido,no,emoji
+2695,G_ruido,ruido_realista,ok ayuda5,ambiguo,no,monosilabo
+2696,G_ruido,ruido_realista,aceptan tarjeta  1,ruido,no,pago
+2697,G_ruido,ruido_realista,?5,ruido,no,signo
+2698,G_ruido,ruido_realista,esta bien oye2,confirmar,no,confirmacion
+2699,G_ruido,ruido_realista,menu pls2,menu,no,spanglish menu
+2700,G_ruido,ruido_realista,👍 oye12,ruido,no,emoji
+2701,G_ruido,ruido_realista,cuanto tardan ayuda99,ruido,no,logistica
+2702,G_ruido,ruido_realista,...12,ruido,no,ellipsis
+2703,G_ruido,ruido_realista,🍕  1,ruido,no,emoji
+2704,G_ruido,ruido_realista,tienen baño no se99,ruido,no,fuera de alcance
+2705,G_ruido,ruido_realista,asdf 99,ruido,no,gibberish
+2706,G_ruido,ruido_realista,hola? plis2,ambiguo,no,saludo duda
+2707,G_ruido,ruido_realista,a que hora abren  1,ruido,no,fuera de alcance
+2708,G_ruido,ruido_realista,cuanto tardan no se,ruido,no,logistica
+2709,G_ruido,ruido_realista,gracias,saludo,no,cierre
+2710,G_ruido,ruido_realista,gracias!!!1,saludo,no,cierre
+2711,G_ruido,ruido_realista,jajaja plis1,ruido,no,risa
+2712,G_ruido,ruido_realista,cuanto tardan oye,ruido,no,logistica
+2713,G_ruido,ruido_realista,perfecto  2,confirmar,no,confirmacion
+2714,G_ruido,ruido_realista,👍 plis5,ruido,no,emoji
+2715,G_ruido,ruido_realista,? plis99,ruido,no,signo
+2716,G_ruido,ruido_realista,hola?  5,ambiguo,no,saludo duda
+2717,G_ruido,ruido_realista,? oye99,ruido,no,mensaje vacio
+2718,G_ruido,ruido_realista,menu pls no se12,menu,no,spanglish menu
+2719,G_ruido,ruido_realista,?,ruido,no,signo
+2720,G_ruido,ruido_realista,busco trabajo ayuda12,ruido,no,fuera de alcance
+2721,G_ruido,ruido_realista,aceptan tarjeta plis1,ruido,no,pago
+2722,G_ruido,ruido_realista,gracias ayuda1,saludo,no,cierre
+2723,G_ruido,ruido_realista,gracias oye99,saludo,no,cierre
+2724,G_ruido,ruido_realista,👍 no se99,ruido,no,emoji
+2725,G_ruido,ruido_realista,do you have pizza 12,ruido,no,spanglish
+2726,G_ruido,ruido_realista,gracias 5,saludo,no,cierre
+2727,G_ruido,ruido_realista,busco trabajo 2,ruido,no,fuera de alcance
+2728,G_ruido,ruido_realista,cuanto tardan,ruido,no,logistica
+2729,G_ruido,ruido_realista,...5,ruido,no,ellipsis
+2730,G_ruido,ruido_realista,?  2,ruido,no,signo
+2731,G_ruido,ruido_realista,🍕 no se99,ruido,no,emoji
+2732,G_ruido,ruido_realista,tienen baño 2,ruido,no,fuera de alcance
+2733,G_ruido,ruido_realista,esta bien ayuda99,confirmar,no,confirmacion
+2734,G_ruido,ruido_realista,... no se12,ruido,no,ellipsis
+2735,G_ruido,ruido_realista,perfecto ayuda99,confirmar,no,confirmacion
+2736,G_ruido,ruido_realista,jajaja  2,ruido,no,risa
+2737,G_ruido,ruido_realista,gracias1,saludo,no,cierre
+2738,G_ruido,ruido_realista,perfecto no se5,confirmar,no,confirmacion
+2739,G_ruido,ruido_realista,do you have pizza 99,ruido,no,spanglish
+2740,G_ruido,ruido_realista,aceptan tarjeta oye1,ruido,no,pago
+2741,G_ruido,ruido_realista,menu pls12,menu,no,spanglish menu
+2742,G_ruido,ruido_realista,asdf no se2,ruido,no,gibberish
+2743,G_ruido,ruido_realista,do you have pizza99,ruido,no,spanglish
+2744,G_ruido,ruido_realista,menu pls ayuda,menu,no,spanglish menu
+2745,G_ruido,ruido_realista,asdf 12,ruido,no,gibberish
+2746,G_ruido,ruido_realista,aceptan tarjeta,ruido,no,pago
+2747,G_ruido,ruido_realista,do you have pizza ayuda1,ruido,no,spanglish
+2748,G_ruido,ruido_realista,menu pls  5,menu,no,spanglish menu
+2749,G_ruido,ruido_realista,👍 plis12,ruido,no,emoji
+2750,G_ruido,ruido_realista,do you have pizza,ruido,no,spanglish
+2751,G_ruido,ruido_realista,a que hora abren 2,ruido,no,fuera de alcance
+2752,G_ruido,ruido_realista,do you have pizza!!!2,ruido,no,spanglish
+2753,G_ruido,ruido_realista,esta bien!!!12,confirmar,no,confirmacion
+2754,G_ruido,ruido_realista,hola?!!!2,ambiguo,no,saludo duda
+2755,G_ruido,ruido_realista,👍 oye99,ruido,no,emoji
+2756,G_ruido,ruido_realista,hola?1,ambiguo,no,saludo duda
+2757,G_ruido,ruido_realista,esta bien5,confirmar,no,confirmacion
+2758,G_ruido,ruido_realista,tienen baño plis,ruido,no,fuera de alcance
+2759,G_ruido,ruido_realista,a que hora abren ayuda12,ruido,no,fuera de alcance
+2760,G_ruido,ruido_realista,?  99,ruido,no,signo
+2761,G_ruido,ruido_realista,jajaja 1,ruido,no,risa
+2762,G_ruido,ruido_realista,👍!!!1,ruido,no,emoji
+2763,G_ruido,ruido_realista,busco trabajo oye12,ruido,no,fuera de alcance
+2764,G_ruido,ruido_realista,tienen baño!!!99,ruido,no,fuera de alcance
+2765,G_ruido,ruido_realista,busco trabajo no se1,ruido,no,fuera de alcance
+2766,G_ruido,ruido_realista,jajaja oye1,ruido,no,risa
+2767,G_ruido,ruido_realista,gracias!!!5,saludo,no,cierre
+2768,G_ruido,ruido_realista,gracias plis1,saludo,no,cierre
+2769,G_ruido,ruido_realista,? no se,ruido,no,mensaje vacio
+2770,G_ruido,ruido_realista,cuanto tardan plis1,ruido,no,logistica
+2771,G_ruido,ruido_realista,?2,ruido,no,mensaje vacio
+2772,G_ruido,ruido_realista,hola? oye1,ambiguo,no,saludo duda
+2773,G_ruido,ruido_realista,aceptan tarjeta ayuda99,ruido,no,pago
+2774,G_ruido,ruido_realista,menu pls5,menu,no,spanglish menu
+2775,G_ruido,ruido_realista,esta bien plis,confirmar,no,confirmacion
+2776,G_ruido,ruido_realista,tienen baño,ruido,no,fuera de alcance
+2777,G_ruido,ruido_realista,jajaja ayuda12,ruido,no,risa
+2778,G_ruido,ruido_realista,tienen baño  5,ruido,no,fuera de alcance
+2779,G_ruido,ruido_realista,asdf plis1,ruido,no,gibberish
+2780,G_ruido,ruido_realista,cuanto tardan no se12,ruido,no,logistica
+2781,G_ruido,ruido_realista,ok plis,ambiguo,no,monosilabo
+2782,G_ruido,ruido_realista,esta bien 12,confirmar,no,confirmacion
+2783,G_ruido,ruido_realista,tienen baño  12,ruido,no,fuera de alcance
+2784,G_ruido,ruido_realista,perfecto oye99,confirmar,no,confirmacion
+2785,G_ruido,ruido_realista,gracias oye2,saludo,no,cierre
+2786,G_ruido,ruido_realista,🍕1,ruido,no,emoji
+2787,G_ruido,ruido_realista,... oye2,ruido,no,ellipsis
+2788,G_ruido,ruido_realista,? oye2,ruido,no,signo
+2789,G_ruido,ruido_realista,aceptan tarjeta  12,ruido,no,pago
+2790,G_ruido,ruido_realista,a que hora abren99,ruido,no,fuera de alcance
+2791,G_ruido,ruido_realista,do you have pizza plis2,ruido,no,spanglish
+2792,G_ruido,ruido_realista,ok  2,ambiguo,no,monosilabo
+2793,G_ruido,ruido_realista,gracias plis,saludo,no,cierre
+2794,G_ruido,ruido_realista,tienen baño!!!5,ruido,no,fuera de alcance
+2795,G_ruido,ruido_realista,perfecto ayuda5,confirmar,no,confirmacion
+2796,G_ruido,ruido_realista,busco trabajo ayuda,ruido,no,fuera de alcance
+2797,G_ruido,ruido_realista,ok!!!,ambiguo,no,monosilabo
+2798,G_ruido,ruido_realista,🍕 plis12,ruido,no,emoji
+2799,G_ruido,ruido_realista,cuanto tardan!!!5,ruido,no,logistica
+2800,G_ruido,ruido_realista,ok ayuda2,ambiguo,no,monosilabo
+2801,G_ruido,ruido_realista,hola? plis12,ambiguo,no,saludo duda
+2802,G_ruido,ruido_realista,cuanto tardan!!!1,ruido,no,logistica
+2803,G_ruido,ruido_realista,gracias!!!2,saludo,no,cierre
+2804,G_ruido,ruido_realista,jajaja!!!12,ruido,no,risa
+2805,G_ruido,ruido_realista,hola?99,ambiguo,no,saludo duda
+2806,G_ruido,ruido_realista,hola? oye12,ambiguo,no,saludo duda
+2807,G_ruido,ruido_realista,🍕 ayuda1,ruido,no,emoji
+2808,G_ruido,ruido_realista,ok no se99,ambiguo,no,monosilabo
+2809,G_ruido,ruido_realista,? oye12,ruido,no,mensaje vacio
+2810,G_ruido,ruido_realista,ok 5,ambiguo,no,monosilabo
+2811,G_ruido,ruido_realista,busco trabajo plis99,ruido,no,fuera de alcance
+2812,G_ruido,ruido_realista,do you have pizza no se12,ruido,no,spanglish
+2813,G_ruido,ruido_realista,hola?12,ambiguo,no,saludo duda
+2814,G_ruido,ruido_realista,menu pls  2,menu,no,spanglish menu
+2815,G_ruido,ruido_realista,tienen baño!!!,ruido,no,fuera de alcance
+2816,G_ruido,ruido_realista,a que hora abren 12,ruido,no,fuera de alcance
+2817,G_ruido,ruido_realista,tienen baño!!!1,ruido,no,fuera de alcance
+2818,G_ruido,ruido_realista,hola? ayuda,ambiguo,no,saludo duda
+2819,G_ruido,ruido_realista,jajaja!!!1,ruido,no,risa
+2820,G_ruido,ruido_realista,a que hora abren!!!,ruido,no,fuera de alcance
+2821,G_ruido,ruido_realista,menu pls plis99,menu,no,spanglish menu
+2822,H_adversarial,adversarial,si y no a la vez quiero todo y nada,ambiguo,no,contradiccion
+2823,H_adversarial,adversarial,qwerty pizza,ruido,no,gibberish
+2824,H_adversarial,adversarial,100 hawaianas y -2 pizzas,pedido_con_productos,parcial,multi fake
+2825,H_adversarial,adversarial,-2 pizzas y sushi roll,pedido_con_productos,parcial,multi fake
+2826,H_adversarial,adversarial,burger doble,pedido_con_productos,parcial,producto no en menu
+2827,H_adversarial,adversarial,123456789,ruido,no,gibberish
+2828,H_adversarial,adversarial,100 hawaianas y sushi roll,pedido_con_productos,parcial,multi fake
+2829,H_adversarial,adversarial,cero cocacolas,pedido_con_productos,parcial,producto no en menu
+2830,H_adversarial,adversarial,;;;,ruido,no,gibberish
+2831,H_adversarial,adversarial,tacos al pastor,pedido_con_productos,parcial,producto no en menu
+2832,H_adversarial,adversarial,sushi roll y -2 pizzas,pedido_con_productos,parcial,multi fake
+2833,H_adversarial,adversarial,100 hawaianas y lasagna,pedido_con_productos,parcial,multi fake
+2834,H_adversarial,adversarial,lasagna y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2835,H_adversarial,adversarial,sushi roll y tacos al pastor,pedido_con_productos,parcial,multi fake
+2836,H_adversarial,adversarial,sushi roll,pedido_con_productos,parcial,producto no en menu
+2837,H_adversarial,adversarial,10 pizzas pepperoni,pedido_con_productos,parcial,producto no en menu
+2838,H_adversarial,adversarial,10 pizzas pepperoni y burger doble,pedido_con_productos,parcial,multi fake
+2839,H_adversarial,adversarial,zzzz,ruido,no,gibberish
+2840,H_adversarial,adversarial,-2 pizzas y burger doble,pedido_con_productos,parcial,multi fake
+2841,H_adversarial,adversarial,10 pizzas pepperoni y lasagna,pedido_con_productos,parcial,multi fake
+2842,H_adversarial,adversarial,lasagna,pedido_con_productos,parcial,producto no en menu
+2843,H_adversarial,adversarial,cero cocacolas y tacos al pastor,pedido_con_productos,parcial,multi fake
+2844,H_adversarial,adversarial,10 pizzas pepperoni y -2 pizzas,pedido_con_productos,parcial,multi fake
+2845,H_adversarial,adversarial,cero cocacolas y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2846,H_adversarial,adversarial,10 pizzas pepperoni y tacos al pastor,pedido_con_productos,parcial,multi fake
+2847,H_adversarial,adversarial,100 hawaianas y burger doble,pedido_con_productos,parcial,multi fake
+2848,H_adversarial,adversarial,burger doble y cero cocacolas,pedido_con_productos,parcial,multi fake
+2849,H_adversarial,adversarial,tacos al pastor y cero cocacolas,pedido_con_productos,parcial,multi fake
+2850,H_adversarial,adversarial,lasagna y tacos al pastor,pedido_con_productos,parcial,multi fake
+2851,H_adversarial,adversarial,-2 pizzas y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2852,H_adversarial,adversarial,burger doble y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2853,H_adversarial,adversarial,tacos al pastor y lasagna,pedido_con_productos,parcial,multi fake
+2854,H_adversarial,adversarial,100 hawaianas y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2855,H_adversarial,adversarial,cero cocacolas y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2856,H_adversarial,adversarial,sushi roll y burger doble,pedido_con_productos,parcial,multi fake
+2857,H_adversarial,adversarial,cero cocacolas y cero cocacolas,pedido_con_productos,parcial,multi fake
+2858,H_adversarial,adversarial,tacos al pastor y burger doble,pedido_con_productos,parcial,multi fake
+2859,H_adversarial,adversarial,lasagna y -2 pizzas,pedido_con_productos,parcial,multi fake
+2860,H_adversarial,adversarial,-2 pizzas y cero cocacolas,pedido_con_productos,parcial,multi fake
+2861,H_adversarial,adversarial,-2 pizzas,pedido_con_productos,parcial,producto no en menu
+2862,H_adversarial,adversarial,10 pizzas pepperoni y sushi roll,pedido_con_productos,parcial,multi fake
+2863,H_adversarial,adversarial,sushi roll y cero cocacolas,pedido_con_productos,parcial,multi fake
+2864,H_adversarial,adversarial,100 hawaianas,pedido_con_productos,parcial,producto no en menu
+2865,H_adversarial,adversarial,lasagna y sushi roll,pedido_con_productos,parcial,multi fake
+2866,H_adversarial,adversarial,sushi roll y lasagna,pedido_con_productos,parcial,multi fake
+2867,H_adversarial,adversarial,lasagna y cero cocacolas,pedido_con_productos,parcial,multi fake
+2868,H_adversarial,adversarial,-2 pizzas y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2869,H_adversarial,adversarial,burger doble y sushi roll,pedido_con_productos,parcial,multi fake
+2870,H_adversarial,adversarial,lasagna y lasagna,pedido_con_productos,parcial,multi fake
+2871,H_adversarial,adversarial,burger doble y -2 pizzas,pedido_con_productos,parcial,multi fake
+2872,H_adversarial,adversarial,lasagna y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2873,H_adversarial,adversarial,cero cocacolas y lasagna,pedido_con_productos,parcial,multi fake
+2874,H_adversarial,adversarial,cero cocacolas y -2 pizzas,pedido_con_productos,parcial,multi fake
+2875,H_adversarial,adversarial,-2 pizzas y tacos al pastor,pedido_con_productos,parcial,multi fake
+2876,H_adversarial,adversarial,-2 pizzas y -2 pizzas,pedido_con_productos,parcial,multi fake
+2877,H_adversarial,adversarial,-2 pizzas y lasagna,pedido_con_productos,parcial,multi fake
+2878,H_adversarial,adversarial,cero cocacolas y burger doble,pedido_con_productos,parcial,multi fake
+2879,H_adversarial,adversarial,10 pizzas pepperoni y cero cocacolas,pedido_con_productos,parcial,multi fake
+2880,H_adversarial,adversarial,sushi roll y sushi roll,pedido_con_productos,parcial,multi fake
+2881,H_adversarial,adversarial,burger doble y lasagna,pedido_con_productos,parcial,multi fake
+2882,H_adversarial,adversarial,burger doble y tacos al pastor,pedido_con_productos,parcial,multi fake
+2883,H_adversarial,adversarial,sushi roll y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2884,H_adversarial,adversarial,burger doble y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2885,H_adversarial,adversarial,tacos al pastor y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2886,H_adversarial,adversarial,cero cocacolas y sushi roll,pedido_con_productos,parcial,multi fake
+2887,H_adversarial,adversarial,lasagna y burger doble,pedido_con_productos,parcial,multi fake
+2888,H_adversarial,adversarial,10 pizzas pepperoni y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2889,H_adversarial,adversarial,10 pizzas pepperoni y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2890,H_adversarial,adversarial,100 hawaianas y cero cocacolas,pedido_con_productos,parcial,multi fake
+2891,H_adversarial,adversarial,tacos al pastor y -2 pizzas,pedido_con_productos,parcial,multi fake
+2892,H_adversarial,adversarial,tacos al pastor y tacos al pastor,pedido_con_productos,parcial,multi fake
+2893,H_adversarial,adversarial,burger doble y burger doble,pedido_con_productos,parcial,multi fake
+2894,H_adversarial,adversarial,100 hawaianas y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2895,H_adversarial,adversarial,tacos al pastor y 100 hawaianas,pedido_con_productos,parcial,multi fake
+2896,H_adversarial,adversarial,tacos al pastor y sushi roll,pedido_con_productos,parcial,multi fake
+2897,H_adversarial,adversarial,sushi roll y 10 pizzas pepperoni,pedido_con_productos,parcial,multi fake
+2898,H_adversarial,adversarial,100 hawaianas y tacos al pastor,pedido_con_productos,parcial,multi fake

@@ -1,33 +1,33 @@
 # Resumen cobertura corpus (~95% tráfico esperado)
-Total líneas: 3300
+Total líneas: 2898
 
 ## Por categoría
 | Categoría | Líneas | % | Rol en cobertura |
 |-----------|--------|---|------------------|
-| A_onboarding | 360 | 10.9% | Navegación / comandos / saludos |
-| B_pedido_nl | 1280 | 38.8% | Pedidos lenguaje natural |
-| C_carrito | 430 | 13.0% | Carrito y confirmación |
-| D_reserva | 290 | 8.8% | Reserva de mesa |
-| E_entrega | 230 | 7.0% | Domicilio / dirección / nombre |
-| F_mezclas | 240 | 7.3% | Mensajes mixtos críticos |
-| G_ruido | 200 | 6.1% | Ruido y fuera de alcance |
-| H_adversarial | 270 | 8.2% | Adversarial / no menú |
+| A_onboarding | 360 | 12.4% | Navegación / comandos / saludos |
+| B_pedido_nl | 1280 | 44.2% | Pedidos lenguaje natural |
+| C_carrito | 430 | 14.8% | Carrito y confirmación |
+| D_reserva | 290 | 10.0% | Reserva de mesa |
+| E_entrega | 21 | 0.7% | Domicilio / dirección / nombre |
+| F_mezclas | 240 | 8.3% | Mensajes mixtos críticos |
+| G_ruido | 200 | 6.9% | Ruido y fuera de alcance |
+| H_adversarial | 77 | 2.7% | Adversarial / no menú |
 
 ## Por intención esperada (top)
 
-- pedido_con_productos: 1702 (51.6%)
-- modificar_carrito: 423 (12.8%)
-- dato_reserva: 274 (8.3%)
-- datos_entrega: 230 (7.0%)
-- ruido: 140 (4.2%)
-- ambiguo: 104 (3.2%)
-- menu: 103 (3.1%)
-- reservar: 89 (2.7%)
-- pedido: 73 (2.2%)
-- saludo: 55 (1.7%)
-- inicio: 49 (1.5%)
-- cancelar: 32 (1.0%)
-- confirmar: 23 (0.7%)
+- pedido_con_productos: 1584 (54.7%)
+- modificar_carrito: 423 (14.6%)
+- dato_reserva: 274 (9.5%)
+- ruido: 134 (4.6%)
+- menu: 104 (3.6%)
+- reservar: 89 (3.1%)
+- pedido: 73 (2.5%)
+- saludo: 56 (1.9%)
+- inicio: 49 (1.7%)
+- ambiguo: 34 (1.2%)
+- cancelar: 32 (1.1%)
+- confirmar: 22 (0.8%)
+- datos_entrega: 21 (0.7%)
 - rechazar: 3 (0.1%)
 
 # Top 30 huecos (~5% no cubierto)

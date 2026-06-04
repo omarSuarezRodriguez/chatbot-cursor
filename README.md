@@ -1,4 +1,4 @@
-## v0.36.
+## v0.37
 
 ## Restaurant WhatsApp Chatbot SaaS
 
@@ -4898,3 +4898,16 @@ ahora quiero que me optimices la velocidad de respuesta del bot, como mejora inc
 | Meta latencia &lt;2 s | **OK** |
 
 La precisión se mantiene igual; solo mejoró el rendimiento del camino crítico. Reinicia el bot (`python run.py` o redeploy) para que cargue los cambios en producción.
+
+
+
+
+
+
+
+
+########################################
+## v0.37
+
+
+

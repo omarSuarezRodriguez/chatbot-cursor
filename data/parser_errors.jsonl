@@ -54319,3 +54319,5 @@ ara 4"], "total_items": 0}
 {"timestamp": "2026-06-03T18:47:48.410293+00:00", "wa_id": "", "message": "nomas una bebida por favor", "reason": "ambiguity", "parser_status": "needs_clarification", "score": 0.8, "unknown": [], "total_items": 1}
 {"timestamp": "2026-06-03T18:47:48.413844+00:00", "wa_id": "", "message": "oye tienen estacionamiento?", "reason": "fail_safe", "parser_status": "needs_clarification", "score": null, "unknown": ["tienen estacionamiento"], "total_items": 0}
 {"timestamp": "2026-06-03T18:47:48.417594+00:00", "wa_id": "", "message": "va perfecto confirmemos", "reason": "fail_safe", "parser_status": "needs_clarification", "score": null, "unknown": ["va perfecto confirmemos"], "total_items": 0}
+{"timestamp": "2026-06-04T10:38:20.692980+00:00", "event": "admin_reminder_stopped", "order_id": "ORD-80B4103E", "elapsed_seconds": 3606}
+{"timestamp": "2026-06-04T17:38:35.537519+00:00", "event": "admin_reminder_stopped", "order_id": "ORD-58BB041E", "elapsed_seconds": 3760}
